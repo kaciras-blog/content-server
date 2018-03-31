@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<properties>
+	<group name="discussion" desc="评论设置">
+		<property key="disable" type="bool" desc="是否禁止评论"/>
+		<property key="filter" type="enum" class="net.kaciras.blog.domain.CheckType" desc="评论审核方式"/>
+	</group>
+</properties>

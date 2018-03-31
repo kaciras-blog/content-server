@@ -1,0 +1,48 @@
+package net.kaciras.blog.facade.pojo;
+
+import net.kaciras.blog.domain.article.ArticleDTO;
+import net.kaciras.blog.domain.category.Category;
+import net.kaciras.blog.domain.discuss.Discussion;
+import net.kaciras.blog.domain.draft.DraftDTO;
+import net.kaciras.blog.domain.draft.DraftHistory;
+import net.kaciras.blog.domain.user.User;
+import org.mapstruct.*;
+
+import java.util.List;
+
+@MapperConfig(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring")
+public interface PojoMapper {
+
+	ArticlePreviewVO toPreviewVo(ArticleDTO article);
+
+	List<ArticlePreviewVO> toPreviewList(List<ArticleDTO> articles);
+
+	ArticleVO toVO(ArticleDTO article);
+
+	DraftVO toDraftVO(DraftDTO draft);
+
+	@Named("B")
+	DraftHistoryVO toDraftHistoryVO(DraftHistory draft);
+
+	@IterableMapping(qualifiedByName = "B")
+	List<DraftHistoryVO> toDraftHistoryVOList(List<DraftHistory> histories);
+
+	@Named("C")
+	DraftPreviewVO toDraftPreviewVO(DraftDTO draft);
+
+	@IterableMapping(qualifiedByName = "C")
+	List<DraftPreviewVO> toDraftPreviewVOList(List<DraftDTO> histories);
+
+	DiscussionVO toDiscussionVO(Discussion dto);
+
+	@Named("Category")
+	CategoryVO toCategoryVO(Category category);
+
+	@IterableMapping(qualifiedByName = "Category")
+	List<CategoryVO> toCategoryVOList(List<Category> histories);
+
+	Category toCategory(CategoryVO vo);
+
+	UserVO toUserVo(User user);
+}

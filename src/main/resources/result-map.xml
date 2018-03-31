@@ -1,0 +1,31 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="net.kaciras.blog.domain.dao.ResultMap">
+
+	<resultMap type="net.kaciras.blog.domain.article.Article" id="ArticleMap">
+		<id property="id" column="id"/>
+		<result property="userId" column="user_id"/>
+		<result property="viewCount" column="view_count"/>
+		<result property="create" column="create_time"/>
+		<result property="update" column="update_time"/>
+		<collection property="categories" column="id"
+					select="net.kaciras.blog.domain.article.ClassifyDAO.selectCategoryById"/>
+		<collection property="keywords" column="id" select="net.kaciras.blog.domain.article.KeywordDAO.select"/>
+	</resultMap>
+
+	<resultMap type="net.kaciras.blog.domain.draft.Draft" id="DraftMap">
+		<result column="user_id" property="userId"/>
+		<result column="article_id" property="articleId"/>
+	</resultMap>
+
+	<resultMap type="net.kaciras.blog.domain.draft.DraftHistory" id="DraftHistoryMap">
+		<result column="save_count" property="saveCount"/>
+	</resultMap>
+
+	<resultMap id="DiscussionMap" type="net.kaciras.blog.domain.discuss.Discussion">
+		<id property="id" column="id"/>
+		<result property="postId" column="post"/>
+		<result property="userId" column="user"/>
+		<result property="voteCount" column="vote"/>
+	</resultMap>
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<permissions module="DISCUSSION">
+	<permission>
+		<name>ADD</name>
+		<desc>允许添加评论</desc>
+	</permission>
+	<permission>
+		<name>POWER_QUERY</name>
+		<desc>高级搜索权限，允许以下2种操作：查询全局评论（包括匿名），查看所有删除的评论</desc>
+	</permission>
+	<permission>
+		<name>POWER_MODIFY</name>
+		<desc>高级修改权限，允许以下操作：删除和恢复其他人的评论</desc>
+	</permission>
+</permissions>
