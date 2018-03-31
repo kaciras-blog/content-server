@@ -23,6 +23,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -32,6 +33,7 @@ import java.util.Properties;
 @MapperScan(value = "net.kaciras.blog.domain", annotationClass = Mapper.class)
 @EnableScheduling
 @EnableTransactionManagement
+@EnableWebMvc
 @SpringBootApplication
 public class ServiceApplication {
 
@@ -53,17 +55,6 @@ public class ServiceApplication {
 		return taskScheduler;
 	}
 
-
-	@Bean(destroyMethod = "forceCloseAll")
-	public PooledDataSource dataSource(Properties config) {
-		PooledDataSource dataSource = new PooledDataSource();
-		dataSource.setDriver(config.getProperty("db.driver"));
-		dataSource.setUrl(config.getProperty("db.url"));
-		dataSource.setUsername(config.getProperty("db.user"));
-		dataSource.setPassword(config.getProperty("db.password"));
-		return dataSource;
-	}
-
 	@Bean
 	public SqlSessionFactoryBean sqlSessionFactory(DataSource dataSource) throws IOException {
 		SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
@@ -82,16 +73,6 @@ public class ServiceApplication {
 //	public EmbeddedServletContainerCustomizer tomcatCustomizer() {
 //
 //	}
-
-	/**
-	 * &#064;EnableTransactionManagement 注解将自动使用 PlatformTransactionManager 类型的bean
-	 * @param dataSource 数据源
-	 * @return PlatformTransactionManager
-	 */
-	@Bean
-	public PlatformTransactionManager txManager(DataSource dataSource) {
-		return new DataSourceTransactionManager(dataSource);
-	}
 
 	@Bean
 	public MessageClient messageClient() {

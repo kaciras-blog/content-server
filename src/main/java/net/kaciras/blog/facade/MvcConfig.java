@@ -16,7 +16,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Component
-@EnableWebMvc
 public class MvcConfig implements WebMvcConfigurer {
 
 	private final ObjectMapper objectMapper;
