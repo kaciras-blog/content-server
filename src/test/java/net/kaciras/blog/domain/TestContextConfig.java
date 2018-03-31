@@ -14,7 +14,6 @@ import java.util.Properties;
 
 @Configuration
 @Profile("test")
-@Import(CommonConfiguration.class)
 public class TestContextConfig {
 
 	@Bean

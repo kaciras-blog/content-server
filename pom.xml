@@ -3,13 +3,26 @@
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>Kaciras Blog Version 6</name>
+	<name>Kaciras Blog Version 7</name>
 	<packaging>jar</packaging>
 
 	<groupId>net.kaciras.blog</groupId>
 	<artifactId>Service</artifactId>
 	<version>1.0</version>
 
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.0.0.RELEASE</version>
+		<relativePath/>
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>9</java.version>
+	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>net.kaciras.blog</groupId>
@@ -27,12 +40,10 @@
 		<dependency>
 			<groupId>io.reactivex.rxjava2</groupId>
 			<artifactId>rxjava</artifactId>
-			<version>2.1.10</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
-			<version>3.5.2</version>
 		</dependency>
 
 		<!-- 嵌入式Tomcat服务器 -->
@@ -51,13 +62,18 @@
 			<artifactId>tomcat-embed-websocket</artifactId>
 			<version>9.0.6</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-annotations-api</artifactId>
+			<version>9.0.6</version>
+		</dependency>
 
 		<!-- lombok和mapstruct用于编译期自动生成代码，简化编写 -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.20</version>
 			<scope>provided</scope>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.mapstruct</groupId>
@@ -78,28 +94,13 @@
 			<version>16.0.1</version>
 		</dependency>
 
-		<!-- 对象属性验证相关的依赖，EL的实现在tomcat-embed-el里 -->
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>6.0.8.Final</version>
-		</dependency>
-		<!--<dependency>-->
-		<!--<groupId>javax.el</groupId>-->
-		<!--<artifactId>javax.el-api</artifactId>-->
-		<!--<version>3.0.1-b04</version>-->
-		<!--</dependency>-->
-
-		<!-- Spring 全家桶 -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>5.0.4.RELEASE</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>5.0.4.RELEASE</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -128,7 +129,6 @@
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
-			<version>2.2.3</version>
 		</dependency>
 
 		<dependency>
@@ -142,45 +142,16 @@
 			<version>2.1.0</version>
 		</dependency>
 
-		<!-- Jackson套装，JSON转换用 -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.9.4</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-parameter-names</artifactId>
-			<version>2.9.4</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jdk8</artifactId>
-			<version>2.9.4</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>2.9.4</version>
-		</dependency>
-		<!--<dependency>-->
-		<!--<groupId>com.fasterxml.jackson.dataformat</groupId>-->
-		<!--<artifactId>jackson-dataformat-xml</artifactId>-->
-		<!--<version>2.9.4</version>-->
-		<!--</dependency>-->
-
 		<!-- JUnit5单元测试，以及Spring单元测试支持 -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.1.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.assertj</groupId>
 			<artifactId>assertj-core</artifactId>
 			<version>3.9.1</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -192,7 +163,6 @@
 			<groupId>org.springframework.restdocs</groupId>
 			<artifactId>spring-restdocs-mockmvc</artifactId>
 			<version>2.0.0.RELEASE</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -223,7 +193,6 @@
 						<manifest>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>net.kaciras.blog.facade.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -250,34 +219,8 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.asciidoctor</groupId>
-				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>1.5.6</version>
-				<executions>
-					<execution>
-						<id>generate-docs</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>process-asciidoc</goal>
-						</goals>
-						<configuration>
-							<backend>html</backend>
-							<doctype>book</doctype>
-							<attributes>
-								<snippets>${project.build.directory}/generated-snippets</snippets>
-							</attributes>
-							<sourceDirectory>${project.build.directory}/generated-snippets</sourceDirectory>
-							<outputDirectory>src/docs/api/html</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.springframework.restdocs</groupId>
-						<artifactId>spring-restdocs-asciidoctor</artifactId>
-						<version>2.0.0.RELEASE</version>
-					</dependency>
-				</dependencies>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>

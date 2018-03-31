@@ -1,4 +1,4 @@
-package net.kaciras.blog.domain;
+package net.kaciras.blog.facade;
 
 import net.kaciras.blog.domain.permission.PermissionKeyTypeHandler;
 import net.kaciras.blog.infrastructure.codec.ImageRefrenceTypeHandler;
@@ -12,11 +12,10 @@ import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -29,23 +28,19 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Properties;
 
-@Configuration
-@ComponentScan("net.kaciras.blog.domain")
+@ComponentScan({"net.kaciras.blog.domain", "net.kaciras.blog.facade"})
 @MapperScan(value = "net.kaciras.blog.domain", annotationClass = Mapper.class)
 @EnableScheduling
 @EnableTransactionManagement
-public class CommonConfiguration {
+@SpringBootApplication
+public class ServiceApplication {
 
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer placeholderConfigurer(@Qualifier("config") Properties properties) {
-		PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-		configurer.setProperties(properties);
-		return configurer;
+	public static void main(String[] args) {
+		SpringApplication.run(ServiceApplication.class, args);
 	}
 
 	/**
 	 * &#064;EnableScheduling 注解将自动使用 TaskScheduler 类型的bean。
-	 *
 	 * @return TaskScheduler
 	 */
 	@Bean(destroyMethod = "destroy")
@@ -57,6 +52,7 @@ public class CommonConfiguration {
 		taskScheduler.setThreadNamePrefix("Shud-");
 		return taskScheduler;
 	}
+
 
 	@Bean(destroyMethod = "forceCloseAll")
 	public PooledDataSource dataSource(Properties config) {
@@ -82,9 +78,13 @@ public class CommonConfiguration {
 		return bean;
 	}
 
+//	@Bean
+//	public EmbeddedServletContainerCustomizer tomcatCustomizer() {
+//
+//	}
+
 	/**
 	 * &#064;EnableTransactionManagement 注解将自动使用 PlatformTransactionManager 类型的bean
-	 *
 	 * @param dataSource 数据源
 	 * @return PlatformTransactionManager
 	 */
@@ -97,12 +97,6 @@ public class CommonConfiguration {
 	public MessageClient messageClient() {
 		return new DirectCalledMessageClient();
 	}
-
-//	@Bean
-//	public MessageClient subscriber(Executor executor) {
-//		LinkedEventQueue eventQueue = new LinkedEventQueue(executor);
-//		return new MessageClient(eventQueue, eventQueue);
-//	}
 
 	@Bean
 	CacheManager cacheManager() {
