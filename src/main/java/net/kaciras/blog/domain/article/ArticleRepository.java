@@ -1,6 +1,7 @@
 package net.kaciras.blog.domain.article;
 
 import io.reactivex.Observable;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
@@ -13,7 +14,7 @@ import java.util.List;
 import static net.kaciras.blog.domain.Utils.checkNotNull;
 import static net.kaciras.blog.domain.Utils.checkPositive;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
 class ArticleRepository {
 
@@ -59,7 +60,7 @@ class ArticleRepository {
 		}
 	}
 
-	public Observable<Article> getList(ArticleListRequest request) {
+	Observable<Article> getList(ArticleListRequest request) {
 		checkNotNull(request, "request");
 		request.setCount(Math.min(request.getCount(), 20)); // 限制最大结果数
 		return Observable.fromIterable(articleDAO.selectPreview(request));

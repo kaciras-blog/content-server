@@ -9,17 +9,23 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.codec.ImageRefrenceDeserializer;
 import net.kaciras.blog.infrastructure.codec.ImageRefrenceSerializer;
+import org.apache.ibatis.annotations.Mapper;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.PlaceholderConfigurerSupport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.Properties;
 
 @Configuration
 @ComponentScan("net.kaciras.blog.facade")
+@EnableWebMvc
 public class WebContextConfig {
 
 	@Bean

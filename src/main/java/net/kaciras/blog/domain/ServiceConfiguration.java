@@ -1,4 +1,4 @@
-package net.kaciras.blog.facade;
+package net.kaciras.blog.domain;
 
 import net.kaciras.blog.domain.CommonConfiguration;
 import org.springframework.context.annotation.Bean;

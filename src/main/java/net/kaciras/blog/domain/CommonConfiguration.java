@@ -28,10 +28,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan("net.kaciras.blog.domain")
+@ComponentScan(value = "net.kaciras.blog.domain")
 @MapperScan(value = "net.kaciras.blog.domain", annotationClass = Mapper.class)
 @EnableScheduling
-@EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
+@EnableTransactionManagement
 public class CommonConfiguration {
 
 	@Bean
@@ -95,12 +95,6 @@ public class CommonConfiguration {
 	public MessageClient messageClient() {
 		return new DirectCalledMessageClient();
 	}
-
-//	@Bean
-//	public MessageClient subscriber(Executor executor) {
-//		LinkedEventQueue eventQueue = new LinkedEventQueue(executor);
-//		return new MessageClient(eventQueue, eventQueue);
-//	}
 
 	@Bean
 	CacheManager cacheManager() {

@@ -1,6 +1,7 @@
 package net.kaciras.blog.facade;
 
 import lombok.extern.slf4j.Slf4j;
+import net.kaciras.blog.domain.ServiceConfiguration;
 import net.kaciras.blog.infrastructure.bootstarp.ConnectorBuilder;
 import net.kaciras.blog.infrastructure.bootstarp.HostBuilder;
 import net.kaciras.blog.infrastructure.bootstarp.TomcatBuilder;
