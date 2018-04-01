@@ -84,11 +84,6 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.0.8.Final</version>
 		</dependency>
-		<!--<dependency>-->
-		<!--<groupId>javax.el</groupId>-->
-		<!--<artifactId>javax.el-api</artifactId>-->
-		<!--<version>3.0.1-b04</version>-->
-		<!--</dependency>-->
 
 		<!-- Spring 全家桶 -->
 		<dependency>

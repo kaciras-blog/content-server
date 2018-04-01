@@ -43,6 +43,6 @@ public class ConfigBinding {
 		if (!converter.isPresent()) {
 			throw new NoSuchElementException("没有符合该键和类型的配置项");
 		}
-		return new ConfigItem<>(messageClient, configService, key, type, converter.get());
+		return new ConfigItem<>(messageClient, configService, type, key, converter.get());
 	}
 }

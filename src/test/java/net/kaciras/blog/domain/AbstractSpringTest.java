@@ -12,5 +12,4 @@ import org.springframework.transaction.annotation.Transactional;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestContextConfig.class)
 @ActiveProfiles("test")
-abstract class AbstractSpringTest {
-}
+abstract class AbstractSpringTest {}

@@ -2,6 +2,7 @@ package net.kaciras.blog.facade;
 
 import net.kaciras.blog.domain.CommonConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import java.io.FileInputStream;
@@ -12,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 @Import(CommonConfiguration.class)
+@Configuration
 public class ServiceConfiguration {
 
 	@Bean

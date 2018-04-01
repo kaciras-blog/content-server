@@ -17,9 +17,6 @@ public final class Utils {
 
 	private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-	private Utils() {
-	}
-
 	/**
 	 * 用于检查Update，Delete等SQL语句是否产生了影响，没产生影响时将抛出异常
 	 *
@@ -61,4 +58,6 @@ public final class Utils {
 			throw new IllegalArgumentException(first.getMessage());
 		}
 	}
+
+	private Utils() {}
 }

@@ -26,7 +26,7 @@ public class ArticleService {
 
 	private final MessageClient messageClient;
 
-	private List<ArticleDTO> hots;
+	private Observable<ArticleDTO> hots;
 
 //	@Autowired
 //	public void setPermissionStore(PermissionRepository store) {
@@ -55,7 +55,7 @@ public class ArticleService {
 		}
 	}
 
-	public List<ArticleDTO> getHots() {
+	public Observable<ArticleDTO> getHots() {
 		return hots;
 	}
 
@@ -76,14 +76,14 @@ public class ArticleService {
 		request.setDesc(true);
 		request.setSort("view_count");
 		request.setCount(6);
-		hots = articleMapper.toDTOList(articleRepository.getList(request));
+		hots = articleRepository.getList(request).map(articleMapper::toDTO);
 	}
 
 	public Observable<ArticleDTO> getList(ArticleListRequest request) {
 		if (isDisallow("SHOW_DELETED") && request.isShowDeleted()) {
 			throw new PermissionException();
 		}
-		return Observable.fromIterable(articleRepository.getList(request)).map(articleMapper::toDTO);
+		return articleRepository.getList(request).map(articleMapper::toDTO);
 	}
 
 	public int getCountByCategories(List<Integer> ids) {
