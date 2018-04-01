@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.facade.filter.AccessLogInterceptor;
 import net.kaciras.blog.facade.filter.CSRFInterceptor;
-import net.kaciras.blog.facade.filter.IpFrequencyInterceptor;
+import net.kaciras.blog.facade.filter.DefenseInterceptor;
 import net.kaciras.blog.facade.filter.SecurtyContextInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -22,7 +22,7 @@ public class MvcConfig implements WebMvcConfigurer {
 	private final SecurtyContextInterceptor securtyContextInterceptor;
 	private final AccessLogInterceptor accessLogInterceptor;
 	private final CSRFInterceptor csrfInterceptor;
-	private final IpFrequencyInterceptor ipFrequencyInterceptor;
+	private final DefenseInterceptor defenseInterceptor;
 
 	@Value("${web.CorsOrigin}")
 	private String corsOrigin;
@@ -33,7 +33,7 @@ public class MvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-				.allowedOrigins(corsOrigin)
+				.allowedOrigins("http://localhost", "https://localhost", corsOrigin)
 				.allowedMethods("*")
 				.allowCredentials(true)
 				.allowedHeaders("X-CSRF-Token", "X-Requested-With", "Content-Type")
@@ -48,7 +48,7 @@ public class MvcConfig implements WebMvcConfigurer {
 			registry.addInterceptor(accessLogInterceptor);
 		}
 		registry.addInterceptor(csrfInterceptor);
-		registry.addInterceptor(ipFrequencyInterceptor);
+		registry.addInterceptor(defenseInterceptor);
 	}
 
 	@Override

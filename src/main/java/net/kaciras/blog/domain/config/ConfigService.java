@@ -45,15 +45,15 @@ public class ConfigService {
 	}
 
 	public void set(String key, Object value) {
+		properties.put(key, value);
 		ConfigChangedEvent event = new ConfigChangedEvent();
 		event.setKey(key);
 		event.setOldValue(properties.getProperty(key));
-		properties.put(key, value);
 		event.setNewValue(value.toString());
 		messageClient.send(event);
 	}
 
-	public Map getModifiable() {
-		return Map.of();
+	public Map<String, PropertyGroup> getModifiable() {
+		return configurables;
 	}
 }

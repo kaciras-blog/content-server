@@ -1,5 +1,6 @@
 package net.kaciras.blog.domain.article;
 
+import io.reactivex.Observable;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
@@ -58,10 +59,10 @@ class ArticleRepository {
 		}
 	}
 
-	public List<Article> getList(ArticleListRequest request) {
+	public Observable<Article> getList(ArticleListRequest request) {
 		checkNotNull(request, "request");
 		request.setCount(Math.min(request.getCount(), 20)); // 限制最大结果数
-		return articleDAO.selectPreview(request);
+		return Observable.fromIterable(articleDAO.selectPreview(request));
 	}
 
 	@Transactional

@@ -35,7 +35,6 @@ public final class SessionController {
 			return ResponseEntity.notFound().build();
 		}
 
-		//TODO:
 		User user = userService.getUser(id);
 		if (user == null) {
 			return ResponseEntity.notFound().build();

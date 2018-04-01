@@ -1,5 +1,6 @@
 package net.kaciras.blog.facade.controller;
 
+import io.reactivex.Observable;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.article.ArticleService;
 import net.kaciras.blog.facade.pojo.ArticlePreviewVO;
@@ -19,7 +20,7 @@ public final class RecommendController {
 	private final PojoMapper pojoMapper;
 
 	@GetMapping("/articles")
-	public List<ArticlePreviewVO> hotArticles() {
-		return pojoMapper.toPreviewList(articleService.getHots());
+	public Observable<ArticlePreviewVO> hotArticles() {
+		return articleService.getHots().map(pojoMapper::toPreviewVo);
 	}
 }

@@ -8,7 +8,7 @@ import org.dom4j.ElementPath;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConfigurableElementHandler implements ElementHandler {
+final class ConfigurableElementHandler implements ElementHandler {
 
 	@Getter
 	private Map<String, PropertyGroup> configurables = new HashMap<>();

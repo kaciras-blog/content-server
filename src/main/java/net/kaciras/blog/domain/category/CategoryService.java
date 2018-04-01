@@ -57,8 +57,4 @@ public class CategoryService {
 		}
 		return categoryRepository.get(id).getPath();
 	}
-
-	public List<Category> getPath(int id, int ancestor) {
-		return categoryRepository.get(id).pathTo(ancestor);
-	}
 }

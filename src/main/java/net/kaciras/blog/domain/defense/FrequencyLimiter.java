@@ -1,9 +1,10 @@
-package net.kaciras.blog.facade;
+package net.kaciras.blog.domain.defense;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +13,8 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-@Service
-public class AccessFrequencyService {
+@Component
+final class FrequencyLimiter {
 
 	private final ThreadPoolTaskScheduler taskScheduler;
 	private final ConcurrentHashMap<InetAddress, Integer> records = new ConcurrentHashMap<>();
@@ -26,15 +27,14 @@ public class AccessFrequencyService {
 	private boolean enable;
 
 	@Autowired
-	public AccessFrequencyService(ThreadPoolTaskScheduler taskScheduler) {
+	public FrequencyLimiter(ThreadPoolTaskScheduler taskScheduler) {
 		this.taskScheduler = taskScheduler;
 	}
 
-	public boolean isAllow(HttpServletRequest request) throws UnknownHostException {
+	public boolean isAllow(InetAddress address) {
 		if (!enable) {
 			return true;
 		}
-		InetAddress address = InetAddress.getByName(request.getRemoteAddr());
 		Integer count = records.get(address);
 		if (count == null) {
 			count = 0;
