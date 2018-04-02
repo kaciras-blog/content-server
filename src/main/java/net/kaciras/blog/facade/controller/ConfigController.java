@@ -3,7 +3,10 @@ package net.kaciras.blog.facade.controller;
 import net.kaciras.blog.domain.config.ConfigService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.HandlerMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RestController
@@ -16,9 +19,11 @@ public final class ConfigController {
 		this.configService = configService;
 	}
 
-	@PutMapping("/{name}")
-	public ResponseEntity putConfig(@PathVariable String name, @RequestParam String value) {
-		configService.set(name, value);
+	@PutMapping("/**")
+	public ResponseEntity putConfig(HttpServletRequest request) {
+		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		path = path.substring("/configs/".length()).replace('/', '.');
+		configService.set(path, request.getParameter("value"));
 		return ResponseEntity.noContent().build();
 	}
 

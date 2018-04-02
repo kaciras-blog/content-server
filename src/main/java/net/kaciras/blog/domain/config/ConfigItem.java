@@ -14,18 +14,17 @@ public final class ConfigItem<T> {
 
 	private final MessageClient messageClient;
 	private final ConfigService configService;
+	private final ConvertorRegistery convertorRegistery;
 
 	@Getter
 	private final Class<T> type;
 
 	private final String key;
 
-	private final Converter<T> converter;
-
 	public void bind(Consumer<T> consumer) {
-		consumer.accept(converter.convert(configService.getProperty(key), type));
+		consumer.accept(convertorRegistery.convert(type, configService.getProperty(key)));
 		messageClient.subscribe(ConfigChangedEvent.class, event -> {
-			if (event.getKey().equals(key)) consumer.accept(converter.convert(event.getNewValue(), type));
+			if (event.getKey().equals(key)) consumer.accept(convertorRegistery.convert(type, event.getNewValue()));
 		});
 	}
 
@@ -55,6 +54,6 @@ public final class ConfigItem<T> {
 	}
 
 	public T getValue() {
-		return converter.convert(configService.getProperty(key), type);
+		return convertorRegistery.convert(type, configService.getProperty(key));
 	}
 }
