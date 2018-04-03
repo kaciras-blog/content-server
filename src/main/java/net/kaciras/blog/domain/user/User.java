@@ -12,6 +12,7 @@ import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +25,8 @@ public class User {
 	private static final int SALT_SIZE = 32;
 
 	static LoginRecordDao loginRecordDao;
+	static BanRecordDao banRecordDao;
+
 	static Cache<Integer, LoginRecord> cache;
 
 	User(int id, String name) {
@@ -42,8 +45,6 @@ public class User {
 
 	private LocalDateTime regTime;
 	private InetAddress regAddress;
-
-	private boolean banned;
 
 	void putPassword(String passText) {
 		salt = new byte[SALT_SIZE];
@@ -84,5 +85,26 @@ public class User {
 		}
 		cache.remove(id);
 		loginRecordDao.insert(id, address);
+	}
+
+	/**
+	 * 封禁该用户
+	 *
+	 * @param operator 操作者id
+	 * @param time 封禁时间
+	 * @param cause 封禁原因描述
+	 */
+	void ban(int operator, Duration time, String cause) {
+		LocalDateTime start = LocalDateTime.now();
+		BanRecord record = new BanRecord()
+				.start(start)
+				.end(start.plus(time))
+				.operator(operator)
+				.cause(cause);
+		banRecordDao.insertBanRecord(id, record);
+	}
+
+	void unBan(int bid, int operator, String cause) {
+		banRecordDao.insertUnbanRecord(bid, operator, cause);
 	}
 }

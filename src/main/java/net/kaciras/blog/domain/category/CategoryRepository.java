@@ -2,6 +2,8 @@ package net.kaciras.blog.domain.category;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.Utils;
+import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
+import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ class CategoryRepository {
 
 	private final CategoryDAO categoryDAO;
 	private final DaoHelper helper;
+	private final MessageClient messageClient;
 
 	public Category get(int id) {
 		Utils.checkPositive(id, "id");
@@ -73,14 +76,18 @@ class CategoryRepository {
 	}
 
 	@Transactional
-	public void delete(int id) {
+	public void remove(int id) {
 		helper.requireContains(id);
 		Integer parent = categoryDAO.selectAncestor(id, 1);
+
 		if (parent == null) {
 			parent = 0;
 		}
+
 		get(id).moveSubTree(parent);
 		deleteBoth(id);
+
+		messageClient.send(new CategoryRemovedEvent(id, parent));
 	}
 
 	@Transactional

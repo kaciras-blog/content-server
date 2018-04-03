@@ -1,8 +1,8 @@
 package net.kaciras.blog.domain.config;
 
+import net.kaciras.blog.infrastructure.event.ConfigChangedEvent;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.message.event.ConfigChangedEvent;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,12 +57,7 @@ public class ConfigService {
 		}
 
 		properties.put(key, value);
-
-		ConfigChangedEvent event = new ConfigChangedEvent();
-		event.setKey(key);
-		event.setOldValue(properties.getProperty(key));
-		event.setNewValue(value.toString());
-		messageClient.send(event).blockingGet();
+		messageClient.send(new ConfigChangedEvent(key, properties.getProperty(key), value));
 	}
 
 	public Map<String, PropertyGroup> getModifiable() {

@@ -24,7 +24,7 @@
 
 	<resultMap id="DiscussionMap" type="net.kaciras.blog.domain.discuss.Discussion">
 		<id property="id" column="id"/>
-		<result property="postId" column="post"/>
+		<result property="articleId" column="post"/>
 		<result property="userId" column="user"/>
 		<result property="voteCount" column="vote"/>
 	</resultMap>

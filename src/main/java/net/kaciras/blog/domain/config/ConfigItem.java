@@ -2,8 +2,8 @@ package net.kaciras.blog.domain.config;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.event.ConfigChangedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.message.event.ConfigChangedEvent;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

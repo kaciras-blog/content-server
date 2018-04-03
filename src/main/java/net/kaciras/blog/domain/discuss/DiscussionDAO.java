@@ -8,7 +8,7 @@ import java.util.List;
 interface DiscussionDAO {
 
 	@Insert("INSERT INTO Discussion(user,post,floor,content) " +
-			"VALUES (#{userId},#{postId},#{floor},#{content})")
+			"VALUES (#{userId},#{articleId},#{floor},#{content})")
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insert(Discussion discuz);
 

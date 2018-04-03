@@ -3,6 +3,7 @@ package net.kaciras.blog.domain.category;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.kaciras.blog.domain.Utils;
+import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public class Category {
 
 	static CategoryDAO dao;
 	static DaoHelper helper;
+	static MessageClient messageClient;
 
 	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 

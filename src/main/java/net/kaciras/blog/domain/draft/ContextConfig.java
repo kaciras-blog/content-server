@@ -1,8 +1,8 @@
 package net.kaciras.blog.domain.draft;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.message.event.ArticleCreatedEvent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,7 +10,7 @@ import javax.annotation.PostConstruct;
 
 @RequiredArgsConstructor
 @Configuration("DraftContextConfig")
-public class DraftDomainConfiguration {
+class ContextConfig {
 
 	private final MessageClient messageClient;
 	private final DraftRepository draftRepository;
@@ -20,7 +20,7 @@ public class DraftDomainConfiguration {
 	private boolean deleteAfterSubmit;
 
 	@PostConstruct
-	public void init() {
+	private void init() {
 		messageClient.subscribe(ArticleCreatedEvent.class, event -> {
 			if (deleteAfterSubmit) draftRepository.delete(event.getDraftId());
 		});

@@ -17,7 +17,7 @@ class DiscussRepository {
 
 	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void add(Discussion discuz) {
-		int lastFloor = discussionDAO.selectLastFloor(discuz.getPostId());
+		int lastFloor = discussionDAO.selectLastFloor(discuz.getArticleId());
 		discuz.setFloor(lastFloor + 1);
 		discussionDAO.insert(discuz);
 	}

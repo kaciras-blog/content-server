@@ -23,7 +23,7 @@ class UserRepository {
 	}
 
 	public void delete(int id) {
-		Utils.checkEffective(userDao.updateDeleted(id, true));
+		Utils.checkEffective(userDao.delete(id));
 	}
 
 	public User get(int id) {

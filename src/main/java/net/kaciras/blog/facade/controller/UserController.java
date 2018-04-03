@@ -50,6 +50,20 @@ public final class UserController {
 		}
 	}
 
+	@PutMapping("/{id}/availability")
+	public ResponseEntity setAvailability(@PathVariable int id,
+										  @RequestParam boolean banned,
+										  @RequestParam(required = false, defaultValue = "0") long time,
+										  @RequestParam(required = false, defaultValue = "0") int bid,
+										  @RequestParam String cause) {
+		if(banned) {
+			userService.ban(id, time, cause);
+		} else {
+			userService.unban(id, bid, cause);
+		}
+		return ResponseEntity.noContent().build();
+	}
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity delete(@PathVariable int id) {
 		userService.delete(id);

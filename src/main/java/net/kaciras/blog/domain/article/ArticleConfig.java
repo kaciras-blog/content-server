@@ -1,8 +1,8 @@
 package net.kaciras.blog.domain.article;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.message.event.CategoryRemovedEvent;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;

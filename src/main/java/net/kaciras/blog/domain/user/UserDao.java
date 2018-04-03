@@ -17,12 +17,12 @@ interface UserDao {
 	@Select("SELECT id,name,head,regist_ip,regist_time FROM User WHERE id=#{id}")
 	User select(int id);
 
-	@Select("SELECT id,name,password,salt,banned FROM User WHERE name=#{name}")
+	@Select("SELECT id,name,password,salt FROM User WHERE name=#{name}")
 	User selectByName(String name);
-
-	@Update("UPDATE User SET deleted=#{value} WHERE id=#{id}")
-	int updateDeleted(@Param("id") int id, @Param("value") boolean value);
 
 	@Update("UPDATE User SET password=#{password},salt=#{salt} WHERE id=#{id}")
 	int updateLoginInfo(User user);
+
+	@Delete("DELETE FROM User WHERE id=#{id}")
+	int delete(int id);
 }
