@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 import static net.kaciras.blog.domain.permission.Role.*;
 
 @Configuration("PermissionContextConfig")
-public class PermissionConfig {
+public class ContextConfig {
 
 	private final RoleRepository repository;
 	private final MessageClient messageClient;
@@ -22,10 +22,10 @@ public class PermissionConfig {
 	private final RolePermissionDAO rolePermissionDAO;
 	private final UserRoleDAO userRoleDAO;
 
-	public PermissionConfig(RoleRepository repository,
-							MessageClient messageClient,
-							RolePermissionDAO rolePermissionDAO,
-							UserRoleDAO userRoleDAO) {
+	public ContextConfig(RoleRepository repository,
+						 MessageClient messageClient,
+						 RolePermissionDAO rolePermissionDAO,
+						 UserRoleDAO userRoleDAO) {
 		this.repository = repository;
 		this.messageClient = messageClient;
 		this.rolePermissionDAO = rolePermissionDAO;

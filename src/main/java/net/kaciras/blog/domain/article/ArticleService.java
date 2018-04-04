@@ -123,8 +123,9 @@ public class ArticleService {
 		messageClient.send(new ArticleUpdatedEvent(id, publish.getDraftId(), publish.getCategories()));
 	}
 
+	@Transactional
 	public void delete(int id) {
 		checkModifyOther(id);
-		articleRepository.delete(id);
+		articleRepository.get(id).delete();
 	}
 }

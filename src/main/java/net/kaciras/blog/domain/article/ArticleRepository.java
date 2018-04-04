@@ -65,37 +65,4 @@ class ArticleRepository {
 		request.setCount(Math.min(request.getCount(), 20)); // 限制最大结果数
 		return Observable.fromIterable(articleDAO.selectPreview(request));
 	}
-
-	@Transactional
-	public void delete(int id) {
-		if (checkDeleted(id)) {
-			throw new IllegalStateException("文章已删除");
-		}
-		Utils.checkEffective(articleDAO.updateDeleted(id, true));
-	}
-
-	@Transactional
-	public void recover(int id) {
-		if (!checkDeleted(id)) {
-			throw new IllegalStateException("文章没有标记为删除");
-		}
-		Utils.checkEffective(articleDAO.updateDeleted(id, false));
-	}
-
-	/**
-	 * <code>delete</code>和<code>recover</code>共用的部分抽出来。
-	 * 作用是检查id合法性，以及文章是否存在。
-	 *
-	 * @param id 文章id
-	 * @return 删除状态
-	 */
-	private boolean checkDeleted(int id) {
-		checkPositive(id, "id");
-		Boolean deleted = articleDAO.selectDeletedById(id);
-		if (deleted == null) {
-			throw new ResourceNotFoundException("文章不存在");
-		}
-		return deleted;
-	}
-
 }

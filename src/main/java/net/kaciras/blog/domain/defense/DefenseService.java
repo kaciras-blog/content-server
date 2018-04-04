@@ -9,10 +9,13 @@ import java.net.InetAddress;
 @Service
 public class DefenseService {
 
+	private final IPTable ipTable;
 	private final FrequencyLimiter frequencyLimiter;
 	private final ProxyDetector proxyDetector;
 
 	public boolean accept(InetAddress address) {
-		return frequencyLimiter.isAllow(address) && !proxyDetector.isProxy(address);
+		return ipTable.acceptable(address)
+				&& frequencyLimiter.isAllow(address)
+				&& !proxyDetector.isProxy(address);
 	}
 }

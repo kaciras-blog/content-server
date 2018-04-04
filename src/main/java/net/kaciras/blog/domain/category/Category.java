@@ -44,38 +44,42 @@ public class Category {
 
 	@Transactional
 	void moveTo(int target) {
-		if (id == target) {
+		int selfId = this.id;
+		if (selfId == target) {
 			throw new IllegalArgumentException("不能移动到自己下面");
 		}
+
 		Utils.checkNotNegative(target, "target");
 		if (target > 0) {
 			helper.requireContains(target);
 		}
-		moveSubTree(id, dao.selectAncestor(id, 1));
-		moveNode(id, target);
+
+		moveSubTree(selfId, dao.selectAncestor(selfId, 1));
+		moveNode(selfId, target);
 	}
 
 	@Transactional
 	void moveTreeTo(int target) {
+		int selfId = this.id;
 		Utils.checkNotNegative(target, "target");
 		if (target > 0) {
 			helper.requireContains(target);
 		}
 
-		Integer distance = dao.selectDistance(id, target);
+		Integer distance = dao.selectDistance(selfId, target);
 		if (distance == null) {
 			// 移动到父节点或其他无关系节点，不需要做额外动作
 		} else if (distance == 0) {
 			throw new IllegalArgumentException("不能移动到自己下面");
 		} else {
 			// 如果移动的目标是其子类，需要先把子类移动到本类的位置
-			int parent = dao.selectAncestor(id, 1);
+			int parent = dao.selectAncestor(selfId, 1);
 			moveNode(target, parent);
 			moveSubTree(target, target);
 		}
 
-		moveNode(id, target);
-		moveSubTree(id, id);
+		moveNode(selfId, target);
+		moveSubTree(selfId, selfId);
 	}
 
 	/**

@@ -35,7 +35,7 @@ public final class SqlProvidor {
 		if (query.getParent() != null) {
 			sql.WHERE("parent = #{parent}");
 		} else {
-			if (query.getPostId() != null) {
+			if (query.getArticleId() != null) {
 				sql.WHERE("post = #{articleId}");
 			}
 			if (query.getUserId() != null) {

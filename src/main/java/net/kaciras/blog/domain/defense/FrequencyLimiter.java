@@ -1,6 +1,7 @@
 package net.kaciras.blog.domain.defense;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -13,6 +14,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 @Component
 final class FrequencyLimiter {
 
@@ -26,12 +28,7 @@ final class FrequencyLimiter {
 	@Getter
 	private boolean enable;
 
-	@Autowired
-	public FrequencyLimiter(ThreadPoolTaskScheduler taskScheduler) {
-		this.taskScheduler = taskScheduler;
-	}
-
-	public boolean isAllow(InetAddress address) {
+	boolean isAllow(InetAddress address) {
 		if (!enable) {
 			return true;
 		}

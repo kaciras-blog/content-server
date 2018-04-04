@@ -46,7 +46,6 @@ public final class SessionController {
 	@PostMapping("/user")
 	public Map login(HttpServletRequest request, HttpServletResponse response,
 					 @RequestBody @Valid LoginVo loginVo) {
-
 		User user = userService.login(loginVo.getName(), loginVo.getPassword());
 		if (user != null) {
 			putUser(request, response, user, loginVo.isRemenber());

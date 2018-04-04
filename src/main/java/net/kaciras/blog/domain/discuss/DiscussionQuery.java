@@ -12,18 +12,18 @@ public final class DiscussionQuery extends ListSelectRequest {
 
 	boolean metaonly;
 
-	private Integer postId;
+	private Integer articleId;
 	private Integer userId;
 	private Integer parent;
 
-	private DiscussionQuery(Integer postId, Integer userId, Integer parent) {
-		this.postId = postId;
+	private DiscussionQuery(Integer articleId, Integer userId, Integer parent) {
+		this.articleId = articleId;
 		this.userId = userId;
 		this.parent = parent;
 	}
 
-	public static DiscussionQuery byPost(int postId) {
-		return new DiscussionQuery(postId, null, null);
+	public static DiscussionQuery byArticle(int article) {
+		return new DiscussionQuery(article, null, null);
 	}
 
 	public static DiscussionQuery byParent(int parent) {

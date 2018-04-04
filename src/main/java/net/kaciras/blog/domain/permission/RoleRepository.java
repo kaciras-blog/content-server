@@ -48,7 +48,7 @@ public class RoleRepository {
 	public Role get(int id) {
 		Role role = checkNotNullResource(roleDAO.selectAttribute(id));
 		role.setPermissionSet(permAssDAO.selectByRoleId(id));
-		role.setIncludes((List<Role>) Enhancer.create(List.class, new RoleIncludesLoader(this, roleDAO, id)));
+		role.setIncludes((List<Role>) Enhancer.create(List.class, new IncludesLoader(this, roleDAO, id)));
 		return role;
 	}
 
