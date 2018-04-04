@@ -5,13 +5,13 @@ import org.springframework.cglib.proxy.LazyLoader;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class RoleIncludesLoader implements LazyLoader {
+class IncludesLoader implements LazyLoader {
 
 	private final RoleRepository repository;
 	private final RoleDAO dao;
 	private final int roleId;
 
-	RoleIncludesLoader(RoleRepository repository, RoleDAO dao, int roleId) {
+	IncludesLoader(RoleRepository repository, RoleDAO dao, int roleId) {
 		this.repository = repository;
 		this.dao = dao;
 		this.roleId = roleId;

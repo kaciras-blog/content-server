@@ -3,7 +3,6 @@ package net.kaciras.blog.domain.category;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.SecurtyContext;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.message.event.CategoryRemovedEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -45,10 +44,7 @@ public class CategoryService {
 
 	public void delete(int id) {
 		SecurtyContext.checkAccept("CategoryService", "MODIFY");
-		categoryRepository.delete(id);
-		CategoryRemovedEvent event = new CategoryRemovedEvent();
-		event.setId(id);
-		messageClient.send(event);
+		categoryRepository.remove(id);
 	}
 
 	public List<Category> getPath(int id) {

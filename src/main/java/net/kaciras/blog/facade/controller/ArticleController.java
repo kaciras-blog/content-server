@@ -14,8 +14,8 @@ import net.kaciras.blog.domain.user.UserService;
 import net.kaciras.blog.facade.pojo.ArticlePreviewVO;
 import net.kaciras.blog.facade.pojo.ArticleVO;
 import net.kaciras.blog.facade.pojo.PojoMapper;
+import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.message.event.ArticleUpdatedEvent;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
@@ -59,7 +59,7 @@ public final class ArticleController {
 
 	private ArticlePreviewVO assembly(ArticleDTO article) {
 		ArticlePreviewVO vo = mapper.toPreviewVo(article);
-		vo.setDiscussionCount(discussionService.count(DiscussionQuery.byPost(article.getId())));
+		vo.setDiscussionCount(discussionService.count(DiscussionQuery.byArticle(article.getId())));
 
 		//这句没法用doOnNext
 		vo.setCategoryPath(mapper.toCategoryVOList(categoryService.getPath(article.getCategories().get(0))));
@@ -94,7 +94,7 @@ public final class ArticleController {
 	}
 
 	@PostMapping
-	public ResponseEntity postArticle(@RequestBody ArticlePublishDTO dto) throws URISyntaxException {
+	public ResponseEntity<Void> postArticle(@RequestBody ArticlePublishDTO dto) throws URISyntaxException {
 		int id = articleService.publish(dto);
 		return ResponseEntity.created(new URI("/articles/" + id)).build();
 	}

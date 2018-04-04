@@ -18,10 +18,10 @@ final class EnumPropertyItem<T extends Enum> extends PropertyItem {
 
 	private List<EnumEntry> options;
 
-	EnumPropertyItem(String clazz, String name, String desc) {
-		super("enum", name, desc);
+	EnumPropertyItem(String type, String desc) {
+		super(type, desc);
 		try {
-			Class<T> aClass = (Class<T>) Class.forName(clazz);
+			Class<T> aClass = (Class<T>) Class.forName(type);
 			options = Observable.fromArray(aClass.getEnumConstants())
 					.map(EnumEntry::of)
 					.toList()

@@ -4,11 +4,11 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.SecurtyContext;
+import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
+import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.message.event.ArticleCreatedEvent;
-import net.kaciras.blog.infrastructure.message.event.ArticleUpdatedEvent;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,11 +104,7 @@ public class ArticleService {
 		int id = articleRepository.add(articleMapper.publishToArticle(publish));
 		classifyDAO.updateByArticle(id, publish.getCategories().get(0));
 
-		ArticleCreatedEvent event = new ArticleCreatedEvent();
-		event.setDraftId(publish.getDraftId());
-		event.setArticleId(id);
-		event.setCategories(publish.getCategories());
-		messageClient.send(event);
+		messageClient.send(new ArticleCreatedEvent(id, publish.getDraftId(), publish.getCategories()));
 		return id;
 	}
 
@@ -124,13 +120,12 @@ public class ArticleService {
 		}
 		classifyDAO.updateByArticle(id, category);
 
-		ArticleUpdatedEvent event = new ArticleUpdatedEvent();
-		event.setArticleId(id); //TODO: draft and categories
-		messageClient.send(event).blockingGet();
+		messageClient.send(new ArticleUpdatedEvent(id, publish.getDraftId(), publish.getCategories()));
 	}
 
+	@Transactional
 	public void delete(int id) {
 		checkModifyOther(id);
-		articleRepository.delete(id);
+		articleRepository.get(id).delete();
 	}
 }

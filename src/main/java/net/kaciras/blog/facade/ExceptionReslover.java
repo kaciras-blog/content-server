@@ -1,9 +1,6 @@
 package net.kaciras.blog.facade;
 
-import net.kaciras.blog.infrastructure.exception.PermissionException;
-import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
-import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
+import net.kaciras.blog.infrastructure.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -20,7 +17,8 @@ public class ExceptionReslover implements HandlerExceptionResolver {
 			PermissionException.class, 403,
 			ResourceDeletedException.class, 410,
 			ResourceNotFoundException.class, 404,
-			RequestArgumentException.class, 400
+			RequestArgumentException.class, 400,
+			DataTooBigException.class, 413
 	);
 
 	@Override

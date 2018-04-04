@@ -1,13 +1,13 @@
 package net.kaciras.blog.domain.permission;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.event.role.RoleRemovedEvent;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static net.kaciras.blog.domain.Utils.*;
@@ -16,9 +16,6 @@ import static net.kaciras.blog.domain.permission.Role.*;
 @RequiredArgsConstructor
 @Repository
 public class RoleRepository {
-
-	private static final int PERM_NAME_LENGTH = 255;
-	private static final Pattern ALLOW_CHARS = Pattern.compile("^[0-9a-zA-Z_]+$");
 
 	private final RolePermissionDAO permAssDAO;
 	private final RoleDAO roleDAO;
@@ -40,6 +37,7 @@ public class RoleRepository {
 			throw new IllegalArgumentException("无法修改内置角色");
 		}
 		checkEffective(roleDAO.delete(id));
+		messageClient.send(new RoleRemovedEvent(id));
 	}
 
 	public void update(Role role) {
@@ -50,7 +48,7 @@ public class RoleRepository {
 	public Role get(int id) {
 		Role role = checkNotNullResource(roleDAO.selectAttribute(id));
 		role.setPermissionSet(permAssDAO.selectByRoleId(id));
-		role.setIncludes((List<Role>) Enhancer.create(List.class, new RoleIncludesLoader(this, roleDAO, id)));
+		role.setIncludes((List<Role>) Enhancer.create(List.class, new IncludesLoader(this, roleDAO, id)));
 		return role;
 	}
 
@@ -100,29 +98,6 @@ public class RoleRepository {
 			roleSet.add(get(Role.DEFAULT_USER_ROLE_ID));
 		}
 		return roleSet;
-	}
-
-	public void addPermissionToRole(int roleId, String group, String name) {
-		permAssDAO.insert(roleId, convertName(group, name));
-	}
-
-	public void deletePermissionFromRole(int roleId, String group, String name) {
-		permAssDAO.delete(roleId, convertName(group, name));
-	}
-
-	private String convertName(String group, String name) {
-		if (group == null || name == null) {
-			throw new NullPointerException("权限参数不能为null");
-		}
-		if (!ALLOW_CHARS.matcher(name).find() || !ALLOW_CHARS.matcher(group).find()) {
-			throw new IllegalArgumentException("权限名和组名仅支持0-9a-zA-Z_");
-		}
-
-		String combied = group + "#" + name;
-		if (combied.isEmpty() || combied.length() > PERM_NAME_LENGTH) {
-			throw new IllegalArgumentException("权限名和组名总共长度必须在1-255个字符之间");
-		}
-		return combied;
 	}
 
 	public void removeAllFromRole(int roleId) {

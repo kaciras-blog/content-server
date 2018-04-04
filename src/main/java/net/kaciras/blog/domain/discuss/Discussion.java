@@ -2,22 +2,20 @@ package net.kaciras.blog.domain.discuss;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.kaciras.blog.domain.Utils;
+import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.message.event.DiscussionDeletedEvent;
-import net.kaciras.blog.infrastructure.message.event.DiscussionRestoreEvent;
-import net.kaciras.blog.infrastructure.message.event.DiscussionVoteEvent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Configurable
 public class Discussion implements Serializable {
 
-	@Autowired
+	static DiscussionDAO dao;
+	static VoteDAO voteDAO;
 	static MessageClient messageClient;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -25,7 +23,7 @@ public class Discussion implements Serializable {
 	private int id;
 	private int userId;
 
-	private int postId;
+	private int articleId;
 	private int floor;
 
 	private int parent;
@@ -43,12 +41,13 @@ public class Discussion implements Serializable {
 	 * @param userId 点赞用户的id
 	 */
 	void addVote(int userId) {
-		voteCount++;
-		DiscussionVoteEvent event = new DiscussionVoteEvent();
-		event.setRevoke(false);
-		event.setDiscussionId(id);
-		event.setUserId(userId);
-		messageClient.send(event).blockingGet();
+		try {
+			voteDAO.insertRecord(id, userId);
+			voteCount++;
+			dao.increaseVote(id);
+		} catch (DataIntegrityViolationException ex) {
+			throw new ResourceStateException();
+		}
 	}
 
 	/**
@@ -57,26 +56,23 @@ public class Discussion implements Serializable {
 	 * @param userId 点赞用户的id
 	 */
 	void removeVote(int userId) {
-		voteCount--;
-		DiscussionVoteEvent event = new DiscussionVoteEvent();
-		event.setRevoke(true);
-		event.setDiscussionId(id);
-		event.setUserId(userId);
-		messageClient.send(event).blockingGet();
+		try {
+			Utils.checkEffective(voteDAO.deleteRecord(id, userId));
+			voteCount--;
+			dao.descreaseVote(id);
+		} catch (DataIntegrityViolationException ex) {
+			throw new ResourceStateException();
+		}
 	}
 
 	// delete和restore这两个方法我认为应该放在Domain Object里
 	// 因为它们是对deleted属性的修改，而不是真正的删除
 
 	void delete() {
-		DiscussionDeletedEvent event = new DiscussionDeletedEvent();
-		event.setDiscussionId(id);
-		messageClient.send(event).blockingGet();
+		dao.updateDeleted(id, true);
 	}
 
 	void restore() {
-		DiscussionRestoreEvent event = new DiscussionRestoreEvent();
-		event.setDiscussionId(id);
-		messageClient.send(event).blockingGet();
+		dao.updateDeleted(id, false);
 	}
 }

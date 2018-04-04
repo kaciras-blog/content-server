@@ -19,7 +19,7 @@ final class ConfigurableElementHandler implements ElementHandler {
 	public void onStart(ElementPath elementPath) {
 		Element element = elementPath.getCurrent();
 		if (element.getName().equals("group")) {
-			currentGroup = new PropertyGroup(element.attributeValue("name"), element.attributeValue("desc"));
+			currentGroup = new PropertyGroup(element.attributeValue("desc"));
 		}
 	}
 
@@ -45,14 +45,10 @@ final class ConfigurableElementHandler implements ElementHandler {
 			case "string":
 			case "bool":
 			case "float":
-				currentGroup.getItems().put(name, new PropertyItem(type, name, element.attributeValue("desc")));
-				break;
-			case "enum":
-				currentGroup.getItems().put(name, new EnumPropertyItem(
-						element.attributeValue("class"), name, element.attributeValue("desc")));
+				currentGroup.getItems().put(name, new PropertyItem(type, element.attributeValue("desc")));
 				break;
 			default:
-				throw new RuntimeException("未知的配置项类型" + type);
+				currentGroup.getItems().put(name, new EnumPropertyItem(type, element.attributeValue("desc")));
 		}
 	}
 }

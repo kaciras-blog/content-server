@@ -1,10 +1,8 @@
 package net.kaciras.blog.domain.permission;
 
 import lombok.*;
+import net.kaciras.blog.infrastructure.event.role.RoleIncludeChangedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.message.event.RoleIncludeChangedEvent;
-import net.kaciras.blog.infrastructure.message.event.RolePermissionAddedEvent;
-import net.kaciras.blog.infrastructure.message.event.RolePermissionRemovedEvent;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
 
@@ -26,6 +24,8 @@ public class Role {
 
 	@Qualifier("userPermissionCache")
 	static Cache cache;
+
+	static RolePermissionDAO rolePermissionDAO;
 
 	static MessageClient messageClient;
 
@@ -52,22 +52,14 @@ public class Role {
 		if (!permissionSet.add(perm)) {
 			throw new IllegalArgumentException();
 		}
-		RolePermissionAddedEvent event = new RolePermissionAddedEvent();
-		event.setRoleId(id);
-		event.setGroup(perm.getModule());
-		event.setName(perm.getName());
-		messageClient.send(event).blockingGet();
+		rolePermissionDAO.insert(id, PermUtils.convertName(perm.getModule(), perm.getName()));
 	}
 
 	public void removePermission(PermissionKey perm) {
 		if (!permissionSet.remove(perm)) {
 			throw new IllegalArgumentException();
 		}
-		RolePermissionRemovedEvent event = new RolePermissionRemovedEvent();
-		event.setRoleId(id);
-		event.setGroup(perm.getModule());
-		event.setName(perm.getName());
-		messageClient.send(event).blockingGet();
+		rolePermissionDAO.delete(id, PermUtils.convertName(perm.getModule(), perm.getName()));
 	}
 
 	public boolean accept(PermissionKey pk) {
@@ -102,11 +94,14 @@ public class Role {
 	}
 
 	public void changeIncludes(List<Role> ids) {
-		RoleIncludeChangedEvent event = new RoleIncludeChangedEvent();
-		event.setRoleId(id);
-		event.setOldList(getIncludes().stream().map(Role::getId).collect(Collectors.toList()));
 		includes = ids;
-		event.setNewList(ids.stream().map(Role::getId).collect(Collectors.toList()));
-		messageClient.send(event).blockingGet();
+		List<Integer> old = getIncludes().stream()
+				.map(Role::getId)
+				.collect(Collectors.toList());
+		List<Integer> New = ids.stream()
+				.map(Role::getId)
+				.collect(Collectors.toList());
+		RoleIncludeChangedEvent event = new RoleIncludeChangedEvent(id, old, New);
+		messageClient.send(event);
 	}
 }

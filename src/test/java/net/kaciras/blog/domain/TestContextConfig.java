@@ -17,18 +17,12 @@ import java.util.Properties;
 public class TestContextConfig {
 
 	@Bean
-	public Properties config() {
+	public Properties config() throws IOException {
 		Properties properties = new Properties();
-		loadIgnoreException(properties, "D:\\Coding\\JAVA\\Blog\\Service\\src\\test\\resources\\config.ini");
+		String confile = "D:\\Coding\\JAVA\\Blog-V7\\Service\\src\\test\\resources\\config.ini";
+		try (Reader reader = new InputStreamReader(new FileInputStream(confile), StandardCharsets.UTF_8)) {
+			properties.load(reader);
+		}
 		return properties;
 	}
-
-	private void loadIgnoreException(Properties properties, String file) {
-		try (Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8)) {
-			properties.load(reader);
-		} catch (IOException ignore) {
-			// ignore
-		}
-	}
-
 }

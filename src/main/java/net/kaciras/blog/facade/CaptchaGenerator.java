@@ -60,7 +60,8 @@ public final class CaptchaGenerator {
 		g2.setColor(c); //设置背景色
 		g2.fillRect(0, 2, w, h - 4);
 
-		shear(g2, w, h, c); //扭曲
+		shearX(g2, w, h, c); //扭曲
+		shearY(g2, w, h, c);
 
 		//干扰线
 		g2.setColor(getRandColor(160, 200)); //线条的颜色
@@ -125,23 +126,14 @@ public final class CaptchaGenerator {
 		return rgb;
 	}
 
-	private static void shear(Graphics g, int w1, int h1, Color color) {
-		shearX(g, w1, h1, color);
-		shearY(g, w1, h1, color);
-	}
-
 	private static void shearX(Graphics g, int w1, int h1, Color color) {
-
 		int period = RANDOM.nextInt(2);
-
 		int frames = 1;
 		int phase = RANDOM.nextInt(2);
 
 		for (int i = 0; i < h1; i++) {
-			double d = (double) (period >> 1)
-					* Math.sin((double) i / (double) period
-					+ (6.2831853071795862D * (double) phase)
-					/ (double) frames);
+			double d = (period >> 1) * Math.sin(i / (double) period
+					+ 6.2831853071795862D * phase / frames);
 			g.copyArea(0, i, w1, 1, (int) d, 0);
 			g.setColor(color);
 			g.drawLine((int) d, i, 0, i);
@@ -154,8 +146,8 @@ public final class CaptchaGenerator {
 		int frames = 20;
 		int phase = 7;
 		for (int i = 0; i < w1; i++) {
-			double d = (double) (period >> 1) * Math.sin((double) i / (double) period
-					+ (6.2831853071795862D * (double) phase) / (double) frames);
+			double d = (period >> 1) * Math.sin(i / (double) period
+					+ 6.2831853071795862D * phase / frames);
 			g.copyArea(i, 0, 1, h1, 0, (int) d);
 			g.setColor(color);
 			g.drawLine(i, (int) d, i, 0);

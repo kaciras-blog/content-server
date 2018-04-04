@@ -27,7 +27,7 @@ class DiscussionServiceTest extends AbstractSpringTest {
 		Assertions.assertThat(one.getId()).isEqualTo(7);
 		Assertions.assertThat(one.getFloor()).isEqualTo(5);
 		Assertions.assertThat(one.getContent()).isEqualTo("楼中楼的二楼");
-		Assertions.assertThat(one.getPostId()).isEqualTo(1);
+		Assertions.assertThat(one.getArticleId()).isEqualTo(1);
 		Assertions.assertThat(one.getUserId()).isEqualTo(1);
 		Assertions.assertThat(one.getVoteCount()).isEqualTo(2);
 		Assertions.assertThat(one.isDeleted()).isFalse();
@@ -41,7 +41,7 @@ class DiscussionServiceTest extends AbstractSpringTest {
 		Discussion discuz = new Discussion();
 		discuz.setContent("hellow world");
 		discuz.setUserId(1);
-		discuz.setPostId(3);
+		discuz.setArticleId(3);
 
 		Assertions.assertThat(service.add(discuz)).isGreaterThan(0);
 		Assertions.assertThat(discuz.getFloor()).isEqualTo(1);

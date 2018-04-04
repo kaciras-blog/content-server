@@ -5,7 +5,9 @@ import net.kaciras.blog.domain.DeletedState;
 import net.kaciras.blog.domain.SecurtyContext;
 import net.kaciras.blog.domain.ConfigBind;
 import net.kaciras.blog.domain.permission.Authenticator;
+import net.kaciras.blog.infrastructure.exception.DataTooBigException;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
+import net.kaciras.blog.infrastructure.text.TextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,7 @@ public final class DiscussionService {
 		this.allowAnonymous = allowAnonymous;
 	}
 
-	@Qualifier("discussionAuthenticator")
+	@Qualifier("DiscussionAuthenticator")
 	@Autowired
 	public void setAuthenticator(Authenticator authenticator) {
 		this.authenticator = authenticator;
@@ -73,6 +75,10 @@ public final class DiscussionService {
 		} else {
 			authenticator.require("ADD");
 			uid = loginedUserId;
+		}
+
+		if(TextUtil.getHeight(discussion.getContent(), 40) > 64) {
+			throw new DataTooBigException("评论内容过长，请分多次发表");
 		}
 
 		discussion.setUserId(uid);

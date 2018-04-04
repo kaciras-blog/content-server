@@ -1,9 +1,9 @@
 package net.kaciras.blog.domain.permission;
 
-import net.kaciras.blog.domain.Utils;
+import net.kaciras.blog.infrastructure.event.role.RoleEvent;
+import net.kaciras.blog.infrastructure.event.role.RoleIncludeChangedEvent;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.message.event.*;
 import org.springframework.cache.Cache;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 import static net.kaciras.blog.domain.permission.Role.*;
 
 @Configuration("PermissionContextConfig")
-public class PermissionConfig {
+public class ContextConfig {
 
 	private final RoleRepository repository;
 	private final MessageClient messageClient;
@@ -22,10 +22,10 @@ public class PermissionConfig {
 	private final RolePermissionDAO rolePermissionDAO;
 	private final UserRoleDAO userRoleDAO;
 
-	public PermissionConfig(RoleRepository repository,
-							MessageClient messageClient,
-							RolePermissionDAO rolePermissionDAO,
-							UserRoleDAO userRoleDAO) {
+	public ContextConfig(RoleRepository repository,
+						 MessageClient messageClient,
+						 RolePermissionDAO rolePermissionDAO,
+						 UserRoleDAO userRoleDAO) {
 		this.repository = repository;
 		this.messageClient = messageClient;
 		this.rolePermissionDAO = rolePermissionDAO;
@@ -38,27 +38,15 @@ public class PermissionConfig {
 	@PostConstruct
 	void checkInternalRoles() {
 		Role.messageClient = messageClient;
+		Role.rolePermissionDAO  = rolePermissionDAO;
 
 		createIfAbsent(ANYONE_ROLE_ID, "任何访问者");
 		createIfAbsent(DEFAULT_USER_ROLE_ID, "登录用户");
 		createIfAbsent(ADMIN_ROLE_ID, "内置管理员");
 		repository.removeAllFromRole(ADMIN_ROLE_ID);
 
-
-		messageClient.subscribe(RolePermissionAddedEvent.class,
-				e -> repository.addPermissionToRole(e.getRoleId(), e.getGroup(), e.getName()));
-
-		messageClient.subscribe(RolePermissionRemovedEvent.class,
-				e -> repository.deletePermissionFromRole(e.getRoleId(), e.getGroup(), e.getName()));
-
 		messageClient.subscribe(RoleIncludeChangedEvent.class,
 				e -> repository.changeIncludes(e.getRoleId(), e.getNewList()));
-
-		messageClient.subscribe(UserRoleAddedEvent.class,
-				e -> userRoleDAO.insertUserRole(e.getUserId(), e.getRoleId()));
-
-		messageClient.subscribe(UserRoleDeletedEvent.class,
-				e -> Utils.checkEffective(userRoleDAO.deleteUserRole(e.getUserId(), e.getRoleId())));
 	}
 
 	private void createIfAbsent(int id, String name) {
