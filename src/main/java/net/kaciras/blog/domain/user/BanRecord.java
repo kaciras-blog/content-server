@@ -1,15 +1,18 @@
 package net.kaciras.blog.domain.user;
 
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
-@Accessors(fluent = true)
+@Accessors(chain = true)
 @EqualsAndHashCode(of = "id")
+@Setter(AccessLevel.PACKAGE)
 @Data
-final class BanRecord {
+public final class BanRecord {
 
 	private int id;
 
@@ -17,4 +20,6 @@ final class BanRecord {
 	private LocalDateTime end;
 	private int operator;
 	private String cause;
+
+	private UnbanRecord unbanRecord;
 }

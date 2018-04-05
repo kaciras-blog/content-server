@@ -27,9 +27,6 @@ public class MvcConfig implements WebMvcConfigurer {
 	@Value("${web.CorsOrigin}")
 	private String corsOrigin;
 
-	@Value("${web.accessLog}")
-	private boolean accessLog;
-
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
@@ -43,12 +40,10 @@ public class MvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(securtyContextInterceptor);
-		if (accessLog) {
-			registry.addInterceptor(accessLogInterceptor);
-		}
-		registry.addInterceptor(csrfInterceptor);
 		registry.addInterceptor(defenseInterceptor);
+		registry.addInterceptor(securtyContextInterceptor);
+		registry.addInterceptor(accessLogInterceptor);
+		registry.addInterceptor(csrfInterceptor);
 	}
 
 	@Override

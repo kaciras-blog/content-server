@@ -1,22 +1,22 @@
 package net.kaciras.blog.domain;
 
-import net.kaciras.blog.facade.WebContextConfig;
+import net.kaciras.blog.facade.ServiceApplication;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Rollback
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-@WebAppConfiguration
-@ContextHierarchy({
-		@ContextConfiguration(name = "parent", classes = TestContextConfig.class),
-		@ContextConfiguration(name = "web", classes = WebContextConfig.class),
-})
-abstract class AbstractSpringTest {}
+@TestPropertySource(value = "classpath:config.ini")
+@SpringBootTest(classes = ServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+abstract class AbstractSpringTest {
+
+}

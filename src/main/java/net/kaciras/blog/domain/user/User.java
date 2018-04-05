@@ -22,7 +22,8 @@ import java.util.List;
 @Data
 public class User {
 
-	private static final int SALT_SIZE = 32;
+	/** 使用512位的Sha3算法对密码加密 */
+	private static final int HASH_SIZE = 512;
 
 	static LoginRecordDao loginRecordDao;
 	static BanRecordDao banRecordDao;
@@ -40,14 +41,19 @@ public class User {
 	private byte[] salt;
 
 	private String email;
-
 	private ImageRefrence head = ImageRefrence.internal("noface.gif");
+
+	private boolean deleted;
 
 	private LocalDateTime regTime;
 	private InetAddress regAddress;
 
+	LocalDateTime getBannedEndTime() {
+		return banRecordDao.selectLastEndTime(id);
+	}
+
 	void putPassword(String passText) {
-		salt = new byte[SALT_SIZE];
+		salt = new byte[HASH_SIZE >> 3];
 		Utils.SECURE_RANDOM.nextBytes(salt);
 		password = encryptPassword(passText, salt);
 	}
@@ -56,9 +62,16 @@ public class User {
 		return Arrays.equals(password, encryptPassword(passText, salt));
 	}
 
+	/**
+	 * 对密码进行HASH加密
+	 *
+	 * @param password 原始密码文本
+	 * @param salt 盐值
+	 * @return 加密后的密码
+	 */
 	private byte[] encryptPassword(String password, byte[] salt) {
 		try {
-			MessageDigest md = MessageDigest.getInstance("SHA3-256");
+			MessageDigest md = MessageDigest.getInstance("SHA3-" + HASH_SIZE);
 			md.update(password.getBytes(StandardCharsets.UTF_8));
 			md.update(salt);
 			return md.digest();
@@ -67,8 +80,12 @@ public class User {
 		}
 	}
 
-	public List<LoginRecord> getLoginRecords() {
+	List<LoginRecord> getLoginRecords() {
 		return loginRecordDao.select(id);
+	}
+
+	List<BanRecord> getBanRecords() {
+		return banRecordDao.selectBanRecords(id);
 	}
 
 	public void recordLogin(InetAddress address) {
@@ -93,15 +110,17 @@ public class User {
 	 * @param operator 操作者id
 	 * @param time 封禁时间
 	 * @param cause 封禁原因描述
+	 * @return 封禁记录的id
 	 */
-	void ban(int operator, Duration time, String cause) {
+	int ban(int operator, Duration time, String cause) {
 		LocalDateTime start = LocalDateTime.now();
 		BanRecord record = new BanRecord()
-				.start(start)
-				.end(start.plus(time))
-				.operator(operator)
-				.cause(cause);
+				.setStart(start)
+				.setEnd(start.plus(time))
+				.setOperator(operator)
+				.setCause(cause);
 		banRecordDao.insertBanRecord(id, record);
+		return record.getId();
 	}
 
 	void unBan(int bid, int operator, String cause) {

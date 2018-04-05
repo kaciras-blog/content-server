@@ -10,10 +10,6 @@ interface UserDao {
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insert(User user);
 
-	@Insert("INSERT INTO User(id,name,password,salt,head,regist_ip) " +
-			"VALUES(#{id},#{name},#{password},#{salt},#{salt},#{regAddress})")
-	void insertWithId(User user);
-
 	@Select("SELECT id,name,head,regist_ip,regist_time FROM User WHERE id=#{id}")
 	User select(int id);
 
@@ -23,6 +19,6 @@ interface UserDao {
 	@Update("UPDATE User SET password=#{password},salt=#{salt} WHERE id=#{id}")
 	int updateLoginInfo(User user);
 
-	@Delete("DELETE FROM User WHERE id=#{id}")
+	@Delete("UPDATE User SET deleted=1 WHERE id=#{id}")
 	int delete(int id);
 }

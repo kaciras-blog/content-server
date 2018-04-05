@@ -1,11 +1,9 @@
 package net.kaciras.misc;
 
-import net.kaciras.blog.domain.Utils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.security.MessageDigest;
-import java.util.UUID;
 
 final class MiscTest {
 

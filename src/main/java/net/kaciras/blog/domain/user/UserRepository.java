@@ -22,15 +22,15 @@ class UserRepository {
 		return user;
 	}
 
-	public void delete(int id) {
-		Utils.checkEffective(userDao.delete(id));
-	}
-
 	public User get(int id) {
 		if (id == 0) {
 			return guest;
 		}
 		return userDao.select(id);
+	}
+
+	public void delete(int id) {
+		Utils.checkEffective(userDao.delete(id));
 	}
 
 	public User getByName(String name) {

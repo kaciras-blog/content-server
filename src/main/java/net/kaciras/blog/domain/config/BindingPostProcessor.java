@@ -1,16 +1,11 @@
 package net.kaciras.blog.domain.config;
 
-import io.reactivex.Observable;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.ConfigBind;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.Arrays;
 
 @RequiredArgsConstructor

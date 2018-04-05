@@ -1,0 +1,28 @@
+{
+	"properties": [
+		{
+			"name": "tomcat.cert",
+			"type": "java.lang.String",
+			"description": "TLS cert file used by tomcat, if null, the tls will be disabled."
+		},
+		{
+			"name": "tomcat.pvk",
+			"type": "java.lang.String",
+			"description": "TLS private key file used by tomcat."
+		},
+		{
+			"name": "tomcat.chain",
+			"type": "java.lang.String",
+			"description": "TLS cert chain file used by tomcat."
+		},
+		{
+			"name": "data-directory",
+			"type": "java.lang.String",
+			"description": "Directory to save application data files."
+		},
+		{
+			"name": "temporary-data",
+			"type": "java.lang.Boolean",
+			"description": "If true,use system temp directory as data-directory."
+		}
+	] }

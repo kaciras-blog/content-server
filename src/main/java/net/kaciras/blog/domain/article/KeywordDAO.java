@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
-public interface KeywordDAO {
+interface KeywordDAO {
 
 	@Select("SELECT value FROM Keyword WHERE id=#{id}")
 	List<String> select(int id);

@@ -8,4 +8,8 @@
 		<name>BAN</name>
 		<desc>允许封禁和解封用户</desc>
 	</permission>
+	<permission>
+		<name>POWER_QUERY</name>
+		<desc>允许查询其他用户的封禁记录</desc>
+	</permission>
 </permissions>

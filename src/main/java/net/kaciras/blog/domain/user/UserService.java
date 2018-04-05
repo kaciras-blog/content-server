@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
@@ -57,7 +58,8 @@ public class UserService {
 	}
 
 	/**
-	 * 此方法将真正地删除一个用户，被删除用户的所有相关数据（文章、评论等）都将被清除
+	 * 此方法将真正地删除一个用户，被删除用户的所有相关数据（文章、评论等）
+	 * 都将被设为删除，但是用户的记录仍然保留。使用此方法删除将无法撤销。
 	 *
 	 * @param id 用户id
 	 */
@@ -66,13 +68,20 @@ public class UserService {
 		repository.delete(id);
 	}
 
-	public void ban(int id, long seconds, String cause) {
+	public int ban(int id, long seconds, String cause) {
 		authenticator.require("BAN");
-		repository.get(id).ban(SecurtyContext.getRequiredCurrentUser(), Duration.ofSeconds(seconds), cause);
+		return repository.get(id).ban(SecurtyContext.getRequiredCurrentUser(), Duration.ofSeconds(seconds), cause);
 	}
 
 	public void unban(int id, int bid, String cause) {
 		authenticator.require("BAN");
 		repository.get(id).unBan(bid, SecurtyContext.getRequiredCurrentUser(), cause);
+	}
+
+	public List<BanRecord> getBanRedords(int id) {
+		if(SecurtyContext.getCurrentUser() != id) {
+			authenticator.require("POWER_QUERY");
+		}
+		return repository.get(id).getBanRecords();
 	}
 }

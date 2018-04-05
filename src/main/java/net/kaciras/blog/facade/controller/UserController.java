@@ -1,6 +1,7 @@
 package net.kaciras.blog.facade.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.domain.user.BanRecord;
 import net.kaciras.blog.domain.user.RegisterVo;
 import net.kaciras.blog.domain.user.User;
 import net.kaciras.blog.domain.user.UserService;
@@ -14,7 +15,9 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.net.InetAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -50,18 +53,27 @@ public final class UserController {
 		}
 	}
 
-	@PutMapping("/{id}/availability")
+	@PostMapping("/{id}/banRecords")
 	public ResponseEntity setAvailability(@PathVariable int id,
-										  @RequestParam boolean banned,
 										  @RequestParam(required = false, defaultValue = "0") long time,
-										  @RequestParam(required = false, defaultValue = "0") int bid,
-										  @RequestParam String cause) {
-		if(banned) {
-			userService.ban(id, time, cause);
-		} else {
-			userService.unban(id, bid, cause);
-		}
-		return ResponseEntity.noContent().build();
+										  @RequestParam String cause) throws URISyntaxException {
+		int bid = userService.ban(id, time, cause);
+		String location = String.format("/users/%d/banRecords/%d", id, bid);
+		return ResponseEntity.created(new URI(location)).build();
+	}
+
+	@PostMapping("/{id}/banRecords/{bid}/undoRecord")
+	public ResponseEntity unban(@PathVariable int id,
+								@PathVariable int bid,
+								@RequestParam String cause) throws URISyntaxException {
+		userService.unban(id, bid, cause);
+		String location = String.format("/users/%d/banRecords/%d/undoRecord", id, bid);
+		return ResponseEntity.created(new URI(location)).build();
+	}
+
+	@GetMapping("/{id}/banRecords")
+	public List<BanRecord> getBanRecords(@PathVariable int id) {
+		return userService.getBanRedords(id);
 	}
 
 	@DeleteMapping("/{id}")

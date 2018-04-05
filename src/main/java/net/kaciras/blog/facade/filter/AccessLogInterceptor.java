@@ -6,6 +6,7 @@ import eu.bitwalker.useragentutils.Version;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.accesslog.AccessLogDAO;
 import net.kaciras.blog.domain.accesslog.AccessRecord;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,12 +22,18 @@ public class AccessLogInterceptor extends HandlerInterceptorAdapter {
 
 	private final AccessLogDAO accessLogDAO;
 
+	@Value("${accessLog.enable}")
+	private boolean enable;
+
 	@Async
 	@Override
 	public void postHandle(HttpServletRequest req,
 						   HttpServletResponse res,
 						   Object handler,
 						   ModelAndView modelAndView) throws Exception {
+		if (!enable) {
+			return;
+		}
 		String uri = req.getRequestURI();
 		if (uri == null) {
 			return; // TODO: Unknow reason
