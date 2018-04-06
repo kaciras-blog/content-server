@@ -1,0 +1,10 @@
+<permissions module="CATEGORY">
+	<permission>
+		<name>CHANGE_RELATION</name>
+		<desc>允许移动、删除分类</desc>
+	</permission>
+	<permission>
+		<name>MODIFY</name>
+		<desc>允许添加分类，以及修改分类的属性</desc>
+	</permission>
+</permissions>

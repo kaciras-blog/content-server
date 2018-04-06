@@ -2,7 +2,10 @@ package net.kaciras.blog.domain.category;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.SecurtyContext;
+import net.kaciras.blog.domain.permission.Authenticator;
+import net.kaciras.blog.domain.permission.AuthenticatorFactory;
 import net.kaciras.blog.infrastructure.message.MessageClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -13,10 +16,16 @@ import java.util.List;
 public class CategoryService {
 
 	private final CategoryRepository categoryRepository;
-	private final MessageClient messageClient;
+
+	private Authenticator authenticator;
+
+	@Autowired
+	public void setAuthenticator(AuthenticatorFactory factory) {
+		this.authenticator = factory.create("CATEGORY");
+	}
 
 	public void moveTree(int id, int parent, boolean treeMode) {
-		SecurtyContext.checkAccept("CategoryService", "MODIFY");
+		authenticator.require("CHANGE_RELATION");
 		Category category = categoryRepository.get(id);
 		if (treeMode)
 			category.moveTreeTo(parent);
@@ -33,17 +42,17 @@ public class CategoryService {
 	}
 
 	public int add(Category category, int parent) {
-		SecurtyContext.checkAccept("CategoryService", "MODIFY");
+		authenticator.require("MODIFY");
 		return categoryRepository.add(category, parent);
 	}
 
 	public void update(Category category) {
-		SecurtyContext.checkAccept("CategoryService", "MODIFY");
+		authenticator.require("MODIFY");
 		categoryRepository.update(category);
 	}
 
 	public void delete(int id) {
-		SecurtyContext.checkAccept("CategoryService", "MODIFY");
+		authenticator.require("MODIFY");
 		categoryRepository.remove(id);
 	}
 

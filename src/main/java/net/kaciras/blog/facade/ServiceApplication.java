@@ -1,6 +1,8 @@
 package net.kaciras.blog.facade;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.kaciras.blog.domain.permission.PermissionKeyTypeHandler;
+import net.kaciras.blog.infrastructure.codec.ExtendsCodecModule;
 import net.kaciras.blog.infrastructure.codec.ImageRefrenceTypeHandler;
 import net.kaciras.blog.infrastructure.codec.IpAddressTypeHandler;
 import net.kaciras.blog.infrastructure.message.DirectCalledMessageClient;
@@ -47,7 +49,7 @@ public class ServiceApplication {
 	 * @return TaskScheduler
 	 */
 	@Bean(destroyMethod = "destroy")
-	public ThreadPoolTaskScheduler taskScheduler() {
+	ThreadPoolTaskScheduler taskScheduler() {
 		ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
 		taskScheduler.setPoolSize(4);
 		taskScheduler.initialize();
@@ -57,7 +59,7 @@ public class ServiceApplication {
 	}
 
 	@Bean
-	public SqlSessionFactoryBean sqlSessionFactory(DataSource dataSource) throws IOException {
+	SqlSessionFactoryBean sqlSessionFactory(DataSource dataSource) throws IOException {
 		SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
 		bean.setTypeHandlers(new TypeHandler[]{
 				new IpAddressTypeHandler(),
@@ -70,8 +72,18 @@ public class ServiceApplication {
 		return bean;
 	}
 
+	/**
+	 * SpringBoot会把Module类型的bean加入到Jackson的模块中。
+	 *
+	 * @return 基础层项目中包含的一些编解码模块
+	 */
 	@Bean
-	public MessageClient messageClient(Executor s) {
+	ExtendsCodecModule extendsCodecModule() {
+		return new ExtendsCodecModule();
+	}
+
+	@Bean
+	MessageClient messageClient() {
 		return new DirectCalledMessageClient();
 	}
 

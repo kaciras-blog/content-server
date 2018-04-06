@@ -60,9 +60,10 @@ class ArticleRepository {
 		}
 	}
 
-	Observable<Article> getList(ArticleListRequest request) {
+	Observable<Article> findAll(ArticleListRequest request) {
 		checkNotNull(request, "request");
 		request.setCount(Math.min(request.getCount(), 20)); // 限制最大结果数
 		return Observable.fromIterable(articleDAO.selectPreview(request));
 	}
+
 }

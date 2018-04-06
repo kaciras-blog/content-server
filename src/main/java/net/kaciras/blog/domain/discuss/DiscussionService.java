@@ -1,9 +1,9 @@
 package net.kaciras.blog.domain.discuss;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.domain.ConfigBind;
 import net.kaciras.blog.domain.DeletedState;
 import net.kaciras.blog.domain.SecurtyContext;
-import net.kaciras.blog.domain.ConfigBind;
 import net.kaciras.blog.domain.permission.Authenticator;
 import net.kaciras.blog.infrastructure.exception.DataTooBigException;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -39,18 +38,14 @@ public final class DiscussionService {
 	/* - - - - - - - - - - - - - - - 业务方法 - - - - - - - - - - - - - - - - -  */
 
 	private void verifyQuery(DiscussionQuery query) {
-		if (query.getDeletedState() != DeletedState.FALSE) {
-			Integer quid = query.getUserId();
-			Integer loginedUser = SecurtyContext.getCurrentUser();
-			if (quid == null || !Objects.equals(quid, loginedUser)) {
-				authenticator.require("POWER_QUERY");
-			}
+		if (query.getDeletedState() != DeletedState.FALSE && SecurtyContext.isNotUser(query.getUserId())) {
+			authenticator.require("POWER_QUERY");
 		}
 	}
 
 	public Discussion getOne(int id) {
 		Discussion result = discussRepository.get(id);
-		if (result.isDeleted() && !Objects.equals(result.getUserId(), SecurtyContext.getCurrentUser())) {
+		if (result.isDeleted() && SecurtyContext.isNotUser(result.getUserId())) {
 			authenticator.require("POWER_QUERY");
 		}
 		return result;
@@ -98,7 +93,7 @@ public final class DiscussionService {
 
 	public void delete(int id) {
 		Discussion discussion = discussRepository.get(id);
-		if (!Objects.equals(discussion.getUserId(), SecurtyContext.getCurrentUser())) {
+		if (SecurtyContext.isNotUser(discussion.getUserId())) {
 			authenticator.require("POWER_MODIFY");
 		}
 		discussion.delete();

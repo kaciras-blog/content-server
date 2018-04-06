@@ -2,8 +2,10 @@ package net.kaciras.blog.domain.draft;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.SecurtyContext;
-import net.kaciras.blog.domain.article.ArticleDTO;
 import net.kaciras.blog.domain.article.ArticleService;
+import net.kaciras.blog.domain.permission.Authenticator;
+import net.kaciras.blog.domain.permission.AuthenticatorFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,28 +18,35 @@ public class DraftService {
 	private final DraftRepository draftRepository;
 	private final DraftMapper draftMapper;
 
+	private Authenticator authenticator;
+
+	@Autowired
+	public void setAuthenticator(AuthenticatorFactory factory) {
+		this.authenticator = factory.create("DRAFT");
+	}
+
 	public DraftDTO get(int id) {
-		SecurtyContext.checkAccept("DraftService", "ACCESS_OTHER");
+		authenticator.require("POWER_MODIFY");
 		return draftMapper.toDTO(draftRepository.getById(id));
 	}
 
 	public List<DraftDTO> findByUser(int userId) {
-		SecurtyContext.checkAccept("DraftService", "ACCESS_OTHER");
+		authenticator.require("POWER_MODIFY");
 		return draftMapper.toDTOList(draftRepository.findByUser(userId));
 	}
 
 	public void save(DraftSaveDTO dto) {
-		SecurtyContext.checkAccept("DraftService", "MODIFY_OTHER");
+		authenticator.require("POWER_MODIFY");
 		draftRepository.getById(dto.getId()).save(dto);
 	}
 
 	public void deleteByUser(int userId) {
-		SecurtyContext.checkAccept("DraftService", "MODIFY_OTHER");
+		authenticator.require("POWER_MODIFY");
 		draftRepository.clear(userId);
 	}
 
 	public void delete(int id) {
-		SecurtyContext.checkAccept("DraftService", "MODIFY_OTHER");
+		authenticator.require("POWER_MODIFY");
 		draftRepository.delete(id);
 	}
 
@@ -52,17 +61,13 @@ public class DraftService {
 	}
 
 	public int newDraft(Integer article) {
-		SecurtyContext.checkAccept("DraftService", "MODIFY");
+		authenticator.require("USE");
 		Draft draft;
 
 		if (article == null) {
 			draft = defaultDraft();
 		} else {
-			ArticleDTO a = articleService.getArticle(article).blockingGet();
-			if (a.getUserId() != SecurtyContext.getCurrentUser()) {
-				SecurtyContext.checkAccept("DraftService", "MODIFY_OTHER");
-			}
-			draft = draftMapper.fromArticle(a);
+			draft = draftMapper.fromArticle(articleService.getArticle(article).blockingGet());
 		}
 
 		draft.setUserId(SecurtyContext.getCurrentUser());
@@ -70,6 +75,10 @@ public class DraftService {
 	}
 
 	public List<DraftHistory> getHistories(int id) {
-		return draftRepository.getById(id).getHistories();
+		Draft draft = draftRepository.getById(id);
+		if(SecurtyContext.isNotUser(draft.getUserId())) {
+			authenticator.require("POWER_MODIFY");
+		}
+		return draft.getHistories();
 	}
 }

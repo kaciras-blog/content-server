@@ -23,13 +23,12 @@ class TomcatConfigurer {
 	private String cert;
 	private String pvk;
 	private String chain;
-	private Integer redirect;
 
 	@Bean
 	public TomcatServletWebServerFactory tomcatCustomizer() {
 		TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
 		factory.setProtocol(PROTOCOL_CLASS);
-		if(cert != null && redirect != null) {
+		if(cert != null) {
 			factory.addConnectorCustomizers(this::enableHttp2);
 		}
 		return factory;

@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
+import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
+import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import org.ehcache.Cache;
 
 import java.net.InetAddress;
@@ -59,6 +61,13 @@ public class User {
 	}
 
 	boolean checkLogin(String passText) {
+		if(deleted) {
+			throw new ResourceDeletedException("该用户已被删除");
+		}
+		LocalDateTime bannedEndTime = getBannedEndTime();
+		if(bannedEndTime != null) {
+			throw new ResourceStateException("用户已被封禁，解封时间:" + Utils.TIME_FORMATTER.format(bannedEndTime));
+		}
 		return Arrays.equals(password, encryptPassword(passText, salt));
 	}
 

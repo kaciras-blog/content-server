@@ -1,9 +1,6 @@
 package net.kaciras.blog.domain;
 
-import net.kaciras.blog.domain.permission.PermissionKey;
-import net.kaciras.blog.domain.permission.RoleService;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +27,19 @@ public final class SecurtyContext {
 		return threadLocalUser.get();
 	}
 
+	/**
+	 * 检查当前的用户是否不是参数id所指定的用户。
+	 * 因为getCurrentUser()可能返回null而无法直接与int类型比较，故定义此快捷方法。
+	 * 因为一般当前用户和所需用户不同的情况才需要额外处理，所以此方法是不相同返回true。
+	 *
+	 * @param id 用户id
+	 * @return 如果当前用户不存在，或用户id与参数指定的id不同则返回true，否则false
+	 */
+	public static boolean isNotUser(int id) {
+		Integer loginedUser = getCurrentUser();
+		return loginedUser == null || loginedUser != id;
+	}
+
 	public static int getRequiredCurrentUser() {
 		Integer userDTO = getCurrentUser();
 		if (userDTO == null) {
@@ -38,23 +48,4 @@ public final class SecurtyContext {
 		return userDTO;
 	}
 
-	/**
-	 * 暂时采用单体架构，不解决分布权限问题，故搞了下面这几个方法快速检查权限
-	 *
-	 * @since 2018-1-28
-	 */
-	private static RoleService service;
-
-	@Autowired
-	public void setUserRoleSerivce(RoleService service) {
-		SecurtyContext.service = service;
-	}
-
-	public static void checkAccept(String group, String name) {
-		if (!accept(group, name)) throw new PermissionException();
-	}
-
-	public static boolean accept(String group, String name) {
-		return service.accept(SecurtyContext.getCurrentUser(), new PermissionKey(group, name));
-	}
 }

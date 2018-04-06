@@ -1,0 +1,10 @@
+<permissions module="DRAFT">
+	<permission>
+		<name>USE</name>
+		<desc>允许使用草稿功能，包括创建、修改自己的草稿</desc>
+	</permission>
+	<permission>
+		<name>POWER_MODIFY</name>
+		<desc>允许查看、删除他人的草稿</desc>
+	</permission>
+</permissions>

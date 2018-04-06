@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import static net.kaciras.blog.domain.Utils.RANDOM;
@@ -19,10 +20,19 @@ import static net.kaciras.blog.domain.Utils.RANDOM;
 public final class CaptchaGenerator {
 
 	//字符集
-	private static final String CAPTCHA_TEXT = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	private static final char[] CAPTCHA_TEXT = "0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
 
 	private static final int CAPTCHA_WIDTH = 150; //图片宽度
 	private static final int CAPTCHA_HEIGHT = 40; //图片高度
+
+	private final Font font;
+
+	public CaptchaGenerator() throws IOException, FontFormatException {
+		InputStream stream = CaptchaGenerator.class.getClassLoader().getResourceAsStream("CENTURY.TTF");
+		try(stream) {
+			font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(Font.PLAIN, CAPTCHA_HEIGHT - 4);
+		}
+	}
 
 	/**
 	 * 将生成的图片写入到输出流中,并返回验证码字符串
@@ -37,16 +47,16 @@ public final class CaptchaGenerator {
 		return text;
 	}
 
-	private static String randomCaptchaText(int captchaSize) {
+	private String randomCaptchaText(int captchaSize) {
 		StringBuilder text = new StringBuilder(captchaSize);
 		for (int i = 0; i < captchaSize; i++) {
-			int position = RANDOM.nextInt(CAPTCHA_TEXT.length() - 1);
-			text.append(CAPTCHA_TEXT.charAt(position));
+			int position = RANDOM.nextInt(CAPTCHA_TEXT.length);
+			text.append(CAPTCHA_TEXT[position]);
 		}
 		return text.toString();
 	}
 
-	private static BufferedImage createCaptcha(int w, int h, String text) {
+	private BufferedImage createCaptcha(int w, int h, String text) {
 		int verifySize = text.length();
 		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 
@@ -83,23 +93,22 @@ public final class CaptchaGenerator {
 			image.setRGB(x, y, rgb);
 		}
 
-		int fontSize = h - 4;
-		Font font = new Font(null, Font.ITALIC, fontSize);
 		g2.setFont(font);
+
 		char[] chars = text.toCharArray();
 		for (int i = 0; i < verifySize; i++) {
 			AffineTransform affine = new AffineTransform();
-			affine.setToRotation(Math.PI / 4 * RANDOM.nextDouble() * (RANDOM.nextBoolean() ? 1 : -1), (w / verifySize) * i + fontSize / 2, h / 2);
+			affine.setToRotation(Math.PI / 4 * RANDOM.nextDouble() * (RANDOM.nextBoolean() ? 1 : -1), (w / verifySize) * i + font.getSize() / 2, h / 2);
 			g2.setColor(getRandColor(50, 140));
 			g2.setTransform(affine);
-			g2.drawChars(chars, i, 1, ((w - 10) / verifySize) * i + 5, h / 2 + fontSize / 2 - 10);
+			g2.drawChars(chars, i, 1, ((w - 10) / verifySize) * i + 5, h / 2 + font.getSize() / 2 - 10);
 		}
 
 		g2.dispose();
 		return image;
 	}
 
-	private static Color getRandColor(int fc, int bc) {
+	private Color getRandColor(int fc, int bc) {
 		fc &= 0xFF;
 		bc &= 0xFF;
 		int r = fc + RANDOM.nextInt(bc - fc);
@@ -108,17 +117,17 @@ public final class CaptchaGenerator {
 		return new Color(r, g, b);
 	}
 
-	private static int getRandomIntColor() {
+	private int getRandomIntColor() {
 		int[] rgb = getRandomRgb();
 		int color = 0;
 		for (int c : rgb) {
-			color = color << 8;
-			color = color | c;
+			color <<= 8;
+			color |= c;
 		}
 		return color;
 	}
 
-	private static int[] getRandomRgb() {
+	private int[] getRandomRgb() {
 		int[] rgb = new int[3];
 		for (int i = 0; i < 3; i++) {
 			rgb[i] = RANDOM.nextInt(255);
@@ -126,7 +135,7 @@ public final class CaptchaGenerator {
 		return rgb;
 	}
 
-	private static void shearX(Graphics g, int w1, int h1, Color color) {
+	private void shearX(Graphics g, int w1, int h1, Color color) {
 		int period = RANDOM.nextInt(2);
 		int frames = 1;
 		int phase = RANDOM.nextInt(2);
@@ -141,7 +150,7 @@ public final class CaptchaGenerator {
 		}
 	}
 
-	private static void shearY(Graphics g, int w1, int h1, Color color) {
+	private void shearY(Graphics g, int w1, int h1, Color color) {
 		int period = RANDOM.nextInt(40) + 10; // 50;
 		int frames = 20;
 		int phase = 7;

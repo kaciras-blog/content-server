@@ -1,38 +1,39 @@
 package net.kaciras.blog.facade;
 
 import net.kaciras.blog.infrastructure.exception.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-@Component
-public class ExceptionReslover implements HandlerExceptionResolver {
+@ControllerAdvice
+@ResponseBody
+public class ExceptionReslover {
 
+	/** 自己定义的异常 */
 	private final Map<Class, Integer> errorCodeMap = Map.of(
+			RequestArgumentException.class, 400,
 			PermissionException.class, 403,
 			ResourceDeletedException.class, 410,
 			ResourceNotFoundException.class, 404,
-			RequestArgumentException.class, 400,
-			DataTooBigException.class, 413
+			DataTooBigException.class, 413,
+			ResourceStateException.class, 412
 	);
 
-	@Override
-	public ModelAndView resolveException(HttpServletRequest request,
-										 HttpServletResponse response,
-										 Object handler, Exception ex) {
+	@ExceptionHandler
+	public ResponseEntity handle(Exception ex) throws Exception {
 		Integer code = errorCodeMap.get(ex.getClass());
 		if (code != null) {
-			ModelAndView modelAndView = new ModelAndView();
-			modelAndView.setStatus(HttpStatus.valueOf(code));
-			response.setStatus(code);
-			return modelAndView;
+			return ResponseEntity.status(code).body(Map.of("message", ex.getMessage()));
 		}
-		return null;
+		if(ex instanceof MethodArgumentNotValidException) {
+//			List<ObjectError> errors = ((MethodArgumentNotValidException) ex).getBindingResult().getAllErrors();
+			return ResponseEntity.status(400).body(Map.of("message", "请求中存在不合法的参数"));
+		}
+		throw ex;
 	}
 
 }

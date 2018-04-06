@@ -6,6 +6,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.security.SecureRandom;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.Set;
 
@@ -14,6 +15,8 @@ public final class Utils {
 	public static final Random RANDOM = new Random();
 
 	public static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
+	public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 	private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 

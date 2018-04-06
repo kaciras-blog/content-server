@@ -79,7 +79,7 @@ public class UserService {
 	}
 
 	public List<BanRecord> getBanRedords(int id) {
-		if(SecurtyContext.getCurrentUser() != id) {
+		if(SecurtyContext.isNotUser(id)) {
 			authenticator.require("POWER_QUERY");
 		}
 		return repository.get(id).getBanRecords();
