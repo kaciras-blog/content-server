@@ -5,7 +5,7 @@
 				  type="int"
 				  desc="整数类型"/>
 		<property key="config.binding.enum"
-				  type="net.kaciras.blog.domain.ConfigControllerTest$TestEnumConfig"
+				  type="net.kaciras.blog.domain.facade.ConfigControllerTest$TestEnumConfig"
 				  desc="枚举类型"/>
 	</group>
 </properties>

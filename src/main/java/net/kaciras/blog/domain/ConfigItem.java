@@ -1,7 +1,8 @@
-package net.kaciras.blog.domain.config;
+package net.kaciras.blog.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.domain.config.ConfigService;
 import net.kaciras.blog.infrastructure.event.ConfigChangedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 

@@ -1,33 +1,45 @@
 package net.kaciras.misc;
 
 import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.SingleSubject;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 final class RxJavaTest {
 
+	/**
+	 * CompletableFuture用completeExceptionally()方法设置为出现异常时，会将异常包装
+	 * 为ExecutionException，调用方使用get()获取结果时将抛出。
+	 *
+	 * 该测试验证RxJava中，Single.fromFuture不会解包ExecutionException异常。
+	 *
+	 * @throws Exception 测试方法抛出了异常
+	 */
 	@Test
-	void as() throws InterruptedException {
-		CompletableFuture f = new CompletableFuture();
-		AtomicReference ar = new AtomicReference();
+	void verifyUnwarpExceptionFromFuture() throws Exception {
+		CompletableFuture<Void> future = new CompletableFuture<>();
+		AtomicReference<Object> holder = new AtomicReference<>();
 
-		//fromFuture不会解包ExecutionException异常
-		Single.fromFuture(f)
+		Single.fromFuture(future)
 				.subscribeOn(Schedulers.newThread())
-				.doOnError(ar::set).subscribe();
+				.subscribe((r, e) -> holder.set(e));
 
-		Thread.sleep(666);
-		f.completeExceptionally(new IOException());
-		Thread.sleep(666);
+		future.completeExceptionally(new NotSerializableException());
+		Thread.sleep(1000);
 
-		Assertions.assertThat(ar.get()).isInstanceOf(IOException.class);
+		Throwable exception = (Throwable) holder.get();
+		Assertions.assertThat(exception).isInstanceOf(ExecutionException.class);
+		Assertions.assertThat(exception.getCause()).isInstanceOf(NotSerializableException.class);
 	}
 
 	@Test

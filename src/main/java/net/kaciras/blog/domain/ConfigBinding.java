@@ -1,6 +1,7 @@
-package net.kaciras.blog.domain.config;
+package net.kaciras.blog.domain;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.domain.config.ConfigService;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.stereotype.Component;
 

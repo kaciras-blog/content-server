@@ -2,6 +2,8 @@ package net.kaciras.blog.domain.config;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.ConfigBind;
+import net.kaciras.blog.domain.ConfigBinding;
+import net.kaciras.blog.domain.ConfigItem;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;

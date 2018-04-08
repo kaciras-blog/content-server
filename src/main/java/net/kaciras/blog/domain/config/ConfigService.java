@@ -2,6 +2,7 @@ package net.kaciras.blog.domain.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.kaciras.blog.domain.ConvertorRegistery;
 import net.kaciras.blog.infrastructure.event.ConfigChangedEvent;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
@@ -51,7 +52,7 @@ public class ConfigService {
 		}
 	}
 
-	String getProperty(String key) {
+	public String getProperty(String key) {
 		return environment.getProperty(key);
 	}
 

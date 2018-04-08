@@ -1,12 +1,15 @@
-package net.kaciras.blog.domain.config;
+package net.kaciras.blog.domain;
 
+import net.kaciras.blog.domain.config.Converter;
+import net.kaciras.blog.domain.config.EnumConvertor;
+import net.kaciras.blog.domain.config.FunctionConvertor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @SuppressWarnings("unchecked")
 @Component
-final class ConvertorRegistery {
+public final class ConvertorRegistery {
 
 	private final Collection<Converter> converters;
 
@@ -39,7 +42,7 @@ final class ConvertorRegistery {
 		);
 	}
 
-	boolean checkType(String typeName, String value) {
+	public boolean checkType(String typeName, String value) {
 		try{
 			convert(typeName, value);
 			return true;

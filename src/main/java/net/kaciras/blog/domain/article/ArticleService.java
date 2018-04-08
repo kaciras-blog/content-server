@@ -92,36 +92,27 @@ public class ArticleService {
 		return classifyDAO.selectCountByCategory(id);
 	}
 
-	@Transactional
 	public int publish(ArticlePublishDTO publish) {
 		authenticator.require("PUBLISH");
-		publish.setUserId(SecurtyContext.getCurrentUser());
-		int id = articleRepository.add(articleMapper.publishToArticle(publish));
-		classifyDAO.updateByArticle(id, publish.getCategories().get(0));
+
+		Article article = articleMapper.publishToArticle(publish);
+		article.setUserId(SecurtyContext.getCurrentUser());
+		int id = articleRepository.add(article);
 
 		messageClient.send(new ArticleCreatedEvent(id, publish.getDraftId(), publish.getCategories()));
 		return id;
 	}
 
-	@Transactional
 	public void update(int id, ArticlePublishDTO publish) {
 		if(SecurtyContext.isNotUser(id)) {
 			throw new PermissionException();
 		}
 		Article article = articleMapper.publishToArticle(publish);
 		article.setId(id);
-
-		int category = 0;
-		if (!publish.getCategories().isEmpty()) {
-			category = publish.getCategories().get(0); //TODO: #BUG NullPointer
-		}
-
-		classifyDAO.updateByArticle(id, category);
 		articleRepository.update(article);
 		messageClient.send(new ArticleUpdatedEvent(id, publish.getDraftId(), publish.getCategories()));
 	}
 
-	@Transactional
 	public void delete(int id) {
 		checkModifyOther(id);
 		articleRepository.get(id).delete();

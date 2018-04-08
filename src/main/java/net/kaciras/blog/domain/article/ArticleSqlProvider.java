@@ -31,6 +31,7 @@ public class ArticleSqlProvider {
 		return sql.toString() + String.format(" LIMIT %d,%d", query.getStart(), query.getCount());
 	}
 
+	@SuppressWarnings("Convert2MethodRef")
 	public String countInCategories(List<Integer> arg0) {
 		StringJoiner joiner = new StringJoiner(",", "category in (", ")");
 		arg0.stream().map(id -> id.toString()).forEach(joiner::add);

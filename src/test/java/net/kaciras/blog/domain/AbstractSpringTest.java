@@ -15,8 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Rollback
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-@TestPropertySource(value = "classpath:config.ini")
 @SpringBootTest(classes = ServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-abstract class AbstractSpringTest {
+public abstract class AbstractSpringTest {
 
 }

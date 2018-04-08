@@ -16,6 +16,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+/**
+ * 该类会将配置服务的配置项加入到环境中，并具有最高的优先级
+ */
 class PropertyProcessor implements EnvironmentPostProcessor {
 
 	@Override
