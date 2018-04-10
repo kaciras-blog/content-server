@@ -1,45 +1,52 @@
 package net.kaciras.blog.domain.defense;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import net.kaciras.blog.domain.ConfigBind;
+import org.ehcache.Cache;
+import org.ehcache.CacheManager;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ExpiryPolicyBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 @RequiredArgsConstructor
 @Component
 final class FrequencyLimiter {
 
 	private final ThreadPoolTaskScheduler taskScheduler;
-	private final ConcurrentHashMap<InetAddress, Integer> records = new ConcurrentHashMap<>();
 
-	@Setter
+	private Cache<InetAddress, Integer> cache;
+
+	@Autowired
+	public void setCacheManager(CacheManager cacheManager) {
+		CacheConfigurationBuilder<InetAddress, Integer> builder = CacheConfigurationBuilder
+				.newCacheConfigurationBuilder(InetAddress.class, Integer.class, ResourcePoolsBuilder.heap(1024))
+				.withExpiry(ExpiryPolicyBuilder.timeToIdleExpiration(Duration.ofMinutes(30)));
+		cache = cacheManager.createCache("frequencyLimiter", builder.build());
+	}
+
+	@ConfigBind("defense.frequency.threshold")
 	private int threshold = 10;
 
-	@Setter
-	@Getter
+	@ConfigBind("defense.frequency.enable")
 	private boolean enable;
 
 	boolean isAllow(InetAddress address) {
 		if (!enable) {
 			return true;
 		}
-		Integer count = records.get(address);
+		Integer count = cache.get(address);
 		if (count == null) {
 			count = 0;
 		} else if (count > threshold) {
 			return false;
 		}
-		records.put(address, ++count);
-		taskScheduler.getScheduledExecutor().schedule(() -> records.remove(address), 30, TimeUnit.MINUTES);
+		cache.put(address, ++count);
 		return true;
 	}
 }

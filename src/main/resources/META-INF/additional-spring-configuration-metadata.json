@@ -24,5 +24,15 @@
 			"name": "temporary-data",
 			"type": "java.lang.Boolean",
 			"description": "If true,use system temp directory as data-directory."
+		},
+		{
+			"name": "defense.frequency.enable",
+			"type": "java.lang.Boolean",
+			"description": "enable frequency limiter to limit request frequency."
+		},
+		{
+			"name": "defense.frequency.threshold",
+			"type": "java.lang.Integer",
+			"description": "how many request at time should be sleeped."
 		}
 	] }

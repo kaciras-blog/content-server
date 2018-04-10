@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public final class DiscussionVO {
 
 	private int id;
-	private int postId;
+	private int articleId;
 	private int floor;
 	private int parent;
 

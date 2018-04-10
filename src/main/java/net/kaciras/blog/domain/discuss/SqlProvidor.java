@@ -1,6 +1,5 @@
 package net.kaciras.blog.domain.discuss;
 
-import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import org.apache.ibatis.jdbc.SQL;
 
 import java.util.Set;
@@ -10,9 +9,6 @@ public final class SqlProvidor {
 	private Set<String> sortFields = Set.of("time", "vote");
 
 	public String select(DiscussionQuery query) {
-		if (query.getCount() > 30) {
-			throw new RequestArgumentException();
-		}
 		SQL sql = new SQL().SELECT("*").FROM("Discussion");
 
 		putFilters(sql, query);
