@@ -10,7 +10,6 @@ import java.util.List;
 abstract class ArticleContentBase {
 
 	private int userId;
-	private List<Integer> categories;
 
 	private String title;
 	private List<String> keywords;

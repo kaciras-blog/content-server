@@ -8,8 +8,4 @@ import java.util.List;
 public interface ArticleMapper {
 
 	Article publishToArticle(ArticlePublishDTO publishDTO);
-
-	ArticleDTO toDTO(Article article);
-
-	List<ArticleDTO> toDTOList(List<Article> articles);
 }

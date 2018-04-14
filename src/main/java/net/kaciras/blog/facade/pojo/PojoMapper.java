@@ -1,6 +1,6 @@
 package net.kaciras.blog.facade.pojo;
 
-import net.kaciras.blog.domain.article.ArticleDTO;
+import net.kaciras.blog.domain.article.Article;
 import net.kaciras.blog.domain.category.Category;
 import net.kaciras.blog.domain.discuss.Discussion;
 import net.kaciras.blog.domain.draft.DraftDTO;
@@ -14,11 +14,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface PojoMapper {
 
-	ArticlePreviewVO toPreviewVo(ArticleDTO article);
+	ArticlePreviewVO toPreviewVo(Article article);
 
-	List<ArticlePreviewVO> toPreviewList(List<ArticleDTO> articles);
-
-	ArticleVO toVO(ArticleDTO article);
+	ArticleVO toVO(Article article);
 
 	DraftVO toDraftVO(DraftDTO draft);
 

@@ -1,7 +1,7 @@
 package net.kaciras.blog.domain.draft;
 
 
-import net.kaciras.blog.domain.article.ArticleDTO;
+import net.kaciras.blog.domain.article.Article;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -16,5 +16,5 @@ public interface DraftMapper {
 
 	@Mapping(target = "articleId", source = "id")
 	@Mapping(target = "keywords", expression = "java(String.join(\" \", article.getKeywords()))")
-	Draft fromArticle(ArticleDTO article);
+	Draft fromArticle(Article article);
 }

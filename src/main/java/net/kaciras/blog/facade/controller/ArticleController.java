@@ -3,7 +3,7 @@ package net.kaciras.blog.facade.controller;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.domain.article.ArticleDTO;
+import net.kaciras.blog.domain.article.Article;
 import net.kaciras.blog.domain.article.ArticleListRequest;
 import net.kaciras.blog.domain.article.ArticlePublishDTO;
 import net.kaciras.blog.domain.article.ArticleService;
@@ -27,6 +27,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -57,7 +58,7 @@ public final class ArticleController {
 		return articleService.getList(request).map(this::assembly);
 	}
 
-	private ArticlePreviewVO assembly(ArticleDTO article) {
+	private ArticlePreviewVO assembly(Article article) {
 		ArticlePreviewVO vo = mapper.toPreviewVo(article);
 		vo.setDiscussionCount(discussionService.count(DiscussionQuery.byArticle(article.getId())));
 
@@ -94,20 +95,31 @@ public final class ArticleController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> postArticle(@RequestBody ArticlePublishDTO dto) throws URISyntaxException {
+	public ResponseEntity<Void> post(@RequestBody ArticlePublishDTO dto) throws URISyntaxException {
 		int id = articleService.publish(dto);
 		return ResponseEntity.created(new URI("/articles/" + id)).build();
 	}
 
+	/*
+	 * 用PUT，那么当分类字段不存在时应当清除资源的分类信息，
+	 * 如果用PATCH，底层就必须能够单独更新资源的字段，以忽略请求中不存在的字段。
+	 * 目前看来那种都不好使...
+	 */
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody ArticlePublishDTO publish) {
 		articleService.update(id, publish);
 		return ResponseEntity.noContent().build();
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(@PathVariable int id) {
-		articleService.delete(id);
+	@PutMapping("/{id}/categories")
+	public ResponseEntity<Void> updateCategories(@PathVariable int id, @RequestBody List<Integer> cates) {
+		articleService.changeCategory(id, cates);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PutMapping("/{id}/deleteion")
+	public ResponseEntity<Void> delete(@PathVariable int id, @RequestParam boolean value) {
+		articleService.updateDeleteion(id, value);
 		return ResponseEntity.noContent().build();
 	}
 }

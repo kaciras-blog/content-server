@@ -8,17 +8,19 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 @RequiredArgsConstructor
-@Configuration
-class ArticleConfig {
+@Configuration("ArticleContextConfig")
+class ContextConfig {
 
 	private final ArticleDAO articleDAO;
 	private final MessageClient messageClient;
 	private final ClassifyDAO classifyDAO;
 
 	@PostConstruct
-	void init() {
+	private void init() {
 		Article.articleDAO = articleDAO;
+		Article.classifyDAO = classifyDAO;
+
 		//删除分类后将原分类下的文章移动到其父类中
-		messageClient.subscribe(CategoryRemovedEvent.class, event -> classifyDAO.updateByCategory(event.getId(), event.getParent()));
+		messageClient.subscribe(CategoryRemovedEvent.class, event -> classifyDAO.updateCategory(event.getId(), event.getParent()));
 	}
 }

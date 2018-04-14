@@ -20,7 +20,7 @@ public class CategoryService {
 	private Authenticator authenticator;
 
 	@Autowired
-	public void setAuthenticator(AuthenticatorFactory factory) {
+	void setAuthenticator(AuthenticatorFactory factory) {
 		this.authenticator = factory.create("CATEGORY");
 	}
 

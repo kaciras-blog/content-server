@@ -10,7 +10,5 @@ public class ArticleListRequest extends ListSelectRequest {
 
 	private int userId;
 
-	private boolean showDeleted;
-
 	private Integer category;
 }

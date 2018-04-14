@@ -43,13 +43,4 @@ public interface ArticleDAO {
 
 	@Update("UPDATE Article SET view_count=view_count+1 WHERE id=#{id}")
 	void increaseViewCount(int id);
-
-	/**
-	 * 这个是专门用来检查文章删除情况的
-	 *
-	 * @param id 文章id
-	 * @return true：如果文章被删除，false：文章没有删除，null：文章不存在
-	 */
-	@Select("SELECT deleted FROM Article WHERE id=#{id}")
-	Boolean selectDeletedById(int id);
 }

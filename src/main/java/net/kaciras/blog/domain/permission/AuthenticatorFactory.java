@@ -14,6 +14,6 @@ public final class AuthenticatorFactory {
 	}
 
 	public Authenticator create(String module) {
-		return new Authenticator(module, roleService, permissionRepository);
+		return new DefaultAuthenticator(module, roleService, permissionRepository);
 	}
 }

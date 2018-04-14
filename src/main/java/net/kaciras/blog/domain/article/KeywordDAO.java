@@ -10,7 +10,7 @@ interface KeywordDAO {
 	@Select("SELECT value FROM Keyword WHERE id=#{id}")
 	List<String> select(int id);
 
-	@Insert("INSERT INTO Keyword(id,value) VALUES (#{id}, #{value})")
+	@Insert("INSERT INTO Keyword(id, value) VALUES (#{id}, #{value})")
 	void insert(@Param("id") int id, @Param("value") String value);
 
 	@Delete("DELETE FROM Keyword WHERE id=#{id}")

@@ -26,6 +26,8 @@ public class ArticleSqlProvider {
 			if (!allowFields.contains(field))
 				throw new IllegalArgumentException("错误的过滤字段:" + field);
 			sql.ORDER_BY(field + " " + (query.isDesc() ? "DESC" : "ASC"));
+		} else {
+			sql.ORDER_BY("id DESC"); //默认按发布顺序倒序
 		}
 
 		return sql.toString() + String.format(" LIMIT %d,%d", query.getStart(), query.getCount());

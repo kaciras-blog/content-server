@@ -1,7 +1,7 @@
 package net.kaciras.blog.facade;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.kaciras.blog.domain.permission.PermissionKeyTypeHandler;
+import net.kaciras.blog.infrastructure.bootstarp.CommandListener;
 import net.kaciras.blog.infrastructure.codec.ExtendsCodecModule;
 import net.kaciras.blog.infrastructure.codec.ImageRefrenceTypeHandler;
 import net.kaciras.blog.infrastructure.codec.IpAddressTypeHandler;
@@ -13,11 +13,11 @@ import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.annotation.*;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -28,7 +28,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.concurrent.Executor;
 
 @ComponentScan({"net.kaciras.blog.domain", "net.kaciras.blog.facade"})
 @MapperScan(value = "net.kaciras.blog.domain", annotationClass = Mapper.class)
@@ -39,8 +38,11 @@ import java.util.concurrent.Executor;
 @SpringBootApplication
 public class ServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ServiceApplication.class, args);
+	public static void main(String[] args) throws IOException {
+		ConfigurableApplicationContext context = SpringApplication.run(ServiceApplication.class, args);
+		CommandListener listener = new CommandListener(60002);
+		listener.onShutdown(() -> SpringApplication.exit(context, () -> 0));
+		listener.start();
 	}
 
 	/**

@@ -8,8 +8,6 @@
 		<result property="viewCount" column="view_count"/>
 		<result property="create" column="create_time"/>
 		<result property="update" column="update_time"/>
-		<collection property="categories" column="id"
-					select="net.kaciras.blog.domain.article.ClassifyDAO.selectCategoryById"/>
 		<collection property="keywords" column="id" select="net.kaciras.blog.domain.article.KeywordDAO.select"/>
 	</resultMap>
 

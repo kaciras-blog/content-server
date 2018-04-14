@@ -17,10 +17,10 @@ public final class PermissionController {
 
 	private final RoleService roleService;
 
-	@GetMapping("{group}/{name}/verification")
-	public ResponseEntity<Void> verifyPermission(@PathVariable String group,
-												 @PathVariable String name) {
-		boolean accept = roleService.accept(SecurtyContext.getCurrentUser(), new PermissionKey(group, name));
-		return accept ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+	@GetMapping("{module}/{name}/verification")
+	public ResponseEntity<Void> verifyPermission(PermissionKey pk) {
+		return (roleService.accept(SecurtyContext.getCurrentUser(), pk)
+				? ResponseEntity.ok()
+				: ResponseEntity.notFound()).build();
 	}
 }
