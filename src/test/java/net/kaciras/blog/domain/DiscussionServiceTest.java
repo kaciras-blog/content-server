@@ -72,7 +72,7 @@ class DiscussionServiceTest extends AbstractSpringTest {
 
 		//delete查询条件
 		Assertions.assertThat(service.count(query)).isEqualTo(4);
-		query.setDeletedState(DeletedState.ALL);
+		query.setDeletion(DeletedState.ALL);
 		Assertions.assertThat(service.count(query)).isEqualTo(5);
 
 		Assertions.assertThat(service.getList(query)).size().isEqualTo(2);

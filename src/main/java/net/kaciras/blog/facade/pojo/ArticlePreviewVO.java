@@ -28,4 +28,6 @@ public final class ArticlePreviewVO {
 
 	private int viewCount;
 	private int discussionCount;
+
+	private boolean deleted;
 }

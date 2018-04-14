@@ -38,7 +38,7 @@ public final class DiscussionService {
 	/* - - - - - - - - - - - - - - - 业务方法 - - - - - - - - - - - - - - - - -  */
 
 	private void verifyQuery(DiscussionQuery query) {
-		if (query.getDeletedState() != DeletedState.FALSE && SecurtyContext.isNotUser(query.getUserId())) {
+		if (query.getDeletion() != DeletedState.FALSE && SecurtyContext.isNotUser(query.getUserId())) {
 			authenticator.require("POWER_QUERY");
 		}
 	}

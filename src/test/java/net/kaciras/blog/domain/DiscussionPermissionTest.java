@@ -23,7 +23,7 @@ class DiscussionPermissionTest extends AbstractSpringTest {
 		DiscussionQuery query = new DiscussionQuery();
 		query.setCount(20);
 
-		query.setDeletedState(DeletedState.ALL);
+		query.setDeletion(DeletedState.ALL);
 		Assertions.assertThatThrownBy(() -> service.getList(query)).isInstanceOf(PermissionException.class);
 
 		SecurtyContext.setCurrentUser(2);

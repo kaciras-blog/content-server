@@ -2,6 +2,7 @@ package net.kaciras.blog.facade;
 
 import net.kaciras.blog.infrastructure.exception.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,7 +14,9 @@ import java.util.Map;
 @ResponseBody
 public class ExceptionReslover {
 
-	/** 自己定义的异常 */
+	/**
+	 * 自己定义的异常
+	 */
 	private final Map<Class, Integer> errorCodeMap = Map.of(
 			RequestArgumentException.class, 400,
 			PermissionException.class, 403,
@@ -29,8 +32,15 @@ public class ExceptionReslover {
 		if (code != null) {
 			return ResponseEntity.status(code).body(Map.of("message", ex.getMessage()));
 		}
-		if(ex instanceof MethodArgumentNotValidException) {
+
+		/* 控制器方法的参数@Valid失败 */
+		if (ex instanceof MethodArgumentNotValidException) {
 //			List<ObjectError> errors = ((MethodArgumentNotValidException) ex).getBindingResult().getAllErrors();
+			return ResponseEntity.status(400).body(Map.of("message", "请求中存在不合法的参数"));
+		}
+
+		/* 控制器参数中对象的字段@Valid失败 */
+		if (ex instanceof BindException) {
 			return ResponseEntity.status(400).body(Map.of("message", "请求中存在不合法的参数"));
 		}
 		throw ex;

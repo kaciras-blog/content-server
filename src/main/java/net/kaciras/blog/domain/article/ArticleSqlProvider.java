@@ -4,7 +4,7 @@ import org.apache.ibatis.jdbc.SQL;
 
 import java.util.List;
 import java.util.Set;
-import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class ArticleSqlProvider {
@@ -13,7 +13,16 @@ public class ArticleSqlProvider {
 //	private Set<String> compartors = Set.of(">", "<", "=", ">=", "<=", "!=");
 
 	public String selectPreview(ArticleListRequest query) {
-		SQL sql = new SQL().SELECT("*").FROM("Article AS A").WHERE("deleted = 0");
+		SQL sql = new SQL().SELECT("*").FROM("Article AS A");
+
+		switch (query.getDeletion()) {
+			case TRUE:
+				sql.WHERE("deleted = 1");
+				break;
+			case FALSE:
+				sql.WHERE("deleted = 0");
+				break;
+		}
 
 		//TODO: coupling
 		Integer category = query.getCategory();
@@ -35,8 +44,11 @@ public class ArticleSqlProvider {
 
 	@SuppressWarnings("Convert2MethodRef")
 	public String countInCategories(List<Integer> arg0) {
-		StringJoiner joiner = new StringJoiner(",", "category in (", ")");
-		arg0.stream().map(id -> id.toString()).forEach(joiner::add);
-		return new SQL().SELECT("COUNT(*)").FROM("Article").WHERE("deleted=0").WHERE(joiner.toString()).toString();
+		String cateFilter = arg0.stream()
+				.map(id -> id.toString())
+				.collect(Collectors.joining(",", "category in (", ")"));
+		return new SQL().SELECT("COUNT(*)").FROM("Article")
+				.WHERE("deleted=0")
+				.WHERE(cateFilter).toString();
 	}
 }

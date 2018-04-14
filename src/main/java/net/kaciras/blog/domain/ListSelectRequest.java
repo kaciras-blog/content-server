@@ -34,5 +34,5 @@ public class ListSelectRequest implements Serializable {
 	 * 资源的删除状态过滤，对于无删除状态的资源，此字段将被忽略
 	 */
 	@NotNull
-	private DeletedState deletedState = DeletedState.FALSE;
+	private DeletedState deletion = DeletedState.FALSE;
 }

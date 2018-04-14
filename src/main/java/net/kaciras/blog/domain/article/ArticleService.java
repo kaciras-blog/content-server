@@ -12,6 +12,7 @@ import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
+import org.jetbrains.annotations.Async;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -70,6 +71,7 @@ public class ArticleService {
 		return Single.just(article).doAfterSuccess(Article::recordView); //增加浏览量
 	}
 
+	@Async.Schedule
 	@Scheduled(fixedDelay = 5 * 60 * 1000)
 	void updateHotsTask() {
 		ArticleListRequest request = new ArticleListRequest();
@@ -80,7 +82,7 @@ public class ArticleService {
 	}
 
 	public Observable<Article> getList(ArticleListRequest request) {
-		if (request.getDeletedState() != DeletedState.FALSE) {
+		if (request.getDeletion() != DeletedState.FALSE) {
 			authenticator.require("SHOW_DELETED");
 		}
 		return articleRepository.findAll(request);

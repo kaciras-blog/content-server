@@ -9,6 +9,8 @@ import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import org.ehcache.Cache;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
@@ -50,17 +52,18 @@ public class User {
 	private LocalDateTime regTime;
 	private InetAddress regAddress;
 
+	@Nullable
 	LocalDateTime getBannedEndTime() {
 		return banRecordDao.selectLastEndTime(id);
 	}
 
-	void putPassword(String passText) {
+	void putPassword(@NotNull String passText) {
 		salt = new byte[HASH_SIZE >> 3];
 		Utils.SECURE_RANDOM.nextBytes(salt);
 		password = encryptPassword(passText, salt);
 	}
 
-	boolean checkLogin(String passText) {
+	boolean checkLogin(@NotNull String passText) {
 		if(deleted) {
 			throw new ResourceDeletedException("该用户已被删除");
 		}

@@ -1,6 +1,5 @@
 package net.kaciras.blog.domain.defense;
 
-import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.ConfigBind;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
@@ -8,17 +7,13 @@ import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ExpiryPolicyBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.time.Duration;
 
-@RequiredArgsConstructor
 @Component
 final class FrequencyLimiter {
-
-	private final ThreadPoolTaskScheduler taskScheduler;
 
 	private Cache<InetAddress, Integer> cache;
 
@@ -31,7 +26,7 @@ final class FrequencyLimiter {
 	}
 
 	@ConfigBind("defense.frequency.threshold")
-	private int threshold = 10;
+	private int threshold;
 
 	@ConfigBind("defense.frequency.enable")
 	private boolean enable;

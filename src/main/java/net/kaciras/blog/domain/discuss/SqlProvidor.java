@@ -38,7 +38,7 @@ public final class SqlProvidor {
 				sql.WHERE("user = #{userId}");
 			}
 		}
-		switch (query.getDeletedState()) {
+		switch (query.getDeletion()) {
 			case FALSE:
 				sql.WHERE("deleted = 0");
 				break;
