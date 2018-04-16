@@ -45,7 +45,7 @@ public class User {
 	private byte[] salt;
 
 	private String email;
-	private ImageRefrence head = ImageRefrence.internal("noface.gif");
+	private ImageRefrence head = ImageRefrence.parse("noface.gif");
 
 	private boolean deleted;
 

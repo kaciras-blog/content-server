@@ -2,13 +2,14 @@ package net.kaciras.blog.domain.draft;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
 @Getter
 @Setter
 public abstract class DraftContentBase {
 
 	private String title;
-	private String cover;
+	private ImageRefrence cover;
 	private String summary;
 	private String keywords;
 	private String content;

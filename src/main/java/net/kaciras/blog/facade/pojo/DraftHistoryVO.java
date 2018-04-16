@@ -3,6 +3,7 @@ package net.kaciras.blog.facade.pojo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
+import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
 import java.time.LocalDateTime;
 
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 public class DraftHistoryVO {
 
 	private String title;
-	private String cover;
+	private ImageRefrence cover;
 	private String summary;
 
 	private int saveCount;

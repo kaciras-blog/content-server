@@ -3,6 +3,7 @@ package net.kaciras.blog.facade.pojo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
+import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +18,7 @@ public final class ArticlePreviewVO {
 
 	private String title;
 	private List<String> keywords;
-	private String cover;
+	private ImageRefrence cover;
 	private String summary;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")

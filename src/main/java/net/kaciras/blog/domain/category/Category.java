@@ -3,6 +3,7 @@ package net.kaciras.blog.domain.category;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.kaciras.blog.domain.Utils;
+import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +22,7 @@ public class Category {
 	private int id;
 	private String name;
 
-	private String cover;
+	private ImageRefrence cover;
 	private String description;
 	private String background;
 

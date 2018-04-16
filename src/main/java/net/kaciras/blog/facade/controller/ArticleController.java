@@ -48,7 +48,7 @@ public final class ArticleController {
 	@Autowired
 	public void setCacheManager(CacheManager cacheManager) {
 		CacheConfigurationBuilder<Integer, String> builder = CacheConfigurationBuilder
-				.newCacheConfigurationBuilder(Integer.class, String.class, ResourcePoolsBuilder.heap(100));
+				.newCacheConfigurationBuilder(Integer.class, String.class, ResourcePoolsBuilder.heap(4096));
 		etags = cacheManager.createCache("articleEtag", builder.build());
 		messageClient.subscribe(ArticleUpdatedEvent.class, event -> etags.remove(event.getArticleId()));
 	}
@@ -117,7 +117,7 @@ public final class ArticleController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PutMapping("/{id}/deleteion")
+	@PutMapping("/{id}/deletion")
 	public ResponseEntity<Void> delete(@PathVariable int id, @RequestParam boolean value) {
 		articleService.updateDeleteion(id, value);
 		return ResponseEntity.noContent().build();
