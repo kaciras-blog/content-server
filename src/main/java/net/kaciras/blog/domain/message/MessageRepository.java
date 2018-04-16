@@ -1,9 +1,15 @@
 package net.kaciras.blog.domain.message;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+@RequiredArgsConstructor
 @Repository
-public class MessageRepository {
+class MessageRepository {
 
+	private final MessageDao messageDao;
 
+	Message get(int id) {
+		return null;
+	}
 }

@@ -16,7 +16,7 @@ class ContextConfig {
 	private final DraftRepository draftRepository;
 	private final DraftDAO draftDAO;
 
-	@Value("${draft.deleteAfterSubmit}")
+	@Value("${draft.delete-after-publish}")
 	private boolean deleteAfterSubmit;
 
 	@PostConstruct

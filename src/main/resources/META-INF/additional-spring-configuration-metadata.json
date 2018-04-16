@@ -34,5 +34,10 @@
 			"name": "defense.frequency.threshold",
 			"type": "java.lang.Integer",
 			"description": "how many request at time should be sleeped."
+		},
+		{
+			"name": "draft.delete-after-publish",
+			"type": "java.lang.String",
+			"description": "发表文章后删除草稿."
 		}
 	] }

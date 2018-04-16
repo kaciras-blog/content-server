@@ -24,7 +24,7 @@ public class Category {
 
 	private ImageRefrence cover;
 	private String description;
-	private String background;
+	private ImageRefrence background;
 
 	Integer getParent() {
 		return dao.selectAncestor(id, 1);

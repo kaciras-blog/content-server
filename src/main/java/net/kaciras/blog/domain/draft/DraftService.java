@@ -5,6 +5,7 @@ import net.kaciras.blog.domain.SecurtyContext;
 import net.kaciras.blog.domain.article.ArticleService;
 import net.kaciras.blog.domain.permission.Authenticator;
 import net.kaciras.blog.domain.permission.AuthenticatorFactory;
+import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,7 +57,7 @@ public class DraftService {
 		newDraft.setSummary("");
 		newDraft.setKeywords("");
 		newDraft.setContent("");
-		newDraft.setCover("placeholder.png");
+		newDraft.setCover(ImageRefrence.parse("placeholder.png"));
 		return newDraft;
 	}
 

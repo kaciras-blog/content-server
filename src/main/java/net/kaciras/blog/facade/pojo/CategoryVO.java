@@ -11,7 +11,7 @@ public class CategoryVO {
 
 	private ImageRefrence cover;
 	private String description;
-	private String background;
+	private ImageRefrence background;
 
 	private int level;
 	private int parent;
