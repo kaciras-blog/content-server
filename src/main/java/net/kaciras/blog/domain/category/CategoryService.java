@@ -1,12 +1,11 @@
 package net.kaciras.blog.domain.category;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.domain.SecurtyContext;
 import net.kaciras.blog.domain.permission.Authenticator;
 import net.kaciras.blog.domain.permission.AuthenticatorFactory;
-import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,13 +23,17 @@ public class CategoryService {
 		this.authenticator = factory.create("CATEGORY");
 	}
 
+	@Transactional
 	public void moveTree(int id, int parent, boolean treeMode) {
 		authenticator.require("CHANGE_RELATION");
 		Category category = categoryRepository.get(id);
-		if (treeMode)
-			category.moveTreeTo(parent);
-		else
-			category.moveTo(parent);
+		Category newParent = categoryRepository.get(parent);
+
+		if (treeMode) {
+			category.moveTreeTo(newParent);
+		} else {
+			category.moveTo(newParent);
+		}
 	}
 
 	public Category get(int id) {

@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.message.MessageClient;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -34,53 +36,50 @@ public class Category {
 		return dao.selectDistance(0, id);
 	}
 
+	@NotNull
 	List<Category> getPath() {
 		return dao.selectPathToRoot(id);
 	}
 
+	/**
+	 * 获取此分类到指定上级分类之间的所有分类。
+	 *
+	 * @param ancestor 上级分类id
+	 * @return 路径上所有的分类，如果ancestor不是此分类的上级分类则为null
+	 */
+	@Nullable
 	List<Category> pathTo(int ancestor) {
 		Utils.checkPositive(ancestor, "ancestor");
 		return dao.selectPathToAncestor(id, ancestor);
 	}
 
-	@Transactional
-	void moveTo(int target) {
-		int selfId = this.id;
-		if (selfId == target) {
+	void moveTo(Category target) {
+		if (this.equals(target)) {
+			throw new IllegalArgumentException("不能移动到自己下面");
+		}
+		moveSubTree(id, dao.selectAncestor(id, 1));
+		moveNode(id, target.getId());
+	}
+
+	void moveTreeTo(Category target) {
+		if (this.equals(target)) {
 			throw new IllegalArgumentException("不能移动到自己下面");
 		}
 
-		Utils.checkNotNegative(target, "target");
-		if (target > 0) {
-			helper.requireContains(target);
-		}
-
-		moveSubTree(selfId, dao.selectAncestor(selfId, 1));
-		moveNode(selfId, target);
-	}
-
-	@Transactional
-	void moveTreeTo(int target) {
-		int selfId = this.id;
-		Utils.checkNotNegative(target, "target");
-		if (target > 0) {
-			helper.requireContains(target);
-		}
-
-		Integer distance = dao.selectDistance(selfId, target);
+		Integer distance = dao.selectDistance(id, target.getId());
 		if (distance == null) {
 			// 移动到父节点或其他无关系节点，不需要做额外动作
 		} else if (distance == 0) {
 			throw new IllegalArgumentException("不能移动到自己下面");
 		} else {
 			// 如果移动的目标是其子类，需要先把子类移动到本类的位置
-			int parent = dao.selectAncestor(selfId, 1);
-			moveNode(target, parent);
-			moveSubTree(target, target);
+			int parent = dao.selectAncestor(id, 1);
+			moveNode(target.getId(), parent);
+			moveSubTree(target.getId(), target.getId());
 		}
 
-		moveNode(selfId, target);
-		moveSubTree(selfId, selfId);
+		moveNode(id, target.getId());
+		moveSubTree(id, id);
 	}
 
 	/**
@@ -96,8 +95,8 @@ public class Category {
 		dao.insertNode(id);
 	}
 
-	void moveSubTree(int parent) {
-		moveSubTree(id, parent);
+	void moveSubTree(Category parent) {
+		moveSubTree(id, parent.getId());
 	}
 
 	/**

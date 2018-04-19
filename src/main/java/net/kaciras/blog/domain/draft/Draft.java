@@ -1,15 +1,15 @@
 package net.kaciras.blog.domain.draft;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.kaciras.blog.domain.Utils;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @EqualsAndHashCode(of = "id", callSuper = false)
-@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+@Data
 final class Draft extends DraftContentBase {
 
 	/**
@@ -18,35 +18,36 @@ final class Draft extends DraftContentBase {
 	@Setter
 	private static int historyLimit = 5;
 
-	@Autowired
-	private DraftDAO draftDAO;
+	static DraftDAO draftDAO;
 
 // - - - - - - - - - - - - - - - - - - - - - -
 
-	@Getter
-	@Setter
 	private int id;
-
-	@Getter
-	@Setter
 	private Integer articleId;
-
-	@Getter
-	@Setter
 	private int userId;
-
-	@Getter
-	@Setter
+	private int saveCount;
 	private LocalDateTime time;
 
 	List<DraftHistory> getHistories() {
 		return draftDAO.selectHistories(id);
 	}
 
-	/*
-	 * 检查数量可能出现幻读（新增）和不可重读（删除），但影响不大
+	/**
+	 * 保存草稿。
+	 *
+	 * @param content 内容
 	 */
 	void save(DraftContentBase content) {
+		Utils.checkEffective(draftDAO.update(this, content));
+	}
+
+	/**
+	 * 保存草稿的内容为一个新的历史记录。
+	 * 检查数量可能出现幻读（新增）和不可重读（删除），但影响不大
+	 *
+	 * @param content 内容
+	 */
+	void saveNewHistory(DraftContentBase content) {
 		int count = draftDAO.selectCountById(id);
 		if (count > historyLimit) {
 			draftDAO.deleteOldest(id);

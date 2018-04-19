@@ -33,7 +33,7 @@ public final class DraftController {
 
 	@GetMapping
 	public List<DraftPreviewVO> getList() {
-		return mapper.toDraftPreviewVOList(draftService.findByUser(SecurtyContext.getRequiredCurrentUser()));
+		return mapper.toDraftPreviewVOList(draftService.getList(SecurtyContext.getRequiredCurrentUser()));
 	}
 
 	@GetMapping("/{id}")
@@ -53,9 +53,15 @@ public final class DraftController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity put(@RequestBody DraftSaveDTO draft) {
-		draftService.save(draft);
+	public ResponseEntity put(@RequestBody DraftSaveDTO dto) {
+		draftService.save(dto);
 		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/{id}/histories")
+	public ResponseEntity postHistories(@RequestBody DraftSaveDTO dto) throws URISyntaxException {
+		int saveCount = draftService.saveNewHistory(dto);
+		return ResponseEntity.created(new URI("/drafts/" + dto.getId() + "/histories/" + saveCount)).build();
 	}
 
 	@DeleteMapping

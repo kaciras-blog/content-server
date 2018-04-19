@@ -31,7 +31,7 @@ public class DraftService {
 		return draftMapper.toDTO(draftRepository.getById(id));
 	}
 
-	public List<DraftDTO> findByUser(int userId) {
+	public List<DraftDTO> getList(int userId) {
 		authenticator.require("POWER_MODIFY");
 		return draftMapper.toDTOList(draftRepository.findByUser(userId));
 	}
@@ -39,6 +39,13 @@ public class DraftService {
 	public void save(DraftSaveDTO dto) {
 		authenticator.require("POWER_MODIFY");
 		draftRepository.getById(dto.getId()).save(dto);
+	}
+
+	public int saveNewHistory(DraftSaveDTO dto) {
+		authenticator.require("POWER_MODIFY");
+		Draft draft = draftRepository.getById(dto.getId());
+		draft.saveNewHistory(dto);
+		return draft.getSaveCount() + 1;
 	}
 
 	public void deleteByUser(int userId) {

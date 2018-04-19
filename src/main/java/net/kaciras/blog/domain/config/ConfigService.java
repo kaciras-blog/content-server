@@ -64,7 +64,7 @@ public class ConfigService {
 			throw new RequestArgumentException("配置项的值不符合定义的类型");
 		}
 
-		log.trace("put config: {} = {}", key, value);
+		logger.trace("put config: {} = {}", key, value);
 		properties.put(key,value);
 		messageClient.send(new ConfigChangedEvent(key, properties.getProperty(key), value));
 	}

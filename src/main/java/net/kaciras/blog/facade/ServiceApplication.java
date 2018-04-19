@@ -1,12 +1,17 @@
 package net.kaciras.blog.facade;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.kaciras.blog.domain.permission.PermissionKeyTypeHandler;
 import net.kaciras.blog.infrastructure.bootstarp.CommandListener;
 import net.kaciras.blog.infrastructure.codec.ExtendsCodecModule;
 import net.kaciras.blog.infrastructure.codec.ImageRefrenceTypeHandler;
 import net.kaciras.blog.infrastructure.codec.IpAddressTypeHandler;
 import net.kaciras.blog.infrastructure.message.DirectCalledMessageClient;
+import net.kaciras.blog.infrastructure.message.JacksonJsonCodec;
 import net.kaciras.blog.infrastructure.message.MessageClient;
+import net.kaciras.blog.infrastructure.message.TcpTransmission;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.type.TypeHandler;
 import org.ehcache.CacheManager;
@@ -28,6 +33,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.util.concurrent.Executors;
 
 @ComponentScan({"net.kaciras.blog.domain", "net.kaciras.blog.facade"})
 @MapperScan(value = "net.kaciras.blog.domain", annotationClass = Mapper.class)
@@ -85,7 +91,10 @@ public class ServiceApplication {
 	}
 
 	@Bean
-	MessageClient messageClient() {
+	MessageClient messageClient(ObjectMapper objectMapper) throws IOException {
+		objectMapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false).configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
+//		JacksonJsonCodec codec = new JacksonJsonCodec(objectMapper);
+//		TcpTransmission transmission = new TcpTransmission("123.206.206.29", 2380, codec, Executors.newSingleThreadExecutor());
 		return new DirectCalledMessageClient();
 	}
 

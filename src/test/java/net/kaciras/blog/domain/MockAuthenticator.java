@@ -1,4 +1,12 @@
 package net.kaciras.blog.domain;
 
-public class MockAuthenticator {
+import net.kaciras.blog.domain.permission.Authenticator;
+
+public class MockAuthenticator implements Authenticator {
+
+	@Override
+	public boolean check(String permission) {
+		Integer user = SecurtyContext.getCurrentUser();
+		return false;
+	}
 }

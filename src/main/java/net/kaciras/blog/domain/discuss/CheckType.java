@@ -1,4 +1,6 @@
-package net.kaciras.blog.domain;
+package net.kaciras.blog.domain.discuss;
+
+import net.kaciras.blog.domain.EnumConfigItem;
 
 public enum CheckType {
 

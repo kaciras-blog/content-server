@@ -22,18 +22,37 @@ interface DraftDAO {
 	@Delete("DELETE FROM Draft WHERE id=#{id} AND save_count=(SELECT sc FROM(SELECT MIN(save_count) AS sc FROM Draft) AS Self)")
 	void deleteOldest(int id);
 
+	@Update("UPDATE Draft SET title=#{content.title}," +
+			"cover=#{content.cover}," +
+			"summary=#{content.summary}," +
+			"keywords=#{content.keywords}," +
+			"content=#{content.content} " +
+			"WHERE id=#{draft.id} AND save_count=#{draft.saveCount}")
+	int update(@Param("draft") Draft draft, @Param("content") DraftContentBase content);
+
 	@Select("SELECT COUNT(*) FROM DraftUser WHERE user_id=#{uid}")
 	int selectCountByUser(int uid);
 
 	@Select("SELECT COUNT(*) FROM Draft WHERE id=#{id}")
 	int selectCountById(int id);
 
+	/**
+	 * 删除指定id的草稿，包括其所有的历史记录
+	 *
+	 * @param id 草稿id
+	 * @return 删除的行数
+	 */
 	@Delete({
 			"DELETE FROM Draft WHERE id=#{id};",
 			"DELETE FROM DraftUser WHERE id=#{id}"
 	})
 	int deleteById(int id);
 
+	/**
+	 * 删除指定用户所有的草稿。
+	 *
+	 * @param uid 用户id
+	 */
 	@Delete({
 			"DELETE FROM DraftUser WHERE user_id=#{uid};",
 			"DELETE FROM Draft WHERE id IN (SELECT id FROM DraftUser WHERE user_id=#{uid});"

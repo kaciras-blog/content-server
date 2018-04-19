@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 class DraftRepository {
 
 	private final DraftDAO draftDAO;
-	private final AutowireCapableBeanFactory beanFactory;
 
 	/**
 	 * 每个用户最大能保存的草稿数，默认20
@@ -54,7 +53,6 @@ class DraftRepository {
 		if (draft == null) {
 			throw new ResourceNotFoundException();
 		}
-		beanFactory.autowireBean(draft);
 		return draft;
 	}
 

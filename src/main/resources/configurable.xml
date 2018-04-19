@@ -3,6 +3,6 @@
 <properties>
 	<group name="discussion" desc="评论设置">
 		<property key="disable" type="bool" desc="是否禁止评论"/>
-		<property key="filter" type="net.kaciras.blog.domain.CheckType" desc="评论审核方式"/>
+		<property key="filter" type="net.kaciras.blog.domain.discuss.CheckType" desc="评论审核方式"/>
 	</group>
 </properties>
