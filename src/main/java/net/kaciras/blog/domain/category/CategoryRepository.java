@@ -26,7 +26,7 @@ class CategoryRepository {
 
 	@NotNull
 	public Category get(int id) {
-		Utils.checkPositive(id, "id");
+		Utils.checkNotNegative(id, "id");
 		Category category = categoryDAO.selectAttributes(id);
 		return Utils.checkNotNullResource(category);
 	}
@@ -85,7 +85,7 @@ class CategoryRepository {
 			parent = 0;
 		}
 
-		get(id).moveSubTree(parent);
+		get(id).moveSubTree(get(parent));
 		deleteBoth(id);
 
 		messageClient.send(new CategoryRemovedEvent(id, parent));
