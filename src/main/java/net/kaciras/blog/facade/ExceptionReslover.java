@@ -1,5 +1,6 @@
 package net.kaciras.blog.facade;
 
+import lombok.extern.slf4j.Slf4j;
 import net.kaciras.blog.infrastructure.exception.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Map;
 
+@Slf4j
 @ControllerAdvice
 @ResponseBody
 public class ExceptionReslover {
@@ -27,7 +29,7 @@ public class ExceptionReslover {
 	);
 
 	@ExceptionHandler
-	public ResponseEntity handle(Exception ex) throws Exception {
+	public ResponseEntity handle(Exception ex) {
 		Integer code = errorCodeMap.get(ex.getClass());
 		if (code != null) {
 			return ResponseEntity.status(code).body(Map.of("message", ex.getMessage()));
@@ -43,7 +45,9 @@ public class ExceptionReslover {
 		if (ex instanceof BindException) {
 			return ResponseEntity.status(400).body(Map.of("message", "请求中存在不合法的参数"));
 		}
-		throw ex;
+
+		logger.error("未捕获的错误出现啦", ex);
+		return ResponseEntity.status(500).body(Map.of("message", "服务器出错啦"));
 	}
 
 }
