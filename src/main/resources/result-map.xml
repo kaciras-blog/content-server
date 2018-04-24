@@ -14,6 +14,7 @@
 	<resultMap type="net.kaciras.blog.domain.draft.Draft" id="DraftMap">
 		<result column="user_id" property="userId"/>
 		<result column="article_id" property="articleId"/>
+		<result column="save_count" property="saveCount"/>
 	</resultMap>
 
 	<resultMap type="net.kaciras.blog.domain.draft.DraftHistory" id="DraftHistoryMap">

@@ -17,14 +17,13 @@ public class DefenseInterceptor extends HandlerInterceptorAdapter {
 	private final DefenseService defenseService;
 
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		if (HttpMethod.OPTIONS.matches(request.getMethod())) {
+	public boolean preHandle(HttpServletRequest request,
+							 HttpServletResponse response,
+							 Object handler) throws Exception {
+		if (HttpMethod.OPTIONS.matches(request.getMethod()) || defenseService.accept(request)) {
 			return true;
 		}
-		boolean allow = defenseService.accept(InetAddress.getByName(request.getRemoteAddr()));
-		if (!allow) {
-			response.setStatus(429);
-		}
-		return allow;
+		response.setStatus(429);
+		return false;
 	}
 }
