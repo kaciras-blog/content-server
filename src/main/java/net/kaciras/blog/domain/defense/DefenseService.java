@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 public class DefenseService {
 
-	private final IPTable ipTable;
+	private final IPFilterService ipFilterService;
 	private final FrequencyLimiter frequencyLimiter;
 	private final ProxyDetector proxyDetector;
 
@@ -31,7 +31,9 @@ public class DefenseService {
 
 	public boolean accept(HttpServletRequest request) throws UnknownHostException {
 		InetAddress address = InetAddress.getByName(request.getRemoteAddr());
-		if(!ipTable.acceptable(address) && !proxyDetector.isProxy(address)) {
+		ipFilterService.test(address);
+
+		if(!proxyDetector.isProxy(address)) {
 			return false;
 		}
 		for (Api api : sensitiveApis) {
