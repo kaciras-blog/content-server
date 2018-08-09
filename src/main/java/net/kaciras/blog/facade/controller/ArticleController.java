@@ -1,6 +1,5 @@
 package net.kaciras.blog.facade.controller;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.article.Article;
@@ -29,6 +28,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -53,19 +53,24 @@ public final class ArticleController {
 		messageClient.subscribe(ArticleUpdatedEvent.class, event -> etags.remove(event.getArticleId()));
 	}
 
+
 	@GetMapping
-	public Observable<ArticlePreviewVO> getList(ArticleListRequest request) {
-		return articleService.getList(request).map(this::assembly);
+	public List<ArticlePreviewVO> getList(ArticleListRequest request) {
+		return articleService.getList(request).stream().map(this::aggregate).collect(Collectors.toList());
 	}
 
-	private ArticlePreviewVO assembly(Article article) {
-		ArticlePreviewVO vo = mapper.toPreviewVo(article);
-		vo.setDiscussionCount(discussionService.count(DiscussionQuery.byArticle(article.getId())));
-
-		//这句没法用doOnNext
-		vo.setCategoryPath(mapper.toCategoryVOList(categoryService.getPath(article.getCategories().get(0))));
-		vo.setAuthor(mapper.toUserVo(userService.getUser(article.getUserId())));
-		return vo;
+	/**
+	 * 将用户信息，评论数，分类路径和文章聚合为一个对象，节约前端请求次数。
+	 *
+	 * @param article 文章对象
+	 * @return 聚合后的对象
+	 */
+	private ArticlePreviewVO aggregate(Article article) {
+		var result = mapper.toPreviewVo(article);
+		result.setAuthor(mapper.toUserVo(userService.getUser(article.getUserId())));
+		result.setDiscussionCount(discussionService.count(DiscussionQuery.byArticle(article.getId())));
+		result.setCategoryPath(mapper.toCategoryVOList(categoryService.getPath(article.getCategories().get(0))));
+		return result;
 	}
 
 	@GetMapping("/{id}")

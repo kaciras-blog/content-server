@@ -19,11 +19,4 @@ class ArticleServiceTest extends AbstractSpringTest {
 		SecurtyContext.setCurrentUser(1);
 	}
 
-	@Test
-	void testCountByCategories() {
-		int count = articleService.getCountByCategories(Arrays.asList(1, 2, 3));
-		Assertions.assertThat(count).isEqualTo(2);
-
-		Assertions.assertThat(articleService.getCountByCategories0(1)).isEqualTo(2);
-	}
 }

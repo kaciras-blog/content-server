@@ -25,7 +25,7 @@ public class MvcConfig implements WebMvcConfigurer {
 	private final AccessLogInterceptor accessLogInterceptor;
 	private final DefenseInterceptor defenseInterceptor;
 
-	@Value("${web.CorsOrigin}")
+	@Value("${web.cors-origin}")
 	private String corsOrigin;
 
 	@Override

@@ -5,8 +5,8 @@ import net.kaciras.blog.domain.permission.Authenticator;
 public class MockAuthenticator implements Authenticator {
 
 	@Override
-	public boolean check(String permission) {
+	public boolean reject(String permission) {
 		Integer user = SecurtyContext.getCurrentUser();
-		return false;
+		return true;
 	}
 }

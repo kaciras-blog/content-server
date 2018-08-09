@@ -1,19 +1,16 @@
 package net.kaciras.blog.domain.permission;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
+@RequiredArgsConstructor
 @Component
 public final class AuthenticatorFactory {
 
-	private final RoleService roleService;
-	private final PermissionRepository permissionRepository;
-
-	public AuthenticatorFactory(RoleService roleService, PermissionRepository permissionRepository) {
-		this.roleService = roleService;
-		this.permissionRepository = permissionRepository;
-	}
+	private final RestTemplate restTemplate;
 
 	public Authenticator create(String module) {
-		return new DefaultAuthenticator(module, roleService, permissionRepository);
+		return new DefaultAuthenticator(module, restTemplate);
 	}
 }

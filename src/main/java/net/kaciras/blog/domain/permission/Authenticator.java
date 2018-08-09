@@ -4,9 +4,9 @@ import net.kaciras.blog.infrastructure.exception.PermissionException;
 
 public interface Authenticator {
 
-	boolean check(String permission);
+	boolean reject(String permission);
 
 	default void require(String permission) {
-		if (!check(permission)) throw new PermissionException();
+		if (reject(permission)) throw new PermissionException();
 	}
 }

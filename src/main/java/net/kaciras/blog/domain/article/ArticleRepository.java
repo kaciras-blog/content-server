@@ -64,10 +64,13 @@ class ArticleRepository {
 		}
 	}
 
-	Observable<Article> findAll(ArticleListRequest request) {
+	public List<Article> findAll(ArticleListRequest request) {
 		checkNotNull(request, "request");
 		request.setCount(Math.min(request.getCount(), 20)); // 限制最大结果数
-		return Observable.fromIterable(articleDAO.selectPreview(request));
+		return articleDAO.selectPreview(request);
 	}
 
+	public int getCount(int id) {
+		return classifyDAO.selectCountByCategory(id);
+	}
 }

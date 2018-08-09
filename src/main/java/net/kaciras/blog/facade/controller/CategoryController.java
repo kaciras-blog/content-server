@@ -37,7 +37,7 @@ public final class CategoryController {
 	@GetMapping("/{id}")
 	public CategoryVO get(@PathVariable int id) {
 		CategoryVO vo = mapper.toCategoryVO(categoryService.get(id));
-		vo.setArticleCount(articleService.getCountByCategories0(id));
+		vo.setArticleCount(articleService.getCountByCategories(id));
 		return vo;
 	}
 
@@ -45,7 +45,7 @@ public final class CategoryController {
 	public Observable<CategoryVO> getSubCategories(@PathVariable int id) {
 		return Observable.fromIterable(categoryService.getSubCategories(id))
 				.map(mapper::toCategoryVO)
-				.doOnNext(vo -> vo.setArticleCount(articleService.getCountByCategories0(vo.getId())));
+				.doOnNext(vo -> vo.setArticleCount(articleService.getCountByCategories(vo.getId())));
 	}
 
 	@GetMapping("{id}/path")

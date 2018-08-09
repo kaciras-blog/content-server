@@ -1,0 +1,59 @@
+
+
+server:
+  port: 2375
+
+  http2:
+    enabled: true
+
+  compression:
+    enabled: true
+    mime-types: text/html,text/css,text/plain,application/javascript,application/json,application/xml
+    min-response-size: 4096
+
+spring:
+  main:
+    banner-mode: "off"
+
+  datasource:
+    url: jdbc:mariadb://localhost:3316/Blog?allowMultiQueries=true
+    username: root
+    password: IY*J<0+T.[Skcoxd
+    driver-class-name: org.mariadb.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath:result-map.xml
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                   Following is the non-spring settings
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+temporary-data: true
+data-directory: data
+
+web:
+  cors-origin: *
+  csrf-verify: true
+
+tomcat:
+  cert: C:/Users/XuFan/Desktop/blog.kaciras.net/cert1.pem
+  pvk: C:/Users/XuFan/Desktop/blog.kaciras.net/privkey1.pem
+  chain: C:/Users/XuFan/Desktop/blog.kaciras.net/chain1.pem
+
+accessLog:
+  enable: false
+
+#TODO: 更精确的限制
+defense:
+  frequency:
+    enable: true
+    threshold: 20
+
+# 发布文章后删除草稿
+draft:
+  delete-after-publish: true
+
+discussion:
+  allowAnonymous: true
+  enable: true
+  filter: NO_FILTE

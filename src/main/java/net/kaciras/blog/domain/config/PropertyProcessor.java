@@ -26,7 +26,7 @@ class PropertyProcessor implements EnvironmentPostProcessor {
 		Path file = Paths.get(getDataDirectory(environment), "config.properties");
 		Properties properties = new Properties();
 
-		try{
+		try {
 			InputStream input = new FileInputStream(file.toFile());
 			try (input) {
 				properties.load(input);

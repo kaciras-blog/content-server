@@ -30,15 +30,11 @@ public interface ArticleDAO {
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insert(Article article);
 
-	@Update("UPDATE Article SET deleted=#{value} WHERE id=#{id}")
-	int updateDeleted(@Param("id") int id, @Param("value") boolean value);
+	@Update("UPDATE Article SET deleted=#{arg1} WHERE id=#{arg0}")
+	int updateDeleted(int id, boolean value);
 
-	@Update("UPDATE Article SET " +
-			"title=#{title}," +
-			"cover=#{cover}," +
-			"summary=#{summary}," +
-			"content=#{content} " +
-			"WHERE id=#{id}")
+	@Update("UPDATE Article SET title=#{title},cover=#{cover},summary=#{summary}," +
+			"content=#{content} WHERE id=#{id}")
 	int update(Article article);
 
 	@Update("UPDATE Article SET view_count=view_count+1 WHERE id=#{id}")

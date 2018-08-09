@@ -1,6 +1,0 @@
-<permissions module="ROLE">
-	<permission>
-		<name>MODIFY</name>
-		<desc>允许添加、修改和删除角色</desc>
-	</permission>
-</permissions>

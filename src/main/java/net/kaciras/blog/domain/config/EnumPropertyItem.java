@@ -1,10 +1,7 @@
 package net.kaciras.blog.domain.config;
 
 import io.reactivex.Observable;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.kaciras.blog.domain.EnumConfigItem;
 
 import java.util.Arrays;
@@ -12,8 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 final class EnumPropertyItem<T extends Enum> extends PropertyItem {
 
 	private List<EnumEntry> options;

@@ -1,27 +1,26 @@
 package net.kaciras.blog.domain.permission;
 
+import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.SecurtyContext;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.RestTemplate;
 
+@RequiredArgsConstructor
 public final class DefaultAuthenticator implements Authenticator {
 
-	private final RoleService roleService;
-	private final PermissionRepository permissionRepository;
-
 	private final String module;
-
-	DefaultAuthenticator(String module, RoleService roleService,
-						 PermissionRepository permissionRepository) {
-		this.module = module;
-		this.roleService = roleService;
-		this.permissionRepository = permissionRepository;
-	}
+	private final RestTemplate restTemplate;
 
 	@Override
-	public boolean check(String permission) {
-		PermissionKey key = new PermissionKey(module, permission);
-		if (!permissionRepository.contains(key)) {
-			throw new Error("使用了未定义的权限");
+	public boolean reject(String permission) {
+		var userId = SecurtyContext.getCurrentUser();
+		if(userId == null) {
+			userId = 0;
 		}
-		return roleService.accept(SecurtyContext.getCurrentUser(), key);
+		var status = restTemplate.execute("http://localhost:26480/accounts/{id}/prems/{module}/{name}",
+				HttpMethod.HEAD, null, ClientHttpResponse::getStatusCode, userId, module, permission);
+		return status != HttpStatus.OK;
 	}
 }

@@ -13,8 +13,12 @@ abstract class ArticleContentBase {
 	private int userId;
 
 	private String title;
+
 	private List<String> keywords;
+
 	private ImageRefrence cover;
+
 	private String summary;
+
 	private String content;
 }

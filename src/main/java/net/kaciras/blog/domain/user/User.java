@@ -26,94 +26,28 @@ import java.util.List;
 @Data
 public class User {
 
-	/** 使用512位的Sha3算法对密码加密 */
-	private static final int HASH_SIZE = 512;
-
-	static LoginRecordDao loginRecordDao;
 	static BanRecordDao banRecordDao;
-
-	static Cache<Integer, LoginRecord> cache;
-
-	User(int id, String name) {
-		this.id = id;
-		this.name = name;
-	}
 
 	private int id;
 	private String name;
-	private byte[] password;
-	private byte[] salt;
 
 	private String email;
 	private ImageRefrence head = ImageRefrence.parse("noface.gif");
 
 	private boolean deleted;
 
-	private LocalDateTime regTime;
-	private InetAddress regAddress;
+	User(int id, String name) {
+		this.id = id;
+		this.name = name;
+	}
 
 	@Nullable
 	LocalDateTime getBannedEndTime() {
 		return banRecordDao.selectLastEndTime(id);
 	}
 
-	void putPassword(@NotNull String passText) {
-		salt = new byte[HASH_SIZE >> 3];
-		Utils.SECURE_RANDOM.nextBytes(salt);
-		password = encryptPassword(passText, salt);
-	}
-
-	boolean checkLogin(@NotNull String passText) {
-		if(deleted) {
-			throw new ResourceDeletedException("该用户已被删除");
-		}
-		LocalDateTime bannedEndTime = getBannedEndTime();
-		if(bannedEndTime != null) {
-			throw new ResourceStateException("用户已被封禁，解封时间:" + Utils.TIME_FORMATTER.format(bannedEndTime));
-		}
-		return Arrays.equals(password, encryptPassword(passText, salt));
-	}
-
-	/**
-	 * 对密码进行HASH加密
-	 *
-	 * @param password 原始密码文本
-	 * @param salt 盐值
-	 * @return 加密后的密码
-	 */
-	private byte[] encryptPassword(String password, byte[] salt) {
-		try {
-			MessageDigest md = MessageDigest.getInstance("SHA3-" + HASH_SIZE);
-			md.update(password.getBytes(StandardCharsets.UTF_8));
-			md.update(salt);
-			return md.digest();
-		} catch (NoSuchAlgorithmException ex) {
-			throw new Error("请使用支持SHA3的Java版本");
-		}
-	}
-
-	List<LoginRecord> getLoginRecords() {
-		return loginRecordDao.select(id);
-	}
-
 	List<BanRecord> getBanRecords() {
 		return banRecordDao.selectBanRecords(id);
-	}
-
-	public void recordLogin(InetAddress address) {
-		LoginRecord record = cache.get(id);
-		if (record == null) {
-			LoginRecord stored = loginRecordDao.selectMax(id);
-			if (stored != null) {
-				record = stored;
-				cache.put(id, stored);
-			}
-		}
-		if (record != null && record.getAddress().equals(address)) {
-			return; //当前设计，仅地址相同就不记录
-		}
-		cache.remove(id);
-		loginRecordDao.insert(id, address);
 	}
 
 	/**

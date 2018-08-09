@@ -7,7 +7,6 @@ import net.kaciras.blog.domain.ListSelectRequest;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@NoArgsConstructor
 public final class DiscussionQuery extends ListSelectRequest {
 
 	boolean metaonly;
@@ -15,6 +14,8 @@ public final class DiscussionQuery extends ListSelectRequest {
 	private Integer articleId;
 	private Integer userId;
 	private Integer parent;
+
+	public DiscussionQuery() {}
 
 	private DiscussionQuery(Integer articleId, Integer userId, Integer parent) {
 		this.articleId = articleId;

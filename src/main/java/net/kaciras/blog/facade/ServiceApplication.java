@@ -3,15 +3,12 @@ package net.kaciras.blog.facade;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.kaciras.blog.domain.permission.PermissionKeyTypeHandler;
 import net.kaciras.blog.infrastructure.bootstarp.CommandListener;
 import net.kaciras.blog.infrastructure.codec.ExtendsCodecModule;
 import net.kaciras.blog.infrastructure.codec.ImageRefrenceTypeHandler;
 import net.kaciras.blog.infrastructure.codec.IpAddressTypeHandler;
 import net.kaciras.blog.infrastructure.message.DirectCalledMessageClient;
-import net.kaciras.blog.infrastructure.message.JacksonJsonCodec;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.message.TcpTransmission;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.type.TypeHandler;
 import org.ehcache.CacheManager;
@@ -23,17 +20,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.EnableLoadTimeWeaving;
+import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.concurrent.Executors;
 
 @ComponentScan({"net.kaciras.blog.domain", "net.kaciras.blog.facade"})
 @MapperScan(value = "net.kaciras.blog.domain", annotationClass = Mapper.class)
@@ -41,15 +41,13 @@ import java.util.concurrent.Executors;
 @EnableAsync(proxyTargetClass = true)
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableWebMvc
+@EnableLoadTimeWeaving
+@EnableSpringConfigured
 @SpringBootApplication
 public class ServiceApplication {
 
-	public static void main(String[] args) throws IOException {
-		ConfigurableApplicationContext context = SpringApplication.run(ServiceApplication.class, args);
-		CommandListener listener = new CommandListener(60002);
-		listener.onShutdown(() -> SpringApplication.exit(context, () -> 0));
-		listener.start();
-	}
+	@SuppressWarnings("unused")
+	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
 
 	/**
 	 * EnableScheduling 注解将自动使用 TaskScheduler 类型的bean。
@@ -71,7 +69,6 @@ public class ServiceApplication {
 		SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
 		bean.setTypeHandlers(new TypeHandler[]{
 				new IpAddressTypeHandler(),
-				new PermissionKeyTypeHandler(),
 				new ImageRefrenceTypeHandler()
 		});
 		bean.setDataSource(dataSource);
@@ -101,5 +98,17 @@ public class ServiceApplication {
 	@Bean
 	CacheManager cacheManager() {
 		return CacheManagerBuilder.newCacheManagerBuilder().build(true);
+	}
+
+	@Bean
+	RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
+
+	public static void main(String[] args) throws IOException {
+		ConfigurableApplicationContext context = SpringApplication.run(ServiceApplication.class, args);
+		CommandListener listener = new CommandListener(60002);
+		listener.onShutdown(() -> SpringApplication.exit(context, () -> 0));
+		listener.start();
 	}
 }

@@ -1,6 +1,5 @@
 package net.kaciras.blog.domain.article;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.DeletedState;
@@ -24,15 +23,13 @@ import java.util.List;
 @Service
 public class ArticleService {
 
-	private final ArticleRepository articleRepository;
-	private final ClassifyDAO classifyDAO;
+	private final ArticleRepository repository;
 	private final ArticleMapper articleMapper;
-
 	private final MessageClient messageClient;
 
-	private Observable<Article> hots;
-
 	private Authenticator authenticator;
+
+	private List<Article> hots;
 
 	@Autowired
 	public void setAuthenticator(AuthenticatorFactory factory) {
@@ -48,7 +45,7 @@ public class ArticleService {
 	 */
 	private Article requireModify(Article article) {
 		authenticator.require("MODIFY");
-		boolean noPerm = !authenticator.check("POWER_MODIFY");
+		boolean noPerm = authenticator.reject("POWER_MODIFY");
 
 		if (article.isDeleted() && noPerm) {
 			throw new ResourceDeletedException();
@@ -59,13 +56,13 @@ public class ArticleService {
 		return article;
 	}
 
-	public Observable<Article> getHots() {
+	public List<Article> getHots() {
 		return hots;
 	}
 
 	public Single<Article> getArticle(int id) {
-		Article article = articleRepository.get(id);
-		if (article.isDeleted() && !authenticator.check("SHOW_DELETED")) {
+		Article article = repository.get(id);
+		if (article.isDeleted() && authenticator.reject("SHOW_DELETED")) {
 			throw new ResourceDeletedException();
 		}
 		return Single.just(article).doAfterSuccess(Article::recordView); //增加浏览量
@@ -78,23 +75,18 @@ public class ArticleService {
 		request.setDesc(true);
 		request.setSort("view_count");
 		request.setCount(6);
-		hots = articleRepository.findAll(request);
+		hots = repository.findAll(request);
 	}
 
-	public Observable<Article> getList(ArticleListRequest request) {
+	public List<Article> getList(ArticleListRequest request) {
 		if (request.getDeletion() != DeletedState.FALSE) {
 			authenticator.require("SHOW_DELETED");
 		}
-		return articleRepository.findAll(request);
+		return repository.findAll(request);
 	}
 
-	public int getCountByCategories(List<Integer> ids) {
-		return classifyDAO.selectCountByCategory2(ids);
-	}
-
-	@Deprecated
-	public int getCountByCategories0(int id) {
-		return classifyDAO.selectCountByCategory(id);
+	public int getCountByCategories(int id) {
+		return repository.getCount(id);
 	}
 
 	@Transactional
@@ -104,7 +96,7 @@ public class ArticleService {
 		Article article = articleMapper.publishToArticle(publish);
 		article.setUserId(SecurtyContext.getCurrentUser());
 
-		articleRepository.add(article);
+		repository.add(article);
 		article.setCategories(publish.getCategories());
 
 		messageClient.send(new ArticleCreatedEvent(article.getId(), publish.getDraftId(), publish.getCategories()));
@@ -112,13 +104,13 @@ public class ArticleService {
 	}
 
 	public void update(int id, ArticlePublishDTO publish) {
-		Article a = articleRepository.get(id);
+		Article a = repository.get(id);
 		requireModify(a);
 
 		Article article = articleMapper.publishToArticle(publish);
 		article.setId(id);
 		article.setUserId(a.getUserId());
-		articleRepository.update(article);
+		repository.update(article);
 
 		if (publish.getCategories() != null) {
 			article.setCategories(publish.getCategories());
@@ -128,20 +120,21 @@ public class ArticleService {
 	}
 
 	public void changeCategory(int id, List<Integer> categories) {
-		requireModify(articleRepository.get(id)).setCategories(categories);
+		requireModify(repository.get(id)).setCategories(categories);
 	}
 
 	public void updateDeleteion(int id, boolean value) {
-		Article article = articleRepository.get(id);
-		if(SecurtyContext.isNotUser(article.getUserId())) {
+		Article article = repository.get(id);
+		if (SecurtyContext.isNotUser(article.getUserId())) {
 			authenticator.require("POWER_MODIFY");
 		} else {
 			authenticator.require("PUBLISH");
 		}
 
-		if(value)
+		if (value) {
 			article.delete();
-		else
+		} else {
 			article.recover();
+		}
 	}
 }

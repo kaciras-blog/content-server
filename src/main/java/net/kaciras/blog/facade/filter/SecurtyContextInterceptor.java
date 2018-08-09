@@ -20,7 +20,7 @@ public class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
 
 	private static final String ATTR_NAME = "CSRF-Token";
 
-	@Value("${web.csrfVerify}")
+	@Value("${web.csrf-verify}")
 	private boolean csrfVerify;
 
 	@Override
@@ -30,7 +30,10 @@ public class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
 		if (HttpMethod.OPTIONS.matches(request.getMethod())) {
 			return true; //OPTIONS请求不需要用户信息
 		}
-		HttpSession session = request.getSession(true);
+		HttpSession session = request.getSession(false);
+		if(session == null) {
+			return true;
+		}
 		Object userId = session.getAttribute("UserId");
 		if (userId != null && checkCSRF(request)) {
 			SecurtyContext.setCurrentUser((Integer) userId);

@@ -1,19 +1,28 @@
 package net.kaciras.blog.domain.article;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import net.kaciras.blog.domain.Utils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
-public final class Article extends ArticleContentBase {
+@EqualsAndHashCode(callSuper = false)
+@Data
+@Configurable
+public class Article extends ArticleContentBase {
 
-	static ArticleDAO articleDAO;
-	static ClassifyDAO classifyDAO;
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ArticleDAO articleDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ClassifyDAO classifyDAO;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -48,7 +57,7 @@ public final class Article extends ArticleContentBase {
 		return classifyDAO.selectById(id);
 	}
 
-	void setCategories(@NotNull List<Integer> categories) {
+	public void setCategories(@NotNull List<Integer> categories) {
 		classifyDAO.updateByArticle(id, categories.isEmpty() ? 0 : categories.get(0));
 	}
 }
