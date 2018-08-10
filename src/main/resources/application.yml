@@ -1,5 +1,3 @@
-
-
 server:
   port: 2375
 
@@ -32,7 +30,7 @@ temporary-data: true
 data-directory: data
 
 web:
-  cors-origin: *
+  cors-origin: "*"
   csrf-verify: true
 
 tomcat:
@@ -43,13 +41,11 @@ tomcat:
 accessLog:
   enable: false
 
-#TODO: 更精确的限制
 defense:
   frequency:
     enable: true
     threshold: 20
 
-# 发布文章后删除草稿
 draft:
   delete-after-publish: true
 
