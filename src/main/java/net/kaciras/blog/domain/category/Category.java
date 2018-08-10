@@ -5,9 +5,8 @@ import lombok.EqualsAndHashCode;
 import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class Category {
 		return dao.selectDistance(0, id);
 	}
 
-	@NotNull
+	@NonNull
 	List<Category> getPath() {
 		return dao.selectPathToRoot(id);
 	}

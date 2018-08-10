@@ -33,7 +33,7 @@ public class UserService {
 		if(user != null) {
 			return user;
 		}
-
+		return user;
 	}
 
 	public int ban(int id, long seconds, String cause) {

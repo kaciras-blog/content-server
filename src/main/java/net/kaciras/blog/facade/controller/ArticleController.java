@@ -1,6 +1,5 @@
 package net.kaciras.blog.facade.controller;
 
-import io.reactivex.Single;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.article.Article;
 import net.kaciras.blog.domain.article.ArticleListRequest;
@@ -74,13 +73,13 @@ public final class ArticleController {
 	}
 
 	@GetMapping("/{id}")
-	public Single<ResponseEntity<ArticleVO>> get(@PathVariable int id, WebRequest request) {
+	public ResponseEntity<ArticleVO> get(@PathVariable int id, WebRequest request) {
 		String etag = etags.get(id);
 
 		if (request.checkNotModified(etag)) {
-			return Single.just(ResponseEntity.status(304).build());
+			return ResponseEntity.status(304).build();
 		}
-		Single<ArticleVO> single = articleService.getArticle(id).map(mapper::toVO);
+		ArticleVO article = mapper.toVO(articleService.getArticle(id));
 
 		/*
 		 * 如果缓存中不存在，则需要创建新的缓存记录。在并发的情况下，使用
@@ -90,13 +89,12 @@ public final class ArticleController {
 		 */
 		if (etag == null) {
 			String newEtag = UUID.randomUUID().toString();
-			return single
-					.doOnSuccess(post -> etags.putIfAbsent(id, newEtag))
-					.map(vo -> ResponseEntity.ok().eTag("W/\"" + newEtag).body(vo));
+			etags.putIfAbsent(id, newEtag);
+			return ResponseEntity.ok().eTag("W/\"" + newEtag).body(article);
 		}
 
 		//缓存已存在，但是客户端没有记录，则发送已缓存的Etag到客户端
-		return single.map(vo -> ResponseEntity.ok().eTag("W/\"" + etag).body(vo));
+		return ResponseEntity.ok().eTag("W/\"" + etag).body(article);
 	}
 
 	@PostMapping

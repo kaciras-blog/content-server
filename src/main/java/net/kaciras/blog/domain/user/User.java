@@ -4,21 +4,11 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
-import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
-import net.kaciras.blog.infrastructure.exception.ResourceStateException;
-import org.ehcache.Cache;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.springframework.lang.Nullable;
 
-import java.net.InetAddress;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 @EqualsAndHashCode(of = "id")
@@ -54,8 +44,8 @@ public class User {
 	 * 封禁该用户
 	 *
 	 * @param operator 操作者id
-	 * @param time 封禁时间
-	 * @param cause 封禁原因描述
+	 * @param time     封禁时间
+	 * @param cause    封禁原因描述
 	 * @return 封禁记录的id
 	 */
 	int ban(int operator, Duration time, String cause) {

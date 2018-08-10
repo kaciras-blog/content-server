@@ -1,7 +1,9 @@
 package net.kaciras.blog.domain.config;
 
-import io.reactivex.Observable;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.kaciras.blog.domain.EnumConfigItem;
 
 import java.util.Arrays;
@@ -19,10 +21,9 @@ final class EnumPropertyItem<T extends Enum> extends PropertyItem {
 		super(type, desc);
 		try {
 			Class<T> aClass = (Class<T>) Class.forName(type);
-			options = Observable.fromArray(aClass.getEnumConstants())
+			options = Arrays.stream(aClass.getEnumConstants())
 					.map(EnumEntry::of)
-					.toList()
-					.blockingGet();
+					.collect(Collectors.toList());
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
 		}
@@ -36,12 +37,16 @@ final class EnumPropertyItem<T extends Enum> extends PropertyItem {
 		private final String key;
 		private final String name;
 
-		private static EnumEntry of(Enum constant) throws NoSuchFieldException {
-			String key = constant.name();
-			EnumConfigItem annotation = constant.getDeclaringClass().getField(key)
-					.getAnnotation(EnumConfigItem.class);
-			String name = annotation == null ? key : annotation.value();
-			return new EnumEntry(key, name);
+		private static EnumEntry of(Enum constant) {
+			try {
+				String key = constant.name();
+				EnumConfigItem annotation = constant.getDeclaringClass().getField(key)
+						.getAnnotation(EnumConfigItem.class);
+				String name = annotation == null ? key : annotation.value();
+				return new EnumEntry(key, name);
+			} catch (NoSuchFieldException e) {
+				throw new Error("field changed.", e);
+			}
 		}
 	}
 }

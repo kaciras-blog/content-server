@@ -2,9 +2,9 @@ package net.kaciras.blog.domain.article;
 
 import lombok.*;
 import net.kaciras.blog.domain.Utils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,7 +57,7 @@ public class Article extends ArticleContentBase {
 		return classifyDAO.selectById(id);
 	}
 
-	public void setCategories(@NotNull List<Integer> categories) {
+	public void setCategories(@NonNull List<Integer> categories) {
 		classifyDAO.updateByArticle(id, categories.isEmpty() ? 0 : categories.get(0));
 	}
 }

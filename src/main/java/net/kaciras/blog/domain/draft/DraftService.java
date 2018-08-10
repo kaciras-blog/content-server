@@ -75,7 +75,7 @@ public class DraftService {
 		if (article == null) {
 			draft = defaultDraft();
 		} else {
-			draft = draftMapper.fromArticle(articleService.getArticle(article).blockingGet());
+			draft = draftMapper.fromArticle(articleService.getArticle(article));
 		}
 
 		draft.setUserId(SecurtyContext.getCurrentUser());

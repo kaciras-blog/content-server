@@ -1,6 +1,5 @@
 package net.kaciras.blog.facade.controller;
 
-import io.reactivex.Observable;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.article.ArticleService;
 import net.kaciras.blog.domain.category.Category;
@@ -10,6 +9,7 @@ import net.kaciras.blog.facade.pojo.PojoMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 import java.net.URI;
 import java.util.List;
@@ -42,8 +42,8 @@ public final class CategoryController {
 	}
 
 	@GetMapping("/{id}/subCategories")
-	public Observable<CategoryVO> getSubCategories(@PathVariable int id) {
-		return Observable.fromIterable(categoryService.getSubCategories(id))
+	public Flux<CategoryVO> getSubCategories(@PathVariable int id) {
+		return Flux.fromIterable(categoryService.getSubCategories(id))
 				.map(mapper::toCategoryVO)
 				.doOnNext(vo -> vo.setArticleCount(articleService.getCountByCategories(vo.getId())));
 	}

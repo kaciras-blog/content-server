@@ -1,6 +1,5 @@
 package net.kaciras.blog.domain.article;
 
-import io.reactivex.Single;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.DeletedState;
 import net.kaciras.blog.domain.SecurtyContext;
@@ -11,7 +10,6 @@ import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import org.jetbrains.annotations.Async;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -60,15 +58,15 @@ public class ArticleService {
 		return hots;
 	}
 
-	public Single<Article> getArticle(int id) {
+	public Article getArticle(int id) {
 		Article article = repository.get(id);
 		if (article.isDeleted() && authenticator.reject("SHOW_DELETED")) {
 			throw new ResourceDeletedException();
 		}
-		return Single.just(article).doAfterSuccess(Article::recordView); //增加浏览量
+		article.recordView(); //增加浏览量
+		return article;
 	}
 
-	@Async.Schedule
 	@Scheduled(fixedDelay = 5 * 60 * 1000)
 	void updateHotsTask() {
 		ArticleListRequest request = new ArticleListRequest();

@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +24,7 @@ class CategoryRepository {
 	private final DaoHelper helper;
 	private final MessageClient messageClient;
 
-	@NotNull
+	@NonNull
 	public Category get(int id) {
 		Utils.checkNotNegative(id, "id");
 		Category category = categoryDAO.selectAttributes(id);
