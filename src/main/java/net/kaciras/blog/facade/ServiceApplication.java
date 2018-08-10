@@ -1,12 +1,10 @@
 package net.kaciras.blog.facade;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.kaciras.blog.infrastructure.bootstarp.CommandListener;
 import net.kaciras.blog.infrastructure.codec.ExtendsCodecModule;
 import net.kaciras.blog.infrastructure.codec.ImageRefrenceTypeHandler;
 import net.kaciras.blog.infrastructure.codec.IpAddressTypeHandler;
+import net.kaciras.blog.infrastructure.codec.KxCodecConfiguration;
+import net.kaciras.blog.infrastructure.io.CommandListener;
 import net.kaciras.blog.infrastructure.message.DirectCalledMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,6 +19,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -30,7 +29,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -40,9 +38,9 @@ import java.io.IOException;
 @EnableScheduling
 @EnableAsync(proxyTargetClass = true)
 @EnableTransactionManagement(proxyTargetClass = true)
-@EnableWebMvc
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
+@Import(KxCodecConfiguration.class)
 @SpringBootApplication
 public class ServiceApplication {
 
@@ -88,10 +86,7 @@ public class ServiceApplication {
 	}
 
 	@Bean
-	MessageClient messageClient(ObjectMapper objectMapper) throws IOException {
-		objectMapper.configure(JsonGenerator.Feature.AUTO_CLOSE_TARGET, false).configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false);
-//		JacksonJsonCodec codec = new JacksonJsonCodec(objectMapper);
-//		TcpTransmission transmission = new TcpTransmission("123.206.206.29", 2380, codec, Executors.newSingleThreadExecutor());
+	MessageClient messageClient() {
 		return new DirectCalledMessageClient();
 	}
 
