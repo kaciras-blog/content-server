@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/trash/discussions")
-public final class DiscussionTrashController {
+final class DiscussionTrashController {
 
 	private final DiscussionService discussionService;
 

@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/articles")
-public final class ArticleController {
+final class ArticleController {
 
 	private final ArticleService articleService;
 	private final UserService userService;

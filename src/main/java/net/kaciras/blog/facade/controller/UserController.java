@@ -2,6 +2,7 @@ package net.kaciras.blog.facade.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.user.BanRecord;
+import net.kaciras.blog.domain.user.User;
 import net.kaciras.blog.domain.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,13 +14,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
-public final class UserController {
+final class UserController {
 
 	private final UserService userService;
 
 	@GetMapping("/{id}")
-	public String get(@PathVariable int id) {
-		return "{}";
+	public User get(@PathVariable int id) {
+		return userService.getUser(id);
 	}
 
 	@PostMapping("/{id}/banRecords")
@@ -32,8 +33,7 @@ public final class UserController {
 	}
 
 	@PostMapping("/{id}/banRecords/{bid}/undoRecord")
-	public ResponseEntity unban(@PathVariable int id,
-								@PathVariable int bid,
+	public ResponseEntity unban(@PathVariable int id, @PathVariable int bid,
 								@RequestParam String cause) throws URISyntaxException {
 		userService.unban(id, bid, cause);
 		String location = String.format("/users/%d/banRecords/%d/undoRecord", id, bid);

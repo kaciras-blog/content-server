@@ -1,4 +1,4 @@
-package net.kaciras.blog.facade.filter;
+package net.kaciras.blog.facade;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.defense.DefenseService;

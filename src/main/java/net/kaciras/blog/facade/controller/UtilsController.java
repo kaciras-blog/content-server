@@ -13,7 +13,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/utils")
-public final class UtilsController {
+final class UtilsController {
 
 	private final CaptchaGenerator captchaGenerator;
 

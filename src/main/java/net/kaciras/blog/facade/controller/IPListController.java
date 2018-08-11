@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/defense/iplist")
-public class IPListController {
+class IPListController {
 
 	private final IPFilterService ipFilterService;
 

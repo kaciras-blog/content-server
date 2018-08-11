@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/recommendations")
-public final class RecommendController {
+final class RecommendController {
 
 	private final ArticleService articleService;
 	private final PojoMapper pojoMapper;

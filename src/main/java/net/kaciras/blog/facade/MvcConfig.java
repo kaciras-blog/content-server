@@ -2,8 +2,6 @@ package net.kaciras.blog.facade;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.facade.filter.DefenseInterceptor;
-import net.kaciras.blog.facade.filter.SecurtyContextInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;

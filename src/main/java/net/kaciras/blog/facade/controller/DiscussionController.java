@@ -22,26 +22,27 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/discussions")
-public final class DiscussionController {
+final class DiscussionController {
 
 	private final DiscussionService discussionService;
 	private final UserService userService;
 	private final PojoMapper mapper;
 
 	@GetMapping
-	public Map getList(@Valid DiscussionQuery query) {
+	public Map<String, ?> getList(@Valid DiscussionQuery query) {
 		int size = discussionService.count(query);
 		if (query.isMetaonly()) {
 			return Map.of("total", size);
 		}
-		List<Discussion> ds = discussionService.getList(query);
-		List<DiscussionVO> r = new ArrayList<>(ds.size());
+		var ds = discussionService.getList(query);
+		var result = new ArrayList<DiscussionVO>(ds.size());
+
 		for (Discussion d : ds) {
 			DiscussionVO v = mapper.toDiscussionVO(d);
 			v.setUser(mapper.toUserVo(userService.getUser(d.getUserId())));
-			r.add(v);
+			result.add(v);
 		}
-		return Map.of("total", size, "list", r);
+		return Map.of("total", size, "list", result);
 	}
 
 	@PostMapping
@@ -50,7 +51,7 @@ public final class DiscussionController {
 			throw new RequestArgumentException("评论中存在敏感词");
 		}
 		int id = discussionService.add(to);
-		return ResponseEntity.created(URI.create("/discussion/" + id)).build();
+		return ResponseEntity.created(URI.create("/discussions/" + id)).build();
 	}
 
 	@DeleteMapping("/{id}")

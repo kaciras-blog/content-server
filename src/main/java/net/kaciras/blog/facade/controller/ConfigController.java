@@ -11,7 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/configs")
-public final class ConfigController {
+final class ConfigController {
 
 	private final ConfigService configService;
 

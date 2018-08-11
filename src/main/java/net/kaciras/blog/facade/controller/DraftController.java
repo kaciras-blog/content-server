@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/drafts")
-public final class DraftController {
+final class DraftController {
 
 	private final PojoMapper mapper;
 	private final DraftService draftService;
@@ -53,25 +53,25 @@ public final class DraftController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity put(@RequestBody DraftSaveDTO dto) {
+	public ResponseEntity<Void> put(@RequestBody DraftSaveDTO dto) {
 		draftService.save(dto);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("/{id}/histories")
-	public ResponseEntity postHistories(@RequestBody DraftSaveDTO dto) throws URISyntaxException {
+	public ResponseEntity<Void> postHistories(@RequestBody DraftSaveDTO dto) throws URISyntaxException {
 		int saveCount = draftService.saveNewHistory(dto);
 		return ResponseEntity.created(new URI("/drafts/" + dto.getId() + "/histories/" + saveCount)).build();
 	}
 
 	@DeleteMapping
-	public ResponseEntity deleteAll(@RequestParam int userId) {
+	public ResponseEntity<Void> deleteAll(@RequestParam int userId) {
 		draftService.deleteByUser(userId);
 		return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity delete(@PathVariable int id) {
+	public ResponseEntity<Void> delete(@PathVariable int id) {
 		draftService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
