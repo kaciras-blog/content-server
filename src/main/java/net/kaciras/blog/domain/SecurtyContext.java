@@ -9,21 +9,11 @@ public final class SecurtyContext {
 
 	private static final ThreadLocal<Integer> threadLocalUser = new ThreadLocal<>();
 
-	private static boolean debugPermission;
-
-	@Value("${permission.debugMode}")
-	public void setDebugPermission(boolean debugPermission) {
-		SecurtyContext.debugPermission = debugPermission;
-	}
-
 	public static void setCurrentUser(Integer userId) {
 		threadLocalUser.set(userId);
 	}
 
 	public static Integer getCurrentUser() {
-		if (debugPermission) {
-			return 1;
-		}
 		return threadLocalUser.get();
 	}
 

@@ -2,7 +2,6 @@ package net.kaciras.blog.facade;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.facade.filter.AccessLogInterceptor;
 import net.kaciras.blog.facade.filter.DefenseInterceptor;
 import net.kaciras.blog.facade.filter.SecurtyContextInterceptor;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +21,6 @@ public class MvcConfig implements WebMvcConfigurer {
 
 	private final ObjectMapper objectMapper;
 	private final SecurtyContextInterceptor securtyContextInterceptor;
-	private final AccessLogInterceptor accessLogInterceptor;
 	private final DefenseInterceptor defenseInterceptor;
 
 	@Value("${web.cors-origin}")
@@ -43,7 +41,6 @@ public class MvcConfig implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(defenseInterceptor);
 		registry.addInterceptor(securtyContextInterceptor);
-		registry.addInterceptor(accessLogInterceptor);
 	}
 
 	@Override
