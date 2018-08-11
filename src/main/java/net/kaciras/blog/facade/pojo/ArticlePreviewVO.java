@@ -1,6 +1,5 @@
 package net.kaciras.blog.facade.pojo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
@@ -21,10 +20,7 @@ public final class ArticlePreviewVO {
 	private ImageRefrence cover;
 	private String summary;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime create;
-
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime update;
 
 	private int viewCount;

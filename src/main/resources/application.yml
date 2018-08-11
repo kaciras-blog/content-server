@@ -19,9 +19,11 @@ spring:
     password: IY*J<0+T.[Skcoxd
     driver-class-name: org.mariadb.jdbc.Driver
 
+  jackson:
+    date-format: yyyy-MM-dd HH:mm
+
 mybatis:
   mapper-locations: classpath:result-map.xml
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #                   Following is the non-spring settings
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
