@@ -29,7 +29,7 @@ public class ExceptionReslover {
 	);
 
 	@ExceptionHandler
-	public ResponseEntity handle(Exception ex) {
+	public ResponseEntity handle(Exception ex) throws Exception {
 		Integer code = errorCodeMap.get(ex.getClass());
 		if (code != null) {
 			return ResponseEntity.status(code).body(Map.of("message", ex.getMessage()));
@@ -38,16 +38,14 @@ public class ExceptionReslover {
 		/* 控制器方法的参数@Valid失败 */
 		if (ex instanceof MethodArgumentNotValidException) {
 //			List<ObjectError> errors = ((MethodArgumentNotValidException) ex).getBindingResult().getAllErrors();
-			return ResponseEntity.status(400).body(Map.of("message", "请求中存在不合法的参数"));
+			return ResponseEntity.status(400).body(Map.of("message", "请求参数或内容不合法"));
 		}
 
 		/* 控制器参数中对象的字段@Valid失败 */
 		if (ex instanceof BindException) {
-			return ResponseEntity.status(400).body(Map.of("message", "请求中存在不合法的参数"));
+			return ResponseEntity.status(400).body(Map.of("message", "请求参数或内容不合法"));
 		}
-
-		logger.error("未捕获的错误出现啦", ex);
-		return ResponseEntity.status(500).body(Map.of("message", "服务器出错啦"));
+		throw ex;
 	}
 
 }
