@@ -18,12 +18,6 @@ class ContextConfig {
 
 	private final MessageClient messageClient;
 
-	@PostConstruct
-	void setUp() {
-		Discussion.messageClient = messageClient;
-		Discussion.dao = dao;
-		Discussion.voteDAO = voteDAO;
-	}
 
 	@Bean("DiscussionAuthenticator")
 	Authenticator authenticator(AuthenticatorFactory factory) {

@@ -1,10 +1,9 @@
 package net.kaciras.blog.domain.user;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.lang.Nullable;
 
 import java.time.Duration;
@@ -12,11 +11,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @EqualsAndHashCode(of = "id")
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Data
+@Configurable
 public class User {
 
-	static BanRecordDao banRecordDao;
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private BanRecordDao banRecordDao;
 
 	private int id;
 	private String name;

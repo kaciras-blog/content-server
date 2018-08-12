@@ -1,22 +1,37 @@
 package net.kaciras.blog.domain.discuss;
 
+import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-public class Discussion implements Serializable {
+@Data
+@Configurable
+public class Discussion {
 
-	static DiscussionDAO dao;
-	static VoteDAO voteDAO;
-	static MessageClient messageClient;
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private DiscussionDAO dao;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private VoteDAO voteDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private MessageClient messageClient;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

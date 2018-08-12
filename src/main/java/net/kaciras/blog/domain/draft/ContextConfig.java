@@ -24,7 +24,6 @@ class ContextConfig {
 		messageClient.subscribe(ArticleCreatedEvent.class, event -> {
 			if (deleteAfterSubmit) draftRepository.delete(event.getDraftId());
 		});
-		Draft.draftDAO = draftDAO;
 	}
 
 }

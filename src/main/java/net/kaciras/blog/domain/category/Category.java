@@ -1,10 +1,11 @@
 package net.kaciras.blog.domain.category;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.message.MessageClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -12,11 +13,23 @@ import java.util.List;
 
 @EqualsAndHashCode(of = "id")
 @Data
+@Configurable
 public class Category {
 
-	static CategoryDAO dao;
-	static DaoHelper helper;
-	static MessageClient messageClient;
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private CategoryDAO dao;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private DaoHelper helper;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private MessageClient messageClient;
 
 	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 

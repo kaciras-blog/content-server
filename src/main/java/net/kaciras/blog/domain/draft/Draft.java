@@ -1,15 +1,16 @@
 package net.kaciras.blog.domain.draft;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
+import lombok.*;
 import net.kaciras.blog.domain.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @EqualsAndHashCode(of = "id", callSuper = false)
 @Data
+@Configurable
 final class Draft extends DraftContentBase {
 
 	/**
@@ -18,7 +19,10 @@ final class Draft extends DraftContentBase {
 	@Setter
 	private static int historyLimit = 5;
 
-	static DraftDAO draftDAO;
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private DraftDAO draftDAO;
 
 // - - - - - - - - - - - - - - - - - - - - - -
 

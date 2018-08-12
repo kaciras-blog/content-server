@@ -1,5 +1,6 @@
 package net.kaciras.blog.domain.discuss;
 
+import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -7,14 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Repository
 class DiscussRepository {
 
 	private final DiscussionDAO discussionDAO;
-
-	public DiscussRepository(DiscussionDAO discussionDAO) {
-		this.discussionDAO = discussionDAO;
-	}
 
 	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void add(Discussion discuz) {

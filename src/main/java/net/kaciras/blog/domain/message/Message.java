@@ -7,7 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-//系统消息 OR 私信？
+//系统消息 OR 私信
 @EqualsAndHashCode(of = "id")
 @Setter(AccessLevel.PACKAGE)
 @Data
