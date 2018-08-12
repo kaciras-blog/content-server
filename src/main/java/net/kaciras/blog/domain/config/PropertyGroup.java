@@ -8,7 +8,6 @@ import java.util.Map;
 @Data
 final class PropertyGroup {
 
-//	private final String name;
 	private final String desc;
 
 	private Map<String, PropertyItem> items = new HashMap<>();

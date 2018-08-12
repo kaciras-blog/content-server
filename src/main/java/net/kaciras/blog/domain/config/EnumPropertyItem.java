@@ -32,7 +32,7 @@ final class EnumPropertyItem<T extends Enum> extends PropertyItem {
 	@EqualsAndHashCode(of = "key")
 	@Getter
 	@RequiredArgsConstructor
-	static final class EnumEntry {
+	private static final class EnumEntry {
 
 		private final String key;
 		private final String name;

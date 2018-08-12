@@ -9,13 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @RequiredArgsConstructor
 @Configuration("UserContextConfig")
-class ContextConfig implements InitializingBean {
-
-	private final BanRecordDao banRecordDao;
-
-	public void afterPropertiesSet() {
-		User.banRecordDao = banRecordDao;
-	}
+class ContextConfig {
 
 	@Bean("UserAuthenticator")
 	Authenticator authenticator(AuthenticatorFactory factory) {

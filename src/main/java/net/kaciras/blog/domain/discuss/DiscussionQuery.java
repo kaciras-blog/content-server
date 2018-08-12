@@ -2,7 +2,6 @@ package net.kaciras.blog.domain.discuss;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import net.kaciras.blog.domain.ListSelectRequest;
 
 @EqualsAndHashCode(callSuper = true)

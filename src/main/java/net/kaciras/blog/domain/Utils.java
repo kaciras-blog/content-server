@@ -14,10 +14,6 @@ public final class Utils {
 
 	public static final Random RANDOM = new Random();
 
-	public static final SecureRandom SECURE_RANDOM = new SecureRandom();
-
-	public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
 	private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
 	/**

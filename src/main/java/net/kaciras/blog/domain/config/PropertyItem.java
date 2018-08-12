@@ -7,6 +7,5 @@ import lombok.EqualsAndHashCode;
 class PropertyItem {
 
 	private final String type;
-//	private final String key;
 	private final String desc;
 }
