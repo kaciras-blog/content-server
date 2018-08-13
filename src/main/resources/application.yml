@@ -43,11 +43,6 @@ tomcat:
 accessLog:
   enable: false
 
-defense:
-  frequency:
-    enable: true
-    threshold: 20
-
 draft:
   delete-after-publish: true
 

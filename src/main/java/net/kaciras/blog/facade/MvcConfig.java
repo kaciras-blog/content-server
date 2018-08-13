@@ -19,7 +19,6 @@ public class MvcConfig implements WebMvcConfigurer {
 
 	private final ObjectMapper objectMapper;
 	private final SecurtyContextInterceptor securtyContextInterceptor;
-	private final DefenseInterceptor defenseInterceptor;
 
 	@Value("${web.cors-origin}")
 	private String corsOrigin;
@@ -37,7 +36,6 @@ public class MvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(defenseInterceptor);
 		registry.addInterceptor(securtyContextInterceptor);
 	}
 
