@@ -1,4 +1,4 @@
-package net.kaciras.blog.facade;
+package net.kaciras.blog;
 
 import lombok.Setter;
 import org.apache.catalina.connector.Connector;
@@ -43,6 +43,6 @@ class TomcatConfigurer {
 		connector.setSecure(true);
 		connector.setAttribute("sslImplementationName", "org.apache.tomcat.util.net.jsse.JSSEImplementation");
 		connector.setAttribute("SSLEnabled", "true");
-		connector.addUpgradeProtocol(new Http2Protocol());
+//		connector.addUpgradeProtocol(new Http2Protocol());
 	}
 }

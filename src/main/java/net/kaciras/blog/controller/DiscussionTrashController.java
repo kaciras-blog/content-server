@@ -1,4 +1,4 @@
-package net.kaciras.blog.facade.controller;
+package net.kaciras.blog.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.discuss.DiscussionService;

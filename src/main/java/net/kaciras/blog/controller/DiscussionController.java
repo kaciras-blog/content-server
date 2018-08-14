@@ -1,12 +1,12 @@
-package net.kaciras.blog.facade.controller;
+package net.kaciras.blog.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.pojo.DiscussionVO;
+import net.kaciras.blog.pojo.PojoMapper;
 import net.kaciras.blog.domain.discuss.Discussion;
 import net.kaciras.blog.domain.discuss.DiscussionQuery;
 import net.kaciras.blog.domain.discuss.DiscussionService;
 import net.kaciras.blog.domain.user.UserService;
-import net.kaciras.blog.facade.pojo.DiscussionVO;
-import net.kaciras.blog.facade.pojo.PojoMapper;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import net.kaciras.blog.infrastructure.text.TextUtil;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor

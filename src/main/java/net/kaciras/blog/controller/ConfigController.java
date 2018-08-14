@@ -1,9 +1,8 @@
-package net.kaciras.blog.facade.controller;
+package net.kaciras.blog.controller;
 
 import net.kaciras.blog.domain.config.ConfigService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.HandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;

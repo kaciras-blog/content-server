@@ -1,4 +1,4 @@
-package net.kaciras.blog.facade;
+package net.kaciras.blog;
 
 import net.kaciras.blog.infrastructure.codec.ExtendsCodecModule;
 import net.kaciras.blog.infrastructure.codec.ImageRefrenceTypeHandler;
@@ -15,12 +15,8 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.EnableLoadTimeWeaving;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -34,11 +30,10 @@ import org.springframework.web.client.RestTemplate;
 import javax.sql.DataSource;
 import java.io.IOException;
 
-@ComponentScan({"net.kaciras.blog.domain", "net.kaciras.blog.facade"})
 @MapperScan(value = "net.kaciras.blog.domain", annotationClass = Mapper.class)
 @EnableScheduling
 @EnableAsync(proxyTargetClass = true)
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
 @Import(KxCodecConfiguration.class)

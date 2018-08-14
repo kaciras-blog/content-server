@@ -1,4 +1,4 @@
-package net.kaciras.blog.facade;
+package net.kaciras.blog;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

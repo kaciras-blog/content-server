@@ -1,6 +1,9 @@
-package net.kaciras.blog.facade.controller;
+package net.kaciras.blog.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.pojo.ArticlePreviewVO;
+import net.kaciras.blog.pojo.ArticleVO;
+import net.kaciras.blog.pojo.PojoMapper;
 import net.kaciras.blog.domain.article.Article;
 import net.kaciras.blog.domain.article.ArticleListRequest;
 import net.kaciras.blog.domain.article.ArticlePublishDTO;
@@ -9,9 +12,6 @@ import net.kaciras.blog.domain.category.CategoryService;
 import net.kaciras.blog.domain.discuss.DiscussionQuery;
 import net.kaciras.blog.domain.discuss.DiscussionService;
 import net.kaciras.blog.domain.user.UserService;
-import net.kaciras.blog.facade.pojo.ArticlePreviewVO;
-import net.kaciras.blog.facade.pojo.ArticleVO;
-import net.kaciras.blog.facade.pojo.PojoMapper;
 import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.ehcache.Cache;

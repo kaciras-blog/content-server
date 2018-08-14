@@ -1,4 +1,4 @@
-package net.kaciras.blog.facade.pojo;
+package net.kaciras.blog.pojo;
 
 import net.kaciras.blog.domain.article.Article;
 import net.kaciras.blog.domain.category.Category;
@@ -6,6 +6,7 @@ import net.kaciras.blog.domain.discuss.Discussion;
 import net.kaciras.blog.domain.draft.DraftDTO;
 import net.kaciras.blog.domain.draft.DraftHistory;
 import net.kaciras.blog.domain.user.User;
+import net.kaciras.blog.pojo.*;
 import org.mapstruct.*;
 
 import java.util.List;

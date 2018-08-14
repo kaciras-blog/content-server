@@ -1,7 +1,7 @@
-package net.kaciras.blog.facade.controller;
+package net.kaciras.blog.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.facade.CaptchaGenerator;
+import net.kaciras.blog.CaptchaGenerator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

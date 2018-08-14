@@ -1,4 +1,4 @@
-package net.kaciras.blog.facade.pojo;
+package net.kaciras.blog.pojo;
 
 import lombok.Getter;
 import lombok.Setter;

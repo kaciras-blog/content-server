@@ -1,4 +1,4 @@
-package net.kaciras.blog.facade;
+package net.kaciras.blog;
 
 import lombok.extern.slf4j.Slf4j;
 import net.kaciras.blog.infrastructure.exception.*;

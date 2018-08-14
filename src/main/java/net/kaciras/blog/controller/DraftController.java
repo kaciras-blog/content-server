@@ -1,13 +1,13 @@
-package net.kaciras.blog.facade.controller;
+package net.kaciras.blog.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.pojo.DraftHistoryVO;
+import net.kaciras.blog.pojo.DraftPreviewVO;
+import net.kaciras.blog.pojo.DraftVO;
+import net.kaciras.blog.pojo.PojoMapper;
 import net.kaciras.blog.domain.SecurtyContext;
 import net.kaciras.blog.domain.draft.DraftSaveDTO;
 import net.kaciras.blog.domain.draft.DraftService;
-import net.kaciras.blog.facade.pojo.DraftHistoryVO;
-import net.kaciras.blog.facade.pojo.DraftPreviewVO;
-import net.kaciras.blog.facade.pojo.DraftVO;
-import net.kaciras.blog.facade.pojo.PojoMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

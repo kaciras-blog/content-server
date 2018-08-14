@@ -1,4 +1,4 @@
-package net.kaciras.blog.facade;
+package net.kaciras.blog;
 
 import net.kaciras.blog.domain.SecurtyContext;
 import org.springframework.beans.factory.annotation.Value;

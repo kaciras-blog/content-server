@@ -1,11 +1,11 @@
-package net.kaciras.blog.facade.controller;
+package net.kaciras.blog.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.pojo.CategoryVO;
+import net.kaciras.blog.pojo.PojoMapper;
 import net.kaciras.blog.domain.article.ArticleService;
 import net.kaciras.blog.domain.category.Category;
 import net.kaciras.blog.domain.category.CategoryService;
-import net.kaciras.blog.facade.pojo.CategoryVO;
-import net.kaciras.blog.facade.pojo.PojoMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
