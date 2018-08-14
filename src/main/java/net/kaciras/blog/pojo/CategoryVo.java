@@ -4,7 +4,7 @@ import lombok.Data;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
 @Data
-public class CategoryVO {
+public class CategoryVo {
 
 	private int id;
 	private String name;

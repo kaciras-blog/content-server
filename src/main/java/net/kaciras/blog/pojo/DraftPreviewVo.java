@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DraftPreviewVO extends DraftHistoryVO {
+public class DraftPreviewVo extends DraftHistoryVo {
 
 	private int id;
 	private Integer articleId;

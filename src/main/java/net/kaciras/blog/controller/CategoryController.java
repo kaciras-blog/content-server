@@ -1,12 +1,11 @@
 package net.kaciras.blog.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.pojo.CategoryVO;
+import net.kaciras.blog.pojo.CategoryVo;
 import net.kaciras.blog.pojo.PojoMapper;
 import net.kaciras.blog.domain.article.ArticleService;
 import net.kaciras.blog.domain.category.Category;
 import net.kaciras.blog.domain.category.CategoryService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -35,32 +34,32 @@ final class CategoryController {
 //	}
 
 	@GetMapping("/{id}")
-	public CategoryVO get(@PathVariable int id) {
-		CategoryVO vo = mapper.toCategoryVO(categoryService.get(id));
+	public CategoryVo get(@PathVariable int id) {
+		var vo = mapper.categoryView(categoryService.get(id));
 		vo.setArticleCount(articleService.getCountByCategories(id));
 		return vo;
 	}
 
 	@GetMapping("/{id}/subCategories")
-	public Flux<CategoryVO> getSubCategories(@PathVariable int id) {
+	public Flux<CategoryVo> getChildren(@PathVariable int id) {
 		return Flux.fromIterable(categoryService.getSubCategories(id))
-				.map(mapper::toCategoryVO)
+				.map(mapper::categoryView)
 				.doOnNext(vo -> vo.setArticleCount(articleService.getCountByCategories(vo.getId())));
 	}
 
 	@GetMapping("{id}/path")
-	public List<CategoryVO> getPath(@PathVariable int id) {
-		return mapper.toCategoryVOList(categoryService.getPath(id));
+	public List<CategoryVo> getPath(@PathVariable int id) {
+		return mapper.categoryView(categoryService.getPath(id));
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> post(@RequestBody CategoryVO category) {
+	public ResponseEntity<Void> create(@RequestBody CategoryVo category) {
 		int id = categoryService.add(mapper.toCategory(category), category.getParent());
 		return ResponseEntity.created(URI.create("/categories/" + id)).build();
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> put(@PathVariable int id, @RequestBody Category category) {
+	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody Category category) {
 		category.setId(id);
 		categoryService.update(category);
 		return ResponseEntity.noContent().build();
@@ -69,6 +68,6 @@ final class CategoryController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable int id) {
 		categoryService.delete(id);
-		return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
+		return ResponseEntity.noContent().build();
 	}
 }

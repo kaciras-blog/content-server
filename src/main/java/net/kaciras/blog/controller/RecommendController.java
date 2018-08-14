@@ -1,7 +1,7 @@
 package net.kaciras.blog.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.pojo.ArticlePreviewVO;
+import net.kaciras.blog.pojo.ArticlePreviewVo;
 import net.kaciras.blog.pojo.PojoMapper;
 import net.kaciras.blog.domain.article.ArticleService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +20,7 @@ final class RecommendController {
 	private final PojoMapper pojoMapper;
 
 	@GetMapping("/articles")
-	public List<ArticlePreviewVO> hotArticles() {
-		return articleService.getHots().stream().map(pojoMapper::toPreviewVo).collect(Collectors.toList());
+	public List<ArticlePreviewVo> hotArticles() {
+		return articleService.getHots().stream().map(pojoMapper::articlePreview).collect(Collectors.toList());
 	}
 }

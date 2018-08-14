@@ -1,4 +1,4 @@
-package net.kaciras.blog.domain.permission;
+package net.kaciras.blog.domain;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.ConfigBind;
 import net.kaciras.blog.domain.DeletedState;
 import net.kaciras.blog.domain.SecurtyContext;
-import net.kaciras.blog.domain.permission.Authenticator;
+import net.kaciras.blog.domain.Authenticator;
 import net.kaciras.blog.infrastructure.exception.DataTooBigException;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.text.TextUtil;

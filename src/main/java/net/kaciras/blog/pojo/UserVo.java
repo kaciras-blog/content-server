@@ -6,7 +6,7 @@ import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import java.io.Serializable;
 
 @Data
-public class UserVO implements Serializable {
+public class UserVo implements Serializable {
 
 	private int id;
 

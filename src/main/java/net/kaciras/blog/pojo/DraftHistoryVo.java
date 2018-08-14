@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class DraftHistoryVO {
+public class DraftHistoryVo {
 
 	private String title;
 	private ImageRefrence cover;

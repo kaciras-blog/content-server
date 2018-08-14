@@ -5,14 +5,14 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public final class DiscussionVO {
+public final class DiscussionVo {
 
 	private int id;
 	private int articleId;
 	private int floor;
 	private int parent;
 
-	private UserVO user;
+	private UserVo user;
 	private String content;
 
 	private int voteCount;

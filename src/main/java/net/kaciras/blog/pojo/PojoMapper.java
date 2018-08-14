@@ -6,7 +6,6 @@ import net.kaciras.blog.domain.discuss.Discussion;
 import net.kaciras.blog.domain.draft.DraftDTO;
 import net.kaciras.blog.domain.draft.DraftHistory;
 import net.kaciras.blog.domain.user.User;
-import net.kaciras.blog.pojo.*;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -15,33 +14,33 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface PojoMapper {
 
-	ArticlePreviewVO toPreviewVo(Article article);
+	ArticlePreviewVo articlePreview(Article article);
 
-	ArticleVO toVO(Article article);
+	ArticleVo articleView(Article article);
 
-	DraftVO toDraftVO(DraftDTO draft);
+	DraftVo draftView(DraftDTO draft);
 
-	@Named("B")
-	DraftHistoryVO toDraftHistoryVO(DraftHistory draft);
+	@Named("DraftHistory")
+	DraftHistoryVo toDraftHistoryVO(DraftHistory draft);
 
-	@IterableMapping(qualifiedByName = "B")
-	List<DraftHistoryVO> toDraftHistoryVOList(List<DraftHistory> histories);
+	@IterableMapping(qualifiedByName = "DraftHistory")
+	List<DraftHistoryVo> toDraftHistoryVOList(List<DraftHistory> histories);
 
-	@Named("C")
-	DraftPreviewVO toDraftPreviewVO(DraftDTO draft);
+	@Named("Draft")
+	DraftPreviewVo toDraftPreviewVO(DraftDTO draft);
 
-	@IterableMapping(qualifiedByName = "C")
-	List<DraftPreviewVO> toDraftPreviewVOList(List<DraftDTO> histories);
+	@IterableMapping(qualifiedByName = "Draft")
+	List<DraftPreviewVo> toDraftPreviewVOList(List<DraftDTO> histories);
 
-	DiscussionVO toDiscussionVO(Discussion dto);
+	DiscussionVo discussionView(Discussion dto);
 
 	@Named("Category")
-	CategoryVO toCategoryVO(Category category);
+	CategoryVo categoryView(Category category);
 
 	@IterableMapping(qualifiedByName = "Category")
-	List<CategoryVO> toCategoryVOList(List<Category> histories);
+	List<CategoryVo> categoryView(List<Category> histories);
 
-	Category toCategory(CategoryVO vo);
+	Category toCategory(CategoryVo vo);
 
-	UserVO toUserVo(User user);
+	UserVo toUserVo(User user);
 }

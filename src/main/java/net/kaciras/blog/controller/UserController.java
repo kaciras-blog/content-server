@@ -23,12 +23,12 @@ final class UserController {
 		return userService.getUser(id);
 	}
 
-	@PostMapping("/{id}/banRecords")
+	@PostMapping("/{id}/ban-records")
 	public ResponseEntity setAvailability(@PathVariable int id,
 										  @RequestParam(required = false, defaultValue = "0") long time,
 										  @RequestParam String cause) throws URISyntaxException {
-		int bid = userService.ban(id, time, cause);
-		String location = String.format("/users/%d/banRecords/%d", id, bid);
+		var bid = userService.ban(id, time, cause);
+		var location = String.format("/users/%d/banRecords/%d", id, bid);
 		return ResponseEntity.created(new URI(location)).build();
 	}
 
@@ -36,7 +36,7 @@ final class UserController {
 	public ResponseEntity unban(@PathVariable int id, @PathVariable int bid,
 								@RequestParam String cause) throws URISyntaxException {
 		userService.unban(id, bid, cause);
-		String location = String.format("/users/%d/banRecords/%d/undoRecord", id, bid);
+		var location = String.format("/users/%d/banRecords/%d/undoRecord", id, bid);
 		return ResponseEntity.created(new URI(location)).build();
 	}
 

@@ -1,8 +1,8 @@
 package net.kaciras.blog.domain.category;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.domain.permission.Authenticator;
-import net.kaciras.blog.domain.permission.AuthenticatorFactory;
+import net.kaciras.blog.domain.Authenticator;
+import net.kaciras.blog.domain.AuthenticatorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

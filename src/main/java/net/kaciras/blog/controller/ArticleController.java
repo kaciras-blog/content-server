@@ -1,8 +1,8 @@
 package net.kaciras.blog.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.pojo.ArticlePreviewVO;
-import net.kaciras.blog.pojo.ArticleVO;
+import net.kaciras.blog.pojo.ArticlePreviewVo;
+import net.kaciras.blog.pojo.ArticleVo;
 import net.kaciras.blog.pojo.PojoMapper;
 import net.kaciras.blog.domain.article.Article;
 import net.kaciras.blog.domain.article.ArticleListRequest;
@@ -54,7 +54,7 @@ final class ArticleController {
 
 
 	@GetMapping
-	public List<ArticlePreviewVO> getList(ArticleListRequest request) {
+	public List<ArticlePreviewVo> getList(ArticleListRequest request) {
 		return articleService.getList(request).stream().map(this::aggregate).collect(Collectors.toList());
 	}
 
@@ -64,22 +64,22 @@ final class ArticleController {
 	 * @param article 文章对象
 	 * @return 聚合后的对象
 	 */
-	private ArticlePreviewVO aggregate(Article article) {
-		var result = mapper.toPreviewVo(article);
+	private ArticlePreviewVo aggregate(Article article) {
+		var result = mapper.articlePreview(article);
 		result.setAuthor(mapper.toUserVo(userService.getUser(article.getUserId())));
 		result.setDiscussionCount(discussionService.count(DiscussionQuery.byArticle(article.getId())));
-		result.setCategoryPath(mapper.toCategoryVOList(categoryService.getPath(article.getCategories().get(0))));
+		result.setCategoryPath(mapper.categoryView(categoryService.getPath(article.getCategories().get(0))));
 		return result;
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<ArticleVO> get(@PathVariable int id, WebRequest request) {
+	public ResponseEntity<ArticleVo> get(@PathVariable int id, WebRequest request) {
 		String etag = etags.get(id);
 
 		if (request.checkNotModified(etag)) {
 			return ResponseEntity.status(304).build();
 		}
-		ArticleVO article = mapper.toVO(articleService.getArticle(id));
+		var article = mapper.articleView(articleService.getArticle(id));
 
 		/*
 		 * 如果缓存中不存在，则需要创建新的缓存记录。在并发的情况下，使用
@@ -88,7 +88,7 @@ final class ArticleController {
 		 * 下一次访问时被重新设置。
 		 */
 		if (etag == null) {
-			String newEtag = UUID.randomUUID().toString();
+			var newEtag = UUID.randomUUID().toString();
 			etags.putIfAbsent(id, newEtag);
 			return ResponseEntity.ok().eTag("W/\"" + newEtag).body(article);
 		}

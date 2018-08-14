@@ -1,7 +1,7 @@
 package net.kaciras.blog.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.pojo.DiscussionVO;
+import net.kaciras.blog.pojo.DiscussionVo;
 import net.kaciras.blog.pojo.PojoMapper;
 import net.kaciras.blog.domain.discuss.Discussion;
 import net.kaciras.blog.domain.discuss.DiscussionQuery;
@@ -34,10 +34,10 @@ final class DiscussionController {
 			return Map.of("total", size);
 		}
 		var ds = discussionService.getList(query);
-		var result = new ArrayList<DiscussionVO>(ds.size());
+		var result = new ArrayList<DiscussionVo>(ds.size());
 
 		for (Discussion d : ds) {
-			DiscussionVO v = mapper.toDiscussionVO(d);
+			DiscussionVo v = mapper.discussionView(d);
 			v.setUser(mapper.toUserVo(userService.getUser(d.getUserId())));
 			result.add(v);
 		}

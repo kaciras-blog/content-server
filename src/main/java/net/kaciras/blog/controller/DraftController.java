@@ -1,9 +1,9 @@
 package net.kaciras.blog.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.pojo.DraftHistoryVO;
-import net.kaciras.blog.pojo.DraftPreviewVO;
-import net.kaciras.blog.pojo.DraftVO;
+import net.kaciras.blog.pojo.DraftHistoryVo;
+import net.kaciras.blog.pojo.DraftPreviewVo;
+import net.kaciras.blog.pojo.DraftVo;
 import net.kaciras.blog.pojo.PojoMapper;
 import net.kaciras.blog.domain.SecurtyContext;
 import net.kaciras.blog.domain.draft.DraftSaveDTO;
@@ -32,17 +32,17 @@ final class DraftController {
 	private final DraftService draftService;
 
 	@GetMapping
-	public List<DraftPreviewVO> getList() {
+	public List<DraftPreviewVo> getList() {
 		return mapper.toDraftPreviewVOList(draftService.getList(SecurtyContext.getRequiredCurrentUser()));
 	}
 
 	@GetMapping("/{id}")
-	public DraftVO get(@PathVariable("id") int id) {
-		return mapper.toDraftVO(draftService.get(id));
+	public DraftVo get(@PathVariable("id") int id) {
+		return mapper.draftView(draftService.get(id));
 	}
 
 	@GetMapping("/{id}/histories")
-	public List<DraftHistoryVO> getHistories(@PathVariable int id) {
+	public List<DraftHistoryVo> getHistories(@PathVariable int id) {
 		return mapper.toDraftHistoryVOList(draftService.getHistories(id));
 	}
 

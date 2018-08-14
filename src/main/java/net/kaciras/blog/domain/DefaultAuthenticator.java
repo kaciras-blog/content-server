@@ -1,7 +1,6 @@
-package net.kaciras.blog.domain.permission;
+package net.kaciras.blog.domain;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.domain.SecurtyContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;

@@ -1,10 +1,9 @@
 package net.kaciras.blog.domain.config;
 
-import net.kaciras.blog.domain.permission.Authenticator;
-import net.kaciras.blog.domain.permission.AuthenticatorFactory;
+import net.kaciras.blog.domain.Authenticator;
+import net.kaciras.blog.domain.AuthenticatorFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 @Configuration("ConfigContextConfig")
 public class ContextConfig {
