@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
+import net.kaciras.blog.infrastructure.io.DBUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +49,7 @@ class ArticleRepository {
 	public void update(Article article) {
 		checkNotNull(article, "article");
 		try {
-			Utils.checkEffective(articleDAO.update(article));
+			DBUtils.checkEffective(articleDAO.update(article));
 			keywordDAO.clear(article.getId());
 			article.getKeywords().stream()
 					.map(String::trim)

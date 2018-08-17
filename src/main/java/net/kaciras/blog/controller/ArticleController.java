@@ -20,6 +20,7 @@ import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -74,7 +75,7 @@ final class ArticleController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<ArticleVo> get(@PathVariable int id, WebRequest request) {
-		String etag = etags.get(id);
+		var etag = etags.get(id);
 
 		if (request.checkNotModified(etag)) {
 			return ResponseEntity.status(304).build();
@@ -88,12 +89,12 @@ final class ArticleController {
 		 * 下一次访问时被重新设置。
 		 */
 		if (etag == null) {
-			var newEtag = UUID.randomUUID().toString();
-			etags.putIfAbsent(id, newEtag);
-			return ResponseEntity.ok().eTag("W/\"" + newEtag).body(article);
+			etag = UUID.randomUUID().toString();
+			etags.putIfAbsent(id, etag);
+			return ResponseEntity.ok().eTag("W/\"" + etag).body(article);
 		}
 
-		//缓存已存在，但是客户端没有记录，则发送已缓存的Etag到客户端
+		//缓存已存在，但是客户端没有记录，则添加已缓存的Etag到客户端
 		return ResponseEntity.ok().eTag("W/\"" + etag).body(article);
 	}
 

@@ -2,6 +2,7 @@ package net.kaciras.blog.domain.article;
 
 import lombok.*;
 import net.kaciras.blog.domain.Utils;
+import net.kaciras.blog.infrastructure.io.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.lang.NonNull;
@@ -43,14 +44,14 @@ public class Article extends ArticleContentBase {
 		if (deleted) {
 			throw new IllegalStateException("文章已删除");
 		}
-		Utils.checkEffective(articleDAO.updateDeleted(id, true));
+		DBUtils.checkEffective(articleDAO.updateDeleted(id, true));
 	}
 
 	public void recover() {
 		if (!deleted) {
 			throw new IllegalStateException("文章没有标记为删除");
 		}
-		Utils.checkEffective(articleDAO.updateDeleted(id, false));
+		DBUtils.checkEffective(articleDAO.updateDeleted(id, false));
 	}
 
 	public List<Integer> getCategories() {

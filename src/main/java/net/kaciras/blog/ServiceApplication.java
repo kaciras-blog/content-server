@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.type.TypeHandler;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheManagerBuilder;
+import org.mapstruct.MapperConfig;
+import org.mapstruct.ReportingPolicy;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

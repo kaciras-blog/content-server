@@ -2,6 +2,7 @@ package net.kaciras.blog.domain.draft;
 
 import lombok.*;
 import net.kaciras.blog.domain.Utils;
+import net.kaciras.blog.infrastructure.io.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -42,7 +43,7 @@ final class Draft extends DraftContentBase {
 	 * @param content 内容
 	 */
 	void save(DraftContentBase content) {
-		Utils.checkEffective(draftDAO.update(this, content));
+		DBUtils.checkEffective(draftDAO.update(this, content));
 	}
 
 	/**

@@ -10,7 +10,6 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@MapperConfig(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 @Mapper(componentModel = "spring")
 public interface PojoMapper {
 

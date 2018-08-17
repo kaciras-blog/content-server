@@ -1,5 +1,6 @@
 package net.kaciras.blog.domain.config;
 
+@SuppressWarnings("unchecked")
 public class EnumConvertor implements Converter {
 
 	@Override

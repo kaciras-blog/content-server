@@ -23,7 +23,8 @@ final class UtilsController {
 		resp.setHeader("Cache-Control", "no-cache");
 		resp.setDateHeader("Expires", 0);
 		resp.setContentType("image/jpeg");
-		String captcha = captchaGenerator.writeCaptcha(resp.getOutputStream());
+
+		var captcha = captchaGenerator.generateCaptchaTo(resp.getOutputStream());
 		session.setAttribute("Captcha", captcha.toLowerCase());
 	}
 }

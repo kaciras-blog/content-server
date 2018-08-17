@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
+import net.kaciras.blog.infrastructure.io.DBUtils;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Repository;
 
@@ -63,6 +64,6 @@ class DraftRepository {
 
 	public void delete(int id) {
 		Utils.checkPositive(id, "id");
-		Utils.checkEffective(draftDAO.deleteById(id));
+		DBUtils.checkEffective(draftDAO.deleteById(id));
 	}
 }

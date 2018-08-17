@@ -3,6 +3,7 @@ package net.kaciras.blog.domain.category;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
+import net.kaciras.blog.infrastructure.io.DBUtils;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.NonNull;
@@ -28,7 +29,7 @@ class CategoryRepository {
 	public Category get(int id) {
 		Utils.checkNotNegative(id, "id");
 		Category category = categoryDAO.selectAttributes(id);
-		return Utils.checkNotNullResource(category);
+		return DBUtils.checkNotNullResource(category);
 	}
 
 	public int size() {
@@ -73,7 +74,7 @@ class CategoryRepository {
 	 * @param category 新的分类信息对象
 	 */
 	public void update(Category category) {
-		Utils.checkEffective(categoryDAO.update(category));
+		DBUtils.checkEffective(categoryDAO.update(category));
 	}
 
 	@Transactional

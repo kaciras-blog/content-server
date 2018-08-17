@@ -2,6 +2,7 @@ package net.kaciras.blog.domain.user;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.Utils;
+import net.kaciras.blog.infrastructure.io.DBUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
@@ -26,7 +27,7 @@ class UserRepository {
 	}
 
 	public void delete(int id) {
-		Utils.checkEffective(userDao.delete(id));
+		DBUtils.checkEffective(userDao.delete(id));
 	}
 
 	public User getByName(String name) {

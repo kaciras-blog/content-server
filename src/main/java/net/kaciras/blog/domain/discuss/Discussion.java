@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kaciras.blog.domain.Utils;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
+import net.kaciras.blog.infrastructure.io.DBUtils;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -72,7 +73,7 @@ public class Discussion {
 	 */
 	void removeVote(int userId) {
 		try {
-			Utils.checkEffective(voteDAO.deleteRecord(id, userId));
+			DBUtils.checkEffective(voteDAO.deleteRecord(id, userId));
 			voteCount--;
 			dao.descreaseVote(id);
 		} catch (DataIntegrityViolationException ex) {

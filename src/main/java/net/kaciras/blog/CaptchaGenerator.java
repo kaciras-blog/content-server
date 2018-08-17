@@ -41,7 +41,7 @@ public final class CaptchaGenerator {
 	 * @return 验证码字符串
 	 * @throws IOException 如果发生IO错误
 	 */
-	public String writeCaptcha(OutputStream output) throws IOException {
+	public String generateCaptchaTo(OutputStream output) throws IOException {
 		var text = randomCaptchaText(5);
 		ImageIO.write(createCaptcha(CAPTCHA_WIDTH, CAPTCHA_HEIGHT, text), "jpg", output);
 		return text;
