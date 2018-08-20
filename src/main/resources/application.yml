@@ -1,6 +1,12 @@
 server:
   port: 2375
 
+  ssl:
+    enabled: true
+    key-store: D:\\Coding\\Utils\\dev.pfx
+    key-store-type: PKCS12
+    key-store-password: 666666
+
   http2:
     enabled: true
 
@@ -24,6 +30,7 @@ spring:
 
 mybatis:
   mapper-locations: classpath:result-map.xml
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #                   Following is the non-spring settings
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -34,11 +41,6 @@ data-directory: data
 web:
   cors-origin: "*"
   csrf-verify: true
-
-tomcat:
-  cert: C:/Users/XuFan/Desktop/blog.kaciras.net/cert1.pem
-  pvk: C:/Users/XuFan/Desktop/blog.kaciras.net/privkey1.pem
-  chain: C:/Users/XuFan/Desktop/blog.kaciras.net/chain1.pem
 
 accessLog:
   enable: false
