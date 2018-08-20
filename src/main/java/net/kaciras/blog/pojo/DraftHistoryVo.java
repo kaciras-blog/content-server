@@ -1,5 +1,6 @@
 package net.kaciras.blog.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
@@ -15,5 +16,7 @@ public class DraftHistoryVo {
 	private String summary;
 
 	private int saveCount;
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime time;
 }

@@ -26,7 +26,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
 
   jackson:
-    date-format: yyyy-MM-dd HH:mm
+    date-format: yyyy-MM-dd HH:mm #这个只用于java.util.Date这些老API
 
 mybatis:
   mapper-locations: classpath:result-map.xml
