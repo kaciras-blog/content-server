@@ -50,7 +50,7 @@ class DraftRepository {
 
 	public Draft getById(int id) {
 		Utils.checkPositive(id, "id");
-		Draft draft = draftDAO.selectById(id);
+		var draft = draftDAO.selectById(id);
 		if (draft == null) {
 			throw new ResourceNotFoundException();
 		}

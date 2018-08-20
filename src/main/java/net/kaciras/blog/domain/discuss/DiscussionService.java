@@ -18,7 +18,7 @@ import java.util.List;
 @Service
 public final class DiscussionService {
 
-	private final DiscussRepository discussRepository;
+	private final DiscussRepository repository;
 
 	private Authenticator authenticator;
 	private boolean allowAnonymous;
@@ -44,7 +44,7 @@ public final class DiscussionService {
 	}
 
 	public Discussion getOne(int id) {
-		Discussion result = discussRepository.get(id);
+		Discussion result = repository.get(id);
 		if (result.isDeleted() && SecurtyContext.isNotUser(result.getUserId())) {
 			authenticator.require("POWER_QUERY");
 		}
@@ -53,20 +53,21 @@ public final class DiscussionService {
 
 	public List<Discussion> getList(DiscussionQuery query) {
 		verifyQuery(query);
-		return discussRepository.findAll(query);
+		return repository.findAll(query);
 	}
 
 	public int count(DiscussionQuery query) {
 		verifyQuery(query);
-		return discussRepository.size(query);
+		return repository.size(query);
 	}
 
 	public int add(Discussion discussion) {
-		Integer loginedUserId = SecurtyContext.getCurrentUser();
+		var loginedUserId = SecurtyContext.getCurrentUser();
 		int uid = 0;
+
 		if (loginedUserId == null) {
 			if (!allowAnonymous)
-				throw new PermissionException(); // 401更好？
+				throw new PermissionException();
 		} else {
 			authenticator.require("ADD");
 			uid = loginedUserId;
@@ -77,22 +78,22 @@ public final class DiscussionService {
 		}
 
 		discussion.setUserId(uid);
-		discussRepository.add(discussion);
+		repository.add(discussion);
 		return discussion.getId();
 	}
 
 	public void voteUp(int id) {
 		int userId = SecurtyContext.getRequiredCurrentUser();
-		discussRepository.get(id).addVote(userId);
+		repository.get(id).addVote(userId);
 	}
 
 	public void revokeVote(int id) {
 		int userId = SecurtyContext.getRequiredCurrentUser();
-		discussRepository.get(id).removeVote(userId);
+		repository.get(id).removeVote(userId);
 	}
 
 	public void delete(int id) {
-		Discussion discussion = discussRepository.get(id);
+		Discussion discussion = repository.get(id);
 		if (SecurtyContext.isNotUser(discussion.getUserId())) {
 			authenticator.require("POWER_MODIFY");
 		}
@@ -101,6 +102,6 @@ public final class DiscussionService {
 
 	public void restore(int id) {
 		authenticator.require("POWER_MODIFY"); //恢复无论是不是自己都需要权限
-		discussRepository.get(id).restore();
+		repository.get(id).restore();
 	}
 }

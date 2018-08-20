@@ -43,7 +43,7 @@ public class DraftService {
 
 	public int saveNewHistory(DraftSaveDTO dto) {
 		authenticator.require("POWER_MODIFY");
-		Draft draft = draftRepository.getById(dto.getId());
+		var draft = draftRepository.getById(dto.getId());
 		draft.saveNewHistory(dto);
 		return draft.getSaveCount() + 1;
 	}
@@ -59,7 +59,7 @@ public class DraftService {
 	}
 
 	private Draft defaultDraft() {
-		Draft newDraft = new Draft();
+		var newDraft = new Draft();
 		newDraft.setTitle("");
 		newDraft.setSummary("");
 		newDraft.setKeywords("");
@@ -83,7 +83,7 @@ public class DraftService {
 	}
 
 	public List<DraftHistory> getHistories(int id) {
-		Draft draft = draftRepository.getById(id);
+		var draft = draftRepository.getById(id);
 		if(SecurtyContext.isNotUser(draft.getUserId())) {
 			authenticator.require("POWER_MODIFY");
 		}

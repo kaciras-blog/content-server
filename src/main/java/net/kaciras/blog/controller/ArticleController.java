@@ -20,7 +20,6 @@ import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -40,17 +39,17 @@ final class ArticleController {
 	private final CategoryService categoryService;
 	private final DiscussionService discussionService;
 
-	private final PojoMapper mapper;
+	private final PojoMapper pojoMapper;
 	private final MessageClient messageClient;
 
-	private Cache<Integer, String> etags;
+	private Cache<Integer, String> etagCache;
 
 	@Autowired
 	public void setCacheManager(CacheManager cacheManager) {
 		CacheConfigurationBuilder<Integer, String> builder = CacheConfigurationBuilder
 				.newCacheConfigurationBuilder(Integer.class, String.class, ResourcePoolsBuilder.heap(4096));
-		etags = cacheManager.createCache("articleEtag", builder.build());
-		messageClient.subscribe(ArticleUpdatedEvent.class, event -> etags.remove(event.getArticleId()));
+		etagCache = cacheManager.createCache("articleEtag", builder.build());
+		messageClient.subscribe(ArticleUpdatedEvent.class, event -> etagCache.remove(event.getArticleId()));
 	}
 
 
@@ -66,31 +65,31 @@ final class ArticleController {
 	 * @return 聚合后的对象
 	 */
 	private ArticlePreviewVo aggregate(Article article) {
-		var result = mapper.articlePreview(article);
-		result.setAuthor(mapper.toUserVo(userService.getUser(article.getUserId())));
+		var result = pojoMapper.articlePreview(article);
+		result.setAuthor(pojoMapper.toUserVo(userService.getUser(article.getUserId())));
 		result.setDiscussionCount(discussionService.count(DiscussionQuery.byArticle(article.getId())));
-		result.setCategoryPath(mapper.categoryView(categoryService.getPath(article.getCategories().get(0))));
+		result.setCategoryPath(pojoMapper.categoryView(categoryService.getPath(article.getCategories().get(0))));
 		return result;
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<ArticleVo> get(@PathVariable int id, WebRequest request) {
-		var etag = etags.get(id);
+		var etag = etagCache.get(id);
 
 		if (request.checkNotModified(etag)) {
 			return ResponseEntity.status(304).build();
 		}
-		var article = mapper.articleView(articleService.getArticle(id));
+		var article = pojoMapper.articleView(articleService.getArticle(id));
 
 		/*
 		 * 如果缓存中不存在，则需要创建新的缓存记录。在并发的情况下，使用
-		 * etags.putIfAbsent(...)使缓存以先创建的为准，那么后创建的线程将发送一个
+		 * etagCache.putIfAbsent(...)使缓存以先创建的为准，那么后创建的线程将发送一个
 		 * 无效的Etag值到响应中，但对于缓存系统来说这是允许的，无效的Etag头将在
 		 * 下一次访问时被重新设置。
 		 */
 		if (etag == null) {
 			etag = UUID.randomUUID().toString();
-			etags.putIfAbsent(id, etag);
+			etagCache.putIfAbsent(id, etag);
 			return ResponseEntity.ok().eTag("W/\"" + etag).body(article);
 		}
 

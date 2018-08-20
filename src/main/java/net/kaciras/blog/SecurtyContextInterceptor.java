@@ -18,7 +18,8 @@ import javax.servlet.http.HttpSession;
 @Component
 public class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
 
-	private static final String ATTR_NAME = "CSRF-Token";
+	private static final String SESSION_NAME = "CSRF-Token";
+	private static final String HEADER_NAME = "X-CSRF-Token";
 
 	@Value("${web.csrf-verify}")
 	private boolean csrfVerify;
@@ -30,11 +31,11 @@ public class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
 		if (HttpMethod.OPTIONS.matches(request.getMethod())) {
 			return true; //OPTIONS请求不需要用户信息
 		}
-		HttpSession session = request.getSession(false);
+		var session = request.getSession(false);
 		if(session == null) {
 			return true;
 		}
-		Object userId = session.getAttribute("UserId");
+		var userId = session.getAttribute("UserId");
 		if (userId != null && checkCSRF(request)) {
 			SecurtyContext.setCurrentUser((Integer) userId);
 		}
@@ -46,8 +47,8 @@ public class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
 		if (!csrfVerify) {
 			return true;
 		}
-		Object csrf = request.getSession().getAttribute(ATTR_NAME);
-		String header = request.getHeader("X-CSRF-Token");
+		var csrf = request.getSession().getAttribute(SESSION_NAME);
+		var header = request.getHeader(HEADER_NAME);
 		return csrf != null && csrf.equals(header);
 	}
 

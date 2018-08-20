@@ -19,7 +19,7 @@ public class ExceptionReslover {
 	/**
 	 * 自己定义的异常
 	 */
-	private final Map<Class, Integer> errorCodeMap = Map.of(
+	private final Map<Class, Integer> webErrors = Map.of(
 			RequestArgumentException.class, 400,
 			PermissionException.class, 403,
 			ResourceDeletedException.class, 410,
@@ -30,7 +30,7 @@ public class ExceptionReslover {
 
 	@ExceptionHandler
 	public ResponseEntity handle(Exception ex) throws Exception {
-		Integer code = errorCodeMap.get(ex.getClass());
+		Integer code = webErrors.get(ex.getClass());
 		if (code != null) {
 			return ResponseEntity.status(code).body(Map.of("message", ex.getMessage()));
 		}

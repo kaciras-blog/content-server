@@ -3,6 +3,7 @@ package net.kaciras.blog.domain.article;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.domain.Utils;
+import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.io.DBUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,11 +25,7 @@ class ArticleRepository {
 
 	public Article get(int id) {
 		checkPositive(id, "id");
-		Article article = articleDAO.selectById(id);
-		if (article == null) {
-			throw new ResourceNotFoundException();
-		}
-		return article;
+		return DBUtils.checkNotNullResource(articleDAO.selectById(id));
 	}
 
 	@Transactional
@@ -41,7 +38,7 @@ class ArticleRepository {
 					.filter(k -> !k.isEmpty())
 					.forEach(kw -> keywordDAO.insert(article.getId(), kw));
 		} catch (DataIntegrityViolationException ex) {
-			throw new IllegalArgumentException("article中存在不合法的属性值");
+			throw new RequestArgumentException();
 		}
 	}
 
@@ -56,7 +53,7 @@ class ArticleRepository {
 					.filter(k -> !k.isEmpty())
 					.forEach(kw -> keywordDAO.insert(article.getId(), kw));
 		} catch (DataIntegrityViolationException ex) {
-			throw new IllegalArgumentException(ex);
+			throw new RequestArgumentException(ex);
 		}
 	}
 

@@ -78,12 +78,13 @@ public class Category {
 			throw new IllegalArgumentException("不能移动到自己下面");
 		}
 
-		Integer distance = dao.selectDistance(id, target.getId());
-		if (distance == null) {
-			// 移动到父节点或其他无关系节点，不需要做额外动作
-		} else if (distance == 0) {
-			throw new IllegalArgumentException("不能移动到自己下面");
-		} else {
+		// 通过子节点距离判断是否是移到自己的子节点下面
+		var distance = dao.selectDistance(id, target.getId());
+
+		if (distance != null) {
+			if (distance == 0) {
+				throw new IllegalArgumentException("不能移动到自己下面");
+			}
 			// 如果移动的目标是其子类，需要先把子类移动到本类的位置
 			int parent = dao.selectAncestor(id, 1);
 			moveNode(target.getId(), parent);
@@ -125,5 +126,4 @@ public class Category {
 			moveSubTree(sub, sub);
 		}
 	}
-
 }

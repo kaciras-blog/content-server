@@ -28,8 +28,7 @@ class CategoryRepository {
 	@NonNull
 	public Category get(int id) {
 		Utils.checkNotNegative(id, "id");
-		Category category = categoryDAO.selectAttributes(id);
-		return DBUtils.checkNotNullResource(category);
+		return DBUtils.checkNotNullResource(categoryDAO.selectAttributes(id));
 	}
 
 	public int size() {
@@ -80,7 +79,7 @@ class CategoryRepository {
 	@Transactional
 	public void remove(int id) {
 		helper.requireContains(id);
-		Integer parent = categoryDAO.selectAncestor(id, 1);
+		var parent = categoryDAO.selectAncestor(id, 1);
 
 		if (parent == null) {
 			parent = 0;

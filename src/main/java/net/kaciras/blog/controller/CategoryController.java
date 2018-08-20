@@ -24,7 +24,7 @@ final class CategoryController {
 
 	@PostMapping("/transfer")
 	public void move(@RequestParam int id, @RequestParam int parent, @RequestParam boolean treeMode) {
-		categoryService.moveTree(id, parent, treeMode);
+		categoryService.move(id, parent, treeMode);
 	}
 
 //	获取所有的分类？

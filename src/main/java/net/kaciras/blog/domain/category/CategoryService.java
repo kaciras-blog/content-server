@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class CategoryService {
 
-	private final CategoryRepository categoryRepository;
+	private final CategoryRepository repository;
 
 	private Authenticator authenticator;
 
@@ -24,10 +24,10 @@ public class CategoryService {
 	}
 
 	@Transactional
-	public void moveTree(int id, int parent, boolean treeMode) {
+	public void move(int id, int parent, boolean treeMode) {
 		authenticator.require("CHANGE_RELATION");
-		Category category = categoryRepository.get(id);
-		Category newParent = categoryRepository.get(parent);
+		var category = repository.get(id);
+		var newParent = repository.get(parent);
 
 		if (treeMode) {
 			category.moveTreeTo(newParent);
@@ -37,32 +37,32 @@ public class CategoryService {
 	}
 
 	public Category get(int id) {
-		return categoryRepository.get(id);
+		return repository.get(id);
 	}
 
 	public List<Category> getSubCategories(int id) {
-		return categoryRepository.getSubCategories(id);
+		return repository.getSubCategories(id);
 	}
 
 	public int add(Category category, int parent) {
 		authenticator.require("MODIFY");
-		return categoryRepository.add(category, parent);
+		return repository.add(category, parent);
 	}
 
 	public void update(Category category) {
 		authenticator.require("MODIFY");
-		categoryRepository.update(category);
+		repository.update(category);
 	}
 
 	public void delete(int id) {
 		authenticator.require("MODIFY");
-		categoryRepository.remove(id);
+		repository.remove(id);
 	}
 
 	public List<Category> getPath(int id) {
 		if (id == 0) {
 			return Collections.emptyList();
 		}
-		return categoryRepository.get(id).getPath();
+		return repository.get(id).getPath();
 	}
 }

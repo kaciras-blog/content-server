@@ -27,7 +27,7 @@ public class ArticleService {
 
 	private Authenticator authenticator;
 
-	private List<Article> hots;
+	private List<Article> hotArticles;
 
 	@Autowired
 	public void setAuthenticator(AuthenticatorFactory factory) {
@@ -54,8 +54,8 @@ public class ArticleService {
 		return article;
 	}
 
-	public List<Article> getHots() {
-		return hots;
+	public List<Article> getHotArticles() {
+		return hotArticles;
 	}
 
 	public Article getArticle(int id) {
@@ -73,7 +73,7 @@ public class ArticleService {
 		request.setDesc(true);
 		request.setSort("view_count");
 		request.setCount(6);
-		hots = repository.findAll(request);
+		hotArticles = repository.findAll(request);
 	}
 
 	public List<Article> getList(ArticleListRequest request) {
@@ -88,16 +88,16 @@ public class ArticleService {
 	}
 
 	@Transactional
-	public int publish(ArticlePublishDTO publish) {
+	public int publish(ArticlePublishDTO manuscript) {
 		authenticator.require("PUBLISH");
 
-		Article article = articleMapper.publishToArticle(publish);
+		var article = articleMapper.publishToArticle(manuscript);
 		article.setUserId(SecurtyContext.getCurrentUser());
 
 		repository.add(article);
-		article.setCategories(publish.getCategories());
+		article.setCategories(manuscript.getCategories());
 
-		messageClient.send(new ArticleCreatedEvent(article.getId(), publish.getDraftId(), publish.getCategories()));
+		messageClient.send(new ArticleCreatedEvent(article.getId(), manuscript.getDraftId(), manuscript.getCategories()));
 		return article.getId();
 	}
 
@@ -105,7 +105,7 @@ public class ArticleService {
 		Article a = repository.get(id);
 		requireModify(a);
 
-		Article article = articleMapper.publishToArticle(publish);
+		var article = articleMapper.publishToArticle(publish);
 		article.setId(id);
 		article.setUserId(a.getUserId());
 		repository.update(article);
@@ -121,15 +121,15 @@ public class ArticleService {
 		requireModify(repository.get(id)).setCategories(categories);
 	}
 
-	public void updateDeleteion(int id, boolean value) {
-		Article article = repository.get(id);
+	public void updateDeleteion(int id, boolean isDeleted) {
+		var article = repository.get(id);
 		if (SecurtyContext.isNotUser(article.getUserId())) {
 			authenticator.require("POWER_MODIFY");
 		} else {
 			authenticator.require("PUBLISH");
 		}
 
-		if (value) {
+		if (isDeleted) {
 			article.delete();
 		} else {
 			article.recover();

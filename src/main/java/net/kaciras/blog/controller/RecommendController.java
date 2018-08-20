@@ -21,6 +21,6 @@ final class RecommendController {
 
 	@GetMapping("/articles")
 	public List<ArticlePreviewVo> hotArticles() {
-		return articleService.getHots().stream().map(pojoMapper::articlePreview).collect(Collectors.toList());
+		return articleService.getHotArticles().stream().map(pojoMapper::articlePreview).collect(Collectors.toList());
 	}
 }
