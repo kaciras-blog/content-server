@@ -22,10 +22,15 @@ import org.springframework.context.annotation.*;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.session.data.redis.config.annotation.web.server.EnableRedisWebSession;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
@@ -33,6 +38,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 
 @MapperScan(value = "net.kaciras.blog.domain", annotationClass = Mapper.class)
+@EnableRedisHttpSession(redisNamespace = "kx")
 @EnableScheduling
 @EnableAsync(proxyTargetClass = true)
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
@@ -96,6 +102,14 @@ public class ServiceApplication {
 	@Bean
 	RestTemplate restTemplate() {
 		return new RestTemplate();
+	}
+
+	@Bean
+	RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+		var template = new RedisTemplate<String, Object>();
+		template.setConnectionFactory(factory);
+		template.setKeySerializer(new StringRedisSerializer());
+		return template;
 	}
 
 	public static void main(String[] args) throws IOException {

@@ -25,6 +25,11 @@ spring:
     password: IY*J<0+T.[Skcoxd
     driver-class-name: org.mariadb.jdbc.Driver
 
+  redis:
+    host: 192.168.0.11
+    port: 33671
+    password: ZuDNpaB7]vv_iBynJG6ZwPexPPewP]kf
+
   jackson:
     date-format: yyyy-MM-dd HH:mm #这个只用于java.util.Date这些老API
 
