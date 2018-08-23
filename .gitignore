@@ -3,3 +3,4 @@ target/
 work/
 *.log
 *.iml
+data/
