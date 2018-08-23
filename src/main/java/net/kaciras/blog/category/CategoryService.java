@@ -15,7 +15,7 @@ import java.util.List;
 public class CategoryService {
 
 	private final CategoryRepository repository;
-
+	private final VoMapper mapper;
 	private Authenticator authenticator;
 
 	@Autowired
@@ -59,10 +59,10 @@ public class CategoryService {
 		repository.remove(id);
 	}
 
-	public List<Category> getPath(int id) {
+	public List<CategoryVo> getPath(int id) {
 		if (id == 0) {
 			return Collections.emptyList();
 		}
-		return repository.get(id).getPath();
+		return mapper.categoryView(repository.get(id).getPath());
 	}
 }

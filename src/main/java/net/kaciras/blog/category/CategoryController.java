@@ -2,7 +2,6 @@ package net.kaciras.blog.category;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.article.ArticleService;
-import net.kaciras.blog.user.PojoMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -17,7 +16,7 @@ final class CategoryController {
 
 	private final ArticleService articleService;
 	private final CategoryService categoryService;
-	private final PojoMapper mapper;
+	private final VoMapper mapper;
 
 	@PostMapping("/transfer")
 	public void move(@RequestParam int id, @RequestParam int parent, @RequestParam boolean treeMode) {
@@ -46,7 +45,7 @@ final class CategoryController {
 
 	@GetMapping("{id}/path")
 	public List<CategoryVo> getPath(@PathVariable int id) {
-		return mapper.categoryView(categoryService.getPath(id));
+		return categoryService.getPath(id);
 	}
 
 	@PostMapping

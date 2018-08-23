@@ -6,7 +6,6 @@ import net.kaciras.blog.discuss.DiscussionQuery;
 import net.kaciras.blog.discuss.DiscussionService;
 import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.user.PojoMapper;
 import net.kaciras.blog.user.UserService;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
@@ -33,7 +32,7 @@ final class ArticleController {
 	private final CategoryService categoryService;
 	private final DiscussionService discussionService;
 
-	private final PojoMapper pojoMapper;
+	private final ArticleMapper pojoMapper;
 	private final MessageClient messageClient;
 
 	private Cache<Integer, String> etagCache;
@@ -60,9 +59,9 @@ final class ArticleController {
 	 */
 	private ArticlePreviewVo aggregate(Article article) {
 		var result = pojoMapper.articlePreview(article);
-		result.setAuthor(pojoMapper.toUserVo(userService.getUser(article.getUserId())));
+		result.setAuthor(userService.getUser(article.getUserId()));
 		result.setDiscussionCount(discussionService.count(DiscussionQuery.byArticle(article.getId())));
-		result.setCategoryPath(pojoMapper.categoryView(categoryService.getPath(article.getCategories().get(0))));
+		result.setCategoryPath(categoryService.getPath(article.getCategories().get(0)));
 		return result;
 	}
 

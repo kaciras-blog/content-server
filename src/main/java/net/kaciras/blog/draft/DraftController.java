@@ -2,7 +2,6 @@ package net.kaciras.blog.draft;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.SecurtyContext;
-import net.kaciras.blog.user.PojoMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +22,7 @@ import java.util.List;
 @RequestMapping("/drafts")
 final class DraftController {
 
-	private final PojoMapper mapper;
+	private final DraftMapper mapper;
 	private final DraftService draftService;
 
 	@GetMapping

@@ -10,7 +10,7 @@ import org.mapstruct.Named;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface DraftMapper {
+interface DraftMapper {
 
 	DraftDTO toDTO(Draft draft);
 

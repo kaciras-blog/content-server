@@ -16,6 +16,7 @@ import java.util.List;
 public class UserService {
 
 	private final UserRepository repository;
+	private final PojoMapper mapper;
 	private final RestTemplate restTemplate;
 
 	private Authenticator authenticator;
@@ -26,28 +27,28 @@ public class UserService {
 		this.authenticator = authenticator;
 	}
 
-	public User getUser(int id) {
+	public UserVo getUser(int id) {
 		var user = repository.get(id);
 		if(user != null) {
-			return user;
+			return mapper.toUserVo(user);
 		}
-		return user;
+		return mapper.toUserVo(user);
 	}
 
 	public int ban(int id, long seconds, String cause) {
 		authenticator.require("BAN");
-		return getUser(id).ban(SecurtyContext.getRequiredCurrentUser(), Duration.ofSeconds(seconds), cause);
+		return repository.get(id).ban(SecurtyContext.getRequiredCurrentUser(), Duration.ofSeconds(seconds), cause);
 	}
 
 	public void unban(int id, int bid, String cause) {
 		authenticator.require("BAN");
-		getUser(id).unBan(bid, SecurtyContext.getRequiredCurrentUser(), cause);
+		repository.get(id).unBan(bid, SecurtyContext.getRequiredCurrentUser(), cause);
 	}
 
 	public List<BanRecord> getBanRedords(int id) {
 		if(SecurtyContext.isNotUser(id)) {
 			authenticator.require("POWER_QUERY");
 		}
-		return getUser(id).getBanRecords();
+		return repository.get(id).getBanRecords();
 	}
 }

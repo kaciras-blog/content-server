@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import net.kaciras.blog.infrastructure.text.TextUtil;
-import net.kaciras.blog.user.PojoMapper;
 import net.kaciras.blog.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,7 @@ final class DiscussionController {
 
 	private final DiscussionService discussionService;
 	private final UserService userService;
-	private final PojoMapper mapper;
+	private final VoMapper mapper;
 
 	@GetMapping
 	public Map<String, ?> getList(@Valid DiscussionQuery query) {
@@ -34,7 +33,7 @@ final class DiscussionController {
 
 		for (Discussion d : ds) {
 			DiscussionVo v = mapper.discussionView(d);
-			v.setUser(mapper.toUserVo(userService.getUser(d.getUserId())));
+			v.setUser(userService.getUser(d.getUserId()));
 			result.add(v);
 		}
 		return Map.of("total", size, "list", result);
