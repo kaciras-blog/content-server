@@ -1,5 +1,5 @@
 <aspectj>
 	<weaver options="">
-		<include within="net.kaciras.blog.domain..*"/>
+		<include within="net.kaciras.blog..*"/>
 	</weaver>
 </aspectj>

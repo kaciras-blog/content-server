@@ -1,5 +1,8 @@
 package net.kaciras.blog.domain;
 
+import net.kaciras.blog.Authenticator;
+import net.kaciras.blog.SecurtyContext;
+
 public class MockAuthenticator implements Authenticator {
 
 	@Override

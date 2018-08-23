@@ -1,13 +1,9 @@
 package net.kaciras.blog.domain;
 
-import net.kaciras.blog.domain.article.ArticleService;
-import org.assertj.core.api.Assertions;
+import net.kaciras.blog.article.ArticleService;
+import net.kaciras.blog.SecurtyContext;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Arrays;
 
 class ArticleServiceTest extends AbstractSpringTest {
 

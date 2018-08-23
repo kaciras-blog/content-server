@@ -2,26 +2,26 @@
 
 <mapper namespace="net.kaciras.blog.domain.dao.ResultMap">
 
-	<resultMap type="net.kaciras.blog.domain.article.Article" id="ArticleMap">
+	<resultMap type="net.kaciras.blog.article.Article" id="ArticleMap">
 		<id property="id" column="id"/>
 		<result property="userId" column="user_id"/>
 		<result property="viewCount" column="view_count"/>
 		<result property="create" column="create_time"/>
 		<result property="update" column="update_time"/>
-		<collection property="keywords" column="id" select="net.kaciras.blog.domain.article.KeywordDAO.select"/>
+		<collection property="keywords" column="id" select="net.kaciras.blog.article.KeywordDAO.select"/>
 	</resultMap>
 
-	<resultMap type="net.kaciras.blog.domain.draft.Draft" id="DraftMap">
+	<resultMap type="net.kaciras.blog.draft.Draft" id="DraftMap">
 		<result column="user_id" property="userId"/>
 		<result column="article_id" property="articleId"/>
 		<result column="save_count" property="saveCount"/>
 	</resultMap>
 
-	<resultMap type="net.kaciras.blog.domain.draft.DraftHistory" id="DraftHistoryMap">
+	<resultMap type="net.kaciras.blog.draft.DraftHistory" id="DraftHistoryMap">
 		<result column="save_count" property="saveCount"/>
 	</resultMap>
 
-	<resultMap id="DiscussionMap" type="net.kaciras.blog.domain.discuss.Discussion">
+	<resultMap id="DiscussionMap" type="net.kaciras.blog.discuss.Discussion">
 		<id property="id" column="id"/>
 		<result property="articleId" column="post"/>
 		<result property="userId" column="user"/>

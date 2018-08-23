@@ -1,8 +1,10 @@
 package net.kaciras.blog.domain;
 
-import net.kaciras.blog.domain.discuss.DiscussionQuery;
-import net.kaciras.blog.domain.discuss.DiscussionService;
+import net.kaciras.blog.discuss.DiscussionQuery;
+import net.kaciras.blog.discuss.DiscussionService;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
+import net.kaciras.blog.DeletedState;
+import net.kaciras.blog.SecurtyContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
