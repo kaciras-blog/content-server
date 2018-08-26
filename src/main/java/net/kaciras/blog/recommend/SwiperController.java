@@ -1,42 +1,33 @@
 package net.kaciras.blog.recommend;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.support.collections.DefaultRedisMap;
-import org.springframework.data.redis.support.collections.RedisMap;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.List;
 
+@SuppressWarnings("unchecked")
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/recommendation/swiper")
-public class SwiperController {
+public final class SwiperController {
 
-	private final RedisMap<Object, SwipPage> swipPages;
-
-	@SuppressWarnings("unchecked")
-	public SwiperController(RedisTemplate<String, Object> template) {
-		this.swipPages = new DefaultRedisMap("swiper", template);
-	}
+	/**
+	 * 轮播需要保证次序，并且支持删除、插入到任意位置，Redis内置的数据类型
+	 * 不能很好地处理，故直接序列化整个列表。
+	 */
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	@GetMapping
-	public RedisMap<Object, SwipPage> getPages() {
-		return swipPages;
+	public Object getPages() {
+		return redisTemplate.opsForValue().get("swiper");
 	}
 
-	@PutMapping("/{name}")
-	public ResponseEntity<Void> putPage(@PathVariable String name,
-										@RequestBody SwipPage page) throws URISyntaxException {
-		if(swipPages.put(name, page) != null) {
-			return ResponseEntity.noContent().build();
-		}
-		return ResponseEntity.created(new URI("/recommendation/swiper/" + name)).build();
-	}
-
-	@DeleteMapping("/{name}")
-	public ResponseEntity<Void> deletePage(@PathVariable String name) {
-		swipPages.remove(name);
+	//考虑到轮播通常不会有很多页，直接全量更新。
+	@PutMapping
+	public ResponseEntity<Void> change(@RequestBody List<SwipPage> slides) {
+		redisTemplate.opsForValue().set("swiper", slides);
 		return ResponseEntity.noContent().build();
 	}
 }

@@ -2,9 +2,9 @@ package net.kaciras.blog.domain.facade;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.kaciras.blog.domain.AbstractSpringTest;
 import net.kaciras.blog.ConfigBind;
 import net.kaciras.blog.EnumConfigItem;
+import net.kaciras.blog.domain.AbstractSpringTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -66,13 +67,19 @@ public class ConfigControllerTest extends AbstractSpringTest {
 
 	@Test
 	void testSwiper() throws Exception {
-		var body = objectMapper.createObjectNode();
-		body.put("picture", "/baotou.41b54ed.jpg");
-		body.put("link", "https://www.example.com/posts/how-to-test-spring-mvc");
-		body.put("description", "some desc. may be long text.");
+		var body = objectMapper.createArrayNode().add(objectMapper.createObjectNode()
+				.put("name", "an article")
+				.put("picture", "/static/img/baotou.41b54ed.jpg")
+				.put("link", "/article/15")
+				.put("description", "some desc. may be long text.")
+		).add(objectMapper.createObjectNode()
+				.put("name", "外链专题")
+				.put("picture", "/static/img/test-1.jpg")
+				.put("link", "https://www.baidu.com")
+				.put("description", "如何在主机上成为root用户获取全盘加密运行虚拟机中数据的访问权限？这是我们在Appsecco内部讨论的一个问题，我们需要一个合理而可能的解决方案。 "));
 
-		mockMvc.perform(put("/recommendation/swiper/{name}", "2015-8-22日，测试新增的轮播组件")
-					.contentType(MediaType.APPLICATION_JSON_UTF8).content(body.toString()))
+		mockMvc.perform(put("/recommendation/swiper")
+				.contentType(MediaType.APPLICATION_JSON_UTF8).content(body.toString()))
 				.andExpect(status().isNoContent());
 	}
 
