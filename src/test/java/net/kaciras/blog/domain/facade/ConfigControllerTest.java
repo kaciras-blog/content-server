@@ -67,9 +67,9 @@ public class ConfigControllerTest extends AbstractSpringTest {
 	@Test
 	void testSwiper() throws Exception {
 		var body = objectMapper.createObjectNode();
-		body.put("picture", "https://www.example.com/images/abc.png");
+		body.put("picture", "/baotou.41b54ed.jpg");
 		body.put("link", "https://www.example.com/posts/how-to-test-spring-mvc");
-		body.put("description", "some desc.");
+		body.put("description", "some desc. may be long text.");
 
 		mockMvc.perform(put("/recommendation/swiper/{name}", "2015-8-22日，测试新增的轮播组件")
 					.contentType(MediaType.APPLICATION_JSON_UTF8).content(body.toString()))

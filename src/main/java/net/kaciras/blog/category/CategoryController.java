@@ -16,7 +16,7 @@ final class CategoryController {
 
 	private final ArticleService articleService;
 	private final CategoryService categoryService;
-	private final VoMapper mapper;
+	private final CategoryMapper mapper;
 
 	@PostMapping("/transfer")
 	public void move(@RequestParam int id, @RequestParam int parent, @RequestParam boolean treeMode) {

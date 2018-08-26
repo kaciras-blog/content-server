@@ -15,7 +15,7 @@ import java.util.List;
 public class CategoryService {
 
 	private final CategoryRepository repository;
-	private final VoMapper mapper;
+	private final CategoryMapper mapper;
 	private Authenticator authenticator;
 
 	@Autowired

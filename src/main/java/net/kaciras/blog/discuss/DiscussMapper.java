@@ -3,7 +3,7 @@ package net.kaciras.blog.discuss;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-interface VoMapper {
+interface DiscussMapper {
 
 	DiscussionVo discussionView(Discussion dto);
 }

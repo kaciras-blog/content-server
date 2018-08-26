@@ -20,7 +20,7 @@ final class DiscussionController {
 
 	private final DiscussionService discussionService;
 	private final UserService userService;
-	private final VoMapper mapper;
+	private final DiscussMapper mapper;
 
 	@GetMapping
 	public Map<String, ?> getList(@Valid DiscussionQuery query) {

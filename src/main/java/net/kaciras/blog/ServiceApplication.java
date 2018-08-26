@@ -1,18 +1,11 @@
 package net.kaciras.blog;
 
-import net.kaciras.blog.infrastructure.codec.ExtendsCodecModule;
-import net.kaciras.blog.infrastructure.codec.ImageRefrenceTypeHandler;
-import net.kaciras.blog.infrastructure.codec.IpAddressTypeHandler;
 import net.kaciras.blog.infrastructure.codec.KxCodecConfiguration;
 import net.kaciras.blog.infrastructure.io.CommandListener;
 import net.kaciras.blog.infrastructure.message.DirectCalledMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.type.TypeHandler;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheManagerBuilder;
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -21,8 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -34,10 +25,8 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 
-@MapperScan(value = "net.kaciras.blog.domain", annotationClass = Mapper.class)
 @EnableRedisHttpSession(redisNamespace = "kx")
 @EnableScheduling
 @EnableAsync(proxyTargetClass = true)
@@ -64,29 +53,6 @@ public class ServiceApplication {
 		taskScheduler.setDaemon(true);
 		taskScheduler.setThreadNamePrefix("Shud-");
 		return taskScheduler;
-	}
-
-	@Bean
-	SqlSessionFactoryBean sqlSessionFactory(DataSource dataSource) throws IOException {
-		SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
-		bean.setTypeHandlers(new TypeHandler[]{
-				new IpAddressTypeHandler(),
-				new ImageRefrenceTypeHandler()
-		});
-		bean.setDataSource(dataSource);
-		ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
-		bean.setMapperLocations(patternResolver.getResources("result-map.xml"));
-		return bean;
-	}
-
-	/**
-	 * SpringBoot会把Module类型的bean加入到Jackson的模块中。
-	 *
-	 * @return 基础层项目中包含的一些编解码模块
-	 */
-	@Bean
-	ExtendsCodecModule extendsCodecModule() {
-		return new ExtendsCodecModule();
 	}
 
 	@Bean

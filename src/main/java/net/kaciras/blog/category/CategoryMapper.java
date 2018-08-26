@@ -7,7 +7,7 @@ import org.mapstruct.Named;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-interface VoMapper {
+interface CategoryMapper {
 
 	@Named("Category")
 	CategoryVo categoryView(Category category);
