@@ -47,13 +47,8 @@ web:
   cors-origin: "*"
   csrf-verify: true
 
-accessLog:
-  enable: false
-
 draft:
   delete-after-publish: true
 
 discussion:
   allowAnonymous: true
-  enable: true
-  filter: NO_FILTE
