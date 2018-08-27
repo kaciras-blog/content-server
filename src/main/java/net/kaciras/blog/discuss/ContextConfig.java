@@ -16,7 +16,6 @@ class ContextConfig {
 
 	private final MessageClient messageClient;
 
-
 	@Bean("DiscussionAuthenticator")
 	Authenticator authenticator(AuthenticatorFactory factory) {
 		return factory.create("DISCUSSION");

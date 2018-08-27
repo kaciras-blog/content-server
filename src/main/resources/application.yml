@@ -42,6 +42,7 @@ mybatis:
 
 temporary-data: true
 data-directory: data
+debug-permission: true
 
 web:
   cors-origin: "*"
@@ -50,5 +51,5 @@ web:
 draft:
   delete-after-publish: true
 
-discussion:
-  allowAnonymous: true
+discuss:
+  anonymous: true

@@ -24,7 +24,7 @@ public final class DiscussionService {
 	private Authenticator authenticator;
 	private boolean allowAnonymous;
 
-	@ConfigBind("discussion.allowAnonymous")
+	@ConfigBind("discuss.anonymous")
 	public void setAllowAnonymous(boolean allowAnonymous) {
 		this.allowAnonymous = allowAnonymous;
 	}

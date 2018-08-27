@@ -14,5 +14,20 @@
 			"name": "draft.delete-after-publish",
 			"type": "java.lang.String",
 			"description": "发表文章后删除草稿."
+		},
+		{
+			"name": "web.cors-origin",
+			"type": "java.lang.String",
+			"description": "允许的CORS的Origin头."
+		},
+		{
+			"name": "debug-permission",
+			"type": "java.lang.Boolean",
+			"description": "调试权限，true表示关闭权限拦截."
+		},
+		{
+			"name": "discuss.anonymous",
+			"type": "java.lang.String",
+			"description": "是否允许匿名评论."
 		}
 	] }
