@@ -61,7 +61,7 @@ class DraftRepository {
 		draftDAO.deleteAll(userId);
 	}
 
-	public void delete(int id) {
+	public void remove(int id) {
 		Utils.checkPositive(id, "id");
 		DBUtils.checkEffective(draftDAO.deleteById(id));
 	}

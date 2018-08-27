@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SwipPage implements Serializable {
+final class SwiperSlide implements Serializable {
 
 	private String name;
 	private String picture;

@@ -22,7 +22,7 @@ class ContextConfig {
 	@PostConstruct
 	private void init() {
 		messageClient.subscribe(ArticleCreatedEvent.class, event -> {
-			if (deleteAfterSubmit) draftRepository.delete(event.getDraftId());
+			if (deleteAfterSubmit) draftRepository.remove(event.getDraftId());
 		});
 	}
 

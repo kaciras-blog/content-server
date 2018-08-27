@@ -55,7 +55,7 @@ public class DraftService {
 
 	public void delete(int id) {
 		authenticator.require("POWER_MODIFY");
-		draftRepository.delete(id);
+		draftRepository.remove(id);
 	}
 
 	private Draft defaultDraft() {

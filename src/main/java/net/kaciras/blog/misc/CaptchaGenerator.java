@@ -12,8 +12,7 @@ import java.io.OutputStream;
 import static net.kaciras.blog.Utils.RANDOM;
 
 /**
- * 验证码生成工具，使用AWT绘制字符验证码。
- * 干扰包括噪点，干扰线，扭曲，随机颜色
+ * 验证码生成工具，使用AWT绘制字符验证码，并能够添加噪点，干扰线，扭曲，随机颜色等干扰。
  */
 @Component
 public final class CaptchaGenerator {
@@ -28,8 +27,8 @@ public final class CaptchaGenerator {
 	private final Font font;
 
 	public CaptchaGenerator() throws IOException, FontFormatException {
-		var stream = CaptchaGenerator.class.getClassLoader().getResourceAsStream("CENTURY.TTF");
-		try(stream) {
+		//统一不同系统上的字体
+		try(var stream = CaptchaGenerator.class.getClassLoader().getResourceAsStream("CENTURY.TTF")) {
 			font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(Font.PLAIN, CAPTCHA_HEIGHT - 4);
 		}
 	}
@@ -47,9 +46,9 @@ public final class CaptchaGenerator {
 		return text;
 	}
 
-	private String randomCaptchaText(int captchaSize) {
-		var text = new StringBuilder(captchaSize);
-		for (int i = 0; i < captchaSize; i++) {
+	private String randomCaptchaText(int length) {
+		var text = new StringBuilder(length);
+		for (int i = 0; i < length; i++) {
 			int position = RANDOM.nextInt(CAPTCHA_TEXT.length);
 			text.append(CAPTCHA_TEXT[position]);
 		}
