@@ -3,8 +3,10 @@ package net.kaciras.blog.user;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.Authenticator;
 import net.kaciras.blog.SecurtyContext;
+import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -32,6 +34,9 @@ public class UserService {
 		if(user != null) {
 			return mapper.toUserVo(user);
 		}
+		user = restTemplate.getForObject("http://localhost:26480/accounts/{id}", User.class, id);
+		user.setHead(ImageRefrence.parse("noface.gif"));
+		repository.add(user);
 		return mapper.toUserVo(user);
 	}
 
