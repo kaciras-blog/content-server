@@ -1,17 +1,19 @@
 package net.kaciras.blog.article;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 interface ArticleMapper {
 
-	ArticlePreviewVo articlePreview(Article article);
+	List<PreviewVo> toPreview(List<Article> article);
 
-	List<ArticlePreviewVo> toPreviewVo(List<Article> articles);
+	@Mapping(target = "vcnt", source = "viewCount")
+	PreviewVo toPreview(Article article);
 
-	ArticleVo articleView(Article article);
+	ArticleVo toViewObject(Article article);
 
 	Article publishToArticle(ArticlePublishDTO publishDTO);
 }

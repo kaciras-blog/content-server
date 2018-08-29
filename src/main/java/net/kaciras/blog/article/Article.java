@@ -31,7 +31,7 @@ public class Article extends ArticleContentBase {
 	private LocalDateTime create;
 	private LocalDateTime update;
 	private int viewCount;
-	private int discussionCount;
+//	private int discussionCount;
 
 	private boolean deleted;
 

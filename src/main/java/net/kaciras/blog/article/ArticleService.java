@@ -27,7 +27,7 @@ public class ArticleService {
 
 	private Authenticator authenticator;
 
-	private List<ArticlePreviewVo> hotArticles;
+	private List<PreviewVo> hotArticles;
 
 	@Autowired
 	public void setAuthenticator(AuthenticatorFactory factory) {
@@ -54,7 +54,7 @@ public class ArticleService {
 		return article;
 	}
 
-	public List<ArticlePreviewVo> getHotArticles() {
+	public List<PreviewVo> getHotArticles() {
 		return hotArticles;
 	}
 
@@ -73,7 +73,7 @@ public class ArticleService {
 		request.setDesc(true);
 		request.setSort("view_count");
 		request.setCount(6);
-		hotArticles = articleMapper.toPreviewVo(repository.findAll(request));
+		hotArticles = articleMapper.toPreview(repository.findAll(request));
 	}
 
 	public List<Article> getList(ArticleListRequest request) {

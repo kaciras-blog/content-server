@@ -47,7 +47,7 @@ final class ArticleController {
 
 
 	@GetMapping
-	public List<ArticlePreviewVo> getList(ArticleListRequest request) {
+	public List<PreviewVo> getList(ArticleListRequest request) {
 		return articleService.getList(request).stream().map(this::aggregate).collect(Collectors.toList());
 	}
 
@@ -57,11 +57,11 @@ final class ArticleController {
 	 * @param article 文章对象
 	 * @return 聚合后的对象
 	 */
-	private ArticlePreviewVo aggregate(Article article) {
-		var result = pojoMapper.articlePreview(article);
+	private PreviewVo aggregate(Article article) {
+		var result = pojoMapper.toPreview(article);
 		result.setAuthor(userService.getUser(article.getUserId()));
-		result.setDiscussionCount(discussionService.count(DiscussionQuery.byArticle(article.getId())));
-		result.setCategoryPath(categoryService.getPath(article.getCategories().get(0)));
+		result.setDcnt(discussionService.count(DiscussionQuery.byArticle(article.getId())));
+		result.setCpath(categoryService.getPath(article.getCategories().get(0)));
 		return result;
 	}
 
@@ -72,7 +72,7 @@ final class ArticleController {
 		if (request.checkNotModified(etag)) {
 			return ResponseEntity.status(304).build();
 		}
-		var article = pojoMapper.articleView(articleService.getArticle(id));
+		var article = pojoMapper.toViewObject(articleService.getArticle(id));
 
 		/*
 		 * 如果缓存中不存在，则需要创建新的缓存记录。在并发的情况下，使用

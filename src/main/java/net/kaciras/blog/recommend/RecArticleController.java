@@ -1,8 +1,8 @@
 package net.kaciras.blog.recommend;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.article.ArticlePreviewVo;
 import net.kaciras.blog.article.ArticleService;
+import net.kaciras.blog.article.PreviewVo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +17,7 @@ final class RecArticleController {
 	private final ArticleService articleService;
 
 	@GetMapping("/articles")
-	public List<ArticlePreviewVo> hotArticles() {
+	public List<PreviewVo> hotArticles() {
 		return articleService.getHotArticles();
 	}
 }
