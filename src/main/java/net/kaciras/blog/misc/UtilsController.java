@@ -26,7 +26,6 @@ final class UtilsController {
 	 */
 	@GetMapping("/captcha")
 	public void getCaptcha(HttpSession session, HttpServletResponse resp) throws IOException {
-		resp.setHeader("Pragma", "No-cache");
 		resp.setHeader("Cache-Control", "no-cache");
 		resp.setDateHeader("Expires", 0);
 		resp.setContentType("image/jpeg");

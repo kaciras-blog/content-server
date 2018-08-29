@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 @Mapper
-public interface ClassifyDAO {
+interface ClassifyDAO {
 
 	@Update("UPDATE Article SET category=#{cid} WHERE id=#{aid}")
 	int updateByArticle(@Param("aid") int aid, @Param("cid") int cid);

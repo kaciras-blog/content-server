@@ -17,7 +17,7 @@ final class ConfigurableElementHandler implements ElementHandler {
 
 	@Override
 	public void onStart(ElementPath elementPath) {
-		Element element = elementPath.getCurrent();
+		var element = elementPath.getCurrent();
 		if (element.getName().equals("group")) {
 			currentGroup = new PropertyGroup(element.attributeValue("desc"));
 		}
@@ -25,7 +25,7 @@ final class ConfigurableElementHandler implements ElementHandler {
 
 	@Override
 	public void onEnd(ElementPath elementPath) {
-		Element element = elementPath.getCurrent();
+		var element = elementPath.getCurrent();
 		switch (element.getName()) {
 			case "group":
 				configurables.put(element.attributeValue("name"), currentGroup);
@@ -37,8 +37,8 @@ final class ConfigurableElementHandler implements ElementHandler {
 	}
 
 	private void parseProperty(Element element) {
-		String type = element.attributeValue("type");
-		String name = element.attributeValue("key");
+		var type = element.attributeValue("type");
+		var name = element.attributeValue("key");
 
 		switch (type) {
 			case "int":

@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Component
-public class BindingPostProcessor implements BeanPostProcessor {
+class BindingPostProcessor implements BeanPostProcessor {
 
 	private final ConfigBinding configBinding;
 
@@ -39,6 +39,4 @@ public class BindingPostProcessor implements BeanPostProcessor {
 
 		return bean;
 	}
-
-
 }

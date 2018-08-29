@@ -8,7 +8,7 @@ import java.util.List;
  * 这里不涉及分类字段，分类由ClassifyDAO操作。
  */
 @Mapper
-public interface ArticleDAO {
+interface ArticleDAO {
 
 	@Select("SELECT id,user_id,title,summary,cover,content,deleted,update_time,create_time,view_count " +
 			"FROM Article WHERE id=#{id}")

@@ -17,7 +17,6 @@ class UserRepository {
 		userDao.insert(user);
 	}
 
-	@Nullable
 	public User get(int id) {
 		if (id == 0) {
 			return guest;

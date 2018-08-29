@@ -6,7 +6,6 @@ import net.kaciras.blog.SecurtyContext;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

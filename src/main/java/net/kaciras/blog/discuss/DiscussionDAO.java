@@ -29,6 +29,11 @@ interface DiscussionDAO {
 	@Select("SELECT IFNULL(MAX(floor), 0) FROM Discussion WHERE post=#{postId}")
 	int selectLastFloor(int postId);
 
+	/**
+	 * 在discuss表中冗余点赞数，便于排序。在点赞后不要忘了更新。
+	 *
+	 * @param id 评论id
+	 */
 	@Update("UPDATE Discussion SET vote=vote+1 WHERE id=#{id}")
 	void increaseVote(int id);
 
