@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 public class ArticleSqlProvider {
 
 	private Set<String> allowFields = Set.of("create_time", "update_time", "view_count");
-//	private Set<String> compartors = Set.of(">", "<", "=", ">=", "<=", "!=");
 
 	public String selectPreview(ArticleListRequest query) {
 		SQL sql = new SQL().SELECT("*").FROM("Article AS A");
