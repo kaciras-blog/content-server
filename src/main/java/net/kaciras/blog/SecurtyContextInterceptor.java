@@ -19,6 +19,9 @@ public class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
 	private static final String SESSION_NAME = "CSRF-Token";
 	private static final String HEADER_NAME = "X-CSRF-Token";
 
+	@Value("${debug-permission}")
+	private boolean debugPermission;
+
 	@Value("${web.csrf-verify}")
 	private boolean csrfVerify;
 
@@ -28,6 +31,9 @@ public class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
 			return true;
 		if (HttpMethod.OPTIONS.matches(request.getMethod())) {
 			return true; //OPTIONS请求不需要用户信息
+		}
+		if(debugPermission) {
+			SecurtyContext.setCurrentUser(2);
 		}
 		var session = request.getSession(false);
 		if(session == null) {
