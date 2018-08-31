@@ -55,9 +55,8 @@ final class CategoryController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody Category category) {
-		category.setId(id);
-		categoryService.update(category);
+	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody CategoryAttributes attributes) {
+		categoryService.update(id, attributes);
 		return ResponseEntity.noContent().build();
 	}
 

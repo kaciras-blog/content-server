@@ -44,13 +44,15 @@ public class CategoryService {
 		return repository.getSubCategories(id);
 	}
 
-	public int add(Category category, int parent) {
+	public int add(CategoryAttributes attributes, int parent) {
 		authenticator.require("MODIFY");
-		return repository.add(category, parent);
+		return repository.add(mapper.toCategory(attributes), parent);
 	}
 
-	public void update(Category category) {
+	public void update(int id, CategoryAttributes attributes) {
 		authenticator.require("MODIFY");
+		var category = mapper.toCategory(attributes);
+		category.setId(id);
 		repository.update(category);
 	}
 

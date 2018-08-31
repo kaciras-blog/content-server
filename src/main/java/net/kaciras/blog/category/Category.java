@@ -11,10 +11,10 @@ import org.springframework.lang.Nullable;
 
 import java.util.List;
 
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Data
 @Configurable
-public class Category {
+public class Category extends CategoryAttributes {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -34,11 +34,6 @@ public class Category {
 	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 	private int id;
-	private String name;
-
-	private ImageRefrence cover;
-	private String description;
-	private ImageRefrence background;
 
 	Integer getParent() {
 		return dao.selectAncestor(id, 1);
