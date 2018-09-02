@@ -8,6 +8,11 @@ import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
+import org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +40,12 @@ import java.util.concurrent.Executors;
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
 @Import(KxCodecConfiguration.class)
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+		JmsAutoConfiguration.class,
+		JdbcTemplateAutoConfiguration.class,
+		ErrorMvcAutoConfiguration.class,
+		SpringApplicationAdminJmxAutoConfiguration.class,
+})
 public class ServiceApplication {
 
 	@SuppressWarnings("unused")

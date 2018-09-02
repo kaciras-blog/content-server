@@ -17,10 +17,18 @@ server:
 
   tomcat:
     max-threads: 4
+    accept-count: 512
 
 spring:
   main:
     banner-mode: "off"
+
+  mvc:
+    favicon:
+      enabled: false
+
+  jmx:
+    enabled: false
 
   datasource:
     url: jdbc:mariadb://localhost:3316/Blog?allowMultiQueries=true
