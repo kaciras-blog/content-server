@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
 
 @EnableRedisHttpSession(redisNamespace = "kx")
 @EnableScheduling
@@ -48,10 +49,9 @@ public class ServiceApplication {
 	@Bean(destroyMethod = "destroy")
 	ThreadPoolTaskScheduler taskScheduler() {
 		ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
-		taskScheduler.setPoolSize(4);
 		taskScheduler.initialize();
 		taskScheduler.setDaemon(true);
-		taskScheduler.setThreadNamePrefix("Shud-");
+		taskScheduler.setThreadNamePrefix("Shed-");
 		return taskScheduler;
 	}
 
