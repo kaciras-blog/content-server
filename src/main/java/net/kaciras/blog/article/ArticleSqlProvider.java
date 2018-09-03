@@ -1,5 +1,6 @@
 package net.kaciras.blog.article;
 
+import net.kaciras.blog.infrastructure.CollectionUtils;
 import org.apache.ibatis.jdbc.SQL;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public final class ArticleSqlProvider {
 		if (sort.isUnsorted()) {
 			sql.ORDER_BY("id DESC"); //默认按发布顺序倒序
 		} else {
-			var order = getIterableFirst(sort);
+			var order = CollectionUtils.getFirst(sort);
 			var p = order.getProperty();
 
 			if (!allowFields.contains(p))
@@ -47,19 +48,4 @@ public final class ArticleSqlProvider {
 				pageable.getPageNumber(), Math.min(pageable.getPageSize(), 20)); // 限制最大结果数
 	}
 
-	/**
-	 * Helper method to get fitst element from a iterable.
-	 *
-	 * @param iterable iterable object.
-	 * @param <T> type of element.
-	 * @return the element.
-	 * @throws IllegalArgumentException if iterable has no element.
-	 */
-	private static <T> T getIterableFirst(Iterable<T> iterable) {
-		var iter = iterable.iterator();
-		if (iter.hasNext()) {
-			return iter.next();
-		}
-		throw new IllegalArgumentException("iterable has no element.");
-	}
 }

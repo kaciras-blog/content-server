@@ -8,7 +8,7 @@ import net.kaciras.blog.SecurtyContext;
 import net.kaciras.blog.infrastructure.exception.DataTooBigException;
 import net.kaciras.blog.infrastructure.exception.LegallyProhibitedException;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
-import net.kaciras.blog.infrastructure.text.TextUtil;
+import net.kaciras.blog.infrastructure.TextUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
