@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.io.DBUtils;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,7 +58,6 @@ class ArticleRepository {
 
 	public List<Article> findAll(ArticleListRequest request) {
 		checkNotNull(request, "request");
-		request.setCount(Math.min(request.getCount(), 20)); // 限制最大结果数
 		return articleDAO.selectPreview(request);
 	}
 

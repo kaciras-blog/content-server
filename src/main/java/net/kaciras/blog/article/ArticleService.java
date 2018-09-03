@@ -11,6 +11,8 @@ import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,10 +71,8 @@ public class ArticleService {
 
 	@Scheduled(fixedDelay = 5 * 60 * 1000)
 	void updateHotsTask() {
-		ArticleListRequest request = new ArticleListRequest();
-		request.setDesc(true);
-		request.setSort("view_count");
-		request.setCount(6);
+		var request = new ArticleListRequest();
+		request.setPageable(PageRequest.of(0, 6, Sort.Direction.DESC, "view_count"));
 		hotArticles = articleMapper.toPreview(repository.findAll(request));
 	}
 

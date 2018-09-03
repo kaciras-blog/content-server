@@ -8,5 +8,6 @@ import lombok.Setter;
 public class ClassifyArticleListRequest extends ArticleListRequest {
 
 	private int cid;
+
 	private boolean recursive;
 }

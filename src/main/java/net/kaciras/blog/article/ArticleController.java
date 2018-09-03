@@ -12,6 +12,9 @@ import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
@@ -47,7 +50,8 @@ final class ArticleController {
 
 
 	@GetMapping
-	public List<PreviewVo> getList(ArticleListRequest request) {
+	public List<PreviewVo> getList(ArticleListRequest request, Pageable pageable) {
+		request.setPageable(pageable);
 		return articleService.getList(request).stream().map(this::aggregate).collect(Collectors.toList());
 	}
 

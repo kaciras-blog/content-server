@@ -7,12 +7,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public class ArticleSqlProvider {
+public final class ArticleSqlProvider {
 
 	private Set<String> allowFields = Set.of("create_time", "update_time", "view_count");
 
 	public String selectPreview(ArticleListRequest query) {
-		SQL sql = new SQL().SELECT("*").FROM("Article AS A");
+		var sql = new SQL().SELECT("*").FROM("Article AS A");
 
 		switch (query.getDeletion()) {
 			case TRUE:
@@ -24,30 +24,42 @@ public class ArticleSqlProvider {
 		}
 
 		//TODO: coupling
-		Integer category = query.getCategory();
+		var category = query.getCategory();
 		if (category != null && category > 0) {
 			sql.JOIN("CategoryTree AS B ON A.category=B.descendant").WHERE("B.ancestor=#{category}");
 		}
 
-		String field = query.getSort();
-		if (field != null) {
-			if (!allowFields.contains(field))
-				throw new IllegalArgumentException("错误的过滤字段:" + field);
-			sql.ORDER_BY(field + " " + (query.isDesc() ? "DESC" : "ASC"));
-		} else {
+		var pageable = query.getPageable();
+		var sort = pageable.getSort();
+
+		if (sort.isUnsorted()) {
 			sql.ORDER_BY("id DESC"); //默认按发布顺序倒序
+		} else {
+			var order = getIterableFirst(sort);
+			var p = order.getProperty();
+
+			if (!allowFields.contains(p))
+				throw new IllegalArgumentException("错误的过滤字段:" + p);
+			sql.ORDER_BY(p + " " + order.getDirection());
 		}
 
-		return sql.toString() + String.format(" LIMIT %d,%d", query.getStart(), query.getCount());
+		return sql.toString() + String.format(" LIMIT %d,%d",
+				pageable.getPageNumber(), Math.min(pageable.getPageSize(), 20)); // 限制最大结果数
 	}
 
-	@SuppressWarnings("Convert2MethodRef")
-	public String countInCategories(List<Integer> arg0) {
-		String cateFilter = arg0.stream()
-				.map(id -> id.toString())
-				.collect(Collectors.joining(",", "category in (", ")"));
-		return new SQL().SELECT("COUNT(*)").FROM("Article")
-				.WHERE("deleted=0")
-				.WHERE(cateFilter).toString();
+	/**
+	 * Helper method to get fitst element from a iterable.
+	 *
+	 * @param iterable iterable object.
+	 * @param <T> type of element.
+	 * @return the element.
+	 * @throws IllegalArgumentException if iterable has no element.
+	 */
+	private static <T> T getIterableFirst(Iterable<T> iterable) {
+		var iter = iterable.iterator();
+		if (iter.hasNext()) {
+			return iter.next();
+		}
+		throw new IllegalArgumentException("iterable has no element.");
 	}
 }
