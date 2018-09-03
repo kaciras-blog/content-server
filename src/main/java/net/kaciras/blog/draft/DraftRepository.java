@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kaciras.blog.Utils;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
-import net.kaciras.blog.infrastructure.io.DBUtils;
+import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

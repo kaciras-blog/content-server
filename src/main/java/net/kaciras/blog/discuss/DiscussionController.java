@@ -3,7 +3,7 @@ package net.kaciras.blog.discuss;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
-import net.kaciras.blog.infrastructure.text.TextUtil;
+import net.kaciras.blog.infrastructure.TextUtil;
 import net.kaciras.blog.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

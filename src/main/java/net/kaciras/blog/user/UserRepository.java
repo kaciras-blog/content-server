@@ -1,7 +1,7 @@
 package net.kaciras.blog.user;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.io.DBUtils;
+import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 

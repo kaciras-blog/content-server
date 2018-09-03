@@ -3,7 +3,7 @@ package net.kaciras.blog.category;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.Utils;
 import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
-import net.kaciras.blog.infrastructure.io.DBUtils;
+import net.kaciras.blog.infrastructure.sql.DBUtils;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.NonNull;

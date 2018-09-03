@@ -1,7 +1,7 @@
 package net.kaciras.blog.draft;
 
 import lombok.*;
-import net.kaciras.blog.infrastructure.io.DBUtils;
+import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

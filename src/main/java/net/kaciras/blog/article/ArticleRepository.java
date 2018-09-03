@@ -3,7 +3,7 @@ package net.kaciras.blog.article;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
-import net.kaciras.blog.infrastructure.io.DBUtils;
+import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
