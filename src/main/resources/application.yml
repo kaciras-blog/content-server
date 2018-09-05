@@ -47,6 +47,11 @@ spring:
     host: 192.168.0.11
     port: 33671
     password: ZuDNpaB7]vv_iBynJG6ZwPexPPewP]kf
+    
+  session:
+    store-type: redis
+    redis:
+      namespace: kx
 
   jackson:
     date-format: yyyy-MM-dd HH:mm #这个只用于java.util.Date这些老API

@@ -41,10 +41,10 @@ import java.util.concurrent.Executors;
 @EnableSpringConfigured
 @Import(KxCodecConfiguration.class)
 @SpringBootApplication(exclude = {
+		SpringApplicationAdminJmxAutoConfiguration.class,
 		JmsAutoConfiguration.class,
 		JdbcTemplateAutoConfiguration.class,
 		ErrorMvcAutoConfiguration.class,
-		SpringApplicationAdminJmxAutoConfiguration.class,
 })
 public class ServiceApplication {
 
