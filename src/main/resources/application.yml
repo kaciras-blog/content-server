@@ -1,4 +1,5 @@
 server:
+  http-port: 2374
   port: 2375
 
   ssl:
