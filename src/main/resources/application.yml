@@ -21,6 +21,13 @@ server:
     accept-count: 512
 
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
+      - org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
+      - org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+
   main:
     banner-mode: "off"
 
@@ -47,7 +54,7 @@ spring:
     host: 192.168.0.11
     port: 33671
     password: ZuDNpaB7]vv_iBynJG6ZwPexPPewP]kf
-    
+
   session:
     store-type: redis
     redis:
