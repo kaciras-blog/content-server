@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
  * 并在调用完成后清除。
  */
 @Component
-public class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
+class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
 
 	private static final String SESSION_NAME = "CSRF-Token";
 	private static final String HEADER_NAME = "X-CSRF-Token";
@@ -27,10 +27,8 @@ public class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-		if (!(handler instanceof HandlerMethod))
-			return true;
 		if (HttpMethod.OPTIONS.matches(request.getMethod())) {
-			return true; //OPTIONS请求不需要用户信息
+			return true; // OPTIONS请求不需要用户信息
 		}
 		if(debugPermission) {
 			SecurtyContext.setCurrentUser(2);
@@ -47,13 +45,11 @@ public class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
 	}
 
 	private boolean checkCSRF(HttpServletRequest request) {
-		//在配置文件里可以关闭CSRF检验
 		if (!csrfVerify) {
-			return true;
+			return true; //在配置文件里可以关闭CSRF检验
 		}
 		var csrf = request.getSession().getAttribute(SESSION_NAME);
-		var header = request.getHeader(HEADER_NAME);
-		return csrf != null && csrf.equals(header);
+		return csrf != null && csrf.equals(request.getHeader(HEADER_NAME));
 	}
 
 	@Override

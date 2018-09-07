@@ -18,7 +18,7 @@ server:
 
   tomcat:
     max-threads: 4
-    accept-count: 512
+    accept-count: 128
 
 spring:
   autoconfigure:
