@@ -1,5 +1,6 @@
 package net.kaciras.blog.api;
 
+import net.kaciras.blog.infrastructure.AddontionPortAutoConfiguration;
 import net.kaciras.blog.infrastructure.codec.KxCodecConfiguration;
 import net.kaciras.blog.infrastructure.io.CommandListener;
 import net.kaciras.blog.infrastructure.message.DirectCalledMessageClient;
@@ -31,7 +32,7 @@ import java.io.IOException;
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
-@Import(KxCodecConfiguration.class)
+@Import({KxCodecConfiguration.class, AddontionPortAutoConfiguration.class})
 @SpringBootApplication
 public class ServiceApplication {
 
