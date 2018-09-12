@@ -1,7 +1,7 @@
 package net.kaciras.blog.domain;
 
-import net.kaciras.blog.Authenticator;
-import net.kaciras.blog.SecurtyContext;
+import net.kaciras.blog.api.Authenticator;
+import net.kaciras.blog.api.SecurtyContext;
 
 public class MockAuthenticator implements Authenticator {
 

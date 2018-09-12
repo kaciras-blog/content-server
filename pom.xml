@@ -157,7 +157,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>net.kaciras.blog.ServiceApplication</mainClass>
+							<mainClass>net.kaciras.blog.api.ServiceApplication</mainClass>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
 						</manifest>

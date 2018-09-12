@@ -1,7 +1,7 @@
 package net.kaciras.blog.domain;
 
-import net.kaciras.blog.article.ArticleService;
-import net.kaciras.blog.SecurtyContext;
+import net.kaciras.blog.api.article.ArticleService;
+import net.kaciras.blog.api.SecurtyContext;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 

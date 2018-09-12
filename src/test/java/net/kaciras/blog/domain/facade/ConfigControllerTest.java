@@ -2,8 +2,8 @@ package net.kaciras.blog.domain.facade;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.kaciras.blog.ConfigBind;
-import net.kaciras.blog.EnumConfigItem;
+import net.kaciras.blog.api.ConfigBind;
+import net.kaciras.blog.api.EnumConfigItem;
 import net.kaciras.blog.domain.AbstractSpringTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

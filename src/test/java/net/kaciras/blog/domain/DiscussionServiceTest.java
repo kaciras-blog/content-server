@@ -1,11 +1,11 @@
 package net.kaciras.blog.domain;
 
-import net.kaciras.blog.discuss.Discussion;
-import net.kaciras.blog.discuss.DiscussionQuery;
-import net.kaciras.blog.discuss.DiscussionService;
+import net.kaciras.blog.api.discuss.Discussion;
+import net.kaciras.blog.api.discuss.DiscussionQuery;
+import net.kaciras.blog.api.discuss.DiscussionService;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
-import net.kaciras.blog.DeletedState;
-import net.kaciras.blog.SecurtyContext;
+import net.kaciras.blog.api.DeletedState;
+import net.kaciras.blog.api.SecurtyContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

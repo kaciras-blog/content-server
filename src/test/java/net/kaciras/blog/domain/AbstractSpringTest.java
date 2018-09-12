@@ -1,6 +1,6 @@
 package net.kaciras.blog.domain;
 
-import net.kaciras.blog.ServiceApplication;
+import net.kaciras.blog.api.ServiceApplication;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;

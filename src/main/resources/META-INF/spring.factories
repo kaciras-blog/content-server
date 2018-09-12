@@ -1,1 +1,1 @@
-org.springframework.boot.env.EnvironmentPostProcessor=net.kaciras.blog.config.PropertyProcessor
+org.springframework.boot.env.EnvironmentPostProcessor=net.kaciras.blog.api.config.PropertyProcessor
