@@ -70,13 +70,10 @@ public class DraftService {
 
 	public int newDraft(Integer article) {
 		authenticator.require("USE");
-		Draft draft;
 
-		if (article == null) {
-			draft = defaultDraft();
-		} else {
-			draft = draftMapper.fromArticle(articleService.getArticle(article));
-		}
+		var draft = article == null
+				? defaultDraft()
+				: draftMapper.fromArticle(articleService.getArticle(article));
 
 		draft.setUserId(SecurtyContext.getCurrentUser());
 		return draftRepository.add(draft);
@@ -84,7 +81,7 @@ public class DraftService {
 
 	public List<DraftHistory> getHistories(int id) {
 		var draft = draftRepository.getById(id);
-		if(SecurtyContext.isNotUser(draft.getUserId())) {
+		if (SecurtyContext.isNotUser(draft.getUserId())) {
 			authenticator.require("POWER_MODIFY");
 		}
 		return draft.getHistories();

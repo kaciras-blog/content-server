@@ -74,20 +74,20 @@ public final class CaptchaGenerator {
 		//干扰线
 		g2.setColor(randomColor(160, 200)); //线条的颜色
 		for (int i = 0; i < 20; i++) {
-			int x = RANDOM.nextInt(w - 1);
-			int y = RANDOM.nextInt(h - 1);
-			int xl = RANDOM.nextInt(6) + 1;
-			int yl = RANDOM.nextInt(12) + 1;
+			var x = RANDOM.nextInt(w - 1);
+			var y = RANDOM.nextInt(h - 1);
+			var xl = RANDOM.nextInt(6) + 1;
+			var yl = RANDOM.nextInt(12) + 1;
 			g2.drawLine(x, y, x + xl + 40, y + yl + 20);
 		}
 
 		//噪点
-		float yawpRate = 0.06f; //噪声率
-		int area = (int) (yawpRate * w * h);
+		var yawpRate = 0.06f; //噪声率
+		var area = (int) (yawpRate * w * h);
 		for (int i = 0; i < area; i++) {
-			int x = RANDOM.nextInt(w);
-			int y = RANDOM.nextInt(h);
-			int rgb = rendomColorValue();
+			var x = RANDOM.nextInt(w);
+			var y = RANDOM.nextInt(h);
+			var rgb = rendomColorValue();
 			image.setRGB(x, y, rgb);
 		}
 
@@ -111,15 +111,15 @@ public final class CaptchaGenerator {
 	private Color randomColor(int fc, int bc) {
 		fc &= 0xFF;
 		bc &= 0xFF;
-		int r = fc + RANDOM.nextInt(bc - fc);
-		int g = fc + RANDOM.nextInt(bc - fc);
-		int b = fc + RANDOM.nextInt(bc - fc);
+		var r = fc + RANDOM.nextInt(bc - fc);
+		var g = fc + RANDOM.nextInt(bc - fc);
+		var b = fc + RANDOM.nextInt(bc - fc);
 		return new Color(r, g, b);
 	}
 
 	private int rendomColorValue() {
-		int[] rgb = randomRGB();
-		int color = 0;
+		var rgb = randomRGB();
+		var color = 0;
 		for (int c : rgb) {
 			color <<= 8;
 			color |= c;
@@ -128,7 +128,7 @@ public final class CaptchaGenerator {
 	}
 
 	private int[] randomRGB() {
-		int[] rgb = new int[3];
+		var rgb = new int[3];
 		for (int i = 0; i < 3; i++) {
 			rgb[i] = RANDOM.nextInt(255);
 		}
@@ -136,11 +136,11 @@ public final class CaptchaGenerator {
 	}
 
 	private void shearX(Graphics g, int w1, int h1, Color color) {
-		int period = RANDOM.nextInt(2);
-		int frames = 1;
-		int phase = RANDOM.nextInt(2);
+		var period = RANDOM.nextInt(2);
+		var frames = 1;
+		var phase = RANDOM.nextInt(2);
 
-		for (int i = 0; i < h1; i++) {
+		for (var i = 0; i < h1; i++) {
 			var d = (period >> 1) * Math.sin(i / (double) period + Math.PI * 2 * phase / frames);
 			g.copyArea(0, i, w1, 1, (int) d, 0);
 			g.setColor(color);
@@ -150,10 +150,10 @@ public final class CaptchaGenerator {
 	}
 
 	private void shearY(Graphics g, int w1, int h1, Color color) {
-		int period = RANDOM.nextInt(40) + 10; // 50;
-		int frames = 20;
-		int phase = 7;
-		for (int i = 0; i < w1; i++) {
+		var period = RANDOM.nextInt(40) + 10; // 50;
+		var frames = 20;
+		var phase = 7;
+		for (var i = 0; i < w1; i++) {
 			var d = (period >> 1) * Math.sin(i / (double) period + Math.PI * 2 * phase / frames);
 			g.copyArea(i, 0, 1, h1, 0, (int) d);
 			g.setColor(color);
@@ -161,5 +161,4 @@ public final class CaptchaGenerator {
 			g.drawLine(i, (int) d + h1, i, h1);
 		}
 	}
-
 }

@@ -45,7 +45,7 @@ public class ArticleService {
 	 */
 	private Article requireModify(Article article) {
 		authenticator.require("MODIFY");
-		boolean noPerm = authenticator.reject("POWER_MODIFY");
+		var noPerm = authenticator.reject("POWER_MODIFY");
 
 		if (article.isDeleted() && noPerm) {
 			throw new ResourceDeletedException();
@@ -61,7 +61,7 @@ public class ArticleService {
 	}
 
 	public Article getArticle(int id) {
-		Article article = repository.get(id);
+		var article = repository.get(id);
 		if (article.isDeleted() && authenticator.reject("SHOW_DELETED")) {
 			throw new ResourceDeletedException();
 		}
@@ -102,7 +102,7 @@ public class ArticleService {
 	}
 
 	public void update(int id, ArticlePublishDTO publish) {
-		Article a = repository.get(id);
+		var a = repository.get(id);
 		requireModify(a);
 
 		var article = articleMapper.publishToArticle(publish);

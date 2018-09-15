@@ -32,7 +32,7 @@ final class DiscussionController {
 		var result = new ArrayList<DiscussionVo>(ds.size());
 
 		for (Discussion d : ds) {
-			DiscussionVo v = mapper.discussionView(d);
+			var v = mapper.discussionView(d);
 			v.setUser(userService.getUser(d.getUserId()));
 			result.add(v);
 		}

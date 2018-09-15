@@ -42,7 +42,7 @@ final class DraftController {
 
 	@PostMapping
 	public ResponseEntity<Void> createDraft(@RequestParam(required = false) Integer article) throws URISyntaxException {
-		int id = draftService.newDraft(article);
+		var id = draftService.newDraft(article);
 		return ResponseEntity.created(new URI("/drafts/" + id)).build();
 	}
 
@@ -54,7 +54,7 @@ final class DraftController {
 
 	@PostMapping("/{id}/histories")
 	public ResponseEntity<Void> postHistories(@RequestBody DraftSaveDTO dto) throws URISyntaxException {
-		int saveCount = draftService.saveNewHistory(dto);
+		var saveCount = draftService.saveNewHistory(dto);
 		return ResponseEntity.created(new URI("/drafts/" + dto.getId() + "/histories/" + saveCount)).build();
 	}
 

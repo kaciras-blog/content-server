@@ -9,11 +9,11 @@ public final class SqlProvidor {
 	private Set<String> sortFields = Set.of("time", "vote");
 
 	public String select(DiscussionQuery query) {
-		SQL sql = new SQL().SELECT("*").FROM("Discussion");
+		var sql = new SQL().SELECT("*").FROM("Discussion");
 
 		putFilters(sql, query);
 
-		String s = query.getSort();
+		var s = query.getSort();
 		if (s != null && sortFields.contains(s)) {
 			sql.ORDER_BY(s + " " + (query.isDesc() ? "DESC" : "ASC"));
 		}
@@ -22,7 +22,7 @@ public final class SqlProvidor {
 	}
 
 	public String selectCount(DiscussionQuery query) {
-		SQL sql = new SQL().SELECT("COUNT(*)").FROM("Discussion");
+		var sql = new SQL().SELECT("COUNT(*)").FROM("Discussion");
 		putFilters(sql, query);
 		return sql.toString();
 	}

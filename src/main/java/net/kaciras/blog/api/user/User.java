@@ -51,8 +51,8 @@ public class User {
 	 * @return 封禁记录的id
 	 */
 	int ban(int operator, Duration time, String cause) {
-		LocalDateTime start = LocalDateTime.now();
-		BanRecord record = new BanRecord()
+		var start = LocalDateTime.now();
+		var record = new BanRecord()
 				.setStart(start)
 				.setEnd(start.plus(time))
 				.setOperator(operator)

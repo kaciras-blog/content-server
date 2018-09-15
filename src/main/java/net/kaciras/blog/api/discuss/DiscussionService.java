@@ -45,7 +45,7 @@ public final class DiscussionService {
 	}
 
 	public Discussion getOne(int id) {
-		Discussion result = repository.get(id);
+		var result = repository.get(id);
 		if (result.isDeleted() && SecurtyContext.isNotUser(result.getUserId())) {
 			authenticator.require("POWER_QUERY");
 		}
@@ -64,7 +64,7 @@ public final class DiscussionService {
 
 	public int add(Discussion discussion) {
 		var loginedUserId = SecurtyContext.getCurrentUser();
-		int uid = 0;
+		var uid = 0;
 
 		if (loginedUserId == null) {
 			if (!allowAnonymous)
@@ -87,17 +87,17 @@ public final class DiscussionService {
 	}
 
 	public void voteUp(int id) {
-		int userId = SecurtyContext.getRequiredCurrentUser();
+		var userId = SecurtyContext.getRequiredCurrentUser();
 		repository.get(id).addVote(userId);
 	}
 
 	public void revokeVote(int id) {
-		int userId = SecurtyContext.getRequiredCurrentUser();
+		var userId = SecurtyContext.getRequiredCurrentUser();
 		repository.get(id).removeVote(userId);
 	}
 
 	public void delete(int id) {
-		Discussion discussion = repository.get(id);
+		var discussion = repository.get(id);
 		if (SecurtyContext.isNotUser(discussion.getUserId())) {
 			authenticator.require("POWER_MODIFY");
 		}

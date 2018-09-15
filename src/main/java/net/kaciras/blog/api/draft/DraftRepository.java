@@ -38,7 +38,7 @@ class DraftRepository {
 	 */
 	public int add(Draft draft) {
 		Utils.checkPositive(draft.getUserId(), "userId");
-		int count = draftDAO.selectCountByUser(draft.getUserId());
+		var count = draftDAO.selectCountByUser(draft.getUserId());
 		if (count > userLimit) {
 			throw new IllegalStateException("用户的草稿数量已达上限");
 		}

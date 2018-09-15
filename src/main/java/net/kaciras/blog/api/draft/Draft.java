@@ -52,7 +52,7 @@ final class Draft extends DraftContentBase {
 	 * @param content 内容
 	 */
 	void saveNewHistory(DraftContentBase content) {
-		int count = draftDAO.selectCountById(id);
+		var count = draftDAO.selectCountById(id);
 		if (count > historyLimit) {
 			draftDAO.deleteOldest(id);
 		}
