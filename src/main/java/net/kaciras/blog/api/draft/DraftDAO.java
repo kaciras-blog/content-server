@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper
 interface DraftDAO {
 
-	@Insert("INSERT INTO DraftUser(user_id,article_id) VALUES (#{userId},#{articleId})")
+	@Insert("INSERT INTO draft_user(user_id,article_id) VALUES (#{userId},#{articleId})")
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insertAssoicate(Draft draft);
 
@@ -30,7 +30,7 @@ interface DraftDAO {
 			"WHERE id=#{draft.id} AND save_count=#{draft.saveCount}")
 	int update(@Param("draft") Draft draft, @Param("content") DraftContentBase content);
 
-	@Select("SELECT COUNT(*) FROM DraftUser WHERE user_id=#{uid}")
+	@Select("SELECT COUNT(*) FROM draft_user WHERE user_id=#{uid}")
 	int selectCountByUser(int uid);
 
 	@Select("SELECT COUNT(*) FROM Draft WHERE id=#{id}")
@@ -44,7 +44,7 @@ interface DraftDAO {
 	 */
 	@Delete({
 			"DELETE FROM Draft WHERE id=#{id};",
-			"DELETE FROM DraftUser WHERE id=#{id}"
+			"DELETE FROM draft_user WHERE id=#{id}"
 	})
 	int deleteById(int id);
 
@@ -54,19 +54,19 @@ interface DraftDAO {
 	 * @param uid 用户id
 	 */
 	@Delete({
-			"DELETE FROM DraftUser WHERE user_id=#{uid};",
-			"DELETE FROM Draft WHERE id IN (SELECT id FROM DraftUser WHERE user_id=#{uid});"
+			"DELETE FROM draft_user WHERE user_id=#{uid};",
+			"DELETE FROM Draft WHERE id IN (SELECT id FROM draft_user WHERE user_id=#{uid});"
 	})
 	void deleteAll(int uid);
 
-	@Select("SELECT A.article_id,A.user_id,B.* FROM DraftUser AS A " +
+	@Select("SELECT A.article_id,A.user_id,B.* FROM draft_user AS A " +
 			"JOIN Draft AS B ON A.id=B.id " +
 			"WHERE A.id=#{id} ORDER BY save_count DESC LIMIT 1")
 	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.DraftMap")
 	Draft selectById(int id);
 
 	//连接 + 分组 + 排序太麻烦，直接上层处理
-	@Select("SELECT id FROM DraftUser WHERE user_id=#{uid}")
+	@Select("SELECT id FROM draft_user WHERE user_id=#{uid}")
 	List<Integer> selectByUser(int uid);
 
 	@Select("SELECT * FROM Draft WHERE id=#{id} ORDER BY save_count DESC")
