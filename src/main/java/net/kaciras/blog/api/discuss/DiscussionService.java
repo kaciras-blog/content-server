@@ -8,7 +8,7 @@ import net.kaciras.blog.api.SecurtyContext;
 import net.kaciras.blog.infrastructure.exception.DataTooBigException;
 import net.kaciras.blog.infrastructure.exception.LegallyProhibitedException;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
-import net.kaciras.blog.infrastructure.TextUtil;
+import net.kaciras.blog.infrastructure.TextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -74,10 +74,10 @@ public final class DiscussionService {
 			uid = loginedUserId;
 		}
 
-		if(TextUtil.getHeight(discussion.getContent(), 40) > 64) {
+		if(TextUtils.getHeight(discussion.getContent(), 40) > 64) {
 			throw new DataTooBigException("评论内容过长，请分多次发表");
 		}
-		if(TextUtil.isDanger(discussion.getContent())) {
+		if(TextUtils.isDanger(discussion.getContent())) {
 			throw new LegallyProhibitedException("评论包含不和谐内容");
 		}
 

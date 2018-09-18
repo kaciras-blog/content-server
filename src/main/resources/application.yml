@@ -23,7 +23,7 @@ server:
 spring:
   autoconfigure:
     exclude:
-#      - org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
+      - org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
       - org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration
       - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
       - org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration

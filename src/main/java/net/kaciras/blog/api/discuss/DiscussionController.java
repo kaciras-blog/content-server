@@ -3,7 +3,7 @@ package net.kaciras.blog.api.discuss;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
-import net.kaciras.blog.infrastructure.TextUtil;
+import net.kaciras.blog.infrastructure.TextUtils;
 import net.kaciras.blog.api.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,7 +41,7 @@ final class DiscussionController {
 
 	@PostMapping
 	public ResponseEntity post(@RequestBody Discussion to) {
-		if(TextUtil.isDanger(TextUtil.toSimplified(to.getContent()))) {
+		if(TextUtils.isDanger(TextUtils.toSimplified(to.getContent()))) {
 			throw new RequestArgumentException("评论中存在敏感词");
 		}
 		int id = discussionService.add(to);

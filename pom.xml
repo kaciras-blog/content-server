@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>net.kaciras.blog</groupId>
 			<artifactId>Infrastructure</artifactId>
-			<version>1.2</version>
+			<version>1.3</version>
 		</dependency>
 
 		<dependency>
@@ -106,11 +106,6 @@
 			<artifactId>mariadb-java-client</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>eu.bitwalker</groupId>
-			<artifactId>UserAgentUtils</artifactId>
-			<version>1.21</version>
-		</dependency>
 		<dependency>
 			<groupId>org.dom4j</groupId>
 			<artifactId>dom4j</artifactId>
