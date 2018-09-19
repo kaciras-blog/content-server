@@ -7,21 +7,21 @@ import java.util.List;
 @Mapper
 interface CategoryDAO {
 
-	@Select("SELECT * FROM Category WHERE id=#{id}")
+	@Select("SELECT * FROM category WHERE id=#{id}")
 	Category selectAttributes(int id);
 
-	@Select("SELECT COUNT(*) FROM Category")
+	@Select("SELECT COUNT(*) FROM category")
 	int selectCount();
 
-	@Update("UPDATE Category SET name=#{name},cover=#{cover},description=#{description}, background=#{background} WHERE id=#{id}")
+	@Update("UPDATE category SET name=#{name},cover=#{cover},description=#{description}, background=#{background} WHERE id=#{id}")
 	int update(Category category);
 
-	@Insert("INSERT INTO Category(name, cover, description, background) " +
+	@Insert("INSERT INTO category(name, cover, description, background) " +
 			"VALUES(#{name},#{cover},#{description}, #{background})")
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insert(Category entity);
 
-	@Delete("DELETE FROM Category WHERE id=#{id}")
+	@Delete("DELETE FROM category WHERE id=#{id}")
 	int delete(int id);
 
 	/**
@@ -50,7 +50,7 @@ interface CategoryDAO {
 	 * @return 子节点列表
 	 */
 	@Select("SELECT B.* FROM category_tree AS A " +
-			"JOIN Category AS B ON A.descendant=B.id " +
+			"JOIN category AS B ON A.descendant=B.id " +
 			"WHERE A.ancestor=#{ancestor} AND A.distance=#{n}")
 	List<Category> selectSubLayer(@Param("ancestor") int ancestor, @Param("n") int n);
 
@@ -73,7 +73,7 @@ interface CategoryDAO {
 	 * @return 路径列表。如果节点不存在，则返回空列表
 	 */
 	@Select("SELECT id,name,cover,description FROM category_tree AS A " +
-			"JOIN Category AS B ON A.ancestor=B.id " +
+			"JOIN category AS B ON A.ancestor=B.id " +
 			"WHERE descendant=#{id} AND ancestor>0 ORDER BY distance DESC")
 	List<Category> selectPathToRoot(int id);
 
@@ -85,7 +85,7 @@ interface CategoryDAO {
 	 * @return 路径列表。如果节点不存在，或上级节点不存在，则返回空列表
 	 */
 	@Select("SELECT B.* FROM category_tree AS A " +
-			"JOIN Category AS B ON A.ancestor=B.id " +
+			"JOIN category AS B ON A.ancestor=B.id " +
 			"WHERE descendant=#{id} AND " +
 			"distance<(SELECT distance FROM category_tree WHERE descendant=#{id} AND ancestor=#{ancestor}) " +
 			"ORDER BY distance DESC")
@@ -144,6 +144,6 @@ interface CategoryDAO {
 	 * @param id 分类id
 	 * @return true表示存在，null或false表示不存在
 	 */
-	@Select("SELECT 1 FROM Category WHERE id=#{id}")
+	@Select("SELECT 1 FROM category WHERE id=#{id}")
 	Boolean contains(int id);
 }

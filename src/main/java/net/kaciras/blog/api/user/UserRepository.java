@@ -10,7 +10,7 @@ class UserRepository {
 
 	private final User guest = new User(0, "游客");
 
-	private final UserDao userDao;
+	private final UserDAO userDao;
 
 	public void add(User user) {
 		userDao.insert(user);

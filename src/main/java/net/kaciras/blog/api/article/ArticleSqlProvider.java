@@ -11,7 +11,7 @@ public final class ArticleSqlProvider {
 	private Set<String> allowFields = Set.of("create_time", "update_time", "view_count");
 
 	public String selectPreview(ArticleListRequest query) {
-		var sql = new SQL().SELECT("*").FROM("Article AS A");
+		var sql = new SQL().SELECT("*").FROM("article AS A");
 
 		switch (query.getDeletion()) {
 			case TRUE:
@@ -25,7 +25,7 @@ public final class ArticleSqlProvider {
 		//TODO: coupling
 		var category = query.getCategory();
 		if (category != null && category > 0) {
-			sql.JOIN("CategoryTree AS B ON A.category=B.descendant").WHERE("B.ancestor=#{category}");
+			sql.JOIN("category_tree AS B ON A.category=B.descendant").WHERE("B.ancestor=#{category}");
 		}
 
 		var pageable = query.getPageable();

@@ -45,7 +45,7 @@ spring:
         size-parameter: count
 
   datasource:
-    url: jdbc:mariadb://localhost:3316/Blog?allowMultiQueries=true
+    url: jdbc:mariadb://192.168.0.11:3316/blog?allowMultiQueries=true
     username: root
     password: IY*J<0+T.[Skcoxd
     driver-class-name: org.mariadb.jdbc.Driver

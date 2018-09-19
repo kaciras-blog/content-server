@@ -9,7 +9,7 @@ public final class SqlProvidor {
 	private Set<String> sortFields = Set.of("time", "vote");
 
 	public String select(DiscussionQuery query) {
-		var sql = new SQL().SELECT("*").FROM("Discussion");
+		var sql = new SQL().SELECT("*").FROM("discussion");
 
 		putFilters(sql, query);
 
@@ -22,7 +22,7 @@ public final class SqlProvidor {
 	}
 
 	public String selectCount(DiscussionQuery query) {
-		var sql = new SQL().SELECT("COUNT(*)").FROM("Discussion");
+		var sql = new SQL().SELECT("COUNT(*)").FROM("discussion");
 		putFilters(sql, query);
 		return sql.toString();
 	}
