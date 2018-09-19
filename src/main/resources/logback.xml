@@ -23,7 +23,9 @@
 		<appender-ref ref="console"/>
 		<appender-ref ref="file"/>
 	</logger>
-
+	<logger name="org.springframework.web.servlet.mvc.method" additivity="false">
+		<level value="ERROR"/> <!-- ExceptionReslover默认会记录一个警告 -->
+	</logger>
 	<root level="INFO">
 		<appender-ref ref="console"/>
 		<appender-ref ref="file"/>
