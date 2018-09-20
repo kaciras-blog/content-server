@@ -31,11 +31,6 @@
 			"description": "是否允许匿名评论."
 		},
 		{
-			"name": "server.http-port",
-			"type": "java.lang.Integer",
-			"description": "在该端口上接受HTTP连接，用于同时支持HTTP和HTTPS."
-		},
-		{
 			"name": "web.csrf-verify",
 			"type": "java.lang.Boolean",
 			"description": "Description for web.csrf-verify."
