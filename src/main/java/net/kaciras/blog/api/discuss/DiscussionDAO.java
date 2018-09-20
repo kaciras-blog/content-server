@@ -7,8 +7,8 @@ import java.util.List;
 @Mapper
 interface DiscussionDAO {
 
-	@Insert("INSERT INTO discussion(user_id, object_id, `type`, floor, content) " +
-			"VALUES (#{userId}, #{objectId}, #{type}, #{floor}, #{content})")
+	@Insert("INSERT INTO discussion(user_id, object_id, `type`, floor, parent, content) " +
+			"VALUES (#{userId}, #{objectId}, #{type}, #{floor}, #{parent}, #{content})")
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insert(Discussion discuz);
 
@@ -21,7 +21,7 @@ interface DiscussionDAO {
 
 	@Select("SELECT * FROM discussion WHERE id=#{id}")
 	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.DiscussionMap")
-	Discussion selectById(int id);
+	Discussion selectById(long id);
 
 	@Update("UPDATE discussion SET deleted=#{value} WHERE id=#{id}")
 	int updateDeleted(@Param("id") long id, @Param("value") boolean value);

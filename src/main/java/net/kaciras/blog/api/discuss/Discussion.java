@@ -5,10 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import net.kaciras.blog.infrastructure.TextUtils;
-import net.kaciras.blog.infrastructure.exception.DataTooBigException;
-import net.kaciras.blog.infrastructure.exception.LegallyProhibitedException;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
-import net.kaciras.blog.infrastructure.exception.ResourceStateException;
+import net.kaciras.blog.infrastructure.exception.*;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +100,9 @@ public class Discussion {
 	}
 
 	static Discussion create(int userId, String content) {
+		if (content == null || content.length() == 0) {
+			throw new RequestArgumentException("评论内容不能为空");
+		}
 		if (TextUtils.getHeight(content, 40) > 64) {
 			throw new DataTooBigException("评论内容过长，请分多次发表");
 		}

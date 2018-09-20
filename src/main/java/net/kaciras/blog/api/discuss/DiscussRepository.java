@@ -26,7 +26,7 @@ class DiscussRepository {
 		discussionDAO.insert(dis);
 	}
 
-	public Discussion get(int id) {
+	public Discussion get(long id) {
 		return discussionDAO.selectById(id);
 	}
 

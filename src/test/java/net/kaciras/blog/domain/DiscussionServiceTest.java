@@ -1,11 +1,11 @@
 package net.kaciras.blog.domain;
 
+import net.kaciras.blog.api.DeletedState;
+import net.kaciras.blog.api.SecurtyContext;
 import net.kaciras.blog.api.discuss.Discussion;
 import net.kaciras.blog.api.discuss.DiscussionQuery;
 import net.kaciras.blog.api.discuss.DiscussionService;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
-import net.kaciras.blog.api.DeletedState;
-import net.kaciras.blog.api.SecurtyContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ class DiscussionServiceTest extends AbstractSpringTest {
 		Assertions.assertThat(one.getId()).isEqualTo(7);
 		Assertions.assertThat(one.getFloor()).isEqualTo(5);
 		Assertions.assertThat(one.getContent()).isEqualTo("楼中楼的二楼");
-		Assertions.assertThat(one.getArticleId()).isEqualTo(1);
+		Assertions.assertThat(one.getObjectId()).isEqualTo(1);
 		Assertions.assertThat(one.getUserId()).isEqualTo(1);
 		Assertions.assertThat(one.getVoteCount()).isEqualTo(2);
 		Assertions.assertThat(one.isDeleted()).isFalse();
@@ -41,11 +41,9 @@ class DiscussionServiceTest extends AbstractSpringTest {
 		Assertions.assertThat(service.count(query)).isEqualTo(2);
 
 		Discussion discuz = new Discussion();
-		discuz.setContent("hellow world");
 		discuz.setUserId(1);
-		discuz.setArticleId(3);
 
-		Assertions.assertThat(service.add(discuz)).isGreaterThan(0);
+		Assertions.assertThat(service.add(3, 0, "hellow world")).isGreaterThan(0);
 		Assertions.assertThat(discuz.getFloor()).isEqualTo(1);
 		Assertions.assertThat(service.count(query)).isEqualTo(3);
 
@@ -56,7 +54,7 @@ class DiscussionServiceTest extends AbstractSpringTest {
 		discuz.setId(7777);
 		discuz.setTime(LocalDateTime.MIN);
 
-		int id = service.add(discuz);
+		var id = service.add(3, 0, "hellow world");
 		Assertions.assertThat(id).isLessThan(100).isGreaterThan(0);
 		Assertions.assertThat(discuz.getFloor()).isEqualTo(2);
 
