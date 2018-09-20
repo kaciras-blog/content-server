@@ -75,7 +75,7 @@ final class DiscussionController {
 	 */
 	@PostMapping("/{id}/vote")
 	public ResponseEntity<Void> postVote(@PathVariable int id) {
-		discussionService.voteUp(id);//409
+		discussionService.voteUp(id);
 		return ResponseEntity.noContent().build();
 	}
 

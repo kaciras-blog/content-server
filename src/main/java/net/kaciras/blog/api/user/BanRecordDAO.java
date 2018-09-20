@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
-interface BanRecordDao {
+interface BanRecordDAO {
 
 	@Insert("INSERT INTO ban_record(user_id,start,end,operator,cause) " +
 			"VALUES (#{uid},#{r.start},#{r.end},#{r.operator},#{r.cause})")

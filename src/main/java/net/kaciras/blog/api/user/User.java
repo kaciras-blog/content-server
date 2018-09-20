@@ -18,7 +18,7 @@ public class User {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private BanRecordDao banRecordDao;
+	private BanRecordDAO banRecordDao;
 
 	private int id;
 	private String name;
