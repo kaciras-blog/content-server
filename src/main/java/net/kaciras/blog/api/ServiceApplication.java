@@ -2,6 +2,7 @@ package net.kaciras.blog.api;
 
 import net.kaciras.blog.infrastructure.AddontionPortAutoConfiguration;
 import net.kaciras.blog.infrastructure.codec.KxCodecConfiguration;
+import net.kaciras.blog.infrastructure.exception.ExceptionResloverAutoConfiguration;
 import net.kaciras.blog.infrastructure.io.CommandListener;
 import net.kaciras.blog.infrastructure.message.DirectCalledMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
@@ -32,7 +33,11 @@ import java.io.IOException;
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
-@Import({KxCodecConfiguration.class, AddontionPortAutoConfiguration.class})
+@Import({
+		ExceptionResloverAutoConfiguration.class,
+		KxCodecConfiguration.class,
+		AddontionPortAutoConfiguration.class,
+})
 @SpringBootApplication
 public class ServiceApplication {
 
