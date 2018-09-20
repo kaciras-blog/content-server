@@ -41,7 +41,7 @@ public final class DiscussionService {
 		}
 	}
 
-	public Discussion getOne(int id) {
+	public Discussion getOne(long id) {
 		var result = repository.get(id);
 		if (result.isDeleted() && SecurtyContext.isNotUser(result.getUserId())) {
 			authenticator.require("POWER_QUERY");
@@ -67,7 +67,7 @@ public final class DiscussionService {
 		return dis.getId();
 	}
 
-	public long addReply(int disId, String content) {
+	public long addReply(long disId, String content) {
 		var reply = Discussion.create(requireAddedUser(), content);
 		repository.get(disId).getReplyList().add(reply);
 		return reply.getId();
@@ -95,7 +95,7 @@ public final class DiscussionService {
 		repository.get(id).removeVote(userId);
 	}
 
-	public void delete(int id) {
+	public void delete(long id) {
 		var discussion = repository.get(id);
 		if (SecurtyContext.isNotUser(discussion.getUserId())) {
 			authenticator.require("POWER_MODIFY");
