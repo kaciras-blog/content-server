@@ -4,9 +4,13 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import net.kaciras.blog.infrastructure.TextUtils;
+import net.kaciras.blog.infrastructure.exception.DataTooBigException;
+import net.kaciras.blog.infrastructure.exception.LegallyProhibitedException;
+import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
-import net.kaciras.blog.infrastructure.sql.DBUtils;
 import net.kaciras.blog.infrastructure.message.MessageClient;
+import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -44,10 +48,17 @@ public class Discussion {
 
 	private String content;
 
-	private int voteCount;
-
 	private LocalDateTime time;
 	private boolean deleted;
+
+	private int voteCount;
+
+	ReplyList getReplyList() {
+		if (parent != 0) {
+			throw new ResourceNotFoundException("楼中楼不能再添加楼中楼了");
+		}
+		return new ReplyList(this);
+	}
 
 	/**
 	 * 点赞，一个用户只能点赞一次
@@ -88,5 +99,18 @@ public class Discussion {
 
 	void restore() {
 		dao.updateDeleted(id, false);
+	}
+
+	static Discussion create(int userId, String content) {
+		if (TextUtils.getHeight(content, 40) > 64) {
+			throw new DataTooBigException("评论内容过长，请分多次发表");
+		}
+		if (TextUtils.isDanger(content)) {
+			throw new LegallyProhibitedException("评论包含不和谐内容");
+		}
+		var dis = new Discussion();
+		dis.setUserId(userId);
+		dis.setContent(content);
+		return dis;
 	}
 }

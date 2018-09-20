@@ -5,10 +5,7 @@ import net.kaciras.blog.api.Authenticator;
 import net.kaciras.blog.api.ConfigBind;
 import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.api.SecurtyContext;
-import net.kaciras.blog.infrastructure.exception.DataTooBigException;
-import net.kaciras.blog.infrastructure.exception.LegallyProhibitedException;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
-import net.kaciras.blog.infrastructure.TextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -62,28 +59,33 @@ public final class DiscussionService {
 		return repository.size(query);
 	}
 
-	public int add(Discussion discussion) {
+	public int add(int articleId, String content) {
+		var dis = Discussion.create(requireAddedUser(), content);
+		dis.setArticleId(articleId);
+		repository.add(dis);
+		return dis.getId();
+	}
+
+	public int addReply(int disId, String content) {
+		var reply = Discussion.create(requireAddedUser(), content);
+		repository.get(disId).getReplyList().add(reply);
+		return reply.getId();
+	}
+
+	private int requireAddedUser() {
 		var loginedUserId = SecurtyContext.getCurrentUser();
-		var uid = 0;
 
 		if (loginedUserId == null) {
 			if (!allowAnonymous)
 				throw new PermissionException();
-		} else {
-			authenticator.require("ADD");
-			uid = loginedUserId;
+			return 0;
 		}
+		authenticator.require("ADD");
+		return loginedUserId;
+	}
 
-		if(TextUtils.getHeight(discussion.getContent(), 40) > 64) {
-			throw new DataTooBigException("评论内容过长，请分多次发表");
-		}
-		if(TextUtils.isDanger(discussion.getContent())) {
-			throw new LegallyProhibitedException("评论包含不和谐内容");
-		}
+	private void checkContent(String content) {
 
-		discussion.setUserId(uid);
-		repository.add(discussion);
-		return discussion.getId();
 	}
 
 	public void voteUp(int id) {
