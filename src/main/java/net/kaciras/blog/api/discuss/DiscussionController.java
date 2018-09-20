@@ -26,15 +26,27 @@ final class DiscussionController {
 		if (query.isMetaonly()) {
 			return Map.of("total", size);
 		}
-		var ds = discussionService.getList(query);
-		var result = new ArrayList<DiscussionVo>(ds.size());
+		var list = discussionService.getList(query);
+		var result = new ArrayList<DiscussionVo>(list.size());
 
-		for (var discussion : ds) {
-			var vo = mapper.discussionView(discussion);
-			vo.setUser(userService.getUser(discussion.getUserId()));
+		for (var discuz : list) {
+			var vo = convert(discuz);
+			vo.setReplyCount(discuz.getReplyList().size());
+
+			vo.setReplies(new ArrayList<>(5));
+			var replies = discuz.getReplyList().select(0, 5);
+			for (var reply : replies) {
+				vo.getReplies().add(convert(reply));
+			}
 			result.add(vo);
 		}
 		return Map.of("total", size, "items", result);
+	}
+
+	private DiscussionVo convert(Discussion discussion) {
+		var vo = mapper.toView(discussion);
+		vo.setUser(userService.getUser(discussion.getUserId()));
+		return vo;
 	}
 
 	@PostMapping
@@ -56,7 +68,7 @@ final class DiscussionController {
 	}
 
 	/**
-	 * 点赞功能
+	 * 点赞功能，每个用户对每个评论只能点赞一次，若重复点赞则返回409.
 	 *
 	 * @param id 要点赞的评论ID
 	 * @return 响应
@@ -73,7 +85,6 @@ final class DiscussionController {
 		return ResponseEntity.noContent().build();
 	}
 
-	//重复点赞
 	@ExceptionHandler(ResourceStateException.class)
 	public ResponseEntity<Void> handleException(ResourceStateException ex) {
 		return ResponseEntity.status(409).build();

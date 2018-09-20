@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import java.util.List;
+
 @Configurable
 @RequiredArgsConstructor
 public final class ReplyList {
@@ -19,5 +21,16 @@ public final class ReplyList {
 		reply.setType(parent.getType());
 		reply.setFloor(parent.getFloor());
 		dao.insert(reply);
+	}
+
+	public int size() {
+		return dao.selectCount(DiscussionQuery.byParent(parent.getId()));
+	}
+
+	public List<Discussion> select(int start, int size) {
+		var query = DiscussionQuery.byParent(parent.getId());
+		query.setStart(start);
+		query.setCount(size);
+		return dao.selectList(query);
 	}
 }

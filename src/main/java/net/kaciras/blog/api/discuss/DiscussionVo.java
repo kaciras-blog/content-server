@@ -5,6 +5,7 @@ import lombok.Data;
 import net.kaciras.blog.api.user.UserVo;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public final class DiscussionVo {
@@ -17,6 +18,9 @@ public final class DiscussionVo {
 
 	private UserVo user;
 	private String content;
+
+	private List<DiscussionVo> replies;
+	private int replyCount;
 
 	private int voteCount;
 	private boolean deleted;

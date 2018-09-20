@@ -14,22 +14,22 @@ public final class DiscussionQuery extends ListSelectRequest {
 	private Integer type;
 
 	private Integer userId;
-	private Integer parent;
+	private Long parent;
 
 	public DiscussionQuery() {}
 
-	private DiscussionQuery(Integer objectId, Integer type, Integer userId, Integer parent) {
+	private DiscussionQuery(Integer objectId, Integer type, Integer userId, Long parent) {
 		this.objectId = objectId;
+		this.type = type;
 		this.userId = userId;
 		this.parent = parent;
-		this.type = type;
 	}
 
 	public static DiscussionQuery byArticle(int article) {
 		return new DiscussionQuery(article, 0, null, null);
 	}
 
-	public static DiscussionQuery byParent(int parent) {
+	public static DiscussionQuery byParent(long parent) {
 		return new DiscussionQuery(null, null, null, parent);
 	}
 
