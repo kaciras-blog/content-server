@@ -14,11 +14,16 @@ class DiscussRepository {
 
 	private final DiscussionDAO discussionDAO;
 
-	@Transactional(isolation = Isolation.SERIALIZABLE)
-	public void add(Discussion discuz) {
-		var lastFloor = discussionDAO.selectLastFloor(discuz.getArticleId());
-		discuz.setFloor(lastFloor + 1);
-		discussionDAO.insert(discuz);
+	/**
+	 * 添加一条评论。
+	 *
+	 * @param dis 评论对象
+	 */
+	@Transactional(isolation = Isolation.SERIALIZABLE) // 楼层的确定需要获取评论数，存在幻读的可能
+	public void add(Discussion dis) {
+		var count = discussionDAO.selectCountByObject(dis.getObjectId(), dis.getType());
+		dis.setFloor(count); // 评论的楼层是连续的，新评论的楼层就是已有评论的数量
+		discussionDAO.insert(dis);
 	}
 
 	public Discussion get(int id) {
@@ -29,7 +34,7 @@ class DiscussRepository {
 		if (query.getCount() > 30) {
 			throw new RequestArgumentException("单次查询数量太多");
 		}
-		if(query.getArticleId() == null
+		if(query.getObjectId() == null
 				&& query.getParent() == null
 				&& query.getUserId() == null) {
 			throw new RequestArgumentException("请指定查询条件");
@@ -38,7 +43,7 @@ class DiscussRepository {
 	}
 
 	public int size(DiscussionQuery query) {
-		if(query.getArticleId() == null
+		if(query.getObjectId() == null
 				&& query.getParent() == null
 				&& query.getUserId() == null) {
 			throw new RequestArgumentException("请指定查询条件");

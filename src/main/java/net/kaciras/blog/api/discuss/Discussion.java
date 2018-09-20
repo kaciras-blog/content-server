@@ -38,14 +38,15 @@ public class Discussion {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-	private int id;
-	private int userId;
+	private long id;
 
-	private int articleId;
+	private int objectId;
+	private int type;
+
 	private int floor;
+	private long parent;
 
-	private int parent;
-
+	private int userId;
 	private String content;
 
 	private LocalDateTime time;
@@ -94,11 +95,11 @@ public class Discussion {
 	// 因为它们是对deleted属性的修改，而不是真正的删除
 
 	void delete() {
-		dao.updateDeleted(id, true);
+		DBUtils.checkEffective(dao.updateDeleted(id, true));
 	}
 
 	void restore() {
-		dao.updateDeleted(id, false);
+		DBUtils.checkEffective(dao.updateDeleted(id, false));
 	}
 
 	static Discussion create(int userId, String content) {

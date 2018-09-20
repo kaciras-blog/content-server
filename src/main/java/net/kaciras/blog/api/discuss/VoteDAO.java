@@ -6,11 +6,11 @@ import org.apache.ibatis.annotations.*;
 interface VoteDAO {
 
 	@Insert("INSERT INTO discussion_vote (id,user) VALUES (#{id}, #{userId})")
-	void insertRecord(@Param("id") int id, @Param("userId") int userId);
+	void insertRecord(@Param("id") long id, @Param("userId") int userId);
 
 	@Delete("DELETE FROM discussion_vote WHERE id=#{id} AND user=#{userId}")
-	int deleteRecord(@Param("id") int id, @Param("userId") int userId);
+	int deleteRecord(@Param("id") long id, @Param("userId") int userId);
 
 	@Select("SELECT 1 FROM discussion_vote WHERE id=#{id} AND user=#{userId}")
-	Boolean contains(@Param("id") int id, @Param("userId") int userId);
+	Boolean contains(@Param("id") long id, @Param("userId") int userId);
 }

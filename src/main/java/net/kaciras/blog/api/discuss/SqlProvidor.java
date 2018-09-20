@@ -31,11 +31,11 @@ public final class SqlProvidor {
 		if (query.getParent() != null) {
 			sql.WHERE("parent = #{parent}");
 		} else {
-			if (query.getArticleId() != null) {
-				sql.WHERE("post = #{articleId}");
+			if (query.getObjectId() != null && query.getType() != null) {
+				sql.WHERE("object_id = #{objectId} AND `type`=#{type}");
 			}
 			if (query.getUserId() != null) {
-				sql.WHERE("user = #{userId}");
+				sql.WHERE("user_id = #{userId}");
 			}
 		}
 		switch (query.getDeletion()) {

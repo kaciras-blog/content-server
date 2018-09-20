@@ -1,10 +1,10 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.user.UserService;
+import net.kaciras.blog.infrastructure.TextUtils;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
-import net.kaciras.blog.infrastructure.TextUtils;
-import net.kaciras.blog.api.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,12 +31,12 @@ final class DiscussionController {
 		var ds = discussionService.getList(query);
 		var result = new ArrayList<DiscussionVo>(ds.size());
 
-		for (Discussion d : ds) {
-			var v = mapper.discussionView(d);
-			v.setUser(userService.getUser(d.getUserId()));
+		for (var discussion : ds) {
+			var v = mapper.discussionView(discussion);
+			v.setUser(userService.getUser(discussion.getUserId()));
 			result.add(v);
 		}
-		return Map.of("total", size, "list", result);
+		return Map.of("total", size, "items", result);
 	}
 
 	@PostMapping
@@ -54,6 +54,16 @@ final class DiscussionController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PostMapping("/{id}/replies")
+	public ResponseEntity<Void> addReply(@PathVariable int id, String content) {
+
+	}
+
+	/**
+	 * 点赞功能
+	 * @param id 要点赞的评论ID
+	 * @return 响应
+	 */
 	@PostMapping("/{id}/vote")
 	public ResponseEntity<Void> postVote(@PathVariable int id) {
 		discussionService.voteUp(id);//409

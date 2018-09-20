@@ -59,14 +59,15 @@ public final class DiscussionService {
 		return repository.size(query);
 	}
 
-	public int add(int articleId, String content) {
+	public long add(int objectId, int type, String content) {
 		var dis = Discussion.create(requireAddedUser(), content);
-		dis.setArticleId(articleId);
+		dis.setObjectId(objectId);
+		dis.setType(type);
 		repository.add(dis);
 		return dis.getId();
 	}
 
-	public int addReply(int disId, String content) {
+	public long addReply(int disId, String content) {
 		var reply = Discussion.create(requireAddedUser(), content);
 		repository.get(disId).getReplyList().add(reply);
 		return reply.getId();
@@ -82,10 +83,6 @@ public final class DiscussionService {
 		}
 		authenticator.require("ADD");
 		return loginedUserId;
-	}
-
-	private void checkContent(String content) {
-
 	}
 
 	public void voteUp(int id) {

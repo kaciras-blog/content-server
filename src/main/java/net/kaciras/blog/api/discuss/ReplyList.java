@@ -15,7 +15,8 @@ public final class ReplyList {
 
 	public void add(Discussion reply) {
 		reply.setParent(parent.getId());
-		reply.setArticleId(parent.getArticleId());
+		reply.setObjectId(parent.getObjectId());
+		reply.setType(parent.getType());
 		reply.setFloor(parent.getFloor());
 		dao.insert(reply);
 	}
