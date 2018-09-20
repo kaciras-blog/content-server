@@ -32,11 +32,12 @@ public final class SqlProvidor {
 			sql.WHERE("parent = #{parent}");
 		} else {
 			if (query.getObjectId() != null && query.getType() != null) {
-				sql.WHERE("object_id = #{objectId} AND `type`=#{type}");
+				sql.WHERE("object_id = #{objectId} AND `type` = #{type}");
 			}
 			if (query.getUserId() != null) {
 				sql.WHERE("user_id = #{userId}");
 			}
+			sql.WHERE("parent = 0");
 		}
 		switch (query.getDeletion()) {
 			case FALSE:
