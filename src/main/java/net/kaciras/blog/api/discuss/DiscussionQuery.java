@@ -2,8 +2,10 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import net.kaciras.blog.api.ListSelectRequest;
 
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Data
 public final class DiscussionQuery extends ListSelectRequest {
@@ -15,8 +17,6 @@ public final class DiscussionQuery extends ListSelectRequest {
 
 	private Integer userId;
 	private Long parent;
-
-	public DiscussionQuery() {}
 
 	private DiscussionQuery(Integer objectId, Integer type, Integer userId, Long parent) {
 		this.objectId = objectId;

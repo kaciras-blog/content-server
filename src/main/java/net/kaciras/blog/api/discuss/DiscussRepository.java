@@ -15,11 +15,12 @@ class DiscussRepository {
 	private final DiscussionDAO discussionDAO;
 
 	/**
-	 * 添加一条评论。
+	 * 添加一条评论，此方法会在评论对象中设置自动生成的ID。
+	 * 使用了串行级别的事务，因为楼层的确定需要获取评论数，存在幻读的可能。
 	 *
 	 * @param dis 评论对象
 	 */
-	@Transactional(isolation = Isolation.SERIALIZABLE) // 楼层的确定需要获取评论数，存在幻读的可能
+	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void add(Discussion dis) {
 		var count = discussionDAO.selectCountByObject(dis.getObjectId(), dis.getType());
 		dis.setFloor(count); // 评论的楼层是连续的，新评论的楼层就是已有评论的数量

@@ -4,3 +4,4 @@ work/
 *.log
 *.iml
 data/
+/start.bat
