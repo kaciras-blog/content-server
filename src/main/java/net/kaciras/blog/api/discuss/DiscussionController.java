@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -34,15 +35,18 @@ final class DiscussionController {
 		for (var discuz : list) {
 			var vo = convert(discuz);
 			vo.setReplyCount(discuz.getReplyList().size());
-
-			vo.setReplies(new ArrayList<>(5));
-			var replies = discuz.getReplyList().select(0, 5);
-			for (var reply : replies) {
-				vo.getReplies().add(convert(reply));
-			}
+			vo.setReplies(convert(discuz.getReplyList().select(0, 5)));
 			result.add(vo);
 		}
 		return Map.of("total", size, "items", result);
+	}
+
+	private List<DiscussionVo> convert(List<Discussion> discussion) {
+		var res = new ArrayList<DiscussionVo>(discussion.size());
+		for (var d : discussion) {
+			res.add(convert(d));
+		}
+		return res;
 	}
 
 	private DiscussionVo convert(Discussion discussion) {
@@ -61,6 +65,23 @@ final class DiscussionController {
 	public ResponseEntity<Void> delete(@PathVariable long id) {
 		discussionService.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	/**
+	 * 查询指定评论的回复（楼中楼）。
+	 *
+	 * 楼中楼的URL主要使用子资源的形式，虽然getList()方法通过设置请求参数
+	 * 也能做到相同的功能，但使用子资源更加语义化。
+	 *
+	 * @param id 评论ID
+	 * @param pageable 分页参数
+	 * @return 回复列表
+	 */
+	@GetMapping("/{id}/replies")
+	public List<DiscussionVo> getReplies(@PathVariable long id, Pageable pageable) {
+		var query = DiscussionQuery.byParent(id);
+		query.setPageable(pageable);
+		return convert(discussionService.getList(query));
 	}
 
 	@PostMapping("/{id}/replies")
