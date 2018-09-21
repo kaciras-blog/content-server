@@ -3,10 +3,10 @@ package net.kaciras.blog.api.discuss;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.user.UserService;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Map;
@@ -21,7 +21,9 @@ final class DiscussionController {
 	private final DiscussMapper mapper;
 
 	@GetMapping
-	public Map<String, ?> getList(@Valid DiscussionQuery query) {
+	public Map<String, ?> getList(DiscussionQuery query, Pageable pageable) {
+		query.setPageable(pageable);
+
 		var size = discussionService.count(query);
 		if (query.isMetaonly()) {
 			return Map.of("total", size);

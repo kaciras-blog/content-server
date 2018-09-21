@@ -1,10 +1,10 @@
 package net.kaciras.blog.domain;
 
+import net.kaciras.blog.api.DeletedState;
+import net.kaciras.blog.api.SecurtyContext;
 import net.kaciras.blog.api.discuss.DiscussionQuery;
 import net.kaciras.blog.api.discuss.DiscussionService;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
-import net.kaciras.blog.api.DeletedState;
-import net.kaciras.blog.api.SecurtyContext;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class DiscussionPermissionTest extends AbstractSpringTest {
 	@Test
 	void testGetList() {
 		DiscussionQuery query = new DiscussionQuery();
-		query.setCount(20);
+//		query.setCount(20);
 
 		query.setDeletion(DeletedState.ALL);
 		Assertions.assertThatThrownBy(() -> service.getList(query)).isInstanceOf(PermissionException.class);

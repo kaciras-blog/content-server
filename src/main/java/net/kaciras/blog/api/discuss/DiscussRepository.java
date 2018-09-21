@@ -31,7 +31,7 @@ class DiscussRepository {
 	}
 
 	public List<Discussion> findAll(DiscussionQuery query) {
-		if (query.getCount() > 30) {
+		if (query.getPageable().getPageSize() > 30) {
 			throw new RequestArgumentException("单次查询数量太多");
 		}
 		if(query.getObjectId() == null

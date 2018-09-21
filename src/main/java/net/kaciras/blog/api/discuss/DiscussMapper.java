@@ -5,5 +5,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 interface DiscussMapper {
 
-	DiscussionVo toView(Discussion dto);
+	DiscussionVo toView(Discussion items);
 }

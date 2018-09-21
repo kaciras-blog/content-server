@@ -3,6 +3,7 @@ package net.kaciras.blog.api.discuss;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -29,8 +30,7 @@ public final class ReplyList {
 
 	public List<Discussion> select(int start, int size) {
 		var query = DiscussionQuery.byParent(parent.getId());
-		query.setStart(start);
-		query.setCount(size);
+		query.setPageable(PageRequest.of(start, size));
 		return dao.selectList(query);
 	}
 }

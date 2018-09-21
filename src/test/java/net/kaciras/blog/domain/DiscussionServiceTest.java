@@ -68,7 +68,7 @@ class DiscussionServiceTest extends AbstractSpringTest {
 	void testGetList() {
 		DiscussionQuery query = new DiscussionQuery();
 		query.setUserId(0);
-		query.setCount(2);
+//		query.setCount(2);
 
 		//delete查询条件
 		Assertions.assertThat(service.count(query)).isEqualTo(4);
