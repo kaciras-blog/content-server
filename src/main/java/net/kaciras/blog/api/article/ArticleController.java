@@ -1,12 +1,8 @@
 package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.category.CategoryService;
-import net.kaciras.blog.api.discuss.DiscussionQuery;
-import net.kaciras.blog.api.discuss.DiscussionService;
 import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.api.user.UserService;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
@@ -21,7 +17,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,9 +24,6 @@ import java.util.stream.Collectors;
 final class ArticleController {
 
 	private final ArticleService articleService;
-	private final UserService userService;
-	private final CategoryService categoryService;
-	private final DiscussionService discussionService;
 
 	private final ArticleMapper pojoMapper;
 	private final MessageClient messageClient;
@@ -46,25 +38,10 @@ final class ArticleController {
 		messageClient.subscribe(ArticleUpdatedEvent.class, event -> etagCache.remove(event.getArticleId()));
 	}
 
-
 	@GetMapping
 	public List<PreviewVo> getList(ArticleListRequest request, Pageable pageable) {
 		request.setPageable(pageable);
-		return articleService.getList(request).stream().map(this::aggregate).collect(Collectors.toList());
-	}
-
-	/**
-	 * 将用户信息，评论数，分类路径和文章聚合为一个对象，节约前端请求次数。
-	 *
-	 * @param article 文章对象
-	 * @return 聚合后的对象
-	 */
-	private PreviewVo aggregate(Article article) {
-		var result = pojoMapper.toPreview(article);
-		result.setAuthor(userService.getUser(article.getUserId()));
-		result.setDcnt(discussionService.count(DiscussionQuery.byArticle(article.getId())));
-		result.setCpath(categoryService.getPath(article.getCategories().get(0)));
-		return result;
+		return articleService.getList(request);
 	}
 
 	@GetMapping("/{id}")
@@ -93,8 +70,8 @@ final class ArticleController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> post(@RequestBody ArticlePublishDTO dto) throws URISyntaxException {
-		int id = articleService.publish(dto);
+	public ResponseEntity<Void> post(@RequestBody ArticlePublishRequest request) throws URISyntaxException {
+		var id = articleService.publish(request);
 		return ResponseEntity.created(new URI("/articles/" + id)).build();
 	}
 
@@ -104,14 +81,14 @@ final class ArticleController {
 	 * 目前看来那种都不好使...
 	 */
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody ArticlePublishDTO publish) {
+	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody ArticlePublishRequest publish) {
 		articleService.update(id, publish);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PutMapping("/{id}/categories")
-	public ResponseEntity<Void> updateCategories(@PathVariable int id, @RequestBody List<Integer> cates) {
-		articleService.changeCategory(id, cates);
+	public ResponseEntity<Void> updateCategories(@PathVariable int id, @RequestBody int category) {
+		articleService.changeCategory(id, category);
 		return ResponseEntity.noContent().build();
 	}
 

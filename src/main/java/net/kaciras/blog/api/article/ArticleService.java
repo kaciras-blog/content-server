@@ -5,26 +5,35 @@ import net.kaciras.blog.api.Authenticator;
 import net.kaciras.blog.api.AuthenticatorFactory;
 import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.api.SecurtyContext;
+import net.kaciras.blog.api.category.CategoryService;
+import net.kaciras.blog.api.discuss.DiscussionQuery;
+import net.kaciras.blog.api.discuss.DiscussionService;
+import net.kaciras.blog.api.user.UserService;
 import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
 import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
+import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class ArticleService {
 
+	private final UserService userService;
+	private final CategoryService categoryService;
+	private final DiscussionService discussionService;
+
 	private final ArticleRepository repository;
-	private final ArticleMapper articleMapper;
+	private final ArticleMapper mapper;
 	private final MessageClient messageClient;
 
 	private Authenticator authenticator;
@@ -73,52 +82,74 @@ public class ArticleService {
 	void updateHotsTask() {
 		var request = new ArticleListRequest();
 		request.setPageable(PageRequest.of(0, 6, Sort.Direction.DESC, "view_count"));
-		hotArticles = articleMapper.toPreview(repository.findAll(request));
+		hotArticles = mapper.toPreview(repository.findAll(request));
 	}
 
-	public List<Article> getList(ArticleListRequest request) {
+	public List<PreviewVo> getList(ArticleListRequest request) {
 		if (request.getDeletion() != DeletedState.FALSE) {
 			authenticator.require("SHOW_DELETED");
 		}
-		return repository.findAll(request);
+		return repository.findAll(request).stream().map(this::aggregate).collect(Collectors.toList());
+	}
+
+	/**
+	 * 将用户信息，评论数，分类路径和文章聚合为一个对象，节约前端请求次数。
+	 *
+	 * @param article 文章对象
+	 * @return 聚合后的对象
+	 */
+	private PreviewVo aggregate(Article article) {
+		var result = mapper.toPreview(article);
+		result.setAuthor(userService.getUser(article.getUserId()));
+		result.setDcnt(discussionService.count(DiscussionQuery.byArticle(article.getId())));
+		result.setCpath(categoryService.getPath(article.getCategory()));
+		return result;
 	}
 
 	public int getCountByCategories(int id) {
 		return repository.getCount(id);
 	}
 
-	@Transactional
-	public int publish(ArticlePublishDTO manuscript) {
+	/**
+	 * 发布一篇文章。
+	 * @param manuscript 文章内容对象。
+	 * @return 生成的ID
+	 */
+	public int publish(ArticlePublishRequest manuscript) {
 		authenticator.require("PUBLISH");
 
-		var article = articleMapper.publishToArticle(manuscript);
+		var article = mapper.toArticle(manuscript);
 		article.setUserId(SecurtyContext.getCurrentUser());
 
 		repository.add(article);
-		article.setCategories(manuscript.getCategories());
+		article.updateCategory(manuscript.getCategory());
 
-		messageClient.send(new ArticleCreatedEvent(article.getId(), manuscript.getDraftId(), manuscript.getCategories()));
+		messageClient.send(new ArticleCreatedEvent(article.getId(), manuscript.getDraftId(), manuscript.getCategory()));
 		return article.getId();
 	}
 
-	public void update(int id, ArticlePublishDTO publish) {
-		var a = repository.get(id);
-		requireModify(a);
+	/**
+	 * 修改文章。
+	 *
+	 * @param id 文章ID。
+	 * @param update 更新内容。
+	 */
+	public void update(int id, ArticlePublishRequest update) {
+		var article = DBUtils.checkNotNullResource(repository.get(id));
+		requireModify(article);
 
-		var article = articleMapper.publishToArticle(publish);
-		article.setId(id);
-		article.setUserId(a.getUserId());
+		mapper.update(update, article);
 		repository.update(article);
 
-		if (publish.getCategories() != null) {
-			article.setCategories(publish.getCategories());
+		if(update.getCategory() != null) {
+			article.updateCategory(update.getCategory());
 		}
 
-		messageClient.send(new ArticleUpdatedEvent(id, publish.getDraftId(), publish.getCategories()));
+		messageClient.send(new ArticleUpdatedEvent(id, update.getDraftId(), update.getCategory()));
 	}
 
-	public void changeCategory(int id, List<Integer> categories) {
-		requireModify(repository.get(id)).setCategories(categories);
+	public void changeCategory(int id, int category) {
+		requireModify(repository.get(id)).updateCategory(category);
 	}
 
 	public void updateDeleteion(int id, boolean isDeleted) {
@@ -128,11 +159,6 @@ public class ArticleService {
 		} else {
 			authenticator.require("PUBLISH");
 		}
-
-		if (isDeleted) {
-			article.delete();
-		} else {
-			article.recover();
-		}
+		article.updateDeleted(isDeleted);
 	}
 }

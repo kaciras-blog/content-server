@@ -10,8 +10,6 @@ import java.util.List;
 @Setter
 abstract class ArticleContentBase {
 
-	private int userId;
-
 	private String title;
 
 	private List<String> keywords;

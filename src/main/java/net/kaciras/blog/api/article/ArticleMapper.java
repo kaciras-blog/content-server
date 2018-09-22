@@ -2,6 +2,7 @@ package net.kaciras.blog.api.article;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
@@ -15,5 +16,7 @@ interface ArticleMapper {
 
 	ArticleVo toViewObject(Article article);
 
-	Article publishToArticle(ArticlePublishDTO publishDTO);
+	Article toArticle(ArticleContentBase contentBase);
+
+	void update(ArticleContentBase contentBase, @MappingTarget Article article);
 }

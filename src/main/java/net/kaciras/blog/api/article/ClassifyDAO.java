@@ -5,8 +5,6 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import java.util.List;
-
 @Mapper
 interface ClassifyDAO {
 
@@ -17,7 +15,7 @@ interface ClassifyDAO {
 	void updateCategory(@Param("old") int old, @Param("New") int New);
 
 	@Select("SELECT category FROM article WHERE id=#{id}")
-	List<Integer> selectById(int id);
+	int selectById(int id);
 
 	// 感觉性能不太好
 	@Select("SELECT COUNT(*) FROM article AS A " +

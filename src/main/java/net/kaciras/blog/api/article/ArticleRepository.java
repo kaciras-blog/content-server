@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static net.kaciras.blog.api.Utils.checkNotNull;
-import static net.kaciras.blog.api.Utils.checkPositive;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
@@ -22,8 +21,7 @@ class ArticleRepository {
 	private final ClassifyDAO classifyDAO;
 
 	public Article get(int id) {
-		checkPositive(id, "id");
-		return DBUtils.checkNotNullResource(articleDAO.selectById(id));
+		return articleDAO.selectById(id);
 	}
 
 	@Transactional

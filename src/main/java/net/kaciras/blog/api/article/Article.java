@@ -1,13 +1,12 @@
 package net.kaciras.blog.api.article;
 
 import lombok.*;
-import net.kaciras.blog.infrastructure.sql.DBUtils;
+import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
+import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
@@ -27,37 +26,38 @@ public class Article extends ArticleContentBase {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 	private int id;
+	private int userId;
 
 	private LocalDateTime create;
 	private LocalDateTime update;
-	private int viewCount;
-//	private int discussionCount;
-
 	private boolean deleted;
+
+	private int viewCount;
 
 	void recordView() {
 		articleDAO.increaseViewCount(getId());
 	}
 
-	public void delete() {
-		if (deleted) {
-			throw new IllegalStateException("文章已删除");
+	/**
+	 * 更改文章的删除状态，如果操作没有意义（当前状态与目标状态相同）则抛出异常。
+	 *
+	 * @param value 目标状态，true表示删除，false表示没有删除。
+	 */
+	public void updateDeleted(boolean value) {
+		if (deleted == value) {
+			if(deleted) {
+				throw new ResourceDeletedException("文章已经删除了");
+			}
+			throw new ResourceStateException("文章还没有被删除呢");
 		}
-		DBUtils.checkEffective(articleDAO.updateDeleted(id, true));
+		articleDAO.updateDeleted(id, value);
 	}
 
-	public void recover() {
-		if (!deleted) {
-			throw new IllegalStateException("文章没有标记为删除");
-		}
-		DBUtils.checkEffective(articleDAO.updateDeleted(id, false));
-	}
-
-	public List<Integer> getCategories() {
+	public int getCategory() {
 		return classifyDAO.selectById(id);
 	}
 
-	public void setCategories(@NonNull List<Integer> categories) {
-		classifyDAO.updateByArticle(id, categories.isEmpty() ? 0 : categories.get(0));
+	public void updateCategory(int category) {
+		classifyDAO.updateByArticle(id, category);
 	}
 }
