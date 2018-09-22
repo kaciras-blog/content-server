@@ -16,9 +16,6 @@ import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,8 +34,6 @@ public class ArticleService {
 	private final MessageClient messageClient;
 
 	private Authenticator authenticator;
-
-	private List<PreviewVo> hotArticles;
 
 	@Autowired
 	public void setAuthenticator(AuthenticatorFactory factory) {
@@ -65,10 +60,6 @@ public class ArticleService {
 		return article;
 	}
 
-	public List<PreviewVo> getHotArticles() {
-		return hotArticles;
-	}
-
 	public Article getArticle(int id) {
 		var article = repository.get(id);
 		if (article.isDeleted() && authenticator.reject("SHOW_DELETED")) {
@@ -76,13 +67,6 @@ public class ArticleService {
 		}
 		article.recordView(); //增加浏览量
 		return article;
-	}
-
-	@Scheduled(fixedDelay = 5 * 60 * 1000)
-	void updateHotsTask() {
-		var request = new ArticleListRequest();
-		request.setPageable(PageRequest.of(0, 6, Sort.Direction.DESC, "view_count"));
-		hotArticles = mapper.toPreview(repository.findAll(request));
 	}
 
 	public List<PreviewVo> getList(ArticleListRequest request) {
