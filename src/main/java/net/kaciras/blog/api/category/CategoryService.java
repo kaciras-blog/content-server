@@ -51,8 +51,9 @@ public class CategoryService {
 
 	public void update(int id, CategoryAttributes attributes) {
 		authenticator.require("MODIFY");
-		var category = mapper.toCategory(attributes);
-		category.setId(id);
+
+		var category = repository.get(id);
+		mapper.update(attributes, category);
 		repository.update(category);
 	}
 

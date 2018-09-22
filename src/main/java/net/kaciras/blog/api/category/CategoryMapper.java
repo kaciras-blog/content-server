@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.category;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ interface CategoryMapper {
 
 	List<CategoryVo> categoryView(List<Category> histories);
 
-	Category toCategory(CategoryAttributes attributes);
+	Category toCategory(CategoryAttributes viewObject);
 
-	Category toCategory(CategoryVo viewObject);
+	void update(CategoryAttributes attributes, @MappingTarget Category category);
 }

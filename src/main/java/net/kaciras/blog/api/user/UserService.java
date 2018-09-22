@@ -17,7 +17,7 @@ import java.util.List;
 public class UserService {
 
 	private final UserRepository repository;
-	private final PojoMapper mapper;
+	private final UserMapper mapper;
 	private final RestTemplate restTemplate;
 
 	private Authenticator authenticator;
