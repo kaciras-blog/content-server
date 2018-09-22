@@ -23,12 +23,6 @@ final class CategoryController {
 		categoryService.move(id, parent, treeMode);
 	}
 
-//	获取所有的分类？
-//	@GetMapping
-//	public List<Category> getTopLayer() {
-//		return categoryService.getTopCategories();
-//	}
-
 	@GetMapping("/{id}")
 	public CategoryVo get(@PathVariable int id) {
 		var vo = mapper.categoryView(categoryService.get(id));
@@ -50,7 +44,7 @@ final class CategoryController {
 
 	@PostMapping
 	public ResponseEntity<Void> create(@RequestBody CategoryVo category) {
-		int id = categoryService.add(mapper.toCategory(category), category.getParent());
+		int id = categoryService.add(category, category.getParent());
 		return ResponseEntity.created(URI.create("/categories/" + id)).build();
 	}
 
