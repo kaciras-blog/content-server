@@ -21,7 +21,7 @@ class ArticleRepository {
 	private final ClassifyDAO classifyDAO;
 
 	public Article get(int id) {
-		return articleDAO.selectById(id);
+		return DBUtils.checkNotNullResource(articleDAO.selectById(id));
 	}
 
 	@Transactional

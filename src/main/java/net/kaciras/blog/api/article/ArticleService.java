@@ -14,7 +14,6 @@ import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -119,7 +118,7 @@ public class ArticleService {
 	 * @param update 更新内容。
 	 */
 	public void update(int id, ArticlePublishRequest update) {
-		var article = DBUtils.checkNotNullResource(repository.get(id));
+		var article = repository.get(id);
 		requireModify(article);
 
 		mapper.update(update, article);
