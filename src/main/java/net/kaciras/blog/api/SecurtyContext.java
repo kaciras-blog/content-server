@@ -25,12 +25,12 @@ public final class SecurtyContext {
 	 * @return 如果当前用户不存在，或用户id与参数指定的id不同则返回true，否则false
 	 */
 	public static boolean isNotUser(int id) {
-		Integer loginedUser = getCurrentUser();
+		var loginedUser = getCurrentUser();
 		return loginedUser == null || loginedUser != id;
 	}
 
 	public static int getRequiredCurrentUser() {
-		Integer userDTO = getCurrentUser();
+		var userDTO = getCurrentUser();
 		if (userDTO == null) {
 			throw new PermissionException();
 		}

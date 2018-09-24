@@ -51,7 +51,7 @@ public class ServiceApplication {
 	 */
 	@Bean(destroyMethod = "destroy")
 	ThreadPoolTaskScheduler taskScheduler() {
-		ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+		var taskScheduler = new ThreadPoolTaskScheduler();
 		taskScheduler.initialize();
 		taskScheduler.setDaemon(true);
 		taskScheduler.setThreadNamePrefix("Shed-");
@@ -82,8 +82,8 @@ public class ServiceApplication {
 	}
 
 	public static void main(String[] args) throws IOException {
-		ConfigurableApplicationContext context = SpringApplication.run(ServiceApplication.class, args);
-		CommandListener listener = new CommandListener(60002);
+		var context = SpringApplication.run(ServiceApplication.class, args);
+		var listener = new CommandListener(60002);
 		listener.onShutdown(() -> SpringApplication.exit(context, () -> 0));
 		listener.start();
 	}
