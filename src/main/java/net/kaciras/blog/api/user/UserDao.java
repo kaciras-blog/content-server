@@ -1,12 +1,14 @@
 package net.kaciras.blog.api.user;
 
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 @Mapper
 interface UserDAO {
 
-	@Insert("INSERT INTO `user`(name,head) VALUES(#{name},#{head})")
-	@Options(useGeneratedKeys = true, keyColumn = "id")
+	@Insert("INSERT INTO `user`(id, name, head) VALUES(#{id}, #{name},#{head})")
 	void insert(User user);
 
 	@Select("SELECT id,name,head,deleted FROM `user` WHERE id=#{id}")
