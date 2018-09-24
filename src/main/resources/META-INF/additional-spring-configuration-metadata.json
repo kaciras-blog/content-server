@@ -27,12 +27,17 @@
 		},
 		{
 			"name": "discuss.anonymous",
-			"type": "java.lang.String",
+			"type": "java.lang.Boolean",
 			"description": "是否允许匿名评论."
 		},
 		{
 			"name": "web.csrf-verify",
 			"type": "java.lang.Boolean",
 			"description": "Description for web.csrf-verify."
+		},
+		{
+			"name": "discuss.disable",
+			"type": "java.lang.Boolean",
+			"description": "是否允许匿名评论."
 		}
 	] }

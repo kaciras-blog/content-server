@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!-- 枚举类型的type为类全名，注意内部类是使用$分隔的 -->
-<properties>
-	<group name="discussion" desc="评论设置">
-		<property key="disable" type="bool" desc="是否禁止评论"/>
-	</group>
-</properties>

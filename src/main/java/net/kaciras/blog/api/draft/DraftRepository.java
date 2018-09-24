@@ -43,7 +43,7 @@ class DraftRepository {
 			throw new IllegalStateException("用户的草稿数量已达上限");
 		}
 		draftDAO.insertAssoicate(draft);
-		draftDAO.insertHistory(draft.getId(), draft);
+		draftDAO.insertHistory(draft.getId(), draft, 0);
 		return draft.getId();
 	}
 

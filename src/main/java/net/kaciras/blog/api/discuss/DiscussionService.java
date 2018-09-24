@@ -2,12 +2,12 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.Authenticator;
-import net.kaciras.blog.api.ConfigBind;
 import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.api.SecurtyContext;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public final class DiscussionService {
 	private Authenticator authenticator;
 	private boolean allowAnonymous;
 
-	@ConfigBind("discuss.anonymous")
+	@Value("${discuss.anonymous}")
 	public void setAllowAnonymous(boolean allowAnonymous) {
 		this.allowAnonymous = allowAnonymous;
 	}

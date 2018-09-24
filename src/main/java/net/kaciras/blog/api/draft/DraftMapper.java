@@ -20,7 +20,6 @@ interface DraftMapper {
 
 	List<DraftVo> toVo(List<Draft> drafts);
 
-	@IterableMapping(qualifiedByName = "DraftHistory")
 	List<DraftHistoryVo> toDraftHistoryVOList(List<DraftHistory> histories);
 
 	@Named("PreviewVo")

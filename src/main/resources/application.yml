@@ -82,4 +82,5 @@ draft:
   delete-after-publish: true
 
 discuss:
+  disable: false
   anonymous: true
