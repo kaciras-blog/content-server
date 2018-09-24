@@ -8,6 +8,7 @@ import net.kaciras.blog.api.article.ArticleService;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,25 +27,21 @@ public class DraftService {
 		this.authenticator = factory.create("DRAFT");
 	}
 
-	public DraftDTO get(int id) {
+	public Draft get(int id) {
 		authenticator.require("POWER_MODIFY");
-		return draftMapper.toDTO(draftRepository.getById(id));
+		return draftRepository.getById(id);
 	}
 
-	public List<DraftDTO> getList(int userId) {
+	public List<Draft> getList(int userId) {
 		authenticator.require("POWER_MODIFY");
-		return draftMapper.toDTOList(draftRepository.findByUser(userId));
+		return draftRepository.findByUser(userId);
 	}
 
-	public void save(DraftSaveDTO dto) {
-		authenticator.require("POWER_MODIFY");
-		draftRepository.getById(dto.getId()).save(dto);
-	}
-
-	public int saveNewHistory(DraftSaveDTO dto) {
+	@Transactional
+	public int save(DraftSaveRequest dto) {
 		authenticator.require("POWER_MODIFY");
 		var draft = draftRepository.getById(dto.getId());
-		draft.saveNewHistory(dto);
+		draft.addHistory(dto);
 		return draft.getSaveCount() + 1;
 	}
 

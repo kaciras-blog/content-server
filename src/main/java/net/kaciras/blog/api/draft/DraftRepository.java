@@ -56,6 +56,10 @@ class DraftRepository {
 		return draft;
 	}
 
+	public void update(Draft draft) {
+		DBUtils.checkEffective(draftDAO.update(draft));
+	}
+
 	public void clear(int userId) {
 		Utils.checkPositive(userId, "userId");
 		draftDAO.deleteAll(userId);

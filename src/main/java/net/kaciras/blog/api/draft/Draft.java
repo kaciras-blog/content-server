@@ -1,7 +1,6 @@
 package net.kaciras.blog.api.draft;
 
 import lombok.*;
-import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -37,25 +36,16 @@ final class Draft extends DraftContentBase {
 	}
 
 	/**
-	 * 保存草稿。
-	 *
-	 * @param content 内容
-	 */
-	void save(DraftContentBase content) {
-		DBUtils.checkEffective(draftDAO.update(this, content));
-	}
-
-	/**
 	 * 保存草稿的内容为一个新的历史记录。
 	 * 检查数量可能出现幻读（新增）和不可重读（删除），但影响不大
 	 *
 	 * @param content 内容
 	 */
-	void saveNewHistory(DraftContentBase content) {
+	void addHistory(DraftContentBase content) {
 		var count = draftDAO.selectCountById(id);
 		if (count > historyLimit) {
 			draftDAO.deleteOldest(id);
 		}
-		draftDAO.insertHistory(id, content);
+		draftDAO.insertHistory(id, content, count);
 	}
 }

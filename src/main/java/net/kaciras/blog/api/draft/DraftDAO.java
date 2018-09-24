@@ -14,21 +14,22 @@ interface DraftDAO {
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insertAssoicate(Draft draft);
 
-	@Insert("INSERT INTO draft(id,save_count,title,cover,summary,keywords,content) " +
-			"VALUES(#{id}, (SELECT IFNULL(sc, 0) FROM (SELECT MAX(save_count)+1 AS sc FROM draft WHERE id=#{id}) AS Self)," +
-			"#{content.title}, #{content.cover}, #{content.summary}, #{content.keywords}, #{content.content})")
-	void insertHistory(@Param("id") int id, @Param("content") DraftContentBase content);
+	@Insert("INSERT INTO draft(id, save_count, title, cover, summary, keywords, content) " +
+			"VALUES (#{arg0}, #{arg2}, #{arg1.title}, #{arg1.cover}, #{arg1.summary}, #{arg1.keywords}, #{arg1.arg1})")
+	void insertHistory(int id, DraftContentBase content, int saveCount);
 
-	@Delete("DELETE FROM draft WHERE id=#{id} AND save_count=(SELECT sc FROM(SELECT MIN(save_count) AS sc FROM draft) AS Self)")
+	@Delete("DELETE FROM draft WHERE id=#{id} AND save_count=" +
+			"(SELECT sc FROM(SELECT MIN(save_count) AS sc FROM draft) AS Self)")
 	void deleteOldest(int id);
 
-	@Update("UPDATE Draft SET title=#{content.title}," +
-			"cover=#{content.cover}," +
-			"summary=#{content.summary}," +
-			"keywords=#{content.keywords}," +
-			"content=#{content.content} " +
-			"WHERE id=#{draft.id} AND save_count=#{draft.saveCount}")
-	int update(@Param("draft") Draft draft, @Param("content") DraftContentBase content);
+	@Update("UPDATE draft SET " +
+			"title=#{title}," +
+			"cover=#{cover}," +
+			"summary=#{summary}," +
+			"keywords=#{keywords}," +
+			"content=#{content} " +
+			"WHERE id=#{id} AND save_count=#{saveCount}")
+	int update(Draft draft);
 
 	@Select("SELECT COUNT(*) FROM draft_user WHERE user_id=#{uid}")
 	int selectCountByUser(int uid);
@@ -59,6 +60,12 @@ interface DraftDAO {
 	})
 	void deleteAll(int uid);
 
+	/**
+	 * 查出最新的草稿。
+	 *
+	 * @param id 草稿ID
+	 * @return 草稿对象
+	 */
 	@Select("SELECT A.article_id,A.user_id,B.* FROM draft_user AS A " +
 			"JOIN draft AS B ON A.id=B.id " +
 			"WHERE A.id=#{id} ORDER BY save_count DESC LIMIT 1")

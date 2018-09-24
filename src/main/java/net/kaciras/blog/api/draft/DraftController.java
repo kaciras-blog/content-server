@@ -27,12 +27,12 @@ final class DraftController {
 
 	@GetMapping
 	public List<DraftPreviewVo> getList() {
-		return mapper.toDraftPreviewVOList(draftService.getList(SecurtyContext.getRequiredCurrentUser()));
+		return mapper.toPreviewVo(draftService.getList(SecurtyContext.getRequiredCurrentUser()));
 	}
 
 	@GetMapping("/{id}")
 	public DraftVo get(@PathVariable("id") int id) {
-		return mapper.draftView(draftService.get(id));
+		return mapper.toVo(draftService.get(id));
 	}
 
 	@GetMapping("/{id}/histories")
@@ -46,16 +46,10 @@ final class DraftController {
 		return ResponseEntity.created(new URI("/drafts/" + id)).build();
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<Void> put(@RequestBody DraftSaveDTO dto) {
-		draftService.save(dto);
-		return ResponseEntity.noContent().build();
-	}
-
 	@PostMapping("/{id}/histories")
-	public ResponseEntity<Void> postHistories(@RequestBody DraftSaveDTO dto) throws URISyntaxException {
-		var saveCount = draftService.saveNewHistory(dto);
-		return ResponseEntity.created(new URI("/drafts/" + dto.getId() + "/histories/" + saveCount)).build();
+	public ResponseEntity<Void> save(@RequestBody DraftSaveRequest request) throws URISyntaxException {
+		var saveCount = draftService.save(request);
+		return ResponseEntity.created(new URI("/drafts/" + request.getId() + "/histories/" + saveCount)).build();
 	}
 
 	@DeleteMapping

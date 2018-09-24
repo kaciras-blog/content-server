@@ -12,25 +12,20 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 interface DraftMapper {
 
-	DraftDTO toDTO(Draft draft);
-
-	List<DraftDTO> toDTOList(List<Draft> drafts);
-
 	@Mapping(target = "articleId", source = "id")
 	@Mapping(target = "keywords", expression = "java(String.join(\" \", article.getKeywords()))")
 	Draft fromArticle(Article article);
 
-	DraftVo draftView(DraftDTO draft);
+	DraftVo toVo(Draft draft);
 
-	@Named("DraftHistory")
-	DraftHistoryVo toDraftHistoryVO(DraftHistory draft);
+	List<DraftVo> toVo(List<Draft> drafts);
 
 	@IterableMapping(qualifiedByName = "DraftHistory")
 	List<DraftHistoryVo> toDraftHistoryVOList(List<DraftHistory> histories);
 
-	@Named("Draft")
-	DraftPreviewVo toDraftPreviewVO(DraftDTO draft);
+	@Named("PreviewVo")
+	DraftPreviewVo toPreviewVo(Draft draft);
 
-	@IterableMapping(qualifiedByName = "Draft")
-	List<DraftPreviewVo> toDraftPreviewVOList(List<DraftDTO> histories);
+	@IterableMapping(qualifiedByName = "PreviewVo")
+	List<DraftPreviewVo> toPreviewVo(List<Draft> histories);
 }
