@@ -121,7 +121,7 @@ public class ArticleService {
 		var article = repository.get(id);
 		requireModify(article);
 
-		mapper.update(update, article);
+		mapper.update(article, update);
 		repository.update(article);
 
 		if(update.getCategory() != null) {

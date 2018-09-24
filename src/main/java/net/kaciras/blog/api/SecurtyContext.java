@@ -37,4 +37,7 @@ public final class SecurtyContext {
 		return userDTO;
 	}
 
+	public static void requireUser(int id) {
+		if(getRequiredCurrentUser() != id) throw new PermissionException();
+	}
 }

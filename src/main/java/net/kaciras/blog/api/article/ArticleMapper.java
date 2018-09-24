@@ -14,5 +14,5 @@ interface ArticleMapper {
 
 	Article toArticle(ArticleContentBase contentBase);
 
-	void update(ArticleContentBase contentBase, @MappingTarget Article article);
+	void update(@MappingTarget Article article, ArticleContentBase contentBase);
 }

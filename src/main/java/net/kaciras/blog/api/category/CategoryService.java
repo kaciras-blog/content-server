@@ -53,7 +53,7 @@ public class CategoryService {
 		authenticator.require("MODIFY");
 
 		var category = repository.get(id);
-		mapper.update(attributes, category);
+		mapper.update(category, attributes);
 		repository.update(category);
 	}
 

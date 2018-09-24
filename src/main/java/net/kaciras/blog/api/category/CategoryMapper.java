@@ -14,5 +14,5 @@ interface CategoryMapper {
 
 	Category toCategory(CategoryAttributes viewObject);
 
-	void update(CategoryAttributes attributes, @MappingTarget Category category);
+	void update(@MappingTarget Category category, CategoryAttributes attributes);
 }
