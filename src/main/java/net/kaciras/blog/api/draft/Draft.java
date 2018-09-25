@@ -43,9 +43,9 @@ final class Draft extends DraftContentBase {
 	 */
 	void addHistory(DraftContentBase content) {
 		var count = draftDAO.selectCountById(id);
-		if (count > historyLimit) {
+		if (count >= historyLimit) {
 			draftDAO.deleteOldest(id);
 		}
-		draftDAO.insertHistory(id, content, count);
+		draftDAO.insertHistory(id, content);
 	}
 }

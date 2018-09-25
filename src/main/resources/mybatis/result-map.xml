@@ -11,16 +11,6 @@
 		<collection property="keywords" column="id" select="net.kaciras.blog.api.article.KeywordDAO.select"/>
 	</resultMap>
 
-	<resultMap type="net.kaciras.blog.api.draft.Draft" id="DraftMap">
-		<result column="user_id" property="userId"/>
-		<result column="article_id" property="articleId"/>
-		<result column="save_count" property="saveCount"/>
-	</resultMap>
-
-	<resultMap type="net.kaciras.blog.api.draft.DraftHistory" id="DraftHistoryMap">
-		<result column="save_count" property="saveCount"/>
-	</resultMap>
-
 	<resultMap id="DiscussionMap" type="net.kaciras.blog.api.discuss.Discussion">
 		<id property="id" column="id"/>
 		<result property="objectId" column="object_id"/>

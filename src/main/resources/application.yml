@@ -64,7 +64,7 @@ spring:
     date-format: yyyy-MM-dd HH:mm #这个只用于java.util.Date这些老API
 
 mybatis:
-  mapper-locations: classpath:result-map.xml
+  mapper-locations: classpath:mybatis/*
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #                   Following is the non-spring settings

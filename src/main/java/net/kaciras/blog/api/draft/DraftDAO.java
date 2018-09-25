@@ -14,12 +14,10 @@ interface DraftDAO {
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insertAssoicate(Draft draft);
 
-	@Insert("INSERT INTO draft(id, save_count, title, cover, summary, keywords, content) " +
-			"VALUES (#{arg0}, #{arg2}, #{arg1.title}, #{arg1.cover}, #{arg1.summary}, #{arg1.keywords}, #{arg1.arg1})")
-	void insertHistory(int id, DraftContentBase content, int saveCount);
+	// SQL in xml file.
+	void insertHistory(int id, DraftContentBase content);
 
-	@Delete("DELETE FROM draft WHERE id=#{id} AND save_count=" +
-			"(SELECT sc FROM(SELECT MIN(save_count) AS sc FROM draft) AS Self)")
+	// SQL in xml file.
 	void deleteOldest(int id);
 
 	@Update("UPDATE draft SET " +
@@ -66,10 +64,6 @@ interface DraftDAO {
 	 * @param id 草稿ID
 	 * @return 草稿对象
 	 */
-	@Select("SELECT A.article_id,A.user_id,B.* FROM draft_user AS A " +
-			"JOIN draft AS B ON A.id=B.id " +
-			"WHERE A.id=#{id} ORDER BY save_count DESC LIMIT 1")
-	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.DraftMap")
 	Draft selectById(int id);
 
 	//连接 + 分组 + 排序太麻烦，直接上层处理
@@ -77,6 +71,6 @@ interface DraftDAO {
 	List<Integer> selectByUser(int uid);
 
 	@Select("SELECT * FROM draft WHERE id=#{id} ORDER BY save_count DESC")
-	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.DraftHistoryMap")
+	@ResultMap("net.kaciras.blog.api.draft.DraftDAO.DraftHistoryMap")
 	List<DraftHistory> selectHistories(int id);
 }
