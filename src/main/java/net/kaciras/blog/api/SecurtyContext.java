@@ -40,4 +40,8 @@ public final class SecurtyContext {
 	public static void requireUser(int id) {
 		if(getRequiredCurrentUser() != id) throw new PermissionException();
 	}
+
+	public static void requireLogin() {
+		if(getRequiredCurrentUser() == 0) throw new PermissionException();
+	}
 }

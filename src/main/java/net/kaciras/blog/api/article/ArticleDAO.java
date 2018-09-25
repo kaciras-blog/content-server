@@ -30,8 +30,14 @@ interface ArticleDAO {
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insert(Article article);
 
-	@Update("UPDATE article SET deleted=#{arg1} WHERE id=#{arg0}")
-	int updateDeleted(int id, boolean value);
+	/**
+	 * 更改一个文章的删除状态，并不会真正地从数据库中删除或插入它。
+	 *
+	 * @param id 文章ID。
+	 * @param value 删除标记的值
+	 */
+	@Update("UPDATE article SET deleted=#{value} WHERE id=#{id}")
+	void updateDeleted(@Param("id") int id, @Param("value") boolean value);
 
 	@Update("UPDATE article SET title=#{title},cover=#{cover},summary=#{summary}," +
 			"content=#{content} WHERE id=#{id}")
