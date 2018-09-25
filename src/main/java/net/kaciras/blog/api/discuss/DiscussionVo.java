@@ -25,6 +25,8 @@ public final class DiscussionVo {
 	private int voteCount;
 	private boolean deleted;
 
+	private boolean voted;
+
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime time;
 }

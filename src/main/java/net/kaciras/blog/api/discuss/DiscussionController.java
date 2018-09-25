@@ -1,11 +1,13 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.SecurtyContext;
 import net.kaciras.blog.api.user.UserService;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriTemplate;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ final class DiscussionController {
 			var vo = convert(discuz);
 			vo.setReplyCount(discuz.getReplyList().size());
 			vo.setReplies(convert(discuz.getReplyList().select(0, 5)));
+			vo.setVoted(discuz.getVoterList().contains(SecurtyContext.getCurrentUser()));
 			result.add(vo);
 		}
 		return Map.of("total", size, "items", result);
@@ -96,14 +99,16 @@ final class DiscussionController {
 	 * @param id 要点赞的评论ID
 	 * @return 响应
 	 */
-	@PostMapping("/{id}/vote")
+	@PostMapping("/{id}/votes")
 	public ResponseEntity<Void> postVote(@PathVariable int id) {
+		SecurtyContext.requireLogin();
 		discussionService.voteUp(id);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.created(URI.create("discussions/" + id + "/votes")).build();
 	}
 
-	@DeleteMapping("/{id}/vote")
+	@DeleteMapping("/{id}/votes")
 	public ResponseEntity<Void> revokeVote(@PathVariable int id) {
+		SecurtyContext.requireLogin();
 		discussionService.revokeVote(id);
 		return ResponseEntity.noContent().build();
 	}

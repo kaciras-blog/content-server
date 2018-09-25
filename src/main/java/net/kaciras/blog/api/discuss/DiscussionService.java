@@ -87,12 +87,12 @@ public final class DiscussionService {
 
 	public void voteUp(int id) {
 		var userId = SecurtyContext.getRequiredCurrentUser();
-		repository.get(id).addVote(userId);
+		repository.get(id).getVoterList().add(userId);
 	}
 
 	public void revokeVote(int id) {
 		var userId = SecurtyContext.getRequiredCurrentUser();
-		repository.get(id).removeVote(userId);
+		repository.get(id).getVoterList().add(userId);
 	}
 
 	public void delete(long id) {

@@ -36,15 +36,4 @@ interface DiscussionDAO {
 	@Select("SELECT COUNT(*) FROM discussion " +
 			"WHERE object_id=#{arg0} AND `type`=#{arg1} AND parent=0")
 	int selectCountByObject(int oid, int type);
-
-	/**
-	 * 在discuss表中冗余点赞数，便于排序。在点赞后不要忘了更新。
-	 *
-	 * @param id 评论id
-	 */
-	@Update("UPDATE discussion SET vote=vote+1 WHERE id=#{id}")
-	void increaseVote(long id);
-
-	@Update("UPDATE discussion SET vote=vote-1 WHERE id=#{id}")
-	void descreaseVote(long id);
 }
