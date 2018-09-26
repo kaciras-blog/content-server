@@ -2,12 +2,6 @@ server:
   http-port: 2374
   port: 2375
 
-  ssl:
-    enabled: true
-    key-store: D:\\Coding\\Utils\\dev.pfx
-    key-store-type: PKCS12
-    key-store-password: 666666
-
   http2:
     enabled: true
 
@@ -47,17 +41,6 @@ spring:
         page-parameter: start
         size-parameter: count
 
-  datasource:
-    url: jdbc:mariadb://192.168.0.11:3316/blog?allowMultiQueries=true
-    username: root
-    password: IY*J<0+T.[Skcoxd
-    driver-class-name: org.mariadb.jdbc.Driver
-
-  redis:
-    host: 192.168.0.11
-    port: 33671
-    password: ZuDNpaB7]vv_iBynJG6ZwPexPPewP]kf
-
   session:
     store-type: redis
     redis:
@@ -68,22 +51,3 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mybatis/*
-
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#                   Following is the non-spring settings
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-temporary-data: true
-data-directory: data
-debug-permission: true
-
-web:
-  cors-origin: "*"
-  csrf-verify: true
-
-draft:
-  delete-after-publish: true
-
-discuss:
-  disable: false
-  anonymous: true

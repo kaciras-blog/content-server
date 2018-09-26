@@ -4,4 +4,6 @@ work/
 *.log
 *.iml
 data/
+
+/application.yml
 /start.bat

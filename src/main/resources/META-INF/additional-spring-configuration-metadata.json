@@ -1,19 +1,10 @@
 {
 	"properties": [
 		{
-			"name": "data-directory",
-			"type": "java.lang.String",
-			"description": "Directory to save application data files."
-		},
-		{
-			"name": "temporary-data",
-			"type": "java.lang.Boolean",
-			"description": "If true,use system temp directory as data-directory."
-		},
-		{
 			"name": "draft.delete-after-publish",
 			"type": "java.lang.String",
-			"description": "发表文章后删除草稿."
+			"defaultValue": true,
+			"description": "发表文章后是否删除草稿."
 		},
 		{
 			"name": "web.cors-origin",
@@ -23,21 +14,25 @@
 		{
 			"name": "debug-permission",
 			"type": "java.lang.Boolean",
+			"defaultValue": false,
 			"description": "调试权限，true表示关闭权限拦截."
+		},
+		{
+			"name": "discuss.disable",
+			"type": "java.lang.Boolean",
+			"defaultValue": false,
+			"description": "是否关闭评论功能."
 		},
 		{
 			"name": "discuss.anonymous",
 			"type": "java.lang.Boolean",
+			"defaultValue": true,
 			"description": "是否允许匿名评论."
 		},
 		{
 			"name": "web.csrf-verify",
 			"type": "java.lang.Boolean",
-			"description": "Description for web.csrf-verify."
-		},
-		{
-			"name": "discuss.disable",
-			"type": "java.lang.Boolean",
-			"description": "是否允许匿名评论."
+			"defaultValue": true,
+			"description": "获取用户身份时是否是否检验CSRF头."
 		}
 	] }
