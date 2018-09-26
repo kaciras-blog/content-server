@@ -4,13 +4,12 @@ import net.kaciras.blog.infrastructure.AddontionPortAutoConfiguration;
 import net.kaciras.blog.infrastructure.codec.KxCodecConfiguration;
 import net.kaciras.blog.infrastructure.exception.ExceptionResloverAutoConfiguration;
 import net.kaciras.blog.infrastructure.io.CommandListener;
-import net.kaciras.blog.infrastructure.message.DirectCalledMessageClient;
+import net.kaciras.blog.infrastructure.message.DirectMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
@@ -29,7 +28,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 
 @EnableScheduling
-@EnableAsync(proxyTargetClass = true)
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
@@ -44,23 +42,9 @@ public class ServiceApplication {
 	@SuppressWarnings("unused")
 	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
 
-	/**
-	 * EnableScheduling 注解将自动使用 TaskScheduler 类型的bean。
-	 *
-	 * @return TaskScheduler
-	 */
-	@Bean(destroyMethod = "destroy")
-	ThreadPoolTaskScheduler taskScheduler() {
-		var taskScheduler = new ThreadPoolTaskScheduler();
-		taskScheduler.initialize();
-		taskScheduler.setDaemon(true);
-		taskScheduler.setThreadNamePrefix("Shed-");
-		return taskScheduler;
-	}
-
 	@Bean
 	MessageClient messageClient() {
-		return new DirectCalledMessageClient();
+		return new DirectMessageClient();
 	}
 
 	@Bean
