@@ -17,16 +17,19 @@ server:
     min-response-size: 4096
 
   tomcat:
-    max-threads: 4
-    accept-count: 128
+    max-threads: 2
 
 spring:
+
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
       - org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration
       - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
       - org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+      - org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration
+      - org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
 
   main:
     banner-mode: "off"

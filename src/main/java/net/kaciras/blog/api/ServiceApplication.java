@@ -27,6 +27,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
+/**
+ * 在配置文件里排除了一些配置，添加新功能时记得看下有没有需要的依赖被排除了。
+ */
 @EnableScheduling
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 @EnableLoadTimeWeaving
