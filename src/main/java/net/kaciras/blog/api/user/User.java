@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Data
 @Configurable
@@ -24,7 +25,7 @@ public class User {
 	private String name;
 
 	private String email;
-	private ImageRefrence head = ImageRefrence.parse("noface.gif");
+	private ImageRefrence head;
 
 	private boolean deleted;
 
