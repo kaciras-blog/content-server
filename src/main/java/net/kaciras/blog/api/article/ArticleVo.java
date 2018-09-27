@@ -32,4 +32,7 @@ public final class ArticleVo {
 	private int viewCount;
 	private int discussionCount;
 	private boolean deleted;
+
+	private ArticleLink prev;
+	private ArticleLink next;
 }

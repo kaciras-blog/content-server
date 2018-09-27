@@ -45,4 +45,8 @@ interface ArticleDAO {
 
 	@Update("UPDATE article SET view_count=view_count+1 WHERE id=#{id}")
 	void increaseViewCount(int id);
+
+	@Select("SELECT id,title FROM article WHERE id ${compartor} #{id} LIMIT 1")
+	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.ArticleLinkMap")
+	ArticleLink getNeighbor(@Param("id") int id, @Param("compartor") String compartor);
 }

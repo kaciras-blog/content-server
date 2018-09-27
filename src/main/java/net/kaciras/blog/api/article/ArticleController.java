@@ -47,11 +47,14 @@ final class ArticleController {
 	@GetMapping("/{id}")
 	public ResponseEntity<ArticleVo> get(@PathVariable int id, WebRequest request) {
 		var etag = etagCache.get(id);
-
 		if (request.checkNotModified(etag)) {
 			return ResponseEntity.status(304).build();
 		}
-		var article = pojoMapper.toViewObject(articleService.getArticle(id));
+
+		var article = articleService.getArticle(id);
+		var vo = pojoMapper.toViewObject(article);
+		vo.setNext(article.getNextLink());
+		vo.setPrev(article.getPreviousLink());
 
 		/*
 		 * 如果缓存中不存在，则需要创建新的缓存记录。在并发的情况下，使用
@@ -62,11 +65,11 @@ final class ArticleController {
 		if (etag == null) {
 			etag = UUID.randomUUID().toString();
 			etagCache.putIfAbsent(id, etag);
-			return ResponseEntity.ok().eTag("W/\"" + etag).body(article);
+			return ResponseEntity.ok().eTag("W/\"" + etag).body(vo);
 		}
 
-		//缓存已存在，但是客户端没有记录，则添加已缓存的Etag到客户端
-		return ResponseEntity.ok().eTag("W/\"" + etag).body(article);
+		// 缓存已存在，但是客户端没有记录，则添加已缓存的Etag到客户端
+		return ResponseEntity.ok().eTag("W/\"" + etag).body(vo);
 	}
 
 	@PostMapping

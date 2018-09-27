@@ -2,6 +2,13 @@
 
 <mapper namespace="net.kaciras.blog.domain.dao.ResultMap">
 
+	<resultMap type="net.kaciras.blog.api.article.ArticleLink" id="ArticleLinkMap">
+		<constructor>
+			<arg column="id" javaType="_int"/>
+			<arg column="title" javaType="String"/>
+		</constructor>
+	</resultMap>
+
 	<resultMap type="net.kaciras.blog.api.article.Article" id="ArticleMap">
 		<id property="id" column="id"/>
 		<result property="userId" column="user_id"/>

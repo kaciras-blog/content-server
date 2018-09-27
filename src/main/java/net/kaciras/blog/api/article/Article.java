@@ -5,6 +5,7 @@ import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 
@@ -59,5 +60,15 @@ public class Article extends ArticleContentBase {
 
 	public void updateCategory(int category) {
 		classifyDAO.updateByArticle(id, category);
+	}
+
+	@Nullable
+	public ArticleLink getPreviousLink() {
+		return articleDAO.getNeighbor(id, "<");
+	}
+
+	@Nullable
+	public ArticleLink getNextLink() {
+		return articleDAO.getNeighbor(id, ">");
 	}
 }
