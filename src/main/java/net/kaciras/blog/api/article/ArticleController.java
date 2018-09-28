@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.category.CategoryService;
 import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.ehcache.Cache;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +24,7 @@ import java.util.UUID;
 final class ArticleController {
 
 	private final ArticleService articleService;
+	private final CategoryService categoryService;
 
 	private final ArticleMapper pojoMapper;
 	private final MessageClient messageClient;
@@ -55,6 +56,7 @@ final class ArticleController {
 		var vo = pojoMapper.toViewObject(article);
 		vo.setNext(article.getNextLink());
 		vo.setPrev(article.getPreviousLink());
+		vo.setBanner(categoryService.getBestBackground(article.getCategory()));
 
 		/*
 		 * 如果缓存中不存在，则需要创建新的缓存记录。在并发的情况下，使用

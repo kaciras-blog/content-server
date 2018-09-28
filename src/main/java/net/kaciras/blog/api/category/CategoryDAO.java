@@ -72,9 +72,10 @@ interface CategoryDAO {
 	 * @param id 节点ID
 	 * @return 路径列表。如果节点不存在，则返回空列表
 	 */
-	@Select("SELECT id,name,cover,description FROM category_tree AS A " +
-			"JOIN category AS B ON A.ancestor=B.id " +
-			"WHERE descendant=#{id} AND ancestor>0 ORDER BY distance DESC")
+	@Select("SELECT B.* FROM category_tree AS A " +
+			"JOIN category AS B ON A.ancestor = B.id " +
+			"WHERE descendant = #{id} AND ancestor > 0 " +
+			"ORDER BY distance ASC")
 	List<Category> selectPathToRoot(int id);
 
 	/**

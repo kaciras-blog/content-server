@@ -3,6 +3,7 @@ package net.kaciras.blog.api.category;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.Authenticator;
 import net.kaciras.blog.api.AuthenticatorFactory;
+import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,5 +68,22 @@ public class CategoryService {
 			return Collections.emptyList();
 		}
 		return mapper.categoryView(repository.get(id).getPath());
+	}
+
+	public ImageRefrence getBestBackground(int id) {
+		if(id == 0) {
+			return null;
+		}
+		var category = repository.get(id);
+
+		if (category.getBackground() != null) {
+			return category.getBackground();
+		}
+		for (var parent : category.getPath()) {
+			if(parent.getBackground() != null) {
+				return parent.getBackground();
+			}
+		}
+		return null;
 	}
 }
