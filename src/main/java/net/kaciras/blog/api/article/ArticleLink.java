@@ -6,5 +6,6 @@ import lombok.Value;
 public final class ArticleLink {
 
 	private final int id;
+	private final String urlTitle;
 	private final String title;
 }

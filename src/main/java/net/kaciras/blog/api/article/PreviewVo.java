@@ -16,7 +16,7 @@ import java.util.List;
 public final class PreviewVo {
 
 	private int id;
-	private String url;
+	private String urlTitle;
 
 	private UserVo author;
 	private String title;

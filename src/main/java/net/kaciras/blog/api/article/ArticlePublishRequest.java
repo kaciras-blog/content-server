@@ -15,5 +15,5 @@ public final class ArticlePublishRequest extends ArticleContentBase {
 	private Integer category;
 
 	@NotEmpty
-	private String url;
+	private String urlTitle;
 }

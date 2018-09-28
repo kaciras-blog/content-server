@@ -17,8 +17,10 @@ import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -32,6 +34,8 @@ public class ArticleService {
 	private final ArticleRepository repository;
 	private final ArticleMapper mapper;
 	private final MessageClient messageClient;
+
+	private final Pattern urlKeywords = Pattern.compile("[\\s?#@:&\\\\/=\"'`]+");
 
 	private Authenticator authenticator;
 
@@ -96,21 +100,23 @@ public class ArticleService {
 
 	/**
 	 * 发布一篇文章。
-	 * @param manuscript 文章内容对象。
+	 * @param request 文章内容对象。
 	 * @return 生成的ID
 	 */
 	@Transactional
-	public int publish(ArticlePublishRequest manuscript) {
+	public int publish(ArticlePublishRequest request) {
 		authenticator.require("PUBLISH");
 
-		var article = mapper.toArticle(manuscript);
+		var article = mapper.toArticle(request);
 		article.setUserId(SecurtyContext.getCurrentUser());
-		article.setUrl(manuscript.getUrl());
+
+		article.setUrlTitle(StringUtils.trimTrailingCharacter(urlKeywords
+				.matcher(request.getUrlTitle()).replaceAll("-"), '-'));
 
 		repository.add(article);
-		article.updateCategory(manuscript.getCategory());
+		article.updateCategory(request.getCategory());
 
-		messageClient.send(new ArticleCreatedEvent(article.getId(), manuscript.getDraftId(), manuscript.getCategory()));
+		messageClient.send(new ArticleCreatedEvent(article.getId(), request.getDraftId(), request.getCategory()));
 		return article.getId();
 	}
 

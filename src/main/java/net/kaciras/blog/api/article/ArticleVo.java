@@ -14,6 +14,7 @@ import java.util.List;
 public final class ArticleVo {
 
 	private int id;
+	private String urlTitle;
 	private UserVo author;
 
 	private String title;

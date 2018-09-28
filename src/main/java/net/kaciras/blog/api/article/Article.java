@@ -32,11 +32,11 @@ public class Article extends ArticleContentBase {
 	/**
 	 * 显示在URL中的标题，有利于SEO，不要出现与URL中的特殊字符。
 	 * 为什么要单独定义此字段而不是使用原始标题：
-	 *     1.原始标题中可能存在URL关键字，如`?`, `#`, `/`等，需要转义。
+	 *     1.原始标题中如果存在URL关键字，如 `?`,`/` 等，需要转换或删除。
 	 *     2.原始标题能够被修改，而URL经常更改不利于SEO。
 	 *     3.部分搜索引擎对非ASCII字符不友好，可能需要将标题转换成其它形式，比如英语。
 	 */
-	private String url;
+	private String urlTitle;
 
 	private LocalDateTime create;
 	private LocalDateTime update;

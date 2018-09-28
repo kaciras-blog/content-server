@@ -5,12 +5,14 @@
 	<resultMap type="net.kaciras.blog.api.article.ArticleLink" id="ArticleLinkMap">
 		<constructor>
 			<arg column="id" javaType="_int"/>
+			<arg column="url_title" javaType="String"/>
 			<arg column="title" javaType="String"/>
 		</constructor>
 	</resultMap>
 
 	<resultMap type="net.kaciras.blog.api.article.Article" id="ArticleMap">
 		<id property="id" column="id"/>
+		<result property="urlTitle" column="url_title"/>
 		<result property="userId" column="user_id"/>
 		<result property="viewCount" column="view_count"/>
 		<result property="create" column="create_time"/>
