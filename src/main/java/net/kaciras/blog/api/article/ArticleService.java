@@ -16,6 +16,7 @@ import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -98,11 +99,13 @@ public class ArticleService {
 	 * @param manuscript 文章内容对象。
 	 * @return 生成的ID
 	 */
+	@Transactional
 	public int publish(ArticlePublishRequest manuscript) {
 		authenticator.require("PUBLISH");
 
 		var article = mapper.toArticle(manuscript);
 		article.setUserId(SecurtyContext.getCurrentUser());
+		article.setUrl(manuscript.getUrl());
 
 		repository.add(article);
 		article.updateCategory(manuscript.getCategory());
@@ -117,6 +120,7 @@ public class ArticleService {
 	 * @param id 文章ID。
 	 * @param update 更新内容。
 	 */
+	@Transactional
 	public void update(int id, ArticlePublishRequest update) {
 		var article = repository.get(id);
 		requireModify(article);

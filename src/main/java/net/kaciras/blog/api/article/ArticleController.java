@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -75,9 +76,9 @@ final class ArticleController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> post(@RequestBody ArticlePublishRequest request) throws URISyntaxException {
+	public ResponseEntity<Void> post(@RequestBody @Valid ArticlePublishRequest request) {
 		var id = articleService.publish(request);
-		return ResponseEntity.created(new URI("/articles/" + id)).build();
+		return ResponseEntity.created(URI.create("/articles/" + id)).build();
 	}
 
 	/*

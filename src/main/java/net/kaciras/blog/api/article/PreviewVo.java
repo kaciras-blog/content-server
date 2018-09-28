@@ -3,8 +3,8 @@ package net.kaciras.blog.api.article;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import net.kaciras.blog.api.category.CategoryVo;
-import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.api.user.UserVo;
+import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +16,8 @@ import java.util.List;
 public final class PreviewVo {
 
 	private int id;
+	private String url;
+
 	private UserVo author;
 	private String title;
 	private ImageRefrence cover;

@@ -10,8 +10,7 @@ import java.util.List;
 @Mapper
 interface ArticleDAO {
 
-	@Select("SELECT id,user_id,title,summary,cover,content,deleted,update_time,create_time,view_count " +
-			"FROM article WHERE id=#{id}")
+	@Select("SELECT * FROM article WHERE id=#{id}")
 	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.ArticleMap")
 	Article selectById(int id);
 
@@ -25,8 +24,8 @@ interface ArticleDAO {
 	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.ArticleMap")
 	List<Article> selectPreview(ArticleListRequest query);
 
-	@Insert("INSERT INTO article(user_id,title,cover,summary,content) " +
-			"VALUES(#{userId},#{title},#{cover},#{summary},#{content})")
+	@Insert("INSERT INTO article(user_id, title, url, cover, summary, content) " +
+			"VALUES(#{userId}, #{title}, #{url}, #{cover}, #{summary}, #{content})")
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insert(Article article);
 
