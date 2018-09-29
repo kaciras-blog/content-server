@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 @Data
 @Configurable
-public class Article extends ArticleContentBase {
+public final class Article extends ArticleContentBase {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)

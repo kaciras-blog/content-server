@@ -2,6 +2,7 @@ package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
+import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,9 @@ class ContextConfig {
 	@PostConstruct
 	private void init() {
 		messageClient.subscribe(ArticleCreatedEvent.class, event -> {
+			if (deleteAfterSubmit) draftRepository.remove(event.getDraftId());
+		});
+		messageClient.subscribe(ArticleUpdatedEvent.class, event -> {
 			if (deleteAfterSubmit) draftRepository.remove(event.getDraftId());
 		});
 	}

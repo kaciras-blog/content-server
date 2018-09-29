@@ -35,7 +35,7 @@ public class ArticleService {
 	private final ArticleMapper mapper;
 	private final MessageClient messageClient;
 
-	private final Pattern urlKeywords = Pattern.compile("[\\s?#@:&\\\\/=\"'`]+");
+	private final Pattern urlKeywords = Pattern.compile("[\\s?#@:&\\\\/=\"'`,.!]+");
 
 	private Authenticator authenticator;
 
