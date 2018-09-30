@@ -34,7 +34,7 @@ public class Category extends CategoryAttributes {
 
 	private int id;
 
-	Integer getParent() {
+	public Integer getParentId() {
 		return dao.selectAncestor(id, 1);
 	}
 
@@ -102,8 +102,8 @@ public class Category extends CategoryAttributes {
 		dao.insertNode(id);
 	}
 
-	void moveSubTree(Category parent) {
-		moveSubTree(id, parent.getId());
+	public void moveSubTree(int parent) {
+		moveSubTree(id, parent);
 	}
 
 	/**

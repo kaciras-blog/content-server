@@ -3,14 +3,12 @@ package net.kaciras.blog.api.category;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
-import net.kaciras.blog.infrastructure.sql.DBUtils;
 import net.kaciras.blog.infrastructure.message.MessageClient;
+import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * 基于ClosureTable的的数据库存储分类树实现。
@@ -85,7 +83,7 @@ class CategoryRepository {
 			parent = 0;
 		}
 
-		get(id).moveSubTree(get(parent));
+		get(id).moveSubTree(parent);
 		deleteBoth(id);
 
 		messageClient.send(new CategoryRemovedEvent(id, parent));
