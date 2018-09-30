@@ -38,12 +38,16 @@ public class Category extends CategoryAttributes {
 		return dao.selectAncestor(id, 1);
 	}
 
-	int getLevel() {
+	public List<Category> getChildren() {
+		return dao.selectSubLayer(id, 1);
+	}
+
+	public int getLevel() {
 		return dao.selectDistance(0, id);
 	}
 
 	@NonNull
-	List<Category> getPath() {
+	public List<Category> getPath() {
 		return dao.selectPathToRoot(id);
 	}
 
@@ -54,12 +58,12 @@ public class Category extends CategoryAttributes {
 	 * @return 路径上所有的分类，如果ancestor不是此分类的上级分类则为null
 	 */
 	@Nullable
-	List<Category> pathTo(int ancestor) {
+	public List<Category> pathTo(int ancestor) {
 		Utils.checkPositive(ancestor, "ancestor");
 		return dao.selectPathToAncestor(id, ancestor);
 	}
 
-	void moveTo(Category target) {
+	public void moveTo(Category target) {
 		if (this.equals(target)) {
 			throw new IllegalArgumentException("不能移动到自己下面");
 		}
@@ -67,7 +71,7 @@ public class Category extends CategoryAttributes {
 		moveNode(id, target.getId());
 	}
 
-	void moveTreeTo(Category target) {
+	public void moveTreeTo(Category target) {
 		if (this.equals(target)) {
 			throw new IllegalArgumentException("不能移动到自己下面");
 		}

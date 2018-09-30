@@ -26,6 +26,9 @@ class CategoryRepository {
 	@NonNull
 	public Category get(int id) {
 		Utils.checkNotNegative(id, "id");
+		if (id == 0) {
+			return new RootCategory();
+		}
 		return DBUtils.checkNotNullResource(categoryDAO.selectAttributes(id));
 	}
 
@@ -36,16 +39,6 @@ class CategoryRepository {
 	public int sizeOfLevel(int level) {
 		Utils.checkPositive(level, "level");
 		return categoryDAO.selectCountByLayer(level);
-	}
-
-	public List<Category> getSubCategories(int id) {
-		return getSubCategories(id, 1);
-	}
-
-	public List<Category> getSubCategories(int id, int n) {
-		Utils.checkNotNegative(id, "id");
-		Utils.checkPositive(n, "n");
-		return categoryDAO.selectSubLayer(id, n);
 	}
 
 	@Transactional
@@ -71,11 +64,13 @@ class CategoryRepository {
 	 * @param category 新的分类信息对象
 	 */
 	public void update(Category category) {
+		Utils.checkPositive(category.getId(), "id");
 		DBUtils.checkEffective(categoryDAO.update(category));
 	}
 
 	@Transactional
 	public void remove(int id) {
+		Utils.checkPositive(id, "id");
 		helper.requireContains(id);
 		var parent = categoryDAO.selectAncestor(id, 1);
 
@@ -90,7 +85,8 @@ class CategoryRepository {
 	}
 
 	@Transactional
-	public void deleteTree(int id) {
+	public void removeTree(int id) {
+		Utils.checkPositive(id, "id");
 		helper.requireContains(id);
 		deleteBoth(id);
 		for (int des : categoryDAO.selectDescendant(id)) {

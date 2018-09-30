@@ -32,7 +32,7 @@ final class CategoryController {
 
 	@GetMapping("/{id}/subCategories")
 	public Flux<CategoryVo> getChildren(@PathVariable int id) {
-		return Flux.fromIterable(categoryService.getSubCategories(id))
+		return Flux.fromIterable(categoryService.getChildren(id))
 				.map(mapper::categoryView)
 				.doOnNext(vo -> vo.setArticleCount(articleService.getCountByCategories(vo.getId())));
 	}

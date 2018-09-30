@@ -13,7 +13,12 @@ interface CategoryDAO {
 	@Select("SELECT COUNT(*) FROM category")
 	int selectCount();
 
-	@Update("UPDATE category SET name=#{name},cover=#{cover},description=#{description}, background=#{background} WHERE id=#{id}")
+	@Update("UPDATE category SET " +
+			"name=#{name}," +
+			"cover=#{cover}," +
+			"description=#{description}," +
+			"background=#{background} " +
+			"WHERE id=#{id}")
 	int update(Category category);
 
 	@Insert("INSERT INTO category(name, cover, description, background) " +
@@ -30,7 +35,7 @@ interface CategoryDAO {
 	 * @param level 层级
 	 * @return 节点数量
 	 */
-	@Select("SELECT COUNT(*) FROM category_tree WHERE ancestor=0 AND distance=#{level}")
+	@Select("SELECT COUNT(*) FROM category_tree WHERE ancestor=1 AND distance=#{level}")
 	int selectCountByLayer(int level);
 
 	/**
@@ -74,7 +79,7 @@ interface CategoryDAO {
 	 */
 	@Select("SELECT B.* FROM category_tree AS A " +
 			"JOIN category AS B ON A.ancestor = B.id " +
-			"WHERE descendant = #{id} AND ancestor > 0 " +
+			"WHERE descendant = #{id} AND ancestor > 1 " +
 			"ORDER BY distance ASC")
 	List<Category> selectPathToRoot(int id);
 

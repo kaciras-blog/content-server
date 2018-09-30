@@ -41,8 +41,8 @@ public class CategoryService {
 		return repository.get(id);
 	}
 
-	public List<Category> getSubCategories(int id) {
-		return repository.getSubCategories(id);
+	public List<Category> getChildren(int id) {
+		return repository.get(id).getChildren();
 	}
 
 	public int add(CategoryAttributes attributes, int parent) {
