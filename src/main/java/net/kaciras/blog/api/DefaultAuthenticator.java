@@ -14,12 +14,9 @@ public final class DefaultAuthenticator implements Authenticator {
 
 	@Override
 	public boolean reject(String permission) {
-		var userId = SecurtyContext.getCurrentUser();
-		if(userId == null) {
-			userId = 0;
-		}
 		var status = restTemplate.execute("http://localhost:26480/accounts/{id}/prems/{module}/{name}",
-				HttpMethod.HEAD, null, ClientHttpResponse::getStatusCode, userId, module, permission);
+				HttpMethod.HEAD, null, ClientHttpResponse::getStatusCode,
+				SecurtyContext.getCurrentUser(), module, permission);
 		return status != HttpStatus.OK;
 	}
 }

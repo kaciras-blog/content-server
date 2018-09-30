@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public final class SecurtyContext {
 
-	private static final ThreadLocal<Integer> threadLocalUser = new ThreadLocal<>();
+	private static final ThreadLocal<Integer> threadLocalUser = ThreadLocal.withInitial(() -> 0);
 
 	public static void setCurrentUser(Integer userId) {
 		threadLocalUser.set(userId);
@@ -25,23 +25,14 @@ public final class SecurtyContext {
 	 * @return 如果当前用户不存在，或用户id与参数指定的id不同则返回true，否则false
 	 */
 	public static boolean isNotUser(int id) {
-		var loginedUser = getCurrentUser();
-		return loginedUser == null || loginedUser != id;
-	}
-
-	public static int getRequiredCurrentUser() {
-		var userDTO = getCurrentUser();
-		if (userDTO == null) {
-			throw new PermissionException();
-		}
-		return userDTO;
+		return getCurrentUser() != id;
 	}
 
 	public static void requireUser(int id) {
-		if(getRequiredCurrentUser() != id) throw new PermissionException();
+		if(isNotUser(id)) throw new PermissionException();
 	}
 
 	public static void requireLogin() {
-		if(getRequiredCurrentUser() == 0) throw new PermissionException();
+		if(getCurrentUser() == 0) throw new PermissionException();
 	}
 }

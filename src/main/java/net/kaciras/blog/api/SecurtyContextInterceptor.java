@@ -53,6 +53,6 @@ class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
 
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-		SecurtyContext.setCurrentUser(null);
+		SecurtyContext.setCurrentUser(0);
 	}
 }

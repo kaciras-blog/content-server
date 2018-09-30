@@ -7,7 +7,6 @@ import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriTemplate;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -38,7 +37,9 @@ final class DiscussionController {
 			var vo = convert(discuz);
 			vo.setReplyCount(discuz.getReplyList().size());
 			vo.setReplies(convert(discuz.getReplyList().select(0, 5)));
-			vo.setVoted(discuz.getVoterList().contains(SecurtyContext.getCurrentUser()));
+
+			var user = SecurtyContext.getCurrentUser();
+			vo.setVoted(user > 0 && discuz.getVoterList().contains(user));
 			result.add(vo);
 		}
 		return Map.of("total", size, "items", result);

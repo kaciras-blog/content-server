@@ -50,12 +50,12 @@ public class UserService {
 
 	public int ban(int id, long seconds, String cause) {
 		authenticator.require("BAN");
-		return repository.get(id).ban(SecurtyContext.getRequiredCurrentUser(), Duration.ofSeconds(seconds), cause);
+		return repository.get(id).ban(SecurtyContext.getCurrentUser(), Duration.ofSeconds(seconds), cause);
 	}
 
 	public void unban(int id, int bid, String cause) {
 		authenticator.require("BAN");
-		repository.get(id).unBan(bid, SecurtyContext.getRequiredCurrentUser(), cause);
+		repository.get(id).unBan(bid, SecurtyContext.getCurrentUser(), cause);
 	}
 
 	public List<BanRecord> getBanRedords(int id) {

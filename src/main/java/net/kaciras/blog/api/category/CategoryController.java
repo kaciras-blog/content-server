@@ -18,11 +18,6 @@ final class CategoryController {
 	private final CategoryService categoryService;
 	private final CategoryMapper mapper;
 
-	@PostMapping("/transfer")
-	public void move(@RequestParam int id, @RequestParam int parent, @RequestParam boolean treeMode) {
-		categoryService.move(id, parent, treeMode);
-	}
-
 	@GetMapping("/{id}")
 	public CategoryVo get(@PathVariable int id) {
 		var vo = mapper.categoryView(categoryService.get(id));
@@ -37,15 +32,21 @@ final class CategoryController {
 				.doOnNext(vo -> vo.setArticleCount(articleService.getCountByCategories(vo.getId())));
 	}
 
+	@PostMapping
+	public ResponseEntity<Void> create(@RequestBody CategoryVo category) {
+		int id = categoryService.add(category, category.getParent());
+		return ResponseEntity.created(URI.create("/categories/" + id)).build();
+	}
+
 	@GetMapping("{id}/path")
 	public List<CategoryVo> getPath(@PathVariable int id) {
 		return categoryService.getPath(id);
 	}
 
-	@PostMapping
-	public ResponseEntity<Void> create(@RequestBody CategoryVo category) {
-		int id = categoryService.add(category, category.getParent());
-		return ResponseEntity.created(URI.create("/categories/" + id)).build();
+
+	@PostMapping("/transfer")
+	public void move(@RequestParam int id, @RequestParam int parent, @RequestParam boolean treeMode) {
+		categoryService.move(id, parent, treeMode);
 	}
 
 	@PutMapping("/{id}")

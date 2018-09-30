@@ -74,24 +74,23 @@ public final class DiscussionService {
 	}
 
 	private int requireAddedUser() {
-		var loginedUserId = SecurtyContext.getCurrentUser();
-
-		if (loginedUserId == null) {
+		var discusser = SecurtyContext.getCurrentUser();
+		if (discusser == 0) {
 			if (!allowAnonymous)
 				throw new PermissionException();
 			return 0;
 		}
 		authenticator.require("ADD");
-		return loginedUserId;
+		return discusser;
 	}
 
 	public void voteUp(int id) {
-		var userId = SecurtyContext.getRequiredCurrentUser();
+		var userId = SecurtyContext.getCurrentUser();
 		repository.get(id).getVoterList().add(userId);
 	}
 
 	public void revokeVote(int id) {
-		var userId = SecurtyContext.getRequiredCurrentUser();
+		var userId = SecurtyContext.getCurrentUser();
 		repository.get(id).getVoterList().add(userId);
 	}
 
