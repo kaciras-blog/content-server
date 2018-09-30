@@ -30,7 +30,7 @@ final class CategoryController {
 		return vo;
 	}
 
-	@GetMapping("/{id}/subCategories")
+	@GetMapping("/{id}/children")
 	public Flux<CategoryVo> getChildren(@PathVariable int id) {
 		return Flux.fromIterable(categoryService.getChildren(id))
 				.map(mapper::categoryView)
