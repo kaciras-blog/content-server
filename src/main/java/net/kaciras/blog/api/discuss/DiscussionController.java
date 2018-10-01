@@ -30,6 +30,7 @@ final class DiscussionController {
 		if (query.isMetaonly()) {
 			return Map.of("total", size);
 		}
+
 		var list = discussionService.getList(query);
 		var result = new ArrayList<DiscussionVo>(list.size());
 
