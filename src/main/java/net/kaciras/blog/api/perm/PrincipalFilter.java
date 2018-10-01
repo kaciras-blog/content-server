@@ -1,5 +1,6 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.perm;
 
+import net.kaciras.blog.api.Utils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;

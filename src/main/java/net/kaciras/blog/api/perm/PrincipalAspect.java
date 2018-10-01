@@ -1,5 +1,6 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.perm;
 
+import net.kaciras.blog.api.SecurtyContext;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -8,7 +9,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 @Aspect
 public class PrincipalAspect {
 
-	@Before("@annotation(net.kaciras.blog.api.RequirePrincipal) && execution(* *(..))")
+	@Before("@annotation(net.kaciras.blog.api.perm.RequirePrincipal) && execution(* *(..))")
 	public void beforeRequireAdministor(JoinPoint joinPoint) throws Exception {
 		var annotation = ((MethodSignature) joinPoint.getSignature())
 				.getMethod()

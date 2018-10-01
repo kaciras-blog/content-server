@@ -1,5 +1,6 @@
 package net.kaciras.blog.api;
 
+import net.kaciras.blog.api.perm.WebPrincipal;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 

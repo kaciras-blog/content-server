@@ -1,13 +1,13 @@
 package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.Authenticator;
-import net.kaciras.blog.api.AuthenticatorFactory;
 import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.api.SecurtyContext;
 import net.kaciras.blog.api.category.CategoryService;
 import net.kaciras.blog.api.discuss.DiscussionQuery;
 import net.kaciras.blog.api.discuss.DiscussionService;
+import net.kaciras.blog.api.perm.Authenticator;
+import net.kaciras.blog.api.perm.AuthenticatorFactory;
 import net.kaciras.blog.api.user.UserService;
 import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
 import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;

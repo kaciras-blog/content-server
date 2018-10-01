@@ -1,8 +1,8 @@
 package net.kaciras.blog.api.category;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.Authenticator;
-import net.kaciras.blog.api.AuthenticatorFactory;
+import net.kaciras.blog.api.perm.Authenticator;
+import net.kaciras.blog.api.perm.AuthenticatorFactory;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

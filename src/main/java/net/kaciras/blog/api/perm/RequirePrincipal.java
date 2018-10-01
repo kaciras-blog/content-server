@@ -1,4 +1,4 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.perm;
 
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 

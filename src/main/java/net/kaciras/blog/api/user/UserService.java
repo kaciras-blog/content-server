@@ -1,10 +1,10 @@
 package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.Authenticator;
-import net.kaciras.blog.api.RequirePrincipal;
 import net.kaciras.blog.api.SecurtyContext;
-import net.kaciras.blog.api.WebPrincipalType;
+import net.kaciras.blog.api.perm.Authenticator;
+import net.kaciras.blog.api.perm.RequirePrincipal;
+import net.kaciras.blog.api.perm.WebPrincipalType;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.sql.DBUtils;

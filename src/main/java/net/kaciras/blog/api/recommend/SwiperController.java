@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.recommend;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.RequirePrincipal;
+import net.kaciras.blog.api.perm.RequirePrincipal;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

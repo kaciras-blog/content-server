@@ -1,9 +1,9 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.Authenticator;
 import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.api.SecurtyContext;
+import net.kaciras.blog.api.perm.Authenticator;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -1,5 +1,6 @@
 package net.kaciras.blog.api;
 
+import net.kaciras.blog.api.perm.WebPrincipal;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import org.springframework.stereotype.Component;
 

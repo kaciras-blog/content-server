@@ -1,4 +1,4 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.perm;
 
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -41,6 +41,6 @@ public class WebPrincipal implements Principal {
 			case 1:
 				return "System";
 		}
-		return "Logined " + id;
+		return "Logined:" + id;
 	}
 }

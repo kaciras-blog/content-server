@@ -1,5 +1,6 @@
 package net.kaciras.blog.api;
 
+import net.kaciras.blog.api.perm.PrincipalAspect;
 import net.kaciras.blog.infrastructure.AddontionPortAutoConfiguration;
 import net.kaciras.blog.infrastructure.codec.KxCodecConfiguration;
 import net.kaciras.blog.infrastructure.exception.ExceptionResloverAutoConfiguration;

@@ -1,6 +1,7 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.perm;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.SecurtyContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
