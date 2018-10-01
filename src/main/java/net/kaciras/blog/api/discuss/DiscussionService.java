@@ -2,8 +2,8 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.DeletedState;
-import net.kaciras.blog.api.SecurityContext;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
+import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,26 +15,24 @@ public final class DiscussionService {
 
 	private final DiscussRepository repository;
 
+	@Value("${discuss.anonymous}")
 	private boolean allowAnonymous;
 
-	@Value("${discuss.anonymous}")
-	public void setAllowAnonymous(boolean allowAnonymous) {
-		this.allowAnonymous = allowAnonymous;
-	}
-
+	@Value("${discuss.disable}")
+	private boolean disabled;
 
 
 	/* - - - - - - - - - - - - - - - 业务方法 - - - - - - - - - - - - - - - - -  */
 
 	private void verifyQuery(DiscussionQuery query) {
-		if (query.getDeletion() != DeletedState.FALSE && SecurityContext.isNotUser(query.getUserId())) {
+		if (query.getDeletion() != DeletedState.FALSE && SecurityContext.isNot(query.getUserId())) {
 			SecurityContext.require("POWER_QUERY");
 		}
 	}
 
 	public Discussion getOne(long id) {
 		var result = repository.get(id);
-		if (result.isDeleted() && SecurityContext.isNotUser(result.getUserId())) {
+		if (result.isDeleted() && SecurityContext.isNot(result.getUserId())) {
 			SecurityContext.require("POWER_QUERY");
 		}
 		return result;
@@ -66,12 +64,14 @@ public final class DiscussionService {
 
 	private int requireAddedUser() {
 		var discusser = SecurityContext.getUserId();
+		if(disabled) {
+			throw new PermissionException();
+		}
 		if (discusser == 0) {
 			if (!allowAnonymous)
 				throw new PermissionException();
 			return 0;
 		}
-		SecurityContext.require("ADD");
 		return discusser;
 	}
 
@@ -87,7 +87,7 @@ public final class DiscussionService {
 
 	public void delete(long id) {
 		var discussion = repository.get(id);
-		if (SecurityContext.isNotUser(discussion.getUserId())) {
+		if (SecurityContext.isNot(discussion.getUserId())) {
 			SecurityContext.require("POWER_MODIFY");
 		}
 		discussion.delete();

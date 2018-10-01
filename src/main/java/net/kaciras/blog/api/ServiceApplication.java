@@ -1,12 +1,13 @@
 package net.kaciras.blog.api;
 
-import net.kaciras.blog.api.perm.PrincipalAspect;
 import net.kaciras.blog.infrastructure.AddontionPortAutoConfiguration;
 import net.kaciras.blog.infrastructure.codec.KxCodecConfiguration;
 import net.kaciras.blog.infrastructure.exception.ExceptionResloverAutoConfiguration;
 import net.kaciras.blog.infrastructure.io.CommandListener;
 import net.kaciras.blog.infrastructure.message.DirectMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
+import net.kaciras.blog.infrastructure.principal.KxPrincipalAutoConfiguration;
+import net.kaciras.blog.infrastructure.principal.ServletSecurityContextFilter;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.springframework.boot.SpringApplication;
@@ -18,9 +19,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.ServletContext;
 import java.io.IOException;
 
 /**
@@ -35,6 +39,7 @@ import java.io.IOException;
 		ExceptionResloverAutoConfiguration.class,
 		KxCodecConfiguration.class,
 		AddontionPortAutoConfiguration.class,
+		KxPrincipalAutoConfiguration.class
 })
 @SpringBootApplication
 public class ServiceApplication {
@@ -43,8 +48,8 @@ public class ServiceApplication {
 	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
 
 	@Bean
-	PrincipalAspect principalAspect() {
-		return new PrincipalAspect();
+	ServletSecurityContextFilter securityContextFilter() {
+		return new ServletSecurityContextFilter();
 	}
 
 	@Bean
@@ -68,6 +73,15 @@ public class ServiceApplication {
 		template.setConnectionFactory(factory);
 		template.setKeySerializer(new StringRedisSerializer());
 		return template;
+	}
+
+	@Bean
+	CookieSerializer cookieSerializer(ServletContext servletContext) {
+		var serializer = new DefaultCookieSerializer();
+		serializer.setSameSite(null);
+		serializer.setDomainName(servletContext.getSessionCookieConfig().getDomain());
+		serializer.setCookieMaxAge(30 * 24 * 60 * 60);
+		return serializer;
 	}
 
 	public static void main(String[] args) throws IOException {

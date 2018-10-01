@@ -1,16 +1,16 @@
 package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SecurityContext;
 import net.kaciras.blog.api.article.ArticleService;
-import net.kaciras.blog.api.perm.RequirePrincipal;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
+import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@RequirePrincipal
+@RequireAuthorize
 @RequiredArgsConstructor
 @Service
 public class DraftService {

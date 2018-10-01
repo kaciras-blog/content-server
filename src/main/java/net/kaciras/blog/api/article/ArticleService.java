@@ -2,7 +2,6 @@ package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.DeletedState;
-import net.kaciras.blog.api.SecurityContext;
 import net.kaciras.blog.api.category.CategoryService;
 import net.kaciras.blog.api.discuss.DiscussionQuery;
 import net.kaciras.blog.api.discuss.DiscussionService;
@@ -12,6 +11,7 @@ import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
+import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -135,7 +135,7 @@ public class ArticleService {
 
 	public void updateDeleteion(int id, boolean isDeleted) {
 		var article = repository.get(id);
-		if (SecurityContext.isNotUser(article.getUserId())) {
+		if (SecurityContext.isNot(article.getUserId())) {
 			SecurityContext.require("POWER_MODIFY");
 		} else {
 			SecurityContext.require("PUBLISH");

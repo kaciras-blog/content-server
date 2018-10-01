@@ -8,7 +8,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.List;
 public class MvcConfig implements WebMvcConfigurer {
 
 	private final ObjectMapper objectMapper;
-	private final SecurtyContextInterceptor securtyContextInterceptor;
 
 	@Value("${web.cors-origin}")
 	private String corsOrigin;
@@ -32,11 +30,6 @@ public class MvcConfig implements WebMvcConfigurer {
 				.allowedHeaders("X-CSRF-Token", "X-Requested-With", "Content-Type")
 				.exposedHeaders("Location")
 				.maxAge(864000);
-	}
-
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(securtyContextInterceptor);
 	}
 
 	@Override

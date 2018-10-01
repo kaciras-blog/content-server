@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SecurityContext;
+import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

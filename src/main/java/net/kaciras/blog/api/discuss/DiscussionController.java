@@ -1,9 +1,9 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SecurityContext;
 import net.kaciras.blog.api.user.UserService;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
+import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

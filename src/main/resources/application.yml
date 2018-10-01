@@ -45,6 +45,7 @@ spring:
 
   session:
     store-type: redis
+    timeout: 30d
     redis:
       namespace: kx
 

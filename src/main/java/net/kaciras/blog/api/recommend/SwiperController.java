@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.recommend;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.perm.RequirePrincipal;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +26,7 @@ public class SwiperController {
 	}
 
 	//考虑到轮播通常不会有很多页，直接全量更新。
-	@RequirePrincipal
+	@RequireAuthorize
 	@PutMapping
 	public ResponseEntity<Void> change(@RequestBody List<SwiperSlide> slides) {
 		redisTemplate.opsForValue().set("swiper", slides);

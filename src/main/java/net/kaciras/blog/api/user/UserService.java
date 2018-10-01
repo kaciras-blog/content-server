@@ -1,10 +1,10 @@
 package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SecurityContext;
-import net.kaciras.blog.api.perm.RequirePrincipal;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
+import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -40,12 +40,12 @@ public class UserService {
 		return mapper.toUserVo(user);
 	}
 
-	@RequirePrincipal
+	@RequireAuthorize
 	public int ban(int id, long seconds, String cause) {
 		return repository.get(id).ban(SecurityContext.getUserId(), Duration.ofSeconds(seconds), cause);
 	}
 
-	@RequirePrincipal
+	@RequireAuthorize
 	public void unban(int id, int bid, String cause) {
 		repository.get(id).unBan(bid, SecurityContext.getUserId(), cause);
 	}
