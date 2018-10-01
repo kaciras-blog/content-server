@@ -10,18 +10,13 @@ import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.AdviceMode;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.EnableLoadTimeWeaving;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,6 +29,7 @@ import java.io.IOException;
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 @Import({
 		ExceptionResloverAutoConfiguration.class,
 		KxCodecConfiguration.class,
@@ -44,6 +40,11 @@ public class ServiceApplication {
 
 	@SuppressWarnings("unused")
 	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
+
+	@Bean
+	PrincipalAspect principalAspect() {
+		return new PrincipalAspect();
+	}
 
 	@Bean
 	MessageClient messageClient() {

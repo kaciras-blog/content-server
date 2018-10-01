@@ -2,9 +2,12 @@ package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.Authenticator;
+import net.kaciras.blog.api.RequirePrincipal;
 import net.kaciras.blog.api.SecurtyContext;
+import net.kaciras.blog.api.WebPrincipalType;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
+import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -30,38 +33,34 @@ public class UserService {
 	}
 
 	public UserVo getUser(int id) {
-		return getUser(id, false);
+		return mapper.toUserVo(DBUtils.checkNotNullResource(repository.get(id)));
 	}
 
-	public UserVo getUser(int id, boolean create) {
+	@RequirePrincipal(value = WebPrincipalType.Logined, ex = ResourceNotFoundException.class)
+	public UserVo getOrCreate(int id) {
 		var user = repository.get(id);
 		if (user != null) {
 			return mapper.toUserVo(user);
 		}
-		if (create) {
-			SecurtyContext.requireUser(id);
-			user = restTemplate.getForObject("http://localhost:26481/accounts/{id}", User.class, id);
-			user.setHead(ImageRefrence.parse("noface.gif"));
-			repository.add(user);
-			return mapper.toUserVo(user);
-		}
-		throw new ResourceNotFoundException();
+		SecurtyContext.requireId(id);
+		user = restTemplate.getForObject("http://localhost:26481/accounts/{id}", User.class, id);
+		user.setHead(ImageRefrence.parse("noface.gif"));
+		repository.add(user);
+		return mapper.toUserVo(user);
 	}
 
+	@RequirePrincipal
 	public int ban(int id, long seconds, String cause) {
-		authenticator.require("BAN");
-		return repository.get(id).ban(SecurtyContext.getCurrentUser(), Duration.ofSeconds(seconds), cause);
+		return repository.get(id).ban(SecurtyContext.getUserId(), Duration.ofSeconds(seconds), cause);
 	}
 
+	@RequirePrincipal
 	public void unban(int id, int bid, String cause) {
-		authenticator.require("BAN");
-		repository.get(id).unBan(bid, SecurtyContext.getCurrentUser(), cause);
+		repository.get(id).unBan(bid, SecurtyContext.getUserId(), cause);
 	}
 
 	public List<BanRecord> getBanRedords(int id) {
-		if (SecurtyContext.isNotUser(id)) {
-			authenticator.require("POWER_QUERY");
-		}
+		SecurtyContext.requireId(id);
 		return repository.get(id).getBanRecords();
 	}
 }

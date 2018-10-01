@@ -1,12 +1,10 @@
 package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.Authenticator;
-import net.kaciras.blog.api.AuthenticatorFactory;
+import net.kaciras.blog.api.RequirePrincipal;
 import net.kaciras.blog.api.SecurtyContext;
 import net.kaciras.blog.api.article.ArticleService;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,38 +18,31 @@ public class DraftService {
 	private final DraftRepository draftRepository;
 	private final DraftMapper draftMapper;
 
-	private Authenticator authenticator;
-
-	@Autowired
-	public void setAuthenticator(AuthenticatorFactory factory) {
-		this.authenticator = factory.create("DRAFT");
-	}
-
+	@RequirePrincipal
 	public Draft get(int id) {
-		authenticator.require("POWER_MODIFY");
 		return draftRepository.getById(id);
 	}
 
+	@RequirePrincipal
 	public List<Draft> getList(int userId) {
-		authenticator.require("POWER_MODIFY");
 		return draftRepository.findByUser(userId);
 	}
 
+	@RequirePrincipal
 	@Transactional
 	public int save(DraftSaveRequest dto) {
-		authenticator.require("POWER_MODIFY");
 		var draft = draftRepository.getById(dto.getId());
 		draft.addHistory(dto);
 		return draft.getSaveCount() + 1;
 	}
 
+	@RequirePrincipal
 	public void deleteByUser(int userId) {
-		authenticator.require("POWER_MODIFY");
 		draftRepository.clear(userId);
 	}
 
+	@RequirePrincipal
 	public void delete(int id) {
-		authenticator.require("POWER_MODIFY");
 		draftRepository.remove(id);
 	}
 
@@ -65,22 +56,18 @@ public class DraftService {
 		return newDraft;
 	}
 
+	@RequirePrincipal
 	public int newDraft(Integer article) {
-		authenticator.require("USE");
-
 		var draft = article == null
 				? defaultDraft()
 				: draftMapper.fromArticle(articleService.getArticle(article));
 
-		draft.setUserId(SecurtyContext.getCurrentUser());
+		draft.setUserId(SecurtyContext.getUserId());
 		return draftRepository.add(draft);
 	}
 
+	@RequirePrincipal
 	public List<DraftHistory> getHistories(int id) {
-		var draft = draftRepository.getById(id);
-		if (SecurtyContext.isNotUser(draft.getUserId())) {
-			authenticator.require("POWER_MODIFY");
-		}
-		return draft.getHistories();
+		return draftRepository.getById(id).getHistories();
 	}
 }

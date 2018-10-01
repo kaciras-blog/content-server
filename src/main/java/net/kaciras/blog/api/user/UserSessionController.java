@@ -2,7 +2,6 @@ package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.SecurtyContext;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,15 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequiredArgsConstructor
 @RestController
-public class UserSessionController {
+final class UserSessionController {
 
 	private final UserService userService;
 
 	@GetMapping("/current-user")
 	public UserVo getCurrentUser() {
-		if (SecurtyContext.getCurrentUser() == 0) {
-			throw new ResourceNotFoundException();
-		}
-		return userService.getUser(SecurtyContext.getCurrentUser(), true);
+		return userService.getUser(SecurtyContext.getUserId());
 	}
 }
