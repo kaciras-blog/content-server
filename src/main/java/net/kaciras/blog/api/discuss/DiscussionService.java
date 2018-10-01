@@ -2,7 +2,7 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.DeletedState;
-import net.kaciras.blog.api.SecurtyContext;
+import net.kaciras.blog.api.SecurityContext;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,15 +27,15 @@ public final class DiscussionService {
 	/* - - - - - - - - - - - - - - - 业务方法 - - - - - - - - - - - - - - - - -  */
 
 	private void verifyQuery(DiscussionQuery query) {
-		if (query.getDeletion() != DeletedState.FALSE && SecurtyContext.isNotUser(query.getUserId())) {
-			SecurtyContext.require("POWER_QUERY");
+		if (query.getDeletion() != DeletedState.FALSE && SecurityContext.isNotUser(query.getUserId())) {
+			SecurityContext.require("POWER_QUERY");
 		}
 	}
 
 	public Discussion getOne(long id) {
 		var result = repository.get(id);
-		if (result.isDeleted() && SecurtyContext.isNotUser(result.getUserId())) {
-			SecurtyContext.require("POWER_QUERY");
+		if (result.isDeleted() && SecurityContext.isNotUser(result.getUserId())) {
+			SecurityContext.require("POWER_QUERY");
 		}
 		return result;
 	}
@@ -65,36 +65,36 @@ public final class DiscussionService {
 	}
 
 	private int requireAddedUser() {
-		var discusser = SecurtyContext.getUserId();
+		var discusser = SecurityContext.getUserId();
 		if (discusser == 0) {
 			if (!allowAnonymous)
 				throw new PermissionException();
 			return 0;
 		}
-		SecurtyContext.require("ADD");
+		SecurityContext.require("ADD");
 		return discusser;
 	}
 
 	public void voteUp(int id) {
-		var userId = SecurtyContext.getUserId();
+		var userId = SecurityContext.getUserId();
 		repository.get(id).getVoterList().add(userId);
 	}
 
 	public void revokeVote(int id) {
-		var userId = SecurtyContext.getUserId();
+		var userId = SecurityContext.getUserId();
 		repository.get(id).getVoterList().add(userId);
 	}
 
 	public void delete(long id) {
 		var discussion = repository.get(id);
-		if (SecurtyContext.isNotUser(discussion.getUserId())) {
-			SecurtyContext.require("POWER_MODIFY");
+		if (SecurityContext.isNotUser(discussion.getUserId())) {
+			SecurityContext.require("POWER_MODIFY");
 		}
 		discussion.delete();
 	}
 
 	public void restore(int id) {
-		SecurtyContext.require("POWER_MODIFY"); // 恢复无论是不是自己都需要权限
+		SecurityContext.require("POWER_MODIFY"); // 恢复无论是不是自己都需要权限
 		repository.get(id).restore();
 	}
 }

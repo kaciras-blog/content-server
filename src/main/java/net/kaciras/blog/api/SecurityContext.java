@@ -5,7 +5,7 @@ import net.kaciras.blog.infrastructure.exception.PermissionException;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class SecurtyContext {
+public final class SecurityContext {
 
 	private static final ThreadLocal<WebPrincipal> threadLocalUser = new ThreadLocal<>();
 

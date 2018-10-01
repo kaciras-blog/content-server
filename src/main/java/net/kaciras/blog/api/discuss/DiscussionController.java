@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SecurtyContext;
+import net.kaciras.blog.api.SecurityContext;
 import net.kaciras.blog.api.user.UserService;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +39,7 @@ final class DiscussionController {
 			vo.setReplyCount(discuz.getReplyList().size());
 			vo.setReplies(convert(discuz.getReplyList().select(0, 5)));
 
-			var user = SecurtyContext.getUserId();
+			var user = SecurityContext.getUserId();
 			vo.setVoted(user > 0 && discuz.getVoterList().contains(user));
 			result.add(vo);
 		}
@@ -103,14 +103,14 @@ final class DiscussionController {
 	 */
 	@PostMapping("/{id}/votes")
 	public ResponseEntity<Void> postVote(@PathVariable int id) {
-		SecurtyContext.requireLogin();
+		SecurityContext.requireLogin();
 		discussionService.voteUp(id);
 		return ResponseEntity.created(URI.create("discussions/" + id + "/votes")).build();
 	}
 
 	@DeleteMapping("/{id}/votes")
 	public ResponseEntity<Void> revokeVote(@PathVariable int id) {
-		SecurtyContext.requireLogin();
+		SecurityContext.requireLogin();
 		discussionService.revokeVote(id);
 		return ResponseEntity.noContent().build();
 	}

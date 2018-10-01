@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SecurtyContext;
+import net.kaciras.blog.api.SecurityContext;
 import net.kaciras.blog.api.perm.RequirePrincipal;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
@@ -26,7 +26,7 @@ public class UserService {
 	}
 
 	public UserVo ensureCurrent() {
-		var principal = SecurtyContext.getPrincipal();
+		var principal = SecurityContext.getPrincipal();
 		if (!principal.isLogined()) {
 			throw new ResourceNotFoundException();
 		}
@@ -42,16 +42,16 @@ public class UserService {
 
 	@RequirePrincipal
 	public int ban(int id, long seconds, String cause) {
-		return repository.get(id).ban(SecurtyContext.getUserId(), Duration.ofSeconds(seconds), cause);
+		return repository.get(id).ban(SecurityContext.getUserId(), Duration.ofSeconds(seconds), cause);
 	}
 
 	@RequirePrincipal
 	public void unban(int id, int bid, String cause) {
-		repository.get(id).unBan(bid, SecurtyContext.getUserId(), cause);
+		repository.get(id).unBan(bid, SecurityContext.getUserId(), cause);
 	}
 
 	public List<BanRecord> getBanRedords(int id) {
-		SecurtyContext.requireId(id);
+		SecurityContext.requireId(id);
 		return repository.get(id).getBanRecords();
 	}
 }

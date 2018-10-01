@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.category;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SecurtyContext;
+import net.kaciras.blog.api.SecurityContext;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +18,7 @@ public class CategoryService {
 
 	@Transactional
 	public void move(int id, int parent, boolean treeMode) {
-		SecurtyContext.require("CHANGE_RELATION");
+		SecurityContext.require("CHANGE_RELATION");
 		var category = repository.get(id);
 		var newParent = repository.get(parent);
 
@@ -38,12 +38,12 @@ public class CategoryService {
 	}
 
 	public int add(CategoryAttributes attributes, int parent) {
-		SecurtyContext.require("MODIFY");
+		SecurityContext.require("MODIFY");
 		return repository.add(mapper.toCategory(attributes), parent);
 	}
 
 	public void update(int id, CategoryAttributes attributes) {
-		SecurtyContext.require("MODIFY");
+		SecurityContext.require("MODIFY");
 
 		var category = repository.get(id);
 		mapper.update(category, attributes);
@@ -51,7 +51,7 @@ public class CategoryService {
 	}
 
 	public void delete(int id) {
-		SecurtyContext.require("MODIFY");
+		SecurityContext.require("MODIFY");
 		repository.remove(id);
 	}
 

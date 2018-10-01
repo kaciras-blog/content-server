@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SecurtyContext;
+import net.kaciras.blog.api.SecurityContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +27,7 @@ final class DraftController {
 
 	@GetMapping
 	public List<DraftPreviewVo> getList() {
-		return mapper.toPreviewVo(draftService.getList(SecurtyContext.getUserId()));
+		return mapper.toPreviewVo(draftService.getList(SecurityContext.getUserId()));
 	}
 
 	@GetMapping("/{id}")

@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SecurtyContext;
+import net.kaciras.blog.api.SecurityContext;
 import net.kaciras.blog.api.article.ArticleService;
 import net.kaciras.blog.api.perm.RequirePrincipal;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
@@ -57,7 +57,7 @@ public class DraftService {
 				? defaultDraft()
 				: draftMapper.fromArticle(articleService.getArticle(article));
 
-		draft.setUserId(SecurtyContext.getUserId());
+		draft.setUserId(SecurityContext.getUserId());
 		return draftRepository.add(draft);
 	}
 

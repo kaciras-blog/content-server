@@ -2,7 +2,7 @@ package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.DeletedState;
-import net.kaciras.blog.api.SecurtyContext;
+import net.kaciras.blog.api.SecurityContext;
 import net.kaciras.blog.api.category.CategoryService;
 import net.kaciras.blog.api.discuss.DiscussionQuery;
 import net.kaciras.blog.api.discuss.DiscussionService;
@@ -46,7 +46,7 @@ public class ArticleService {
 		if (article.isDeleted()) {
 			throw new ResourceDeletedException();
 		}
-		SecurtyContext.requireSelf(article.getUserId(), "POWER_MODIFY");
+		SecurityContext.requireSelf(article.getUserId(), "POWER_MODIFY");
 		return article;
 	}
 
@@ -54,7 +54,7 @@ public class ArticleService {
 		var article = repository.get(id);
 
 		if (article.isDeleted()
-				&& SecurtyContext.checkSelf(article.getUserId(), "SHOW_DELETED")) {
+				&& SecurityContext.checkSelf(article.getUserId(), "SHOW_DELETED")) {
 			throw new ResourceDeletedException();
 		}
 		article.recordView(); //增加浏览量
@@ -63,7 +63,7 @@ public class ArticleService {
 
 	public List<PreviewVo> getList(ArticleListRequest request) {
 		if (request.getDeletion() != DeletedState.FALSE) {
-			SecurtyContext.require("SHOW_DELETED");
+			SecurityContext.require("SHOW_DELETED");
 		}
 		return repository.findAll(request).stream().map(this::aggregate).collect(Collectors.toList());
 	}
@@ -93,10 +93,10 @@ public class ArticleService {
 	 */
 	@Transactional
 	public int publish(ArticlePublishRequest request) {
-		SecurtyContext.require("PUBLISH");
+		SecurityContext.require("PUBLISH");
 
 		var article = mapper.toArticle(request);
-		article.setUserId(SecurtyContext.getUserId());
+		article.setUserId(SecurityContext.getUserId());
 
 		article.setUrlTitle(StringUtils.trimTrailingCharacter(urlKeywords
 				.matcher(request.getUrlTitle()).replaceAll("-"), '-'));
@@ -135,10 +135,10 @@ public class ArticleService {
 
 	public void updateDeleteion(int id, boolean isDeleted) {
 		var article = repository.get(id);
-		if (SecurtyContext.isNotUser(article.getUserId())) {
-			SecurtyContext.require("POWER_MODIFY");
+		if (SecurityContext.isNotUser(article.getUserId())) {
+			SecurityContext.require("POWER_MODIFY");
 		} else {
-			SecurtyContext.require("PUBLISH");
+			SecurityContext.require("PUBLISH");
 		}
 		article.updateDeleted(isDeleted);
 	}

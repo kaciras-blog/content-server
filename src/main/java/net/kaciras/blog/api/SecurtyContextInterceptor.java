@@ -15,7 +15,7 @@ class SecurtyContextInterceptor extends HandlerInterceptorAdapter {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-		SecurtyContext.setPrincipal((WebPrincipal) request.getUserPrincipal());
+		SecurityContext.setPrincipal((WebPrincipal) request.getUserPrincipal());
 		return true;
 	}
 }

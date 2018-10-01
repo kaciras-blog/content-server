@@ -1,6 +1,6 @@
 package net.kaciras.blog.api.perm;
 
-import net.kaciras.blog.api.SecurtyContext;
+import net.kaciras.blog.api.SecurityContext;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -54,13 +54,13 @@ public final class PrincipalAspect {
 
 		switch (annotation.value()) {
 			case System:
-				passed = SecurtyContext.getPrincipal().isSystem();
+				passed = SecurityContext.getPrincipal().isSystem();
 				break;
 			case Administor:
-				passed = SecurtyContext.getPrincipal().isAdministor();
+				passed = SecurityContext.getPrincipal().isAdministor();
 				break;
 			case Logined:
-				passed = SecurtyContext.getPrincipal().isLogined();
+				passed = SecurityContext.getPrincipal().isLogined();
 				break;
 			default:
 				passed = true; // anynomous
