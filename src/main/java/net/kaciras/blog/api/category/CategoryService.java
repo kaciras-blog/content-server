@@ -1,10 +1,8 @@
 package net.kaciras.blog.api.category;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.perm.Authenticator;
-import net.kaciras.blog.api.perm.AuthenticatorFactory;
+import net.kaciras.blog.api.SecurtyContext;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,16 +15,10 @@ public class CategoryService {
 
 	private final CategoryRepository repository;
 	private final CategoryMapper mapper;
-	private Authenticator authenticator;
-
-	@Autowired
-	void setAuthenticator(AuthenticatorFactory factory) {
-		this.authenticator = factory.create("CATEGORY");
-	}
 
 	@Transactional
 	public void move(int id, int parent, boolean treeMode) {
-		authenticator.require("CHANGE_RELATION");
+		SecurtyContext.require("CHANGE_RELATION");
 		var category = repository.get(id);
 		var newParent = repository.get(parent);
 
@@ -46,12 +38,12 @@ public class CategoryService {
 	}
 
 	public int add(CategoryAttributes attributes, int parent) {
-		authenticator.require("MODIFY");
+		SecurtyContext.require("MODIFY");
 		return repository.add(mapper.toCategory(attributes), parent);
 	}
 
 	public void update(int id, CategoryAttributes attributes) {
-		authenticator.require("MODIFY");
+		SecurtyContext.require("MODIFY");
 
 		var category = repository.get(id);
 		mapper.update(category, attributes);
@@ -59,7 +51,7 @@ public class CategoryService {
 	}
 
 	public void delete(int id) {
-		authenticator.require("MODIFY");
+		SecurtyContext.require("MODIFY");
 		repository.remove(id);
 	}
 

@@ -1,12 +1,10 @@
 package net.kaciras.blog.domain;
 
 import net.kaciras.blog.api.DeletedState;
-import net.kaciras.blog.api.SecurtyContext;
 import net.kaciras.blog.api.discuss.DiscussionQuery;
 import net.kaciras.blog.api.discuss.DiscussionService;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,10 +13,10 @@ class DiscussionPermissionTest extends AbstractSpringTest {
 	@Autowired
 	private DiscussionService service;
 
-	@BeforeEach
-	void setUp() {
-		SecurtyContext.setCurrentUser(null);
-	}
+//	@BeforeEach
+//	void setUp() {
+//		SecurtyContext.setCurrentUser(null);
+//	}
 
 	@Test
 	void testGetList() {
@@ -28,7 +26,7 @@ class DiscussionPermissionTest extends AbstractSpringTest {
 		query.setDeletion(DeletedState.ALL);
 		Assertions.assertThatThrownBy(() -> service.getList(query)).isInstanceOf(PermissionException.class);
 
-		SecurtyContext.setCurrentUser(2);
+//		SecurtyContext.setCurrentUser(2);
 		Assertions.assertThatThrownBy(() -> service.getList(query)).isInstanceOf(PermissionException.class);
 
 		query.setUserId(2);
@@ -39,7 +37,7 @@ class DiscussionPermissionTest extends AbstractSpringTest {
 	void testDeleteAndRestore() {
 		Assertions.assertThatThrownBy(() -> service.delete(1)).isInstanceOf(PermissionException.class);
 
-		SecurtyContext.setCurrentUser(2);
+//		SecurtyContext.setCurrentUser(2);
 		Assertions.assertThatThrownBy(() -> service.delete(5)).isInstanceOf(PermissionException.class);
 
 		service.delete(8);
@@ -51,7 +49,7 @@ class DiscussionPermissionTest extends AbstractSpringTest {
 	void testGetOne() {
 		Assertions.assertThatThrownBy(() -> service.getOne(9)).isInstanceOf(PermissionException.class);
 
-		SecurtyContext.setCurrentUser(1);
+//		SecurtyContext.setCurrentUser(1);
 		service.getOne(9);
 	}
 }

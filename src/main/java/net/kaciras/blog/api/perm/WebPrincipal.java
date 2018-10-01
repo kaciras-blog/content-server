@@ -33,6 +33,10 @@ public class WebPrincipal implements Principal {
 		return id == ADMIN_ID;
 	}
 
+	public boolean hasPermission(String name) {
+		return isAdministor() || isSystem();
+	}
+
 	@Override
 	public String getName() {
 		switch (id) {

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@RequirePrincipal
 @RequiredArgsConstructor
 @Service
 public class DraftService {
@@ -18,17 +19,14 @@ public class DraftService {
 	private final DraftRepository draftRepository;
 	private final DraftMapper draftMapper;
 
-	@RequirePrincipal
 	public Draft get(int id) {
 		return draftRepository.getById(id);
 	}
 
-	@RequirePrincipal
 	public List<Draft> getList(int userId) {
 		return draftRepository.findByUser(userId);
 	}
 
-	@RequirePrincipal
 	@Transactional
 	public int save(DraftSaveRequest dto) {
 		var draft = draftRepository.getById(dto.getId());
@@ -36,12 +34,10 @@ public class DraftService {
 		return draft.getSaveCount() + 1;
 	}
 
-	@RequirePrincipal
 	public void deleteByUser(int userId) {
 		draftRepository.clear(userId);
 	}
 
-	@RequirePrincipal
 	public void delete(int id) {
 		draftRepository.remove(id);
 	}
@@ -56,7 +52,6 @@ public class DraftService {
 		return newDraft;
 	}
 
-	@RequirePrincipal
 	public int newDraft(Integer article) {
 		var draft = article == null
 				? defaultDraft()
@@ -66,7 +61,6 @@ public class DraftService {
 		return draftRepository.add(draft);
 	}
 
-	@RequirePrincipal
 	public List<DraftHistory> getHistories(int id) {
 		return draftRepository.getById(id).getHistories();
 	}

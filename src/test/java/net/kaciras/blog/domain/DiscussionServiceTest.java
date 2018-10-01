@@ -1,7 +1,6 @@
 package net.kaciras.blog.domain;
 
 import net.kaciras.blog.api.DeletedState;
-import net.kaciras.blog.api.SecurtyContext;
 import net.kaciras.blog.api.discuss.Discussion;
 import net.kaciras.blog.api.discuss.DiscussionQuery;
 import net.kaciras.blog.api.discuss.DiscussionService;
@@ -20,7 +19,7 @@ class DiscussionServiceTest extends AbstractSpringTest {
 
 	@BeforeEach
 	void setUp() {
-		SecurtyContext.setCurrentUser(1);
+//		SecurtyContext.setCurrentUser(1);
 	}
 
 	@Test

@@ -1,7 +1,6 @@
 package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SecurtyContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +16,6 @@ final class UserSessionController {
 
 	@GetMapping("/current-user")
 	public UserVo getCurrentUser() {
-		return userService.getUser(SecurtyContext.getUserId());
+		return userService.ensureCurrent();
 	}
 }

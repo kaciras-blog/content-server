@@ -6,15 +6,12 @@ import net.kaciras.blog.api.SecurtyContext;
 import net.kaciras.blog.api.category.CategoryService;
 import net.kaciras.blog.api.discuss.DiscussionQuery;
 import net.kaciras.blog.api.discuss.DiscussionService;
-import net.kaciras.blog.api.perm.Authenticator;
-import net.kaciras.blog.api.perm.AuthenticatorFactory;
 import net.kaciras.blog.api.user.UserService;
 import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
 import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -37,12 +34,6 @@ public class ArticleService {
 
 	private final Pattern urlKeywords = Pattern.compile("[\\s?#@:&\\\\/=\"'`,.!]+");
 
-	private Authenticator authenticator;
-
-	@Autowired
-	public void setAuthenticator(AuthenticatorFactory factory) {
-		this.authenticator = factory.create("ARTICLE");
-	}
 
 	/**
 	 * 检查用户是否有权限更改指定的的文章。
@@ -52,21 +43,18 @@ public class ArticleService {
 	 * @throws PermissionException 如果没权限
 	 */
 	private Article requireModify(Article article) {
-		authenticator.require("MODIFY");
-		var noPerm = authenticator.reject("POWER_MODIFY");
-
-		if (article.isDeleted() && noPerm) {
+		if (article.isDeleted()) {
 			throw new ResourceDeletedException();
 		}
-		if (SecurtyContext.isNotUser(article.getUserId()) && noPerm) {
-			throw new PermissionException();
-		}
+		SecurtyContext.requireSelf(article.getUserId(), "POWER_MODIFY");
 		return article;
 	}
 
 	public Article getArticle(int id) {
 		var article = repository.get(id);
-		if (article.isDeleted() && authenticator.reject("SHOW_DELETED")) {
+
+		if (article.isDeleted()
+				&& SecurtyContext.checkSelf(article.getUserId(), "SHOW_DELETED")) {
 			throw new ResourceDeletedException();
 		}
 		article.recordView(); //增加浏览量
@@ -75,7 +63,7 @@ public class ArticleService {
 
 	public List<PreviewVo> getList(ArticleListRequest request) {
 		if (request.getDeletion() != DeletedState.FALSE) {
-			authenticator.require("SHOW_DELETED");
+			SecurtyContext.require("SHOW_DELETED");
 		}
 		return repository.findAll(request).stream().map(this::aggregate).collect(Collectors.toList());
 	}
@@ -105,10 +93,10 @@ public class ArticleService {
 	 */
 	@Transactional
 	public int publish(ArticlePublishRequest request) {
-		authenticator.require("PUBLISH");
+		SecurtyContext.require("PUBLISH");
 
 		var article = mapper.toArticle(request);
-		article.setUserId(SecurtyContext.getCurrentUser());
+		article.setUserId(SecurtyContext.getUserId());
 
 		article.setUrlTitle(StringUtils.trimTrailingCharacter(urlKeywords
 				.matcher(request.getUrlTitle()).replaceAll("-"), '-'));
@@ -148,9 +136,9 @@ public class ArticleService {
 	public void updateDeleteion(int id, boolean isDeleted) {
 		var article = repository.get(id);
 		if (SecurtyContext.isNotUser(article.getUserId())) {
-			authenticator.require("POWER_MODIFY");
+			SecurtyContext.require("POWER_MODIFY");
 		} else {
-			authenticator.require("PUBLISH");
+			SecurtyContext.require("PUBLISH");
 		}
 		article.updateDeleted(isDeleted);
 	}

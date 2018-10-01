@@ -29,14 +29,30 @@ public final class SecurtyContext {
 	}
 
 	public static void requireId(int id) {
-		if(isNotUser(id)) throw new PermissionException();
+		if (isNotUser(id)) throw new PermissionException();
 	}
 
 	public static void requireLogin() {
-		if(getPrincipal().isAnynomous()) throw new PermissionException();
+		if (getPrincipal().isAnynomous()) throw new PermissionException();
 	}
 
 	public static int getUserId() {
 		return getPrincipal().getId();
+	}
+
+	public static boolean checkSelf(int id, String perm) {
+		var principal = getPrincipal();
+		return principal.getId() == id || principal.hasPermission(perm);
+	}
+
+	public static void requireSelf(int id, String perm) {
+		if (!checkSelf(id, perm)) {
+			throw new PermissionException();
+		}
+	}
+
+	public static void require(String perm) {
+		if (!getPrincipal().hasPermission(perm))
+			throw new PermissionException();
 	}
 }

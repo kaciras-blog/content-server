@@ -27,7 +27,7 @@ final class DraftController {
 
 	@GetMapping
 	public List<DraftPreviewVo> getList() {
-		return mapper.toPreviewVo(draftService.getList(SecurtyContext.getCurrentUser()));
+		return mapper.toPreviewVo(draftService.getList(SecurtyContext.getUserId()));
 	}
 
 	@GetMapping("/{id}")

@@ -2,14 +2,10 @@ package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.SecurtyContext;
-import net.kaciras.blog.api.perm.Authenticator;
 import net.kaciras.blog.api.perm.RequirePrincipal;
-import net.kaciras.blog.api.perm.WebPrincipalType;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.sql.DBUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,26 +20,21 @@ public class UserService {
 	private final UserMapper mapper;
 	private final RestTemplate restTemplate;
 
-	private Authenticator authenticator;
-
-	@Qualifier("UserAuthenticator")
-	@Autowired
-	public void setAuthenticator(Authenticator authenticator) {
-		this.authenticator = authenticator;
-	}
 
 	public UserVo getUser(int id) {
 		return mapper.toUserVo(DBUtils.checkNotNullResource(repository.get(id)));
 	}
 
-	@RequirePrincipal(value = WebPrincipalType.Logined, ex = ResourceNotFoundException.class)
-	public UserVo getOrCreate(int id) {
-		var user = repository.get(id);
+	public UserVo ensureCurrent() {
+		var principal = SecurtyContext.getPrincipal();
+		if (!principal.isLogined()) {
+			throw new ResourceNotFoundException();
+		}
+		var user = repository.get(principal.getId());
 		if (user != null) {
 			return mapper.toUserVo(user);
 		}
-		SecurtyContext.requireId(id);
-		user = restTemplate.getForObject("http://localhost:26481/accounts/{id}", User.class, id);
+		user = restTemplate.getForObject("http://localhost:26481/accounts/{id}", User.class, principal.getId());
 		user.setHead(ImageRefrence.parse("noface.gif"));
 		repository.add(user);
 		return mapper.toUserVo(user);

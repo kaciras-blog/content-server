@@ -38,7 +38,7 @@ final class DiscussionController {
 			vo.setReplyCount(discuz.getReplyList().size());
 			vo.setReplies(convert(discuz.getReplyList().select(0, 5)));
 
-			var user = SecurtyContext.getCurrentUser();
+			var user = SecurtyContext.getUserId();
 			vo.setVoted(user > 0 && discuz.getVoterList().contains(user));
 			result.add(vo);
 		}
