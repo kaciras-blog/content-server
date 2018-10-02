@@ -20,8 +20,20 @@ final class CategoryController {
 
 	@GetMapping("/{id}")
 	public CategoryVo get(@PathVariable int id) {
-		var vo = mapper.categoryView(categoryService.get(id));
-		vo.setArticleCount(articleService.getCountByCategories(id));
+		return aggregate(categoryService.getById(id));
+	}
+
+	@GetMapping(value = "/{name}", headers = "Identified-By=name")
+	public CategoryVo getByName(@PathVariable String name) {
+		return aggregate(categoryService.getByName(name));
+	}
+
+	private CategoryVo aggregate(Category category) {
+		var vo = mapper.categoryView(category);
+		vo.setArticleCount(articleService.getCountByCategories(vo.getId()));
+		vo.setParent(category.getParentId());
+		vo.setBestBackground(categoryService.getBestBackground(category));
+		vo.setChildren(mapper.categoryView(categoryService.getChildren(vo.getId())));
 		return vo;
 	}
 

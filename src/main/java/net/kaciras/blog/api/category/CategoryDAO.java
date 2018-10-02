@@ -10,6 +10,9 @@ interface CategoryDAO {
 	@Select("SELECT * FROM category WHERE id=#{id}")
 	Category selectAttributes(int id);
 
+	@Select("SELECT *FROM category WHERE name=#{name} ")
+	Category selectAttributesByName(String name);
+
 	@Select("SELECT COUNT(*) FROM category")
 	int selectCount();
 

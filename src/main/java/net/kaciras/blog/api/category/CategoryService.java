@@ -29,8 +29,12 @@ public class CategoryService {
 		}
 	}
 
-	public Category get(int id) {
+	public Category getById(int id) {
 		return repository.get(id);
+	}
+
+	public Category getByName(String name) {
+		return repository.findByName(name);
 	}
 
 	public List<Category> getChildren(int id) {
@@ -63,16 +67,18 @@ public class CategoryService {
 	}
 
 	public ImageRefrence getBestBackground(int id) {
-		if(id == 0) {
+		if (id == 0) {
 			return null;
 		}
-		var category = repository.get(id);
+		return getBestBackground(repository.get(id));
+	}
 
+	public ImageRefrence getBestBackground(Category category) {
 		if (category.getBackground() != null) {
 			return category.getBackground();
 		}
 		for (var parent : category.getPath()) {
-			if(parent.getBackground() != null) {
+			if (parent.getBackground() != null) {
 				return parent.getBackground();
 			}
 		}

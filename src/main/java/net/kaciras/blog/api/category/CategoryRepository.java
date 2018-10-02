@@ -32,6 +32,10 @@ class CategoryRepository {
 		return DBUtils.checkNotNullResource(categoryDAO.selectAttributes(id));
 	}
 
+	public Category findByName(String name) {
+		return DBUtils.checkNotNullResource(categoryDAO.selectAttributesByName(name));
+	}
+
 	public int size() {
 		return categoryDAO.selectCount();
 	}
