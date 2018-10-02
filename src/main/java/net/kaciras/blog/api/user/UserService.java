@@ -50,6 +50,7 @@ public class UserService {
 		repository.get(id).unBan(bid, SecurityContext.getUserId(), cause);
 	}
 
+	@RequireAuthorize
 	public List<BanRecord> getBanRedords(int id) {
 		SecurityContext.requireId(id);
 		return repository.get(id).getBanRecords();

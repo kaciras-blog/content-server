@@ -22,7 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/articles")
-final class ArticleController {
+class ArticleController {
 
 	private final ArticleService articleService;
 	private final CategoryService categoryService;

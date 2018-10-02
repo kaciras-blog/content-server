@@ -54,3 +54,7 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mybatis/*
+
+kaciras:
+  authorization:
+    security-context: true

@@ -35,13 +35,14 @@ final class DiscussionController {
 		var result = new ArrayList<DiscussionVo>(list.size());
 
 		for (var discuz : list) {
-			var vo = convert(discuz);
-			vo.setReplyCount(discuz.getReplyList().size());
-			vo.setReplies(convert(discuz.getReplyList().select(0, 5)));
+			var view = convert(discuz);
+			var replyList = discuz.getReplyList();
 
-			var user = SecurityContext.getUserId();
-			vo.setVoted(user > 0 && discuz.getVoterList().contains(user));
-			result.add(vo);
+			view.setVoted(discuz.getVoterList().contains(SecurityContext.getUserId()));
+			view.setReplyCount(replyList.size());
+			view.setReplies(convert(replyList.select(0, 5)));
+
+			result.add(view);
 		}
 		return Map.of("total", size, "items", result);
 	}

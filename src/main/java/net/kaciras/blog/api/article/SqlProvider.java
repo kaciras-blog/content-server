@@ -6,7 +6,7 @@ import org.apache.ibatis.jdbc.SQL;
 import java.util.Set;
 
 @SuppressWarnings("unused")
-public final class ArticleSqlProvider {
+public final class SqlProvider {
 
 	private Set<String> allowFields = Set.of("create_time", "update_time", "view_count");
 

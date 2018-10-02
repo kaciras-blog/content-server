@@ -20,7 +20,7 @@ interface ArticleDAO {
 	 * @param query 查询请求对象
 	 * @return 文章预览信息列表
 	 */
-	@SelectProvider(type = ArticleSqlProvider.class, method = "selectPreview")
+	@SelectProvider(type = SqlProvider.class, method = "selectPreview")
 	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.ArticleMap")
 	List<Article> selectPreview(ArticleListRequest query);
 

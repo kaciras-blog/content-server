@@ -7,12 +7,14 @@ import net.kaciras.blog.infrastructure.io.CommandListener;
 import net.kaciras.blog.infrastructure.message.DirectMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import net.kaciras.blog.infrastructure.principal.KxPrincipalAutoConfiguration;
-import net.kaciras.blog.infrastructure.principal.ServletSecurityContextFilter;
 import org.ehcache.CacheManager;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.AdviceMode;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableLoadTimeWeaving;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -34,7 +36,6 @@ import java.io.IOException;
 @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
-@EnableAspectJAutoProxy(proxyTargetClass = true)
 @Import({
 		ExceptionResloverAutoConfiguration.class,
 		KxCodecConfiguration.class,
@@ -46,11 +47,6 @@ public class ServiceApplication {
 
 	@SuppressWarnings("unused")
 	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
-
-	@Bean
-	ServletSecurityContextFilter securityContextFilter() {
-		return new ServletSecurityContextFilter();
-	}
 
 	@Bean
 	MessageClient messageClient() {

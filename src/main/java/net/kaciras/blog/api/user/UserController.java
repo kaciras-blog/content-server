@@ -41,5 +41,4 @@ final class UserController {
 	public List<BanRecord> getBanRecords(@PathVariable int id) {
 		return userService.getBanRedords(id);
 	}
-
 }
