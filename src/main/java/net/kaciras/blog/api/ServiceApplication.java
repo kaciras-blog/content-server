@@ -1,6 +1,7 @@
 package net.kaciras.blog.api;
 
 import net.kaciras.blog.infrastructure.AddontionPortAutoConfiguration;
+import net.kaciras.blog.infrastructure.DevelopmentAutoConfiguration;
 import net.kaciras.blog.infrastructure.codec.KxCodecConfiguration;
 import net.kaciras.blog.infrastructure.exception.ExceptionResloverAutoConfiguration;
 import net.kaciras.blog.infrastructure.io.CommandListener;
@@ -40,7 +41,8 @@ import java.io.IOException;
 		ExceptionResloverAutoConfiguration.class,
 		KxCodecConfiguration.class,
 		AddontionPortAutoConfiguration.class,
-		KxPrincipalAutoConfiguration.class
+		KxPrincipalAutoConfiguration.class,
+		DevelopmentAutoConfiguration.class
 })
 @SpringBootApplication
 public class ServiceApplication {
