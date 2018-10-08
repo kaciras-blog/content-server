@@ -22,10 +22,14 @@ public final class SqlProvider {
 				break;
 		}
 
-		//TODO: coupling
 		var category = query.getCategory();
-		if (category != null && category > 0) {
-			sql.JOIN("category_tree AS B ON A.category=B.descendant").WHERE("B.ancestor=#{category}");
+		if (category > 0) {
+			if(query.isRecursive()) {
+				//TODO: coupling 耦合
+				sql.JOIN("category_tree AS B ON A.category=B.descendant").WHERE("B.ancestor=#{category}");
+			} else {
+				sql.WHERE("A.category = #{category}");
+			}
 		}
 
 		var pageable = query.getPageable();
@@ -45,5 +49,4 @@ public final class SqlProvider {
 		return sql.toString() + String.format(" LIMIT %d,%d",
 				pageable.getPageNumber(), Math.min(pageable.getPageSize(), 20)); // 限制最大结果数
 	}
-
 }

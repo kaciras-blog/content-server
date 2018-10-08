@@ -15,7 +15,9 @@ public class ArticleListRequest {
 
 	private int userId;
 
-	private Integer category;
+	private int category;
+
+	private boolean recursive;
 
 	/**
 	 * 资源的删除状态过滤，对于无删除状态的资源，此字段将被忽略
