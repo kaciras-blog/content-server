@@ -65,7 +65,10 @@ public class ArticleService {
 		if (request.getDeletion() != DeletedState.FALSE) {
 			SecurityContext.require("SHOW_DELETED");
 		}
-		return repository.findAll(request).stream().map(this::aggregate).collect(Collectors.toList());
+		return repository.findAll(request)
+				.stream()
+				.map(article -> aggregate(article, request))
+				.collect(Collectors.toList());
 	}
 
 	/**
@@ -74,11 +77,11 @@ public class ArticleService {
 	 * @param article 文章对象
 	 * @return 聚合后的对象
 	 */
-	private PreviewVo aggregate(Article article) {
+	private PreviewVo aggregate(Article article, ArticleListRequest request) {
 		var result = mapper.toPreview(article);
 		result.setAuthor(userService.getUser(article.getUserId()));
 		result.setDcnt(discussionService.count(DiscussionQuery.byArticle(article.getId())));
-		result.setCpath(categoryService.getPath(article.getCategory()));
+		result.setCpath(categoryService.getPath(article.getCategory(), request.getCategory()));
 		return result;
 	}
 

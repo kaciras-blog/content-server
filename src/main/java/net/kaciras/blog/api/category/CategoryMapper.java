@@ -12,9 +12,11 @@ interface CategoryMapper {
 
 	CategoryVo categoryView(Category category);
 
-	List<CategoryVo> categoryView(List<Category> histories);
+	List<CategoryVo> categoryView(List<Category> list);
 
 	Category toCategory(CategoryAttributes viewObject);
 
 	void update(@MappingTarget Category category, CategoryAttributes attributes);
+
+	List<SimpleCategoryVo> simpleView(List<Category> list);
 }

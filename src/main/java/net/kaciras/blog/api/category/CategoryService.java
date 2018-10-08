@@ -59,11 +59,11 @@ public class CategoryService {
 		repository.remove(id);
 	}
 
-	public List<CategoryVo> getPath(int id) {
+	public List<SimpleCategoryVo> getPath(int id, int ancestor) {
 		if (id == 0) {
 			return Collections.emptyList();
 		}
-		return mapper.categoryView(repository.get(id).getPath());
+		return mapper.simpleView(repository.get(id).getPathTo(ancestor));
 	}
 
 	public ImageRefrence getBestBackground(int id) {

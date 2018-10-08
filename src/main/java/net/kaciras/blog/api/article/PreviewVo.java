@@ -2,7 +2,7 @@ package net.kaciras.blog.api.article;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import net.kaciras.blog.api.category.CategoryVo;
+import net.kaciras.blog.api.category.SimpleCategoryVo;
 import net.kaciras.blog.api.user.UserVo;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
@@ -23,7 +23,8 @@ public final class PreviewVo {
 	private ImageRefrence cover;
 	private List<String> keywords;
 	private String summary;
-	private List<CategoryVo> cpath;
+
+	private List<SimpleCategoryVo> cpath;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime create;

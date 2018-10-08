@@ -6,7 +6,6 @@ import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 import java.util.List;
 
@@ -46,9 +45,8 @@ public class Category extends CategoryAttributes {
 		return dao.selectDistance(0, id);
 	}
 
-	@NonNull
 	public List<Category> getPath() {
-		return dao.selectPathToRoot(id);
+		return getPathTo(0);
 	}
 
 	/**
@@ -57,9 +55,12 @@ public class Category extends CategoryAttributes {
 	 * @param ancestor 上级分类id
 	 * @return 路径上所有的分类，如果ancestor不是此分类的上级分类则为null
 	 */
-	@Nullable
-	public List<Category> pathTo(int ancestor) {
-		Utils.checkPositive(ancestor, "ancestor");
+	@NonNull
+	public List<Category> getPathTo(int ancestor) {
+		Utils.checkNotNegative(ancestor, "ancestor");
+		if(ancestor == 0) {
+			return dao.selectPathToRoot(id);
+		}
 		return dao.selectPathToAncestor(id, ancestor);
 	}
 
