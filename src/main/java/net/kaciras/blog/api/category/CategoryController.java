@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.net.URI;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -49,12 +48,6 @@ final class CategoryController {
 		int id = categoryService.add(category, parent);
 		return ResponseEntity.created(URI.create("/categories/" + id)).build();
 	}
-
-	@GetMapping("{id}/path")
-	public List<CategoryVo> getPath(@PathVariable int id) {
-		return categoryService.getPath(id);
-	}
-
 
 	@PostMapping("/transfer")
 	public void move(@RequestParam int id, @RequestParam int parent, @RequestParam boolean treeMode) {
