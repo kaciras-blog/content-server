@@ -10,8 +10,13 @@ interface CategoryDAO {
 	@Select("SELECT * FROM category WHERE id=#{id}")
 	Category selectAttributes(int id);
 
-	@Select("SELECT *FROM category WHERE name=#{name} ")
+	@Select("SELECT * FROM category WHERE name=#{name} ")
 	Category selectAttributesByName(String name);
+
+	@Select("SELECT A.* FROM category AS A " +
+			"JOIN category_tree AS B ON A.id=B.ancestor " +
+			"WHERE B.distance=1 AND B.descendant=#{id}")
+	Category selectParentAttributes(int id);
 
 	@Select("SELECT COUNT(*) FROM category")
 	int selectCount();
@@ -82,7 +87,7 @@ interface CategoryDAO {
 	 */
 	@Select("SELECT B.* FROM category_tree AS A " +
 			"JOIN category AS B ON A.ancestor = B.id " +
-			"WHERE descendant = #{id} AND ancestor > 1 " +
+			"WHERE descendant = #{id} AND ancestor > 0 " +
 			"ORDER BY distance ASC")
 	List<Category> selectPathToRoot(int id);
 

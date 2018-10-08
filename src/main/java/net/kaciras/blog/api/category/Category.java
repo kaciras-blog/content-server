@@ -34,8 +34,8 @@ public class Category extends CategoryAttributes {
 
 	private int id;
 
-	public Integer getParentId() {
-		return dao.selectAncestor(id, 1);
+	public Category getParent() {
+		return dao.selectParentAttributes(id);
 	}
 
 	public List<Category> getChildren() {

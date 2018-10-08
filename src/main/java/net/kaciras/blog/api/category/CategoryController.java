@@ -29,12 +29,12 @@ final class CategoryController {
 	}
 
 	private CategoryVo aggregate(Category category) {
-		var vo = mapper.categoryView(category);
-		vo.setArticleCount(articleService.getCountByCategories(vo.getId()));
-		vo.setParent(category.getParentId());
-		vo.setBestBackground(categoryService.getBestBackground(category));
-		vo.setChildren(mapper.categoryView(categoryService.getChildren(vo.getId())));
-		return vo;
+		var result = new AggregationVo();
+		mapper.copyProps(result, category);
+
+		result.setArticleCount(articleService.getCountByCategories(category.getId()));
+		result.setBestBackground(categoryService.getBestBackground(category));
+		return result;
 	}
 
 	@GetMapping("/{id}/children")
@@ -45,8 +45,8 @@ final class CategoryController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> create(@RequestBody CategoryVo category) {
-		int id = categoryService.add(category, category.getParent());
+	public ResponseEntity<Void> create(@RequestBody CategoryAttributes category, @RequestParam int parent) {
+		int id = categoryService.add(category, parent);
 		return ResponseEntity.created(URI.create("/categories/" + id)).build();
 	}
 
