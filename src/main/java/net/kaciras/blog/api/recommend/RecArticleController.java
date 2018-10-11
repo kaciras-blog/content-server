@@ -27,7 +27,6 @@ final class RecArticleController {
 		return popular;
 	}
 
-
 	@Scheduled(fixedDelay = 5 * 60 * 1000)
 	void updateHotsTask() {
 		var request = new ArticleListRequest();

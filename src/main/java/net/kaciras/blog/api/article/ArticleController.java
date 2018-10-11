@@ -55,6 +55,7 @@ class ArticleController {
 
 		var article = articleService.getArticle(id);
 		var vo = pojoMapper.toViewObject(article);
+
 		vo.setNext(article.getNextLink());
 		vo.setPrev(article.getPreviousLink());
 		vo.setBanner(categoryService.getBestBackground(article.getCategory()));
