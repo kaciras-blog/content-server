@@ -77,6 +77,7 @@ public class ServiceApplication {
 	CookieSerializer cookieSerializer(ServletContext servletContext) {
 		var serializer = new DefaultCookieSerializer();
 		serializer.setSameSite(null);
+		serializer.setUseSecureCookie(false); // 默认跟连接的SSL一致
 		serializer.setDomainName(servletContext.getSessionCookieConfig().getDomain());
 		serializer.setCookieMaxAge(30 * 24 * 60 * 60);
 		return serializer;
