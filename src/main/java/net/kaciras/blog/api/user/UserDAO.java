@@ -1,6 +1,5 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.user;
 
-import net.kaciras.blog.api.user.User;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
