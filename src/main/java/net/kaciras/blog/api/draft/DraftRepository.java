@@ -27,7 +27,8 @@ class DraftRepository {
 
 	public List<Draft> findByUser(int userId) {
 		Utils.checkPositive(userId, "userId");
-		return draftDAO.selectByUser(userId).stream()
+		return draftDAO.selectByUser(userId)
+				.stream()
 				.map(this::getById)
 				.collect(Collectors.toList());
 	}

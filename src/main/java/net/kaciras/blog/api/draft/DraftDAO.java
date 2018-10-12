@@ -15,7 +15,7 @@ interface DraftDAO {
 	void insertAssoicate(Draft draft);
 
 	// SQL in xml file.
-	void insertHistory(int id, DraftContentBase content);
+	void insertHistory(@Param("id") int id, @Param("draft") DraftContentBase draft);
 
 	// SQL in xml file.
 	void deleteOldest(int id);
