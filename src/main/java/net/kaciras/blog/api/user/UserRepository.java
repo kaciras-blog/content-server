@@ -1,7 +1,6 @@
 package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.UserDAO;
 import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.stereotype.Repository;
 

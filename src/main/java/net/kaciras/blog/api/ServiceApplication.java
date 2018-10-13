@@ -1,9 +1,9 @@
 package net.kaciras.blog.api;
 
-import net.kaciras.blog.infrastructure.AddontionPortAutoConfiguration;
 import net.kaciras.blog.infrastructure.DevelopmentAutoConfiguration;
+import net.kaciras.blog.infrastructure.KxWebUtilsAutoConfiguration;
+import net.kaciras.blog.infrastructure.TlsUtils;
 import net.kaciras.blog.infrastructure.codec.KxCodecConfiguration;
-import net.kaciras.blog.infrastructure.exception.ExceptionResloverAutoConfiguration;
 import net.kaciras.blog.infrastructure.io.CommandListener;
 import net.kaciras.blog.infrastructure.message.DirectMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
@@ -28,7 +28,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.ServletContext;
-import java.io.IOException;
 
 /**
  * 在配置文件里排除了一些配置，添加新功能时记得看下有没有需要的依赖被排除了。
@@ -38,9 +37,8 @@ import java.io.IOException;
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
 @Import({
-		ExceptionResloverAutoConfiguration.class,
+		KxWebUtilsAutoConfiguration.class,
 		KxCodecConfiguration.class,
-		AddontionPortAutoConfiguration.class,
 		KxPrincipalAutoConfiguration.class,
 		DevelopmentAutoConfiguration.class
 })
@@ -83,7 +81,8 @@ public class ServiceApplication {
 		return serializer;
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
+		TlsUtils.disableForHttpsURLConnection();
 		var context = SpringApplication.run(ServiceApplication.class, args);
 		var listener = new CommandListener(60002);
 		listener.onShutdown(() -> SpringApplication.exit(context, () -> 0));
