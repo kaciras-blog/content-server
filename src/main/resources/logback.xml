@@ -1,33 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>%d{yyyy.MM.dd HH:mm:ss} [%level] %thread: %m%n</pattern>
-		</encoder>
-	</appender>
-	<appender name="file" class="ch.qos.logback.core.FileAppender">
-		<file>service.log</file>
-		<append>false</append>
-		<encoder>
-			<pattern>%d{yyyy.MM.dd HH:mm:ss} [%level] %thread: %m%n</pattern>
-		</encoder>
-	</appender>
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-	<logger name="net.kaciras.blog" additivity="false">
-		<level value="INFO"/>
-		<appender-ref ref="console"/>
-		<appender-ref ref="file"/>
-	</logger>
-	<logger name="org.springframework" additivity="false">
-		<level value="WARN"/>
-		<appender-ref ref="console"/>
-		<appender-ref ref="file"/>
-	</logger>
-	<logger name="org.springframework.web.servlet.mvc.method" additivity="false">
-		<level value="ERROR"/> <!-- ExceptionReslover默认会记录一个警告 -->
-	</logger>
-	<root level="INFO">
-		<appender-ref ref="console"/>
-		<appender-ref ref="file"/>
-	</root>
+	<logger name="net.kaciras.blog" level="INFO"/>
+
+	<!-- ExceptionReslover默认会记录一个警告，给他去掉 -->
+	<logger name="org.springframework.web.servlet.mvc.method" level="ERROR"/>
+
+	<!-- Spring的日志没啥看头 -->
+	<logger name="org.springframework" level="WARN"/>
 </configuration>
