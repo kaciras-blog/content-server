@@ -1,5 +1,4 @@
 server:
-  http-port: 2374
   port: 2375
 
   http2:
@@ -54,6 +53,9 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mybatis/*
+
+  configuration:
+    cache-enabled: false
 
 kaciras:
   authorization:
