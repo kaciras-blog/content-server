@@ -8,6 +8,7 @@ import net.kaciras.blog.api.discuss.DiscussionService;
 import net.kaciras.blog.api.user.UserService;
 import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
 import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
+import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -29,11 +31,18 @@ public class ArticleService {
 	private final DiscussionService discussionService;
 
 	private final ArticleRepository repository;
+	private final ClassifyDAO classifyDAO;
+
 	private final ArticleMapper mapper;
 	private final MessageClient messageClient;
 
 	private final Pattern urlKeywords = Pattern.compile("[\\s?#@:&\\\\/=\"'`,.!]+");
 
+	@PostConstruct
+	private void init() {
+		messageClient.subscribe(CategoryRemovedEvent.class, event ->
+				classifyDAO.updateCategory(event.getId(), event.getParent()));
+	}
 
 	/**
 	 * 检查用户是否有权限更改指定的的文章。

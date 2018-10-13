@@ -3,11 +3,16 @@ package net.kaciras.blog.api.draft;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.article.ArticleService;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
+import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
+import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
+import net.kaciras.blog.infrastructure.message.MessageClient;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 @RequireAuthorize
@@ -18,6 +23,21 @@ public class DraftService {
 	private final ArticleService articleService;
 	private final DraftRepository draftRepository;
 	private final DraftMapper draftMapper;
+
+	private final MessageClient messageClient;
+
+	@Value("${draft.delete-after-publish}")
+	private boolean deleteAfterSubmit;
+
+	@PostConstruct
+	private void init() {
+		messageClient.subscribe(ArticleCreatedEvent.class, event -> {
+			if (deleteAfterSubmit) draftRepository.remove(event.getDraftId());
+		});
+		messageClient.subscribe(ArticleUpdatedEvent.class, event -> {
+			if (deleteAfterSubmit) draftRepository.remove(event.getDraftId());
+		});
+	}
 
 	public Draft get(int id) {
 		return draftRepository.getById(id);
