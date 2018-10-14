@@ -24,7 +24,7 @@ interface DiscussionDAO {
 	Discussion selectById(long id);
 
 	@Update("UPDATE discussion SET deleted=#{value} WHERE id=#{id}")
-	int updateDeleted(@Param("id") long id, @Param("value") boolean value);
+	int updateDeleted(long id, boolean value);
 
 	/**
 	 * 查找指定对象的评论数量，不包含评论的回复（楼中楼）。
