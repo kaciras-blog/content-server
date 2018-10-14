@@ -2,6 +2,7 @@
 target/
 work/
 *.log
+*.pid
 *.iml
 data/
 
