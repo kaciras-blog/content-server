@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.draft;
 
 import lombok.*;
+import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -47,5 +48,9 @@ final class Draft extends DraftContentBase {
 			draftDAO.deleteOldest(id);
 		}
 		draftDAO.insertHistory(id, content);
+	}
+
+	void updateHistory(DraftContentBase content) {
+		DBUtils.checkEffective(draftDAO.update(this, content));
 	}
 }

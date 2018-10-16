@@ -21,13 +21,13 @@ interface DraftDAO {
 	void deleteOldest(int id);
 
 	@Update("UPDATE draft SET " +
-			"title=#{title}," +
-			"cover=#{cover}," +
-			"summary=#{summary}," +
-			"keywords=#{keywords}," +
-			"content=#{content} " +
-			"WHERE id=#{id} AND save_count=#{saveCount}")
-	int update(Draft draft);
+			"title=#{value.title}," +
+			"cover=#{value.cover}," +
+			"summary=#{value.summary}," +
+			"keywords=#{value.keywords}," +
+			"content=#{value.content} " +
+			"WHERE id=#{draft.id} AND save_count=#{draft.saveCount}")
+	int update(Draft draft, DraftContentBase value);
 
 	@Select("SELECT COUNT(*) FROM draft_user WHERE user_id=#{uid}")
 	int selectCountByUser(int uid);

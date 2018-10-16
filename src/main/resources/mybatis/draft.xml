@@ -24,7 +24,7 @@
 	<select id="selectById" resultMap="DraftMap">
 		SELECT A.article_id, A.user_id, B.*
 		FROM draft_user AS A
-				 JOIN draft AS B ON A.id = B.id
+			JOIN draft AS B ON A.id = B.id
 		WHERE A.id = #{id}
 		ORDER BY save_count DESC
 		LIMIT 1

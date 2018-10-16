@@ -46,12 +46,6 @@ final class DraftController {
 		return ResponseEntity.created(new URI("/drafts/" + id)).build();
 	}
 
-	@PostMapping("/{id}/histories")
-	public ResponseEntity<Void> save(@RequestBody DraftSaveRequest request) throws URISyntaxException {
-		var saveCount = draftService.save(request);
-		return ResponseEntity.created(new URI("/drafts/" + request.getId() + "/histories/" + saveCount)).build();
-	}
-
 	@DeleteMapping
 	public ResponseEntity<Void> deleteAll(@RequestParam int userId) {
 		draftService.deleteByUser(userId);
@@ -61,6 +55,20 @@ final class DraftController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable int id) {
 		draftService.delete(id);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/{id}/histories")
+	public ResponseEntity<Void> saveNew(@RequestBody DraftSaveRequest request) {
+		var saveCount = draftService.saveNew(request);
+		var location = "/drafts/" + request.getId() + "/histories/" + saveCount;
+		return ResponseEntity.created(URI.create(location)).build();
+	}
+
+	// saveCount 没用着，目前只更新最后一次历史
+	@PutMapping("/{id}/histories/{saveCount}")
+	public ResponseEntity<Void> save(@RequestBody DraftSaveRequest request) {
+		draftService.save(request);
 		return ResponseEntity.noContent().build();
 	}
 }

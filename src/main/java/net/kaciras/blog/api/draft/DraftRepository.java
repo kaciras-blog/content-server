@@ -25,6 +25,12 @@ class DraftRepository {
 	@Setter
 	private int userLimit = 20;
 
+	/**
+	 * 查询指定用户的所有草稿。
+	 *
+	 * @param userId 用户ID
+	 * @return 草稿列表
+	 */
 	public List<Draft> findByUser(int userId) {
 		Utils.checkPositive(userId, "userId");
 		return draftDAO.selectByUser(userId)
@@ -55,10 +61,6 @@ class DraftRepository {
 			throw new ResourceNotFoundException();
 		}
 		return draft;
-	}
-
-	public void update(Draft draft) {
-		DBUtils.checkEffective(draftDAO.update(draft));
 	}
 
 	public void clear(int userId) {
