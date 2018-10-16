@@ -6,7 +6,6 @@ import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,17 +22,12 @@ class CategoryRepository {
 	private final DaoHelper helper;
 	private final MessageClient messageClient;
 
-	@NonNull
 	public Category get(int id) {
 		Utils.checkNotNegative(id, "id");
 		if (id == 0) {
 			return new RootCategory();
 		}
 		return DBUtils.checkNotNullResource(categoryDAO.selectAttributes(id));
-	}
-
-	public Category findByName(String name) {
-		return DBUtils.checkNotNullResource(categoryDAO.selectAttributesByName(name));
 	}
 
 	public int size() {

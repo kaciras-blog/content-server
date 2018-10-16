@@ -33,10 +33,6 @@ public class CategoryService {
 		return repository.get(id);
 	}
 
-	public Category getByName(String name) {
-		return repository.findByName(name);
-	}
-
 	public List<Category> getChildren(int id) {
 		return repository.get(id).getChildren();
 	}

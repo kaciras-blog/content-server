@@ -22,11 +22,6 @@ final class CategoryController {
 		return aggregate(categoryService.getById(id));
 	}
 
-	@GetMapping(value = "/{name}", headers = "Identified-By=name")
-	public CategoryVo getByName(@PathVariable String name) {
-		return aggregate(categoryService.getByName(name));
-	}
-
 	private CategoryVo aggregate(Category category) {
 		var result = new AggregationVo();
 		mapper.copyProps(result, category);
