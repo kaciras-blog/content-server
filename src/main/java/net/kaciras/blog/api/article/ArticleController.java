@@ -2,13 +2,6 @@ package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.category.CategoryService;
-import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
-import net.kaciras.blog.infrastructure.message.MessageClient;
-import org.ehcache.Cache;
-import org.ehcache.CacheManager;
-import org.ehcache.config.builders.CacheConfigurationBuilder;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +10,9 @@ import org.springframework.web.context.request.WebRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,17 +23,8 @@ class ArticleController {
 	private final CategoryService categoryService;
 
 	private final ArticleMapper pojoMapper;
-	private final MessageClient messageClient;
 
-	private Cache<Integer, String> etagCache;
-
-	@Autowired
-	public void setCacheManager(CacheManager cacheManager) {
-		CacheConfigurationBuilder<Integer, String> builder = CacheConfigurationBuilder
-				.newCacheConfigurationBuilder(Integer.class, String.class, ResourcePoolsBuilder.heap(4096));
-		etagCache = cacheManager.createCache("articleEtag", builder.build());
-		messageClient.subscribe(ArticleUpdatedEvent.class, event -> etagCache.remove(event.getArticleId()));
-	}
+	private Map<Integer, String> etagCache = new ConcurrentHashMap<>();
 
 	@GetMapping
 	public List<PreviewVo> getList(ArticleListRequest request, Pageable pageable) {

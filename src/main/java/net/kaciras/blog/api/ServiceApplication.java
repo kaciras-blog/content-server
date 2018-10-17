@@ -7,8 +7,6 @@ import net.kaciras.blog.infrastructure.codec.KxCodecConfiguration;
 import net.kaciras.blog.infrastructure.message.DirectMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import net.kaciras.blog.infrastructure.principal.KxPrincipalAutoConfiguration;
-import org.ehcache.CacheManager;
-import org.ehcache.config.builders.CacheManagerBuilder;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;
@@ -51,11 +49,6 @@ public class ServiceApplication {
 	@Bean
 	MessageClient messageClient() {
 		return new DirectMessageClient();
-	}
-
-	@Bean
-	CacheManager cacheManager() {
-		return CacheManagerBuilder.newCacheManagerBuilder().build(true);
 	}
 
 	@Bean
