@@ -32,6 +32,9 @@ spring:
   mvc:
     favicon:
       enabled: false
+    hiddenmethod:
+      filter:
+        enabled: false
 
   jmx:
     enabled: false
