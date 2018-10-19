@@ -32,6 +32,8 @@ spring:
   mvc:
     favicon:
       enabled: false
+
+    # 全站AJAX，不存在表单提交PUT、DELETE等问题
     hiddenmethod:
       filter:
         enabled: false
@@ -52,7 +54,7 @@ spring:
       namespace: kx
 
   jackson:
-    date-format: yyyy-MM-dd HH:mm #这个只用于java.util.Date这些老API
+    date-format: yyyy-MM-dd HH:mm # 这个只用于java.util.Date这些老API
 
 mybatis:
   mapper-locations: classpath:mybatis/*

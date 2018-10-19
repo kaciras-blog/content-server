@@ -4,7 +4,5 @@ work/
 *.log
 *.pid
 *.iml
-data/
 
-/application.yml
 /start.bat
