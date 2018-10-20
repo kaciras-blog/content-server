@@ -33,15 +33,19 @@ class ArticleController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<ArticleVo> get(@PathVariable int id, WebRequest request) {
+	public ResponseEntity<ArticleVo> get(@PathVariable int id, WebRequest request,
+										 @RequestParam(defaultValue = "false") boolean rv) {
 		var etag = etagCache.get(id);
 		if (request.checkNotModified(etag)) {
 			return ResponseEntity.status(304).build();
 		}
 
 		var article = articleService.getArticle(id);
-		var vo = pojoMapper.toViewObject(article);
+		if (rv) {
+			article.recordView(); //增加浏览量
+		}
 
+		var vo = pojoMapper.toViewObject(article);
 		vo.setNext(article.getNextLink());
 		vo.setPrev(article.getPreviousLink());
 		vo.setBanner(categoryService.getBestBackground(article.getCategory()));

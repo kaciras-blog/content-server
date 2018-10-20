@@ -66,7 +66,6 @@ public class ArticleService {
 				&& SecurityContext.checkSelf(article.getUserId(), "SHOW_DELETED")) {
 			throw new ResourceDeletedException();
 		}
-		article.recordView(); //增加浏览量
 		return article;
 	}
 
