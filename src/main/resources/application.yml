@@ -65,3 +65,7 @@ mybatis:
 kaciras:
   authorization:
     security-context: true
+  cors:
+    allow-headers: [X-CSRF-Token, X-Requested-With, Content-Type]
+    exposed-headers: Location
+    max-age: 864000

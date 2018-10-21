@@ -1,10 +1,5 @@
 server:
 
-  servlet:
-    session:
-      cookie:
-        domain: kaciras.net
-
   ssl:
     enabled: true
     key-store: /etc/letsencrypt/live/api.kaciras.net/cert.pfx
@@ -24,9 +19,6 @@ spring:
     port: 33671
     password: sRewULGr8l&f>Qwr`y>O,y%s^m,YC/=@voo2IbwH@oW&cFG<dh_/ihG\PPZKde:pUa3)!Q.CCqp+0gxy@ks6-5BG1.b`h@u{cWGsA<5/CfM]tl<apSelN.gjK<>x*hu*
 
-web:
-  cors-origin: "https://blog.kaciras.net"
-
 draft:
   delete-after-publish: false
 
@@ -35,4 +27,12 @@ discuss:
   anonymous: true
 
 logging:
-  file: app.log
+  file: content-service.log
+
+kaciras:
+  spring:
+    session:
+      cookie:
+        domain: kaciras.net
+  cors:
+    origins: https://blog.kaciras.net

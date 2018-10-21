@@ -1,8 +1,6 @@
 package net.kaciras.blog.api;
 
-import net.kaciras.blog.infrastructure.DevelopmentAutoConfiguration;
-import net.kaciras.blog.infrastructure.KxWebUtilsAutoConfiguration;
-import net.kaciras.blog.infrastructure.TlsUtils;
+import net.kaciras.blog.infrastructure.*;
 import net.kaciras.blog.infrastructure.codec.KxCodecConfiguration;
 import net.kaciras.blog.infrastructure.message.DirectMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
@@ -20,12 +18,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.session.web.http.CookieSerializer;
-import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
-
-import javax.servlet.ServletContext;
 
 /**
  * 在配置文件里排除了一些配置，添加新功能时记得看下有没有需要的依赖被排除了。
@@ -35,7 +29,10 @@ import javax.servlet.ServletContext;
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
 @Import({
+		KxGlobalCorsAutoConfiguration.class,
+		KxCodecConfiguration.class,
 		KxWebUtilsAutoConfiguration.class,
+		KxSpringSessionAutoConfiguration.class,
 		KxCodecConfiguration.class,
 		KxPrincipalAutoConfiguration.class,
 		DevelopmentAutoConfiguration.class
@@ -62,16 +59,6 @@ public class ServiceApplication {
 		template.setConnectionFactory(factory);
 		template.setKeySerializer(new StringRedisSerializer());
 		return template;
-	}
-
-	@Bean
-	CookieSerializer cookieSerializer(ServletContext servletContext) {
-		var serializer = new DefaultCookieSerializer();
-		serializer.setSameSite(null);
-		serializer.setUseSecureCookie(false); // 默认跟连接的SSL一致
-		serializer.setDomainName(servletContext.getSessionCookieConfig().getDomain());
-		serializer.setCookieMaxAge(30 * 24 * 60 * 60);
-		return serializer;
 	}
 
 	public static void main(String[] args) throws Exception {

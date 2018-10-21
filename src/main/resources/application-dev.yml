@@ -1,10 +1,5 @@
 server:
 
-  servlet:
-    session:
-      cookie:
-        domain: localhost
-
   ssl:
     enabled: true
     key-store: D:\\Coding\\Utils\\dev.pfx
@@ -31,9 +26,6 @@ spring:
 development:
   admin-principal: true
 #  delay: 3s
-
-web:
-  cors-origin: "*"
 
 draft:
   delete-after-publish: false
