@@ -53,7 +53,11 @@ public class HistoryRepository {
 		return newSaveCount;
 	}
 
-	public List<DraftHistory> getAll() {
+	public DraftHistory findBySaveCount(int saveCount) {
+		return historyDAO.select(id, saveCount);
+	}
+
+	public List<DraftHistory> findAll() {
 		return historyDAO.selectAll(id);
 	}
 

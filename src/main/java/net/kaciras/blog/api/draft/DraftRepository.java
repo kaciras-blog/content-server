@@ -43,15 +43,13 @@ class DraftRepository {
 	 * 先使用一条语句检查了用户已有的草稿数量，也可以在数据库层面写触发器实现。
 	 * 在这里检查，默认的事务级别下可能会出现幻读，但这并不会造成严重的影响。
 	 */
-	public int add(Draft draft) {
+	public void add(Draft draft) {
 		Utils.checkPositive(draft.getUserId(), "userId");
 		var count = draftDAO.selectCountByUser(draft.getUserId());
 		if (count > userLimit) {
 			throw new IllegalStateException("用户的草稿数量已达上限");
 		}
-		draftDAO.insertAssoicate(draft);
-		draftDAO.insertHistory(draft.getId(), draft);
-		return draft.getId();
+		draftDAO.insert(draft);
 	}
 
 	public Draft getById(int id) {

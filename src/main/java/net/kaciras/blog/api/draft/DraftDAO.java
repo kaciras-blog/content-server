@@ -12,7 +12,7 @@ interface DraftDAO {
 
 	@Insert("INSERT INTO draft_user(user_id,article_id) VALUES (#{userId},#{articleId})")
 	@Options(useGeneratedKeys = true, keyColumn = "id")
-	void insertAssoicate(Draft draft);
+	void insert(Draft draft);
 
 	@Select("SELECT COUNT(*) FROM draft_user WHERE user_id=#{uid}")
 	int selectCountByUser(int uid);

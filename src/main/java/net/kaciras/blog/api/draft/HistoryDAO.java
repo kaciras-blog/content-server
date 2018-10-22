@@ -13,6 +13,9 @@ interface HistoryDAO {
 	@Select("SELECT MAX(save_count) FROM draft WHERE id=#{id}")
 	Integer selectLastSaveCount(int id);
 
+	@Select("SELECT * FROM draft WHERE id=#{id} AND save_count=#{saveCount}")
+	DraftHistory select(int id, int saveCount);
+
 	// SQL in xml file.
 	void insert(int id, int saveCount, DraftContent draft);
 

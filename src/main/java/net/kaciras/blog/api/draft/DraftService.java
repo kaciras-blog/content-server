@@ -2,7 +2,6 @@ package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.article.ArticleService;
-import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
 import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
@@ -65,26 +64,24 @@ public class DraftService {
 		draftRepository.remove(id);
 	}
 
-	private Draft defaultDraft() {
-		var newDraft = new Draft();
-		newDraft.setTitle("");
-		newDraft.setSummary("");
-		newDraft.setKeywords("");
-		newDraft.setContent("");
-		newDraft.setCover(ImageRefrence.parse("placeholder.png"));
-		return newDraft;
-	}
-
+	@Transactional
 	public int newDraft(Integer article) {
-		var draft = article == null
-				? defaultDraft()
-				: draftMapper.fromArticle(articleService.getArticle(article));
-
+		var draft = new Draft();
 		draft.setUserId(SecurityContext.getUserId());
-		return draftRepository.add(draft);
+		draft.setArticleId(article);
+		draftRepository.add(draft);
+
+		var content = article == null ? DraftContent.initial()
+				: draftMapper.fromArticle(articleService.getArticle(article));
+		draft.getHistoryList().add(content);
+		return draft.getId();
 	}
 
 	public List<DraftHistory> getHistories(int id) {
-		return draftRepository.getById(id).getHistoryList().getAll();
+		return draftRepository.getById(id).getHistoryList().findAll();
+	}
+
+	public DraftHistory getHistory(int id, int saveCount) {
+		return draftRepository.getById(id).getHistoryList().findBySaveCount(saveCount);
 	}
 }

@@ -25,18 +25,13 @@ final class DraftController {
 	private final DraftService draftService;
 
 	@GetMapping
-	public List<DraftPreviewVo> getList() {
-		return mapper.toPreviewVo(draftService.getList(SecurityContext.getUserId()));
+	public List<DraftVo> getList() {
+		return mapper.toVo(draftService.getList(SecurityContext.getUserId()));
 	}
 
 	@GetMapping("/{id}")
 	public DraftVo get(@PathVariable("id") int id) {
 		return mapper.toVo(draftService.get(id));
-	}
-
-	@GetMapping("/{id}/histories")
-	public List<DraftHistory> getHistories(@PathVariable int id) {
-		return draftService.getHistories(id);
 	}
 
 	@PostMapping
@@ -55,6 +50,17 @@ final class DraftController {
 	public ResponseEntity<Void> delete(@PathVariable int id) {
 		draftService.delete(id);
 		return ResponseEntity.noContent().build();
+	}
+
+
+	@GetMapping("/{id}/histories")
+	public List<DraftHistory> getHistories(@PathVariable int id) {
+		return draftService.getHistories(id);
+	}
+
+	@GetMapping("/{id}/histories/{saveCount}")
+	public DraftHistory getHistory(@PathVariable int id, @PathVariable int saveCount) {
+		return draftService.getHistory(id, saveCount);
 	}
 
 	@PostMapping("/{id}/histories")
