@@ -26,7 +26,7 @@ interface HistoryDAO {
 	int selectCount(int id);
 
 	@Select("SELECT * FROM draft WHERE id=#{id} ORDER BY save_count DESC")
-	@ResultMap("net.kaciras.blog.api.draft.DraftDAO.DraftHistoryMap")
+	@ResultMap("net.kaciras.blog.api.draft.HistoryDAO.DraftHistoryMap")
 	List<DraftHistory> selectAll(int id);
 
 	@Update("UPDATE draft SET " +

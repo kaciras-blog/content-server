@@ -35,4 +35,4 @@ discuss:
 
 kaciras:
   cors:
-    origins: origins: "*"
+    origins: "*"
