@@ -51,29 +51,4 @@ final class DraftController {
 		draftService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-
-
-	@GetMapping("/{id}/histories")
-	public List<DraftHistory> getHistories(@PathVariable int id) {
-		return draftService.getHistories(id);
-	}
-
-	@GetMapping("/{id}/histories/{saveCount}")
-	public DraftHistory getHistory(@PathVariable int id, @PathVariable int saveCount) {
-		return draftService.getHistory(id, saveCount);
-	}
-
-	@PostMapping("/{id}/histories")
-	public ResponseEntity<Void> saveNew(@RequestBody DraftSaveRequest request) {
-		var saveCount = draftService.saveNew(request);
-		var location = "/drafts/" + request.getId() + "/histories/" + saveCount;
-		return ResponseEntity.created(URI.create(location)).build();
-	}
-
-	// saveCount 没用着，目前只更新最后一次历史
-	@PutMapping("/{id}/histories/{saveCount}")
-	public ResponseEntity<Void> save(@RequestBody DraftSaveRequest request) {
-		draftService.save(request);
-		return ResponseEntity.noContent().build();
-	}
 }
