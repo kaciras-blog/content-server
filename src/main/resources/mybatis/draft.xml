@@ -1,25 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="net.kaciras.blog.api.draft.DraftDAO">
-
-	<insert id="insertHistory">
-		INSERT INTO draft (id, save_count, title, cover, summary, keywords, content)
-		VALUES (#{id},
-				(SELECT IFNULL(save_count, 0) FROM
-					(SELECT MAX(save_count) + 1 AS save_count FROM draft WHERE id = #{id}) AS Self),
-				#{draft.title},
-				#{draft.cover},
-				#{draft.summary},
-				#{draft.keywords},
-				#{draft.content})
-	</insert>
-
-	<delete id="deleteOldest">
-		DELETE FROM draft WHERE id = #{id} AND save_count =
-			  (SELECT save_count FROM
-					(SELECT MIN(save_count) AS save_count FROM draft WHERE id = #{id})
-			  AS Self)
-	</delete>
 
 	<select id="selectById" resultMap="DraftMap">
 		SELECT A.article_id, A.user_id, B.*
@@ -33,10 +15,5 @@
 	<resultMap type="net.kaciras.blog.api.draft.Draft" id="DraftMap">
 		<result column="user_id" property="userId"/>
 		<result column="article_id" property="articleId"/>
-		<result column="save_count" property="saveCount"/>
-	</resultMap>
-
-	<resultMap type="net.kaciras.blog.api.draft.DraftHistory" id="DraftHistoryMap">
-		<result column="save_count" property="saveCount"/>
 	</resultMap>
 </mapper>

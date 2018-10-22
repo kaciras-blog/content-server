@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public final class DraftSaveRequest extends DraftContentBase implements Serializable {
+public final class DraftSaveRequest extends DraftContent implements Serializable {
 
 	private int id;
 	private Integer articleId;

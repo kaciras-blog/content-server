@@ -6,11 +6,11 @@ import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
 @Getter
 @Setter
-public abstract class DraftContentBase {
+public class DraftContent {
 
 	private String title;
 	private ImageRefrence cover;
-	private String summary;
 	private String keywords;
+	private String summary;
 	private String content;
 }

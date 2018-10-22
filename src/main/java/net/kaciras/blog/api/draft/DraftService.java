@@ -49,14 +49,12 @@ public class DraftService {
 
 	@Transactional
 	public int saveNew(DraftSaveRequest dto) {
-		var draft = draftRepository.getById(dto.getId());
-		draft.addHistory(dto);
-		return draft.getSaveCount() + 1;
+		return draftRepository.getById(dto.getId()).getHistoryList().add(dto);
 	}
 
 	public void save(DraftSaveRequest request) {
 		var draft = draftRepository.getById(request.getId());
-		draft.updateHistory(request);
+		draft.getHistoryList().update(request);
 	}
 
 	public void deleteByUser(int userId) {
@@ -87,6 +85,6 @@ public class DraftService {
 	}
 
 	public List<DraftHistory> getHistories(int id) {
-		return draftRepository.getById(id).getHistories();
+		return draftRepository.getById(id).getHistoryList().getAll();
 	}
 }

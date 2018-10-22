@@ -20,8 +20,6 @@ interface DraftMapper {
 
 	List<DraftVo> toVo(List<Draft> drafts);
 
-	List<DraftHistoryVo> toDraftHistoryVOList(List<DraftHistory> histories);
-
 	@Named("PreviewVo")
 	DraftPreviewVo toPreviewVo(Draft draft);
 

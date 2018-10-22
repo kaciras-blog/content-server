@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -36,14 +35,14 @@ final class DraftController {
 	}
 
 	@GetMapping("/{id}/histories")
-	public List<DraftHistoryVo> getHistories(@PathVariable int id) {
-		return mapper.toDraftHistoryVOList(draftService.getHistories(id));
+	public List<DraftHistory> getHistories(@PathVariable int id) {
+		return draftService.getHistories(id);
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> createDraft(@RequestParam(required = false) Integer article) throws URISyntaxException {
+	public ResponseEntity<Void> createDraft(@RequestParam(required = false) Integer article) {
 		var id = draftService.newDraft(article);
-		return ResponseEntity.created(new URI("/drafts/" + id)).build();
+		return ResponseEntity.created(URI.create("/drafts/" + id)).build();
 	}
 
 	@DeleteMapping

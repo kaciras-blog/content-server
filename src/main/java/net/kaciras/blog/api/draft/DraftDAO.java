@@ -14,26 +14,8 @@ interface DraftDAO {
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insertAssoicate(Draft draft);
 
-	// SQL in xml file.
-	void insertHistory(int id, DraftContentBase draft);
-
-	// SQL in xml file.
-	void deleteOldest(int id);
-
-	@Update("UPDATE draft SET " +
-			"title=#{value.title}," +
-			"cover=#{value.cover}," +
-			"summary=#{value.summary}," +
-			"keywords=#{value.keywords}," +
-			"content=#{value.content} " +
-			"WHERE id=#{draft.id} AND save_count=#{draft.saveCount}")
-	int update(Draft draft, DraftContentBase value);
-
 	@Select("SELECT COUNT(*) FROM draft_user WHERE user_id=#{uid}")
 	int selectCountByUser(int uid);
-
-	@Select("SELECT COUNT(*) FROM draft WHERE id=#{id}")
-	int selectCountById(int id);
 
 	/**
 	 * 删除指定id的草稿，包括其所有的历史记录
@@ -69,8 +51,4 @@ interface DraftDAO {
 	//连接 + 分组 + 排序太麻烦，直接上层处理
 	@Select("SELECT id FROM draft_user WHERE user_id=#{uid}")
 	List<Integer> selectByUser(int uid);
-
-	@Select("SELECT * FROM draft WHERE id=#{id} ORDER BY save_count DESC")
-	@ResultMap("net.kaciras.blog.api.draft.DraftDAO.DraftHistoryMap")
-	List<DraftHistory> selectHistories(int id);
 }
