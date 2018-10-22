@@ -11,7 +11,7 @@ import java.util.List;
 interface ArticleDAO {
 
 	@Select("SELECT * FROM article WHERE id=#{id}")
-	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.ArticleMap")
+	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleMap")
 	Article selectById(int id);
 
 	/**
@@ -21,7 +21,7 @@ interface ArticleDAO {
 	 * @return 文章预览信息列表
 	 */
 	@SelectProvider(type = SqlProvider.class, method = "selectPreview")
-	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.ArticleMap")
+	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleMap")
 	List<Article> selectPreview(ArticleListRequest query);
 
 	@Insert("INSERT INTO article(user_id, title, url_title, cover, summary, content) " +
@@ -47,6 +47,6 @@ interface ArticleDAO {
 
 	@Select("SELECT id, title, url_title FROM article " +
 			"WHERE id ${compartor} #{id} AND deleted=0 LIMIT 1")
-	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.ArticleLinkMap")
+	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleLinkMap")
 	ArticleLink getNeighbor(@Param("id") int id, @Param("compartor") String compartor);
 }

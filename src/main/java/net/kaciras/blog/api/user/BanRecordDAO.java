@@ -24,7 +24,7 @@ interface BanRecordDAO {
 	@Select("SELECT * FROM ban_record AS A WHERE user_id=#{uid}")
 	@Results({
 			@Result(property = "id", column = "id"),
-			@Result(property = "unbanRecord", column = "id", one = @One(select = "net.kaciras.blog.domain.user.BanRecordDao.selectBanRecords"))
+			@Result(property = "unbanRecord", column = "id", one = @One(select = "net.kaciras.blog.api.user.BanRecordDAO.selectBanRecords"))
 	})
 	List<BanRecord> selectBanRecords(int uid);
 

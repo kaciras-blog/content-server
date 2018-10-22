@@ -13,14 +13,14 @@ interface DiscussionDAO {
 	void insert(Discussion discuz);
 
 	@SelectProvider(type = SqlProvidor.class, method = "select")
-	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.DiscussionMap")
+	@ResultMap("net.kaciras.blog.api.discuss.DiscussionDAO.DiscussionMap")
 	List<Discussion> selectList(DiscussionQuery query);
 
 	@SelectProvider(type = SqlProvidor.class, method = "selectCount")
 	int selectCount(DiscussionQuery query);
 
 	@Select("SELECT * FROM discussion WHERE id=#{id}")
-	@ResultMap("net.kaciras.blog.domain.dao.ResultMap.DiscussionMap")
+	@ResultMap("net.kaciras.blog.api.discuss.DiscussionDAO.DiscussionMap")
 	Discussion selectById(long id);
 
 	@Update("UPDATE discussion SET deleted=#{value} WHERE id=#{id}")
