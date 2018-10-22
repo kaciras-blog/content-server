@@ -27,7 +27,7 @@ final class CategoryController {
 		mapper.copyProps(result, category);
 
 		result.setArticleCount(articleService.getCountByCategories(category.getId()));
-		result.setBestBackground(categoryService.getBestBackground(category));
+		result.setBanner(categoryService.getBanner(category));
 		return result;
 	}
 

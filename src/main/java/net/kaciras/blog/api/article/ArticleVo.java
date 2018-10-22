@@ -3,8 +3,8 @@ package net.kaciras.blog.api.article;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
+import net.kaciras.blog.api.category.Banner;
 import net.kaciras.blog.api.user.UserVo;
-import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,5 +33,5 @@ public final class ArticleVo {
 
 	private ArticleLink prev;
 	private ArticleLink next;
-	private ImageRefrence banner;
+	private Banner banner;
 }

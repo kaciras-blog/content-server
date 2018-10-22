@@ -48,7 +48,7 @@ class ArticleController {
 		var vo = pojoMapper.toViewObject(article);
 		vo.setNext(article.getNextLink());
 		vo.setPrev(article.getPreviousLink());
-		vo.setBanner(categoryService.getBestBackground(article.getCategory()));
+		vo.setBanner(categoryService.getBanner(article.getCategory()));
 
 		/*
 		 * 如果缓存中不存在，则需要创建新的缓存记录。在并发的情况下，使用

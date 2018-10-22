@@ -16,4 +16,5 @@ public class CategoryAttributes {
 	private ImageRefrence cover;
 	private String description;
 	private ImageRefrence background;
+	private int theme;
 }

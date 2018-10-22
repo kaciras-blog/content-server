@@ -23,11 +23,12 @@ interface CategoryDAO {
 			"cover=#{cover}," +
 			"description=#{description}," +
 			"background=#{background} " +
+			"theme=#{theme}" +
 			"WHERE id=#{id}")
 	int update(Category category);
 
-	@Insert("INSERT INTO category(name, cover, description, background) " +
-			"VALUES(#{name},#{cover},#{description}, #{background})")
+	@Insert("INSERT INTO category(name, cover, description, background, theme) " +
+			"VALUES(#{name},#{cover},#{description}, #{background}, #{theme})")
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insert(Category entity);
 

@@ -1,7 +1,6 @@
 package net.kaciras.blog.api.category;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,20 +61,20 @@ public class CategoryService {
 		return mapper.simpleView(repository.get(id).getPathTo(ancestor));
 	}
 
-	public ImageRefrence getBestBackground(int id) {
+	public Banner getBanner(int id) {
 		if (id == 0) {
 			return null;
 		}
-		return getBestBackground(repository.get(id));
+		return getBanner(repository.get(id));
 	}
 
-	public ImageRefrence getBestBackground(Category category) {
+	public Banner getBanner(Category category) {
 		if (category.getBackground() != null) {
-			return category.getBackground();
+			return new Banner(category.getBackground(), category.getTheme());
 		}
 		for (var parent : category.getPath()) {
 			if (parent.getBackground() != null) {
-				return parent.getBackground();
+				return new Banner(parent.getBackground(), category.getTheme());
 			}
 		}
 		return null;
