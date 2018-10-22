@@ -73,6 +73,12 @@ final class DiscussionController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PostMapping("/{id}/restoration")
+	public ResponseEntity postRestoration(@PathVariable int id) {
+		discussionService.restore(id);
+		return ResponseEntity.noContent().build();
+	}
+
 	/**
 	 * 查询指定评论的回复（楼中楼）。
 	 *
