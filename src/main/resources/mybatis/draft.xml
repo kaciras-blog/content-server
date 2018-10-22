@@ -3,15 +3,6 @@
 
 <mapper namespace="net.kaciras.blog.api.draft.DraftDAO">
 
-	<select id="selectById" resultMap="DraftMap">
-		SELECT A.article_id, A.user_id, B.*
-		FROM draft_user AS A
-			JOIN draft AS B ON A.id = B.id
-		WHERE A.id = #{id}
-		ORDER BY save_count DESC
-		LIMIT 1
-	</select>
-
 	<resultMap type="net.kaciras.blog.api.draft.Draft" id="DraftMap">
 		<result column="user_id" property="userId"/>
 		<result column="article_id" property="articleId"/>

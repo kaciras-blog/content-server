@@ -4,8 +4,6 @@ import net.kaciras.blog.api.article.Article;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 interface DraftMapper {
 
@@ -13,6 +11,4 @@ interface DraftMapper {
 	DraftContent fromArticle(Article article);
 
 	DraftVo toVo(Draft draft);
-
-	List<DraftVo> toVo(List<Draft> drafts);
 }

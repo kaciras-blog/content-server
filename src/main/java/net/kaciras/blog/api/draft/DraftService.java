@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequireAuthorize
@@ -21,7 +22,7 @@ public class DraftService {
 
 	private final ArticleService articleService;
 	private final DraftRepository draftRepository;
-	private final DraftMapper draftMapper;
+	private final DraftMapper mapper;
 
 	private final MessageClient messageClient;
 
@@ -42,8 +43,16 @@ public class DraftService {
 		return draftRepository.getById(id);
 	}
 
-	public List<Draft> getList(int userId) {
-		return draftRepository.findByUser(userId);
+	public List<DraftVo> getList(int userId) {
+		var drafts = draftRepository.findByUser(userId);
+		var viewObjects = new ArrayList<DraftVo>();
+
+		for (var draft : drafts) {
+			var vo = mapper.toVo(draft);
+			vo.setHistories(draft.getHistoryList().findAll());
+			viewObjects.add(vo);
+		}
+		return viewObjects;
 	}
 
 	@Transactional
@@ -72,7 +81,7 @@ public class DraftService {
 		draftRepository.add(draft);
 
 		var content = article == null ? DraftContent.initial()
-				: draftMapper.fromArticle(articleService.getArticle(article));
+				: mapper.fromArticle(articleService.getArticle(article));
 		draft.getHistoryList().add(content);
 		return draft.getId();
 	}

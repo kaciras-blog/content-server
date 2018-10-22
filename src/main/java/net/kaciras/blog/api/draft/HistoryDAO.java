@@ -25,7 +25,8 @@ interface HistoryDAO {
 	@Select("SELECT COUNT(*) FROM draft WHERE id=#{id}")
 	int selectCount(int id);
 
-	@Select("SELECT * FROM draft WHERE id=#{id} ORDER BY save_count DESC")
+	@Select("SELECT save_count, CHAR_LENGTH(content) AS wordCount, `time` " +
+			"FROM draft WHERE id=#{id} ORDER BY save_count DESC")
 	@ResultMap("net.kaciras.blog.api.draft.HistoryDAO.DraftHistoryMap")
 	List<DraftHistory> selectAll(int id);
 

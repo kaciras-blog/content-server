@@ -57,6 +57,7 @@ public class HistoryRepository {
 		return historyDAO.select(id, saveCount);
 	}
 
+	// 不包含 content
 	public List<DraftHistory> findAll() {
 		return historyDAO.selectAll(id);
 	}

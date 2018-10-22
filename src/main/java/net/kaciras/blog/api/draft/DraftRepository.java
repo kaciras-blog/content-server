@@ -8,7 +8,6 @@ import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 暂时都没加事务
@@ -33,10 +32,7 @@ class DraftRepository {
 	 */
 	public List<Draft> findByUser(int userId) {
 		Utils.checkPositive(userId, "userId");
-		return draftDAO.selectByUser(userId)
-				.stream()
-				.map(this::getById)
-				.collect(Collectors.toList());
+		return draftDAO.selectByUser(userId);
 	}
 
 	/*

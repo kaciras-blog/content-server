@@ -26,7 +26,7 @@ final class DraftController {
 
 	@GetMapping
 	public List<DraftVo> getList() {
-		return mapper.toVo(draftService.getList(SecurityContext.getUserId()));
+		return draftService.getList(SecurityContext.getUserId());
 	}
 
 	@GetMapping("/{id}")

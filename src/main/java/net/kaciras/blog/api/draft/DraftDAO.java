@@ -10,6 +10,12 @@ import java.util.List;
 @Mapper
 interface DraftDAO {
 
+	@Select("SELECT * FROM draft_user WHERE id=#{id}")
+	Draft selectById(int id);
+
+	@Select("SELECT * FROM draft_user WHERE user_id=#{uid}")
+	List<Draft> selectByUser(int uid);
+
 	@Insert("INSERT INTO draft_user(user_id,article_id) VALUES (#{userId},#{articleId})")
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insert(Draft draft);
@@ -39,16 +45,4 @@ interface DraftDAO {
 			"DELETE FROM draft WHERE id IN (SELECT id FROM draft_user WHERE user_id=#{uid});"
 	})
 	void deleteAll(int uid);
-
-	/**
-	 * 查出最新的草稿。
-	 *
-	 * @param id 草稿ID
-	 * @return 草稿对象
-	 */
-	Draft selectById(int id);
-
-	//连接 + 分组 + 排序太麻烦，直接上层处理
-	@Select("SELECT id FROM draft_user WHERE user_id=#{uid}")
-	List<Integer> selectByUser(int uid);
 }
