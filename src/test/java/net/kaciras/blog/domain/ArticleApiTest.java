@@ -2,8 +2,6 @@ package net.kaciras.blog.domain;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.IOException;
@@ -21,7 +19,7 @@ public class ArticleApiTest extends AbstractSpringTest {
 				.put("category", 123)
 				.put("deletion", false)
 				.toString();
-		new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.HSQL)
+
 //		mockMvc.perform(patch("/articles/1").content(content)).andExpect(status().isNoContent());
 	}
 
