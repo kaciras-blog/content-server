@@ -1,12 +1,14 @@
 package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
 
+@RequireAuthorize
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/drafts/{id}/histories")

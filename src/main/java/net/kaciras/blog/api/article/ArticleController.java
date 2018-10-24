@@ -2,6 +2,7 @@ package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.category.CategoryService;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,18 +67,21 @@ class ArticleController {
 		return ResponseEntity.ok().eTag("W/\"" + etag).body(vo);
 	}
 
+	@RequireAuthorize
 	@PostMapping
 	public ResponseEntity<Void> post(@RequestBody @Valid ArticlePublishRequest request) {
 		var id = articleService.publish(request);
 		return ResponseEntity.created(URI.create("/articles/" + id)).build();
 	}
 
+	@RequireAuthorize
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody ArticlePublishRequest publish) {
 		articleService.update(id, publish);
 		return ResponseEntity.noContent().build();
 	}
 
+	@RequireAuthorize
 	@PatchMapping("/{id}")
 	public ResponseEntity<Void> updateCategories(@PathVariable int id, @RequestBody PatchMap props) {
 		if (props.getCategory() != null) {

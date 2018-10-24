@@ -3,6 +3,7 @@ package net.kaciras.blog.api.discuss;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.user.UserService;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -67,12 +68,14 @@ final class DiscussionController {
 		return ResponseEntity.created(URI.create("/discussions/" + id)).build();
 	}
 
+	@RequireAuthorize
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable long id) {
 		discussionService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 
+	@RequireAuthorize
 	@PostMapping("/{id}/restoration")
 	public ResponseEntity postRestoration(@PathVariable int id) {
 		discussionService.restore(id);

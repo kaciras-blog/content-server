@@ -2,6 +2,7 @@ package net.kaciras.blog.api.category;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.article.ArticleService;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -38,23 +39,27 @@ final class CategoryController {
 				.doOnNext(vo -> vo.setArticleCount(articleService.getCountByCategories(vo.getId())));
 	}
 
+	@RequireAuthorize
 	@PostMapping
 	public ResponseEntity<Void> create(@RequestBody CategoryAttributes category, @RequestParam int parent) {
 		int id = categoryService.add(category, parent);
 		return ResponseEntity.created(URI.create("/categories/" + id)).build();
 	}
 
+	@RequireAuthorize
 	@PostMapping("/transfer")
 	public void move(@RequestParam int id, @RequestParam int parent, @RequestParam boolean treeMode) {
 		categoryService.move(id, parent, treeMode);
 	}
 
+	@RequireAuthorize
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody CategoryAttributes attributes) {
 		categoryService.update(id, attributes);
 		return ResponseEntity.noContent().build();
 	}
 
+	@RequireAuthorize
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable int id) {
 		categoryService.delete(id);
