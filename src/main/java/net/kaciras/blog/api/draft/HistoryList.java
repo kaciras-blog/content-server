@@ -12,7 +12,7 @@ import java.util.List;
 
 @Configurable
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-public class HistoryRepository {
+public class HistoryList {
 
 	/**
 	 * 每篇草稿最多保存的历史记录数，默认5
@@ -60,6 +60,10 @@ public class HistoryRepository {
 	// 不包含 content
 	public List<DraftHistory> findAll() {
 		return historyDAO.selectAll(id);
+	}
+
+	public DraftHistory findLastest() {
+		return historyDAO.select(id, historyDAO.selectLastSaveCount(id));
 	}
 
 	public void update(DraftContent content) {

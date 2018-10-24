@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/drafts/{id}/histories")
-public class HistoryController {
+class HistoryController {
 
 	private final DraftService draftService;
 

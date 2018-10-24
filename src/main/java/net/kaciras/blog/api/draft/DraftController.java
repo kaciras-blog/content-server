@@ -28,12 +28,12 @@ class DraftController {
 
 	@GetMapping
 	public List<DraftVo> getList() {
-		return draftService.getList(SecurityContext.getUserId());
+		return mapper.toDraftVo(draftService.getList(SecurityContext.getUserId()));
 	}
 
 	@GetMapping("/{id}")
 	public DraftVo get(@PathVariable("id") int id) {
-		return mapper.toVo(draftService.get(id));
+		return mapper.toDraftVo(draftService.get(id));
 	}
 
 	@PostMapping

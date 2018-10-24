@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 
 @RequireAuthorize
@@ -43,16 +42,8 @@ public class DraftService {
 		return draftRepository.getById(id);
 	}
 
-	public List<DraftVo> getList(int userId) {
-		var drafts = draftRepository.findByUser(userId);
-		var viewObjects = new ArrayList<DraftVo>();
-
-		for (var draft : drafts) {
-			var vo = mapper.toVo(draft);
-			vo.setHistories(draft.getHistoryList().findAll());
-			viewObjects.add(vo);
-		}
-		return viewObjects;
+	public List<Draft> getList(int userId) {
+		return draftRepository.findByUser(userId);
 	}
 
 	@Transactional

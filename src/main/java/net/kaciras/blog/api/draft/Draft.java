@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import java.time.LocalDateTime;
 
-@EqualsAndHashCode(of = "id", callSuper = false)
+@EqualsAndHashCode(of = "id")
 @Data
 @Configurable
 public final class Draft {
@@ -19,14 +19,15 @@ public final class Draft {
 // - - - - - - - - - - - - - - - - - - - - - -
 
 	private int id;
-
-	private Integer articleId;
-
 	private int userId;
 
+	/** 文章来源，null表示新文章，否则表示修改文章 */
+	private Integer articleId;
+
+	/** 创建时间 */
 	private LocalDateTime time;
 
-	public HistoryRepository getHistoryList() {
-		return new HistoryRepository(id);
+	public HistoryList getHistoryList() {
+		return new HistoryList(id);
 	}
 }
