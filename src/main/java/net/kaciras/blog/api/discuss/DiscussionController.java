@@ -17,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/discussions")
-final class DiscussionController {
+class DiscussionController {
 
 	private final DiscussionService discussionService;
 	private final UserService userService;

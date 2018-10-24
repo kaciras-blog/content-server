@@ -12,7 +12,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/categories")
-final class CategoryController {
+class CategoryController {
 
 	private final ArticleService articleService;
 	private final CategoryService categoryService;

@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/drafts")
-final class DraftController {
+class DraftController {
 
 	private final DraftMapper mapper;
 	private final DraftService draftService;

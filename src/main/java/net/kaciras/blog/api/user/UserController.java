@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,10 +9,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+@RequireAuthorize
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
-final class UserController {
+class UserController {
 
 	private final UserService userService;
 
