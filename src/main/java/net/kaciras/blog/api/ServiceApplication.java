@@ -8,7 +8,6 @@ import net.kaciras.blog.infrastructure.principal.KxPrincipalAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;
-import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
 import org.springframework.context.annotation.Import;
@@ -25,7 +24,7 @@ import org.springframework.web.client.RestTemplate;
  * 在配置文件里排除了一些配置，添加新功能时记得看下有没有需要的依赖被排除了。
  */
 @EnableScheduling
-@EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
+@EnableTransactionManagement(proxyTargetClass = true) //TODO: not working
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
 @Import({

@@ -15,9 +15,9 @@ import java.util.List;
 public class HistoryList {
 
 	/**
-	 * 每篇草稿最多保存的历史记录数，默认5
+	 * 每篇草稿最多保存的历史记录数
 	 */
-	private static final int historyLimit = 5;
+	private static final int historyLimit = 10;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -54,7 +54,7 @@ public class HistoryList {
 	}
 
 	public DraftHistory findBySaveCount(int saveCount) {
-		return historyDAO.select(id, saveCount);
+		return DBUtils.checkNotNullResource(historyDAO.select(id, saveCount));
 	}
 
 	// 不包含 content
@@ -63,7 +63,7 @@ public class HistoryList {
 	}
 
 	public DraftHistory findLastest() {
-		return historyDAO.select(id, historyDAO.selectLastSaveCount(id));
+		return DBUtils.checkNotNullResource(historyDAO.select(id, historyDAO.selectLastSaveCount(id)));
 	}
 
 	public void update(DraftContent content) {

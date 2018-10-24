@@ -3,9 +3,9 @@ package net.kaciras.blog.api.draft;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kaciras.blog.api.Utils;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @Repository
-class DraftRepository {
+public class DraftRepository {
 
 	private final DraftDAO draftDAO;
 
@@ -48,13 +48,10 @@ class DraftRepository {
 		draftDAO.insert(draft);
 	}
 
-	public Draft getById(int id) {
+	@Transactional
+	public Draft findById(int id) {
 		Utils.checkPositive(id, "id");
-		var draft = draftDAO.selectById(id);
-		if (draft == null) {
-			throw new ResourceNotFoundException();
-		}
-		return draft;
+		return DBUtils.checkNotNullResource(draftDAO.selectById(id));
 	}
 
 	public void clear(int userId) {

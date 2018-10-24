@@ -24,16 +24,17 @@ import java.util.List;
 class DraftController {
 
 	private final DraftMapper mapper;
+	private final DraftRepository repository;
 	private final DraftService draftService;
 
 	@GetMapping
 	public List<DraftVo> getList() {
-		return mapper.toDraftVo(draftService.getList(SecurityContext.getUserId()));
+		return mapper.toDraftVo(repository.findByUser(SecurityContext.getUserId()));
 	}
 
 	@GetMapping("/{id}")
 	public DraftVo get(@PathVariable("id") int id) {
-		return mapper.toDraftVo(draftService.get(id));
+		return mapper.toDraftVo(repository.findById(id));
 	}
 
 	@PostMapping
@@ -43,14 +44,14 @@ class DraftController {
 	}
 
 	@DeleteMapping
-	public ResponseEntity<Void> deleteAll(@RequestParam int userId) {
-		draftService.deleteByUser(userId);
+	public ResponseEntity<Void> clearForUser(@RequestParam int userId) {
+		repository.clear(userId);
 		return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable int id) {
-		draftService.delete(id);
+		repository.remove(id);
 		return ResponseEntity.noContent().build();
 	}
 }

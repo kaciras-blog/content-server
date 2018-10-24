@@ -13,7 +13,8 @@ interface HistoryDAO {
 	@Select("SELECT MAX(save_count) FROM draft WHERE id=#{id}")
 	Integer selectLastSaveCount(int id);
 
-	@Select("SELECT * FROM draft WHERE id=#{id} AND save_count=#{saveCount}")
+	@Select("SELECT *, CHAR_LENGTH(content) AS wordCount FROM draft WHERE id=#{id} AND save_count=#{saveCount}")
+	@ResultMap("net.kaciras.blog.api.draft.HistoryDAO.DraftHistoryMap")
 	DraftHistory select(int id, int saveCount);
 
 	// SQL in xml file.

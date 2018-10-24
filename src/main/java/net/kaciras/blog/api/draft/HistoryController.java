@@ -14,21 +14,21 @@ import java.util.List;
 @RequestMapping("/drafts/{id}/histories")
 class HistoryController {
 
-	private final DraftService draftService;
+	private final DraftRepository repository;
 
 	@GetMapping
 	public List<DraftHistory> getHistories(@PathVariable int id) {
-		return draftService.getHistories(id);
+		return repository.findById(id).getHistoryList().findAll();
 	}
 
 	@GetMapping("/{saveCount}")
 	public DraftHistory getHistory(@PathVariable int id, @PathVariable int saveCount) {
-		return draftService.getHistory(id, saveCount);
+		return repository.findById(id).getHistoryList().findBySaveCount(saveCount);
 	}
 
 	@PostMapping
 	public ResponseEntity<Void> saveNew(@RequestBody DraftSaveRequest request) {
-		var saveCount = draftService.saveNew(request);
+		var saveCount = repository.findById(request.getId()).getHistoryList().add(request);
 		var location = "/drafts/" + request.getId() + "/histories/" + saveCount;
 		return ResponseEntity.created(URI.create(location)).build();
 	}
@@ -36,7 +36,7 @@ class HistoryController {
 	// saveCount 没用着，目前只更新最后一次历史
 	@PutMapping("/{saveCount}")
 	public ResponseEntity<Void> save(@RequestBody DraftSaveRequest request) {
-		draftService.save(request);
+		repository.findById(request.getId()).getHistoryList().update(request);
 		return ResponseEntity.noContent().build();
 	}
 }

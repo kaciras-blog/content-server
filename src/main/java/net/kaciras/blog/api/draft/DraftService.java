@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 @RequireAuthorize
 @RequiredArgsConstructor
@@ -38,32 +37,6 @@ public class DraftService {
 		});
 	}
 
-	public Draft get(int id) {
-		return draftRepository.getById(id);
-	}
-
-	public List<Draft> getList(int userId) {
-		return draftRepository.findByUser(userId);
-	}
-
-	@Transactional
-	public int saveNew(DraftSaveRequest dto) {
-		return draftRepository.getById(dto.getId()).getHistoryList().add(dto);
-	}
-
-	public void save(DraftSaveRequest request) {
-		var draft = draftRepository.getById(request.getId());
-		draft.getHistoryList().update(request);
-	}
-
-	public void deleteByUser(int userId) {
-		draftRepository.clear(userId);
-	}
-
-	public void delete(int id) {
-		draftRepository.remove(id);
-	}
-
 	@Transactional
 	public int newDraft(Integer article) {
 		var draft = new Draft();
@@ -75,13 +48,5 @@ public class DraftService {
 				: mapper.fromArticle(articleService.getArticle(article));
 		draft.getHistoryList().add(content);
 		return draft.getId();
-	}
-
-	public List<DraftHistory> getHistories(int id) {
-		return draftRepository.getById(id).getHistoryList().findAll();
-	}
-
-	public DraftHistory getHistory(int id, int saveCount) {
-		return draftRepository.getById(id).getHistoryList().findBySaveCount(saveCount);
 	}
 }

@@ -13,6 +13,7 @@ public final class DraftVo {
 	private int userId;
 
 	private String title;
+	private int lastSaveCount;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime createTime;
