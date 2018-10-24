@@ -27,7 +27,7 @@ class ArticleController {
 	private Map<Integer, String> etagCache = new ConcurrentHashMap<>();
 
 	@GetMapping
-	public List<PreviewVo> getList(ArticleListRequest request, Pageable pageable) {
+	public List<PreviewVo> getList(ArticleListQuery request, Pageable pageable) {
 		request.setPageable(pageable);
 		return articleService.getList(request);
 	}
@@ -72,26 +72,20 @@ class ArticleController {
 		return ResponseEntity.created(URI.create("/articles/" + id)).build();
 	}
 
-	/*
-	 * 用PUT，那么当分类字段不存在时应当清除资源的分类信息，
-	 * 如果用PATCH，底层就必须能够单独更新资源的字段，以忽略请求中不存在的字段。
-	 * 目前看来那种都不好使...
-	 */
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody ArticlePublishRequest publish) {
 		articleService.update(id, publish);
 		return ResponseEntity.noContent().build();
 	}
 
-	@PutMapping("/{id}/categories")
-	public ResponseEntity<Void> updateCategories(@PathVariable int id, @RequestBody int category) {
-		articleService.changeCategory(id, category);
-		return ResponseEntity.noContent().build();
-	}
-
-	@PutMapping("/{id}/deletion")
-	public ResponseEntity<Void> delete(@PathVariable int id, @RequestParam boolean value) {
-		articleService.updateDeleteion(id, value);
+	@PatchMapping("/{id}")
+	public ResponseEntity<Void> updateCategories(@PathVariable int id, @RequestBody PatchMap props) {
+		if (props.getCategory() != null) {
+			articleService.changeCategory(id, props.getCategory());
+		}
+		if (props.getDeletion() != null) {
+			articleService.updateDeleteion(id, props.getDeletion());
+		}
 		return ResponseEntity.noContent().build();
 	}
 }

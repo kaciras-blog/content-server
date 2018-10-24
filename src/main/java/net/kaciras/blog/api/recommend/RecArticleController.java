@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.recommend;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.article.ArticleListRequest;
+import net.kaciras.blog.api.article.ArticleListQuery;
 import net.kaciras.blog.api.article.ArticleService;
 import net.kaciras.blog.api.article.PreviewVo;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +29,7 @@ final class RecArticleController {
 
 	@Scheduled(fixedDelay = 5 * 60 * 1000)
 	void updateHotsTask() {
-		var request = new ArticleListRequest();
+		var request = new ArticleListQuery();
 		request.setPageable(PageRequest.of(0, 6, Sort.Direction.DESC, "view_count"));
 		popular = articleService.getList(request);
 	}

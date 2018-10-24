@@ -22,7 +22,7 @@ interface ArticleDAO {
 	 */
 	@SelectProvider(type = SqlProvider.class, method = "selectPreview")
 	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleMap")
-	List<Article> selectPreview(ArticleListRequest query);
+	List<Article> selectPreview(ArticleListQuery query);
 
 	@Insert("INSERT INTO article(user_id, title, url_title, cover, summary, content) " +
 			"VALUES(#{userId}, #{title}, #{urlTitle}, #{cover}, #{summary}, #{content})")

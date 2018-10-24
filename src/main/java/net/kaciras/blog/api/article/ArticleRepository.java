@@ -50,7 +50,7 @@ class ArticleRepository {
 		}
 	}
 
-	public List<Article> findAll(ArticleListRequest request) {
+	public List<Article> findAll(ArticleListQuery request) {
 		checkNotNull(request, "request");
 		return articleDAO.selectPreview(request);
 	}

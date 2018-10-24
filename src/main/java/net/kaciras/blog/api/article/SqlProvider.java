@@ -10,7 +10,7 @@ public final class SqlProvider {
 
 	private Set<String> allowFields = Set.of("create_time", "update_time", "view_count");
 
-	public String selectPreview(ArticleListRequest query) {
+	public String selectPreview(ArticleListQuery query) {
 		var sql = new SQL().SELECT("*").FROM("article AS A");
 
 		switch (query.getDeletion()) {

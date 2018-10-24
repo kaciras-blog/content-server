@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
-public final class ArticlePublishRequest extends ArticleContentBase {
+final class ArticlePublishRequest extends ArticleContentBase {
 
 	private int draftId;
 

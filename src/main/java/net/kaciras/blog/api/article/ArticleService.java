@@ -69,7 +69,7 @@ public class ArticleService {
 		return article;
 	}
 
-	public List<PreviewVo> getList(ArticleListRequest request) {
+	public List<PreviewVo> getList(ArticleListQuery request) {
 		if (request.getDeletion() != DeletedState.FALSE) {
 			SecurityContext.require("SHOW_DELETED");
 		}
@@ -85,7 +85,7 @@ public class ArticleService {
 	 * @param article 文章对象
 	 * @return 聚合后的对象
 	 */
-	private PreviewVo aggregate(Article article, ArticleListRequest request) {
+	private PreviewVo aggregate(Article article, ArticleListQuery request) {
 		var result = mapper.toPreview(article);
 		result.setAuthor(userService.getUser(article.getUserId()));
 		result.setDcnt(discussionService.count(DiscussionQuery.byArticle(article.getId())));
