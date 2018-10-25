@@ -40,6 +40,7 @@ public final class Article extends ArticleContentBase {
 
 	private LocalDateTime create;
 	private LocalDateTime update;
+	private int category;
 	private boolean deleted;
 
 	private int viewCount;
@@ -61,10 +62,6 @@ public final class Article extends ArticleContentBase {
 			throw new ResourceStateException("文章还没有被删除呢");
 		}
 		articleDAO.updateDeleted(id, value);
-	}
-
-	public int getCategory() {
-		return classifyDAO.selectById(id);
 	}
 
 	public void updateCategory(int category) {

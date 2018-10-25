@@ -1,21 +1,25 @@
 package net.kaciras.blog.api.article;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import net.kaciras.blog.api.category.Banner;
 import net.kaciras.blog.api.user.UserVo;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+@EqualsAndHashCode(of = "id")
+@ToString(of = {"id", "title"})
+@Data
 public final class ArticleVo {
 
 	private int id;
 	private String urlTitle;
 	private UserVo author;
+	private int category;
+	private boolean deleted;
 
 	private String title;
 	private List<String> keywords;

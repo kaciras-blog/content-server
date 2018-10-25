@@ -23,7 +23,7 @@ class ArticleController {
 	private final ArticleService articleService;
 	private final CategoryService categoryService;
 
-	private final ArticleMapper pojoMapper;
+	private final ArticleMapper mapper;
 
 	private Map<Integer, String> etagCache = new ConcurrentHashMap<>();
 
@@ -46,7 +46,7 @@ class ArticleController {
 			article.recordView(); //增加浏览量
 		}
 
-		var vo = pojoMapper.toViewObject(article);
+		var vo = mapper.toViewObject(article);
 		vo.setNext(article.getNextLink());
 		vo.setPrev(article.getPreviousLink());
 		vo.setBanner(categoryService.getBanner(article.getCategory()));
@@ -83,7 +83,7 @@ class ArticleController {
 
 	@RequireAuthorize
 	@PatchMapping("/{id}")
-	public ResponseEntity<Void> updateCategories(@PathVariable int id, @RequestBody PatchMap props) {
+	public ResponseEntity<Void> patch(@PathVariable int id, @RequestBody PatchMap props) {
 		if (props.getCategory() != null) {
 			articleService.changeCategory(id, props.getCategory());
 		}

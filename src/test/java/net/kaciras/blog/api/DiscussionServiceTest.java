@@ -1,6 +1,5 @@
-package net.kaciras.blog.domain;
+package net.kaciras.blog.api;
 
-import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.api.discuss.Discussion;
 import net.kaciras.blog.api.discuss.DiscussionQuery;
 import net.kaciras.blog.api.discuss.DiscussionService;

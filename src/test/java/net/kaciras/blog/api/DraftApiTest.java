@@ -1,4 +1,4 @@
-package net.kaciras.blog.domain;
+package net.kaciras.blog.api;
 
 import org.junit.jupiter.api.Test;
 

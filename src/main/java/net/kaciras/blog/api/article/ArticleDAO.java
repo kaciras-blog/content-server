@@ -36,7 +36,7 @@ interface ArticleDAO {
 	 * @param value 删除标记的值
 	 */
 	@Update("UPDATE article SET deleted=#{value} WHERE id=#{id}")
-	void updateDeleted(@Param("id") int id, @Param("value") boolean value);
+	void updateDeleted(int id, boolean value);
 
 	@Update("UPDATE article SET title=#{title},cover=#{cover},summary=#{summary}," +
 			"content=#{content} WHERE id=#{id}")

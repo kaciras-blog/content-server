@@ -141,11 +141,12 @@ public class ArticleService {
 	}
 
 	public void changeCategory(int id, int category) {
-		requireModify(repository.get(id)).updateCategory(category);
+		repository.get(id).updateCategory(category);
 	}
 
 	public void updateDeleteion(int id, boolean isDeleted) {
 		var article = repository.get(id);
+
 		if (SecurityContext.isNot(article.getUserId())) {
 			SecurityContext.require("POWER_MODIFY");
 		} else {
