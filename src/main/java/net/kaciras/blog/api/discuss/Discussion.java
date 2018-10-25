@@ -1,9 +1,6 @@
 package net.kaciras.blog.api.discuss;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import net.kaciras.blog.infrastructure.TextUtils;
 import net.kaciras.blog.infrastructure.exception.DataTooBigException;
 import net.kaciras.blog.infrastructure.exception.LegallyProhibitedException;
@@ -16,6 +13,8 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import java.time.LocalDateTime;
 
+@EqualsAndHashCode(of = "id")
+@ToString(of = {"id", "userId", "objectId"})
 @Data
 @Configurable
 public final class Discussion {

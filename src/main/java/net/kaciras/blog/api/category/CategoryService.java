@@ -1,6 +1,8 @@
 package net.kaciras.blog.api.category;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CategoryService {
@@ -69,13 +72,17 @@ public class CategoryService {
 	}
 
 	public Banner getBanner(Category category) {
-		if (category.getBackground() != null) {
-			return new Banner(category.getBackground(), category.getTheme());
-		}
-		for (var parent : category.getPath()) {
-			if (parent.getBackground() != null) {
-				return new Banner(parent.getBackground(), category.getTheme());
+		try {
+			if (category.getBackground() != null) {
+				return new Banner(category.getBackground(), category.getTheme());
 			}
+			for (var parent : category.getPath()) {
+				if (parent.getBackground() != null) {
+					return new Banner(parent.getBackground(), category.getTheme());
+				}
+			}
+		} catch (ResourceNotFoundException e) {
+			logger.warn("Category[id={}] not found when get banner");
 		}
 		return null;
 	}

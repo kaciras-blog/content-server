@@ -19,7 +19,7 @@ public class User {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private BanRecordDAO banRecordDao;
+	private BanRecordDAO banRecordDAO;
 
 	private int id;
 	private String name;
@@ -36,11 +36,11 @@ public class User {
 
 	@Nullable
 	LocalDateTime getBannedEndTime() {
-		return banRecordDao.selectLastEndTime(id);
+		return banRecordDAO.selectLastEndTime(id);
 	}
 
 	List<BanRecord> getBanRecords() {
-		return banRecordDao.selectBanRecords(id);
+		return banRecordDAO.selectBanRecords(id);
 	}
 
 	/**
@@ -58,11 +58,11 @@ public class User {
 				.setEnd(start.plus(time))
 				.setOperator(operator)
 				.setCause(cause);
-		banRecordDao.insertBanRecord(id, record);
+		banRecordDAO.insertBanRecord(id, record);
 		return record.getId();
 	}
 
 	void unBan(int bid, int operator, String cause) {
-		banRecordDao.insertUnbanRecord(bid, operator, cause);
+		banRecordDAO.insertUnbanRecord(bid, operator, cause);
 	}
 }

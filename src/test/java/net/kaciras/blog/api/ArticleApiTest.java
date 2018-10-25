@@ -14,8 +14,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ArticleApiTest extends AbstractSpringTest {
 
 	private JsonNode queryArticle(int id) throws Exception {
-		return objectMapper.readTree(mockMvc
-				.perform(get("/articles/{id}", id)).andReturn().getResponse().getContentAsString());
+		return objectMapper.readTree(mockMvc.perform(get("/articles/" + id))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString());
 	}
 
 	@Test
@@ -27,9 +28,9 @@ public class ArticleApiTest extends AbstractSpringTest {
 
 	@Test
 	void testChangeCategory() throws Exception {
-		Assertions.assertThat(queryArticle(1).get("category").asInt()).isEqualTo(1);
+		Assertions.assertThat(queryArticle(1).get("category").asInt()).isEqualTo(6);
 
-		var content = objectMapper.createObjectNode().put("category", 64).toString();
+		var content = objectMapper.createObjectNode().put("category", 17).toString();
 
 		// 测试权限
 		mockMvc.perform(patch("/articles/1").content(content))
@@ -38,7 +39,7 @@ public class ArticleApiTest extends AbstractSpringTest {
 		mockMvc.perform(patch("/articles/1").content(content).principal(ADMIN))
 				.andExpect(status().isNoContent());
 
-		Assertions.assertThat(queryArticle(1).get("category").asInt()).isEqualTo(64);
+		Assertions.assertThat(queryArticle(1).get("category").asInt()).isEqualTo(17);
 	}
 
 	@Test

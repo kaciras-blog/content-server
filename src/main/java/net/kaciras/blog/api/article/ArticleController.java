@@ -27,6 +27,9 @@ class ArticleController {
 
 	private Map<Integer, String> etagCache = new ConcurrentHashMap<>();
 
+	// TODO: messaging system
+	private boolean disableCache = true;
+
 	@GetMapping
 	public List<PreviewVo> getList(ArticleListQuery request, Pageable pageable) {
 		request.setPageable(pageable);
@@ -50,6 +53,10 @@ class ArticleController {
 		vo.setNext(article.getNextLink());
 		vo.setPrev(article.getPreviousLink());
 		vo.setBanner(categoryService.getBanner(article.getCategory()));
+
+		if(disableCache) {
+			return ResponseEntity.ok().body(vo);
+		}
 
 		/*
 		 * 如果缓存中不存在，则需要创建新的缓存记录。在并发的情况下，使用

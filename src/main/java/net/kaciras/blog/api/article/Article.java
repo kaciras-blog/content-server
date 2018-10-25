@@ -9,7 +9,8 @@ import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = "id", callSuper = false)
+@ToString(of = "id")
 @Data
 @Configurable
 public final class Article extends ArticleContentBase {

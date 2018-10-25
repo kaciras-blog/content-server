@@ -1,13 +1,13 @@
 package net.kaciras.blog.api.article;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.ToString;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
 import java.util.List;
 
-@Getter
-@Setter
+@ToString(of = "title")
+@Data
 abstract class ArticleContentBase {
 
 	private String title;
