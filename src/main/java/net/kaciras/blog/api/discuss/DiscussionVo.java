@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public final class DiscussionVo {
 
-	private int id;
+	private long id;
 	private int objectId;
 	private int type;
 	private int floor;

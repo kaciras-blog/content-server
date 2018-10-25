@@ -1,7 +1,6 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.user.UserService;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +18,7 @@ import java.util.Map;
 class DiscussionController {
 
 	private final DiscussionService discussionService;
-	private final UserService userService;
+
 	private final DiscussMapper mapper;
 
 	@GetMapping
@@ -32,38 +30,12 @@ class DiscussionController {
 			return Map.of("total", size);
 		}
 
-		var list = discussionService.getList(query);
-		var result = new ArrayList<DiscussionVo>(list.size());
-
-		for (var discuz : list) {
-			var view = convert(discuz);
-			var replyList = discuz.getReplyList();
-
-			view.setVoted(discuz.getVoterList().contains(SecurityContext.getUserId()));
-			view.setReplyCount(replyList.size());
-			view.setReplies(convert(replyList.select(0, 5)));
-
-			result.add(view);
-		}
+		var result = mapper.toDiscussionView(discussionService.getList(query));
 		return Map.of("total", size, "items", result);
 	}
 
-	private List<DiscussionVo> convert(List<Discussion> discussion) {
-		var res = new ArrayList<DiscussionVo>(discussion.size());
-		for (var d : discussion) {
-			res.add(convert(d));
-		}
-		return res;
-	}
-
-	private DiscussionVo convert(Discussion discussion) {
-		var vo = mapper.toView(discussion);
-		vo.setUser(userService.getUser(discussion.getUserId()));
-		return vo;
-	}
-
 	@PostMapping
-	public ResponseEntity post(@RequestBody AddDiscussionRequest request) {
+	public ResponseEntity post(@RequestBody AddRequest request) {
 		var id = discussionService.add(request.getObjectId(), request.getType(), request.getContent());
 		return ResponseEntity.created(URI.create("/discussions/" + id)).build();
 	}
@@ -96,7 +68,7 @@ class DiscussionController {
 	public List<DiscussionVo> getReplies(@PathVariable long id, Pageable pageable) {
 		var query = DiscussionQuery.byParent(id);
 		query.setPageable(pageable);
-		return convert(discussionService.getList(query));
+		return mapper.toReplyView(discussionService.getList(query));
 	}
 
 	@PostMapping("/{id}/replies")
@@ -126,7 +98,7 @@ class DiscussionController {
 	}
 
 	@ExceptionHandler(ResourceStateException.class)
-	public ResponseEntity<Void> handleException(ResourceStateException ex) {
+	public ResponseEntity<Void> handleException() {
 		return ResponseEntity.status(409).build();
 	}
 }

@@ -5,12 +5,14 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import net.kaciras.blog.infrastructure.TextUtils;
-import net.kaciras.blog.infrastructure.exception.*;
+import net.kaciras.blog.infrastructure.exception.DataTooBigException;
+import net.kaciras.blog.infrastructure.exception.LegallyProhibitedException;
+import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
+import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDateTime;
 
@@ -48,7 +50,7 @@ public final class Discussion {
 
 	public ReplyList getReplyList() {
 		if (parent != 0) {
-			throw new ResourceNotFoundException("楼中楼不能再添加楼中楼了");
+			throw new ResourceNotFoundException("楼中楼不能再包含楼中楼了。<-- 有点绕口");
 		}
 		return new ReplyList(this);
 	}
