@@ -1,13 +1,13 @@
 package net.kaciras.blog.api.article;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
-@AllArgsConstructor(onConstructor_ = @JsonCreator)
+@RequiredArgsConstructor(onConstructor_ = @JsonCreator)
 @Value
 final class PatchMap {
 
-	private Integer category;
-	private Boolean deletion;
+	private final Integer category;
+	private final Boolean deletion;
 }

@@ -1,9 +1,51 @@
 package net.kaciras.blog.api.discuss;
 
+import net.kaciras.blog.api.MapStructConfig;
+import net.kaciras.blog.api.user.UserService;
+import net.kaciras.blog.infrastructure.principal.SecurityContext;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Named;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Mapper(componentModel = "spring")
-interface DiscussMapper {
+import java.util.ArrayList;
+import java.util.List;
 
-	DiscussionVo toView(Discussion items);
+
+@Mapper(config = MapStructConfig.class)
+abstract class DiscussMapper {
+
+	@Autowired
+	private UserService userService;
+
+	@IterableMapping(qualifiedByName = "DIS")
+	public abstract List<DiscussionVo> toDiscussionView(List<Discussion> discussions);
+
+	@Named("DIS")
+	DiscussionVo convertDiscussion(Discussion model) {
+		var vo = toReplyView(model);
+		var replyList = model.getReplyList();
+
+		vo.setVoted(model.getVoterList().contains(SecurityContext.getUserId()));
+		vo.setReplyCount(replyList.size());
+		vo.setReplies(toReplyView(replyList.select(0, 5)));
+		return vo;
+	}
+
+	// BUG: 多个IterableMapping不能区分name？
+	public List<DiscussionVo> toReplyView(List<Discussion> replies) {
+		var list = new ArrayList<DiscussionVo>(replies.size());
+		for (var discussion : replies) {
+			list.add(toReplyView(discussion));
+		}
+		return list;
+	}
+
+	DiscussionVo toReplyView(Discussion model) {
+		var vo = createDiscussionVo(model);
+		vo.setUser(userService.getUser(model.getUserId()));
+		return vo;
+	}
+
+	abstract DiscussionVo createDiscussionVo(Discussion model);
 }

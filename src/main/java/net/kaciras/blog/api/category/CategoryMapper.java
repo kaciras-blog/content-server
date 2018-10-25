@@ -1,11 +1,12 @@
 package net.kaciras.blog.api.category;
 
+import net.kaciras.blog.api.MapStructConfig;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(config = MapStructConfig.class)
 interface CategoryMapper {
 
 	void copyProps(@MappingTarget AggregationVo aggregation, Category category);

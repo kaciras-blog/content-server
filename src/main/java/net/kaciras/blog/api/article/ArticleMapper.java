@@ -1,10 +1,11 @@
 package net.kaciras.blog.api.article;
 
+import net.kaciras.blog.api.MapStructConfig;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(config = MapStructConfig.class)
 interface ArticleMapper {
 
 	@Mapping(target = "vcnt", source = "viewCount")
