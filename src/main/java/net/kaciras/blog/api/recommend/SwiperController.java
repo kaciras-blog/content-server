@@ -28,7 +28,7 @@ public class SwiperController {
 	//考虑到轮播通常不会有很多页，直接全量更新。
 	@RequireAuthorize
 	@PutMapping
-	public ResponseEntity<Void> change(@RequestBody List<SwiperSlide> slides) {
+	public ResponseEntity<Void> update(@RequestBody List<SwiperSlide> slides) {
 		redisTemplate.opsForValue().set("swiper", slides);
 		return ResponseEntity.noContent().build();
 	}

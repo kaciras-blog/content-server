@@ -64,7 +64,7 @@ public final class DiscussionService {
 
 	private int requireAddedUser() {
 		var discusser = SecurityContext.getUserId();
-		if(disabled) {
+		if (disabled) {
 			throw new PermissionException();
 		}
 		if (discusser == 0) {
@@ -73,28 +73,5 @@ public final class DiscussionService {
 			return 0;
 		}
 		return discusser;
-	}
-
-	public void voteUp(int id) {
-		var userId = SecurityContext.getUserId();
-		repository.get(id).getVoterList().add(userId);
-	}
-
-	public void revokeVote(int id) {
-		var userId = SecurityContext.getUserId();
-		repository.get(id).getVoterList().remove(userId);
-	}
-
-	public void delete(long id) {
-		var discussion = repository.get(id);
-		if (SecurityContext.isNot(discussion.getUserId())) {
-			SecurityContext.require("POWER_MODIFY");
-		}
-		discussion.delete();
-	}
-
-	public void restore(int id) {
-		SecurityContext.require("POWER_MODIFY"); // 恢复无论是不是自己都需要权限
-		repository.get(id).restore();
 	}
 }

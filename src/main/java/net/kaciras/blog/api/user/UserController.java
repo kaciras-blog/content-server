@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 @RequireAuthorize
@@ -23,20 +22,20 @@ class UserController {
 	}
 
 	@PostMapping("/{id}/ban-records")
-	public ResponseEntity setAvailability(@PathVariable int id,
-										  @RequestParam(required = false, defaultValue = "0") long time,
-										  @RequestParam String cause) throws URISyntaxException {
+	public ResponseEntity ban(@PathVariable int id,
+							  @RequestParam(required = false, defaultValue = "0") long time,
+							  @RequestParam String cause) {
 		var bid = userService.ban(id, time, cause);
 		var location = String.format("/users/%d/banRecords/%d", id, bid);
-		return ResponseEntity.created(new URI(location)).build();
+		return ResponseEntity.created(URI.create(location)).build();
 	}
 
 	@PostMapping("/{id}/banRecords/{bid}/undoRecord")
 	public ResponseEntity unban(@PathVariable int id, @PathVariable int bid,
-								@RequestParam String cause) throws URISyntaxException {
+								@RequestParam String cause) {
 		userService.unban(id, bid, cause);
 		var location = String.format("/users/%d/banRecords/%d/undoRecord", id, bid);
-		return ResponseEntity.created(new URI(location)).build();
+		return ResponseEntity.created(URI.create(location)).build();
 	}
 
 	@GetMapping("/{id}/banRecords")

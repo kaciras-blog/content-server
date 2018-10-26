@@ -17,6 +17,7 @@ import java.util.Map;
 @RequestMapping("/discussions")
 class DiscussionController {
 
+	private final DiscussRepository repository;
 	private final DiscussionService discussionService;
 
 	private final DiscussMapper mapper;
@@ -41,16 +42,11 @@ class DiscussionController {
 	}
 
 	@RequireAuthorize
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(@PathVariable long id) {
-		discussionService.delete(id);
-		return ResponseEntity.noContent().build();
-	}
-
-	@RequireAuthorize
-	@PostMapping("/{id}/restoration")
-	public ResponseEntity postRestoration(@PathVariable int id) {
-		discussionService.restore(id);
+	@PatchMapping("/{id}")
+	public ResponseEntity<Void> patch(@PathVariable long id, @RequestBody PatchMap patchMap) {
+		if (patchMap.getDeletion() != null) {
+			repository.get(id).updateDeletion(patchMap.getDeletion());
+		}
 		return ResponseEntity.noContent().build();
 	}
 
@@ -86,14 +82,16 @@ class DiscussionController {
 	@PostMapping("/{id}/votes")
 	public ResponseEntity<Void> postVote(@PathVariable int id) {
 		SecurityContext.requireLogin();
-		discussionService.voteUp(id);
+		repository.get(id).getVoterList().add(SecurityContext.getUserId());
+
 		return ResponseEntity.created(URI.create("discussions/" + id + "/votes")).build();
 	}
 
 	@DeleteMapping("/{id}/votes")
 	public ResponseEntity<Void> revokeVote(@PathVariable int id) {
 		SecurityContext.requireLogin();
-		discussionService.revokeVote(id);
+		repository.get(id).getVoterList().remove(SecurityContext.getUserId());
+
 		return ResponseEntity.noContent().build();
 	}
 

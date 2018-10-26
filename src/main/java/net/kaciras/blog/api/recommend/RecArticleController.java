@@ -23,7 +23,7 @@ final class RecArticleController {
 	private List<PreviewVo> popular;
 
 	@GetMapping("/articles")
-	public List<PreviewVo> hotArticles() {
+	public List<PreviewVo> getHotArticles() {
 		return popular;
 	}
 

@@ -61,12 +61,8 @@ public final class Discussion {
 	// delete和restore这两个方法我认为应该放在Domain Object里
 	// 因为它们是对deleted属性的修改，而不是真正的删除
 
-	public void delete() {
-		DBUtils.checkEffective(dao.updateDeleted(id, true));
-	}
-
-	public void restore() {
-		DBUtils.checkEffective(dao.updateDeleted(id, false));
+	public void updateDeletion(boolean value) {
+		DBUtils.checkEffective(dao.updateDeleted(id, value));
 	}
 
 	public static Discussion create(int userId, String content) {

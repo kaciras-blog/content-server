@@ -85,12 +85,12 @@ class ArticleController {
 
 	@RequireAuthorize
 	@PatchMapping("/{id}")
-	public ResponseEntity<Void> patch(@PathVariable int id, @RequestBody PatchMap props) {
-		if (props.getCategory() != null) {
-			articleService.changeCategory(id, props.getCategory());
+	public ResponseEntity<Void> patch(@PathVariable int id, @RequestBody PatchMap patchMap) {
+		if (patchMap.getCategory() != null) {
+			articleService.changeCategory(id, patchMap.getCategory());
 		}
-		if (props.getDeletion() != null) {
-			articleService.updateDeleteion(id, props.getDeletion());
+		if (patchMap.getDeletion() != null) {
+			articleService.updateDeleteion(id, patchMap.getDeletion());
 		}
 		return ResponseEntity.noContent().build();
 	}
