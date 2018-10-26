@@ -1,9 +1,13 @@
 package net.kaciras.blog.api.category;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
-@Data
+@ToString(of = {"id", "name"})
+@Getter
+@Setter
 public final class SimpleCategoryVo {
 
 	private int id;

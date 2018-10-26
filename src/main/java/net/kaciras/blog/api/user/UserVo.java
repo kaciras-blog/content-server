@@ -1,9 +1,11 @@
 package net.kaciras.blog.api.user;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
-@Data
+@Getter
+@Setter
 public class UserVo {
 
 	private int id;

@@ -1,16 +1,13 @@
 package net.kaciras.blog.api.user;
 
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
 @Accessors(chain = true)
 @EqualsAndHashCode(of = "id")
-@Setter(AccessLevel.PACKAGE)
 @Data
 public final class BanRecord {
 

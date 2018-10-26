@@ -1,11 +1,13 @@
 package net.kaciras.blog.api.draft;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 public final class DraftVo {
 
 	private int id;

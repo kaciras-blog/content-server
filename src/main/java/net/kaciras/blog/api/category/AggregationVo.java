@@ -1,12 +1,12 @@
 package net.kaciras.blog.api.category;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 public class AggregationVo extends CategoryVo {
 
 	private Banner banner;

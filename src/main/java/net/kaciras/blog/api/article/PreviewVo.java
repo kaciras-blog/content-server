@@ -1,7 +1,9 @@
 package net.kaciras.blog.api.article;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import net.kaciras.blog.api.category.SimpleCategoryVo;
 import net.kaciras.blog.api.user.UserVo;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
@@ -12,7 +14,9 @@ import java.util.List;
 /**
  * 与ArticleVo相比，去掉了content属性
  */
-@Data
+@ToString(of = {"id", "title"})
+@Getter
+@Setter
 public final class PreviewVo {
 
 	private int id;

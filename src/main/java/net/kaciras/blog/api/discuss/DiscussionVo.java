@@ -1,13 +1,15 @@
 package net.kaciras.blog.api.discuss;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import net.kaciras.blog.api.user.UserVo;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public final class DiscussionVo {
 
 	private long id;
