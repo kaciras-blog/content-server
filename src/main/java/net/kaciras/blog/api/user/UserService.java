@@ -34,7 +34,9 @@ public class UserService {
 		if (user != null) {
 			return mapper.toUserVo(user);
 		}
-		user = restTemplate.getForObject("http://localhost:26481/accounts/{id}", User.class, principal.getId());
+
+		user = restTemplate.getForObject("https://localhost:26480/accounts/{id}",
+				User.class, principal.getId());
 		user.setHead(ImageRefrence.parse("noface.gif"));
 		repository.add(user);
 		return mapper.toUserVo(user);

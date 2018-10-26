@@ -2,10 +2,6 @@ package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.DeletedState;
-import net.kaciras.blog.api.category.CategoryService;
-import net.kaciras.blog.api.discuss.DiscussionQuery;
-import net.kaciras.blog.api.discuss.DiscussionService;
-import net.kaciras.blog.api.user.UserService;
 import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
 import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
@@ -26,10 +22,6 @@ import java.util.stream.Collectors;
 @Service
 public class ArticleService {
 
-	private final UserService userService;
-	private final CategoryService categoryService;
-	private final DiscussionService discussionService;
-
 	private final ArticleRepository repository;
 	private final ClassifyDAO classifyDAO;
 
@@ -48,15 +40,13 @@ public class ArticleService {
 	 * 检查用户是否有权限更改指定的的文章。
 	 *
 	 * @param article 文章
-	 * @return 文章
 	 * @throws PermissionException 如果没权限
 	 */
-	private Article requireModify(Article article) {
+	private void requireModify(Article article) {
 		if (article.isDeleted()) {
 			throw new ResourceDeletedException();
 		}
 		SecurityContext.requireSelf(article.getUserId(), "POWER_MODIFY");
-		return article;
 	}
 
 	public Article getArticle(int id) {
@@ -75,22 +65,8 @@ public class ArticleService {
 		}
 		return repository.findAll(request)
 				.stream()
-				.map(article -> aggregate(article, request))
+				.map(article -> mapper.toPreview(article, request))
 				.collect(Collectors.toList());
-	}
-
-	/**
-	 * 将用户信息，评论数，分类路径和文章聚合为一个对象，节约前端请求次数。
-	 *
-	 * @param article 文章对象
-	 * @return 聚合后的对象
-	 */
-	private PreviewVo aggregate(Article article, ArticleListQuery request) {
-		var result = mapper.toPreview(article);
-		result.setAuthor(userService.getUser(article.getUserId()));
-		result.setDcnt(discussionService.count(DiscussionQuery.byArticle(article.getId())));
-		result.setCpath(categoryService.getPath(article.getCategory(), request.getCategory()));
-		return result;
 	}
 
 	public int getCountByCategories(int id) {

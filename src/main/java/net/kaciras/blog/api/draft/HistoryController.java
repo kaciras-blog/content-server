@@ -23,7 +23,9 @@ class HistoryController {
 
 	@GetMapping("/{saveCount}")
 	public DraftHistory getHistory(@PathVariable int id, @PathVariable int saveCount) {
-		return repository.findById(id).getHistoryList().findBySaveCount(saveCount);
+		return repository.findById(id)
+				.getHistoryList()
+				.findBySaveCount(saveCount);
 	}
 
 	@PostMapping

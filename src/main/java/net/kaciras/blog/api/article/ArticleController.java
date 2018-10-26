@@ -1,7 +1,6 @@
 package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.category.CategoryService;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +20,13 @@ import java.util.concurrent.ConcurrentHashMap;
 class ArticleController {
 
 	private final ArticleService articleService;
-	private final CategoryService categoryService;
 
 	private final ArticleMapper mapper;
 
 	private Map<Integer, String> etagCache = new ConcurrentHashMap<>();
 
 	// TODO: messaging system
+	@SuppressWarnings("FieldCanBeLocal")
 	private boolean disableCache = true;
 
 	@GetMapping
@@ -45,15 +44,11 @@ class ArticleController {
 		}
 
 		var article = articleService.getArticle(id);
+		var vo = mapper.toViewObject(article);
+
 		if (rv) {
 			article.recordView(); //增加浏览量
 		}
-
-		var vo = mapper.toViewObject(article);
-		vo.setNext(article.getNextLink());
-		vo.setPrev(article.getPreviousLink());
-		vo.setBanner(categoryService.getBanner(article.getCategory()));
-
 		if(disableCache) {
 			return ResponseEntity.ok().body(vo);
 		}

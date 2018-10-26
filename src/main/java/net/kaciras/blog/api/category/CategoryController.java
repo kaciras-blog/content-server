@@ -1,42 +1,29 @@
 package net.kaciras.blog.api.category;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.article.ArticleService;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 
 import java.net.URI;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/categories")
 class CategoryController {
 
-	private final ArticleService articleService;
 	private final CategoryService categoryService;
 	private final CategoryMapper mapper;
 
 	@GetMapping("/{id}")
 	public CategoryVo get(@PathVariable int id) {
-		return aggregate(categoryService.getById(id));
-	}
-
-	private CategoryVo aggregate(Category category) {
-		var result = new AggregationVo();
-		mapper.copyProps(result, category);
-
-		result.setArticleCount(articleService.getCountByCategories(category.getId()));
-		result.setBanner(categoryService.getBanner(category));
-		return result;
+		return mapper.aggregatedView(categoryService.getById(id));
 	}
 
 	@GetMapping("/{id}/children")
-	public Flux<CategoryVo> getChildren(@PathVariable int id) {
-		return Flux.fromIterable(categoryService.getChildren(id))
-				.map(mapper::categoryView)
-				.doOnNext(vo -> vo.setArticleCount(articleService.getCountByCategories(vo.getId())));
+	public List<CategoryVo> getChildren(@PathVariable int id) {
+		return mapper.categoryView(categoryService.getChildren(id));
 	}
 
 	@RequireAuthorize
