@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequiredArgsConstructor
 @RestController
-final class UserSessionController {
+class UserSessionController {
 
 	private final UserService userService;
 

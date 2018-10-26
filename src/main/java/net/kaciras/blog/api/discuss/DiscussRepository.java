@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 class DiscussRepository {
 
-	private final DiscussionDAO discussionDAO;
+	private final DiscussionDAO dao;
 
 	/**
 	 * 添加一条评论，此方法会在评论对象中设置自动生成的ID。
@@ -22,33 +22,29 @@ class DiscussRepository {
 	 */
 	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void add(Discussion dis) {
-		var count = discussionDAO.selectCountByObject(dis.getObjectId(), dis.getType());
+		var count = dao.selectCountByObject(dis.getObjectId(), dis.getType());
 		dis.setFloor(count); // 评论的楼层是连续的，新评论的楼层就是已有评论的数量
-		discussionDAO.insert(dis);
+		dao.insert(dis);
 	}
 
 	public Discussion get(long id) {
-		return discussionDAO.selectById(id);
+		return dao.selectById(id);
 	}
 
 	public List<Discussion> findAll(DiscussionQuery query) {
 		if (query.getPageable().getPageSize() > 30) {
 			throw new RequestArgumentException("单次查询数量太多");
 		}
-		if(query.getObjectId() == null
-				&& query.getParent() == null
-				&& query.getUserId() == null) {
+		if (query.isInvalid()) {
 			throw new RequestArgumentException("请指定查询条件");
 		}
-		return discussionDAO.selectList(query);
+		return dao.selectList(query);
 	}
 
 	public int size(DiscussionQuery query) {
-		if(query.getObjectId() == null
-				&& query.getParent() == null
-				&& query.getUserId() == null) {
+		if (query.isInvalid()) {
 			throw new RequestArgumentException("请指定查询条件");
 		}
-		return discussionDAO.selectCount(query);
+		return dao.selectCount(query);
 	}
 }

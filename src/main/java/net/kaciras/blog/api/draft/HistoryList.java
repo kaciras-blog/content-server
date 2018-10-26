@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import java.util.List;
 
-@Configurable
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-public class HistoryList {
+@Configurable
+public final class HistoryList {
 
 	/**
 	 * 每篇草稿最多保存的历史记录数

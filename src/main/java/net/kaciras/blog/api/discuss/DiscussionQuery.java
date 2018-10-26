@@ -25,6 +25,11 @@ public final class DiscussionQuery extends ListSelectRequest {
 		this.parent = parent;
 	}
 
+	// 检查下请求参数不能全为null
+	boolean isInvalid() {
+		return (objectId == null || type == null) && userId == null && parent == null;
+	}
+
 	public static DiscussionQuery byArticle(int article) {
 		return new DiscussionQuery(article, 0, null, null);
 	}

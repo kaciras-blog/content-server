@@ -85,7 +85,7 @@ public class Category extends CategoryAttributes {
 				throw new IllegalArgumentException("不能移动到自己下面");
 			}
 			// 如果移动的目标是其子类，需要先把子类移动到本类的位置
-			int parent = dao.selectAncestor(id, 1);
+			var parent = dao.selectAncestor(id, 1);
 			moveNode(target.getId(), parent);
 			moveSubTree(target.getId(), target.getId());
 		}
@@ -119,8 +119,8 @@ public class Category extends CategoryAttributes {
 	 * @param parent 某节点id
 	 */
 	private void moveSubTree(int id, int parent) {
-		int[] subs = dao.selectSubId(id);
-		for (int sub : subs) {
+		var subs = dao.selectSubId(id);
+		for (var sub : subs) {
 			moveNode(sub, parent);
 			moveSubTree(sub, sub);
 		}

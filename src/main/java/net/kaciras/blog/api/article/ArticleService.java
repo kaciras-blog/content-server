@@ -79,7 +79,7 @@ public class ArticleService {
 	 * @return 生成的ID
 	 */
 	@Transactional
-	public int publish(ArticlePublishRequest request) {
+	public int publish(PublishRequest request) {
 		SecurityContext.require("PUBLISH");
 
 		var article = mapper.toArticle(request);
@@ -102,7 +102,7 @@ public class ArticleService {
 	 * @param update 更新内容。
 	 */
 	@Transactional
-	public void update(int id, ArticlePublishRequest update) {
+	public void update(int id, PublishRequest update) {
 		var article = repository.get(id);
 		requireModify(article);
 

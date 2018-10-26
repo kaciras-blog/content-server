@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/recommendation")
-final class RecArticleController {
+class RecArticleController {
 
 	private final ArticleService articleService;
 

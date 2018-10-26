@@ -1,11 +1,11 @@
 package net.kaciras.blog.api.draft;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
-@EqualsAndHashCode(of = {})
-@Data
+@Getter
+@Setter
 public class DraftContent {
 
 	private String title;

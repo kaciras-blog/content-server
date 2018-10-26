@@ -11,9 +11,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 /**
  * 点赞者列表
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Configurable
-public class VoterList {
+public final class VoterList {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -52,6 +52,12 @@ public class VoterList {
 		return false;
 	}
 
+	/**
+	 * 指定用户是否点赞过该评论。
+	 *
+	 * @param userId 用户ID
+	 * @return 如果点赞过了返回true
+	 */
 	public boolean contains(int userId) {
 		var res = voteDAO.contains(discussion, userId);
 		return res != null && res;

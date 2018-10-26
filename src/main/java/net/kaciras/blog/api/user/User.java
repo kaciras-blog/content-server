@@ -16,6 +16,8 @@ import java.util.List;
 @Configurable
 public class User {
 
+	public static final User GUEST = new User(0, "游客");
+
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
@@ -29,17 +31,17 @@ public class User {
 
 	private boolean deleted;
 
-	User(int id, String name) {
+	private User(int id, String name) {
 		this.id = id;
 		this.name = name;
 	}
 
 	@Nullable
-	LocalDateTime getBannedEndTime() {
+	public LocalDateTime getBannedEndTime() {
 		return banRecordDAO.selectLastEndTime(id);
 	}
 
-	List<BanRecord> getBanRecords() {
+	public List<BanRecord> getBanRecords() {
 		return banRecordDAO.selectBanRecords(id);
 	}
 

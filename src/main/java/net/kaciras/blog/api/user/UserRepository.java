@@ -8,8 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 class UserRepository {
 
-	private final User guest = new User(0, "游客");
-
 	private final UserDAO userDao;
 
 	public void add(User user) {
@@ -18,7 +16,7 @@ class UserRepository {
 
 	public User get(int id) {
 		if (id == 0) {
-			return guest;
+			return User.GUEST;
 		}
 		return userDao.select(id);
 	}

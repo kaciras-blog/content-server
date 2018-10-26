@@ -18,19 +18,6 @@ public class CategoryService {
 	private final CategoryRepository repository;
 	private final CategoryMapper mapper;
 
-	@Transactional
-	public void move(int id, int parent, boolean treeMode) {
-		SecurityContext.require("CHANGE_RELATION");
-		var category = repository.get(id);
-		var newParent = repository.get(parent);
-
-		if (treeMode) {
-			category.moveTreeTo(newParent);
-		} else {
-			category.moveTo(newParent);
-		}
-	}
-
 	public Category getById(int id) {
 		return repository.get(id);
 	}
@@ -42,6 +29,19 @@ public class CategoryService {
 	public int add(CategoryAttributes attributes, int parent) {
 		SecurityContext.require("MODIFY");
 		return repository.add(mapper.toCategory(attributes), parent);
+	}
+
+	@Transactional
+	public void move(int id, int parent, boolean treeMode) {
+		SecurityContext.require("CHANGE_RELATION");
+		var category = repository.get(id);
+		var newParent = repository.get(parent);
+
+		if (treeMode) {
+			category.moveTreeTo(newParent);
+		} else {
+			category.moveTo(newParent);
+		}
 	}
 
 	public void update(int id, CategoryAttributes attributes) {

@@ -71,14 +71,14 @@ class ArticleController {
 
 	@RequireAuthorize
 	@PostMapping
-	public ResponseEntity<Void> post(@RequestBody @Valid ArticlePublishRequest request) {
+	public ResponseEntity<Void> post(@RequestBody @Valid PublishRequest request) {
 		var id = articleService.publish(request);
 		return ResponseEntity.created(URI.create("/articles/" + id)).build();
 	}
 
 	@RequireAuthorize
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody ArticlePublishRequest publish) {
+	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody PublishRequest publish) {
 		articleService.update(id, publish);
 		return ResponseEntity.noContent().build();
 	}
