@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.discuss;
 
 import net.kaciras.blog.api.MapStructConfig;
-import net.kaciras.blog.api.user.UserService;
+import net.kaciras.blog.api.user.UserManager;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
@@ -16,7 +16,7 @@ import java.util.List;
 abstract class DiscussMapper {
 
 	@Autowired
-	private UserService userService;
+	private UserManager userManager;
 
 	@IterableMapping(qualifiedByName = "DIS")
 	public abstract List<DiscussionVo> toDiscussionView(List<Discussion> discussions);
@@ -43,7 +43,7 @@ abstract class DiscussMapper {
 
 	DiscussionVo toReplyView(Discussion model) {
 		var vo = createDiscussionVo(model);
-		vo.setUser(userService.getUser(model.getUserId()));
+		vo.setUser(userManager.getUser(model.getUserId()));
 		return vo;
 	}
 

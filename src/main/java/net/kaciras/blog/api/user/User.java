@@ -23,6 +23,11 @@ public class User {
 	@Setter(AccessLevel.NONE)
 	private BanRecordDAO banRecordDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserDAO userDAO;
+
 	private int id;
 	private String name;
 
@@ -43,6 +48,11 @@ public class User {
 
 	public List<BanRecord> getBanRecords() {
 		return banRecordDAO.selectBanRecords(id);
+	}
+
+	public void updateHead(ImageRefrence head) {
+		this.head = head;
+		userDAO.updateHead(head);
 	}
 
 	/**

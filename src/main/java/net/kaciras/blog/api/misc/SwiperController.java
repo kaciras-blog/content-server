@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.recommend;
+package net.kaciras.blog.api.misc;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;

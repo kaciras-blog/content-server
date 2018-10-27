@@ -1,9 +1,7 @@
 package net.kaciras.blog.api.user;
 
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import net.kaciras.blog.infrastructure.codec.ImageRefrence;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 interface UserDAO {
@@ -16,6 +14,9 @@ interface UserDAO {
 
 	@Select("SELECT id,name,deleted FROM `user` WHERE name=#{name}")
 	User selectByName(String name);
+
+	@Update("UPDATE `user` SET head=#{head} WHERE id=#{id}")
+	void updateHead(ImageRefrence head);
 
 	@Delete("UPDATE `user` SET deleted=1 WHERE id=#{id}")
 	int delete(int id);

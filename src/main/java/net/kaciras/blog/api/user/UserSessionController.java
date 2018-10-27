@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 class UserSessionController {
 
-	private final UserService userService;
+	private final UserManager userManager;
 
 	@GetMapping("/current-user")
 	public UserVo getCurrentUser() {
-		return userService.ensureCurrent();
+		return userManager.ensureCurrent();
 	}
 }

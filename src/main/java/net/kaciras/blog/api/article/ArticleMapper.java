@@ -6,7 +6,7 @@ import net.kaciras.blog.api.category.CategoryManager;
 import net.kaciras.blog.api.category.CategoryRepository;
 import net.kaciras.blog.api.discuss.DiscussionQuery;
 import net.kaciras.blog.api.discuss.DiscussionService;
-import net.kaciras.blog.api.user.UserService;
+import net.kaciras.blog.api.user.UserManager;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -25,7 +25,7 @@ abstract class ArticleMapper {
 	private DiscussionService discussionService;
 
 	@Autowired
-	private UserService userService;
+	private UserManager userManager;
 
 	@Autowired
 	private CategoryRepository categoryRepository;
@@ -55,7 +55,7 @@ abstract class ArticleMapper {
 	 */
 	PreviewVo toPreview(Article article, ArticleListQuery request) {
 		var vo = createPreviewFrom(article);
-		vo.setAuthor(userService.getUser(article.getUserId()));
+		vo.setAuthor(userManager.getUser(article.getUserId()));
 		vo.setDcnt(discussionService.count(DiscussionQuery.byArticle(article.getId())));
 		vo.setCpath(mapCategoryPath(categoryRepository
 				.get(article.getCategory()).getPathTo(request.getCategory())));

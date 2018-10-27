@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.recommend;
+package net.kaciras.blog.api.misc;
 
 import lombok.Data;
 
