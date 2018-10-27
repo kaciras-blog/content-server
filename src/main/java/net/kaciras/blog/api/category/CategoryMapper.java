@@ -1,13 +1,12 @@
 package net.kaciras.blog.api.category;
 
 import net.kaciras.blog.api.MapStructConfig;
-import net.kaciras.blog.api.article.ArticleService;
+import net.kaciras.blog.api.article.ArticleRepository;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 
 import java.util.List;
 
@@ -15,19 +14,17 @@ import java.util.List;
 abstract class CategoryMapper {
 
 	@Autowired
-	@Lazy
-	private ArticleService articleService;
+	private ArticleRepository articleRepository;
 
 	@Autowired
-	@Lazy
-	private CategoryService categoryService;
+	private CategoryManager categoryManager;
 
 	public AggregationVo aggregatedView(Category category) {
 		var result = new AggregationVo();
 		copyProps(result, category);
 		result.setParent(categoryView(category.getParent()));
 		result.setChildren(categoryView(category.getChildren()));
-		result.setBanner(categoryService.getBanner(category));
+		result.setBanner(categoryManager.getBanner(category));
 		return result;
 	}
 
@@ -43,7 +40,7 @@ abstract class CategoryMapper {
 
 	private void copyProps(CategoryVo vo, Category category) {
 		copyPropsInternal(vo, category);
-		vo.setArticleCount(articleService.getCountByCategories(category.getId()));
+		vo.setArticleCount(articleRepository.getCount(category.getId()));
 	}
 
 	abstract void copyPropsInternal(@MappingTarget CategoryVo aggregation, Category category);
@@ -54,6 +51,4 @@ abstract class CategoryMapper {
 	abstract Category toCategory(CategoryAttributes viewObject);
 
 	abstract void update(@MappingTarget Category category, CategoryAttributes attributes);
-
-	abstract List<SimpleCategoryVo> simpleView(List<Category> list);
 }

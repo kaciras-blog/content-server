@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @RequiredArgsConstructor
 @Repository
-class CategoryRepository {
+public class CategoryRepository {
 
 	private final CategoryDAO categoryDAO;
 	private final DaoHelper helper;

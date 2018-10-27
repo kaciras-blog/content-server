@@ -6,6 +6,7 @@ import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ import static net.kaciras.blog.api.Utils.checkNotNull;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
-class ArticleRepository {
+public class ArticleRepository {
 
 	private final ArticleDAO articleDAO;
 	private final KeywordDAO keywordDAO;
@@ -23,6 +24,7 @@ class ArticleRepository {
 		return DBUtils.checkNotNullResource(articleDAO.selectById(id));
 	}
 
+	@Transactional
 	public void add(Article article) {
 		checkNotNull(article, "article");
 		try {
@@ -36,6 +38,7 @@ class ArticleRepository {
 		}
 	}
 
+	@Transactional
 	public void update(Article article) {
 		checkNotNull(article, "article");
 		try {

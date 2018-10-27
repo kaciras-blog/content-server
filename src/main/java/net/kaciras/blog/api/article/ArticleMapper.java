@@ -1,7 +1,9 @@
 package net.kaciras.blog.api.article;
 
 import net.kaciras.blog.api.MapStructConfig;
-import net.kaciras.blog.api.category.CategoryService;
+import net.kaciras.blog.api.category.Category;
+import net.kaciras.blog.api.category.CategoryManager;
+import net.kaciras.blog.api.category.CategoryRepository;
 import net.kaciras.blog.api.discuss.DiscussionQuery;
 import net.kaciras.blog.api.discuss.DiscussionService;
 import net.kaciras.blog.api.user.UserService;
@@ -9,6 +11,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Mapper(config = MapStructConfig.class)
 abstract class ArticleMapper {
@@ -20,15 +28,23 @@ abstract class ArticleMapper {
 	private UserService userService;
 
 	@Autowired
-	private CategoryService categoryService;
+	private CategoryRepository categoryRepository;
 
+	@Autowired
+	private CategoryManager categoryManager;
+
+	private final Pattern urlKeywords = Pattern.compile("[\\s?#@:&\\\\/=\"'`,.!]+");
 
 	public ArticleVo toViewObject(Article article) {
 		var vo = createVoFrom(article);
 		vo.setNext(article.getNextLink());
 		vo.setPrev(article.getPreviousLink());
-		vo.setBanner(categoryService.getBanner(article.getCategory()));
+		vo.setBanner(categoryManager.getBanner(article.getCategory()));
 		return vo;
+	}
+
+	public List<PreviewVo> toPreview(@NonNull List<Article> articles, ArticleListQuery request) {
+		return articles.stream().map(article -> toPreview(article, request)).collect(Collectors.toList());
 	}
 
 	/**
@@ -37,11 +53,12 @@ abstract class ArticleMapper {
 	 * @param article 文章对象
 	 * @return 聚合后的对象
 	 */
-	public PreviewVo toPreview(Article article, ArticleListQuery request) {
+	PreviewVo toPreview(Article article, ArticleListQuery request) {
 		var vo = createPreviewFrom(article);
 		vo.setAuthor(userService.getUser(article.getUserId()));
 		vo.setDcnt(discussionService.count(DiscussionQuery.byArticle(article.getId())));
-		vo.setCpath(categoryService.getPath(article.getCategory(), request.getCategory()));
+		vo.setCpath(mapCategoryPath(categoryRepository
+				.get(article.getCategory()).getPathTo(request.getCategory())));
 		return vo;
 	}
 
@@ -50,7 +67,25 @@ abstract class ArticleMapper {
 
 	abstract ArticleVo createVoFrom(Article article);
 
-	public abstract Article toArticle(ArticleContentBase contentBase);
+	abstract List<SimpleCategoryVo> mapCategoryPath(List<Category> categories);
+
+
+	/**
+	 * 由发表请求创建文章对象，是文章的工厂方法。
+	 *
+	 * @param request 发表请求
+	 * @param userId  当前用户ID
+	 * @return 文章对象
+	 */
+	public Article createArticle(PublishRequest request, int userId) {
+		var article = new Article();
+		update(article, request);
+		article.setUserId(userId);
+
+		article.setUrlTitle(StringUtils.trimTrailingCharacter(urlKeywords
+				.matcher(request.getUrlTitle()).replaceAll("-"), '-'));
+		return article;
+	}
 
 	public abstract void update(@MappingTarget Article article, ArticleContentBase contentBase);
 }

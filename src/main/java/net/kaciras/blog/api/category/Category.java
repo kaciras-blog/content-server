@@ -53,7 +53,7 @@ public class Category extends CategoryAttributes {
 	 * 获取此分类到指定上级分类之间的所有分类。
 	 *
 	 * @param ancestor 上级分类id
-	 * @return 路径上所有的分类，如果ancestor不是此分类的上级分类则为null
+	 * @return 路径上所有的分类，如果ancestor不是此分类的上级分类则返回空列表
 	 */
 	@NonNull
 	public List<Category> getPathTo(int ancestor) {

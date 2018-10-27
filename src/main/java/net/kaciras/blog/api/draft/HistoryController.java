@@ -29,7 +29,7 @@ class HistoryController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> saveNew(@RequestBody DraftSaveRequest request) {
+	public ResponseEntity<Void> saveNew(@RequestBody SaveRequest request) {
 		var saveCount = repository.findById(request.getId()).getHistoryList().add(request);
 		var location = "/drafts/" + request.getId() + "/histories/" + saveCount;
 		return ResponseEntity.created(URI.create(location)).build();
@@ -37,7 +37,7 @@ class HistoryController {
 
 	// saveCount 没用着，目前只更新最后一次历史
 	@PutMapping("/{saveCount}")
-	public ResponseEntity<Void> save(@RequestBody DraftSaveRequest request) {
+	public ResponseEntity<Void> save(@RequestBody SaveRequest request) {
 		repository.findById(request.getId()).getHistoryList().update(request);
 		return ResponseEntity.noContent().build();
 	}

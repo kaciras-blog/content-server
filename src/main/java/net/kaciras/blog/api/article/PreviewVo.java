@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.kaciras.blog.api.category.SimpleCategoryVo;
 import net.kaciras.blog.api.user.UserVo;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 

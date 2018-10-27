@@ -1,10 +1,12 @@
 package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.article.ArticleManager;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -25,7 +27,7 @@ class DraftController {
 
 	private final DraftMapper mapper;
 	private final DraftRepository repository;
-	private final DraftService draftService;
+	private final ArticleManager articleManager;
 
 	@GetMapping
 	public List<DraftVo> getList() {
@@ -37,10 +39,25 @@ class DraftController {
 		return mapper.toDraftVo(repository.findById(id));
 	}
 
+	/**
+	 * 创建一个新的草稿，其内容可能是默认内容或从指定的文章生成。
+	 *
+	 * @param article 文章ID，如果不为null则从文章生成草稿
+	 * @return HTTP回复
+	 */
+	@Transactional
 	@PostMapping
 	public ResponseEntity<Void> createDraft(@RequestParam(required = false) Integer article) {
-		var id = draftService.newDraft(article);
-		return ResponseEntity.created(URI.create("/drafts/" + id)).build();
+		var draft = new Draft();
+		draft.setUserId(SecurityContext.getUserId());
+		draft.setArticleId(article);
+		repository.add(draft);
+
+		var content = article == null ? DraftContent.initial()
+				: mapper.fromArticle(articleManager.getLiveArticle(article));
+		draft.getHistoryList().add(content);
+
+		return ResponseEntity.created(URI.create("/drafts/" + draft.getId())).build();
 	}
 
 	@DeleteMapping

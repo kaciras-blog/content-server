@@ -11,7 +11,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public final class DiscussionService {
+public class DiscussionService {
 
 	private final DiscussRepository repository;
 
@@ -28,14 +28,6 @@ public final class DiscussionService {
 		if (query.getDeletion() != DeletedState.FALSE && SecurityContext.isNot(query.getUserId())) {
 			SecurityContext.require("POWER_QUERY");
 		}
-	}
-
-	public Discussion getOne(long id) {
-		var result = repository.get(id);
-		if (result.isDeleted() && SecurityContext.isNot(result.getUserId())) {
-			SecurityContext.require("POWER_QUERY");
-		}
-		return result;
 	}
 
 	public List<Discussion> getList(DiscussionQuery query) {

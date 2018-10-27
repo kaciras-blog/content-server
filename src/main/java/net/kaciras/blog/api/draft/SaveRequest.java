@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public final class DraftSaveRequest extends DraftContent {
+final class SaveRequest extends DraftContent {
 
 	private int id;
 	private Integer articleId;

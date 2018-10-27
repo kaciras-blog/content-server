@@ -1,9 +1,6 @@
-package net.kaciras.blog.api.recommend;
+package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.article.ArticleListQuery;
-import net.kaciras.blog.api.article.ArticleService;
-import net.kaciras.blog.api.article.PreviewVo;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,9 +13,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/recommendation")
-class RecArticleController {
+class HotArticleController {
 
-	private final ArticleService articleService;
+	private final ArticleRepository repository;
+	private final ArticleMapper mapper;
 
 	private List<PreviewVo> popular;
 
@@ -31,6 +29,6 @@ class RecArticleController {
 	void updateHotsTask() {
 		var request = new ArticleListQuery();
 		request.setPageable(PageRequest.of(0, 6, Sort.Direction.DESC, "view_count"));
-		popular = articleService.getList(request);
+		popular = mapper.toPreview(repository.findAll(request), request);
 	}
 }

@@ -25,6 +25,11 @@ public final class Article extends ArticleContentBase {
 	@Setter(AccessLevel.NONE)
 	private ClassifyDAO classifyDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ArticleMapper mapper;
+
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 	private int id;

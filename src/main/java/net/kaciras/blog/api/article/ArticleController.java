@@ -1,7 +1,12 @@
 package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.DeletedState;
+import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
+import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
+import net.kaciras.blog.infrastructure.message.MessageClient;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
+import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +24,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequestMapping("/articles")
 class ArticleController {
 
-	private final ArticleService articleService;
-
+	private final ArticleRepository repository;
+	private final ArticleManager articleManager;
 	private final ArticleMapper mapper;
+
+	private final MessageClient messageClient;
 
 	private Map<Integer, String> etagCache = new ConcurrentHashMap<>();
 
@@ -32,7 +39,10 @@ class ArticleController {
 	@GetMapping
 	public List<PreviewVo> getList(ArticleListQuery request, Pageable pageable) {
 		request.setPageable(pageable);
-		return articleService.getList(request);
+		if (request.getDeletion() != DeletedState.FALSE) {
+			SecurityContext.require("SHOW_DELETED");
+		}
+		return mapper.toPreview(repository.findAll(request), request);
 	}
 
 	@GetMapping("/{id}")
@@ -43,13 +53,13 @@ class ArticleController {
 			return ResponseEntity.status(304).build();
 		}
 
-		var article = articleService.getArticle(id);
+		var article = articleManager.getLiveArticle(id);
 		var vo = mapper.toViewObject(article);
 
 		if (rv) {
 			article.recordView(); //增加浏览量
 		}
-		if(disableCache) {
+		if (disableCache) {
 			return ResponseEntity.ok().body(vo);
 		}
 
@@ -72,14 +82,22 @@ class ArticleController {
 	@RequireAuthorize
 	@PostMapping
 	public ResponseEntity<Void> post(@RequestBody @Valid PublishRequest request) {
-		var id = articleService.publish(request);
-		return ResponseEntity.created(URI.create("/articles/" + id)).build();
+		var article = mapper.createArticle(request, SecurityContext.getUserId());
+		repository.add(article);
+
+		messageClient.send(new ArticleCreatedEvent(article.getId(), request.getDraftId(), request.getCategory()));
+		return ResponseEntity.created(URI.create("/articles/" + article.getId())).build();
 	}
 
 	@RequireAuthorize
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody PublishRequest publish) {
-		articleService.update(id, publish);
+	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody PublishRequest update) {
+		var article = repository.get(id);
+
+		mapper.update(article, update);
+		repository.update(article);
+
+		messageClient.send(new ArticleUpdatedEvent(id, update.getDraftId(), update.getCategory()));
 		return ResponseEntity.noContent().build();
 	}
 
@@ -87,10 +105,10 @@ class ArticleController {
 	@PatchMapping("/{id}")
 	public ResponseEntity<Void> patch(@PathVariable int id, @RequestBody PatchMap patchMap) {
 		if (patchMap.getCategory() != null) {
-			articleService.changeCategory(id, patchMap.getCategory());
+			repository.get(id).updateCategory(patchMap.getCategory());
 		}
 		if (patchMap.getDeletion() != null) {
-			articleService.updateDeleteion(id, patchMap.getDeletion());
+			repository.get(id).updateDeleted(patchMap.getDeletion());
 		}
 		return ResponseEntity.noContent().build();
 	}
