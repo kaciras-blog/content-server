@@ -22,8 +22,8 @@ interface CategoryDAO {
 			"name=#{name}," +
 			"cover=#{cover}," +
 			"description=#{description}," +
-			"background=#{background} " +
-			"theme=#{theme}" +
+			"background=#{background}," +
+			"theme=#{theme} " +
 			"WHERE id=#{id}")
 	int update(Category category);
 
