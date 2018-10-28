@@ -13,4 +13,5 @@ final class PatchMap {
 
 	private final Integer category;
 	private final Boolean deletion;
+	private final String urlTitle;
 }

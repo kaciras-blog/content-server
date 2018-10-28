@@ -89,6 +89,7 @@ class ArticleController {
 		return ResponseEntity.created(URI.create("/articles/" + article.getId())).build();
 	}
 
+	// 不更改 urlTitle，category，这些属性使用PATCH修改
 	@RequireAuthorize
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody PublishRequest update) {
@@ -104,11 +105,16 @@ class ArticleController {
 	@RequireAuthorize
 	@PatchMapping("/{id}")
 	public ResponseEntity<Void> patch(@PathVariable int id, @RequestBody PatchMap patchMap) {
+		var article = repository.get(id);
+
 		if (patchMap.getCategory() != null) {
-			repository.get(id).updateCategory(patchMap.getCategory());
+			article.updateCategory(patchMap.getCategory());
 		}
 		if (patchMap.getDeletion() != null) {
-			repository.get(id).updateDeleted(patchMap.getDeletion());
+			article.updateDeleted(patchMap.getDeletion());
+		}
+		if(patchMap.getUrlTitle() != null) {
+			article.updateUrlTitle(patchMap.getUrlTitle());
 		}
 		return ResponseEntity.noContent().build();
 	}

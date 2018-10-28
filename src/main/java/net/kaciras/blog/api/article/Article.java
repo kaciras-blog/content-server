@@ -5,6 +5,7 @@ import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
@@ -68,6 +69,10 @@ public final class Article extends ArticleContentBase {
 			throw new ResourceStateException("文章还没有被删除呢");
 		}
 		articleDAO.updateDeleted(id, value);
+	}
+
+	public void updateUrlTitle(@NonNull String urlTitle) {
+		articleDAO.updateUrlTitle(id, urlTitle);
 	}
 
 	public void updateCategory(int category) {

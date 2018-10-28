@@ -25,7 +25,7 @@ interface ArticleDAO {
 	List<Article> selectPreview(ArticleListQuery query);
 
 	@Insert("INSERT INTO article(user_id, category, title, url_title, cover, summary, content) " +
-			"VALUES(#{userId},#{category}, #{title}, #{urlTitle}, #{cover}, #{summary}, #{content})")
+			"VALUES(#{userId}, #{category}, #{title}, #{urlTitle}, #{cover}, #{summary}, #{content})")
 	@Options(useGeneratedKeys = true, keyColumn = "id")
 	void insert(Article article);
 
@@ -38,8 +38,11 @@ interface ArticleDAO {
 	@Update("UPDATE article SET deleted=#{value} WHERE id=#{id}")
 	void updateDeleted(int id, boolean value);
 
-	@Update("UPDATE article SET title=#{title},category=#{category},cover=#{cover}," +
-			"summary=#{summary},content=#{content} WHERE id=#{id}")
+	@Update("UPDATE article SET url_title=#{urlTitle} WHERE id=#{id}")
+	void updateUrlTitle(int id, String urlTitle);
+
+	@Update("UPDATE article SET title=#{title},cover=#{cover},summary=#{summary}," +
+			"content=#{content} WHERE id=#{id}")
 	int update(Article article);
 
 	@Update("UPDATE article SET view_count=view_count+1 WHERE id=#{id}")
