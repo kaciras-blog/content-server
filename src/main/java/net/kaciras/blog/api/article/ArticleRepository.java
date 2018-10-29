@@ -2,8 +2,8 @@ package net.kaciras.blog.api.article;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
-import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

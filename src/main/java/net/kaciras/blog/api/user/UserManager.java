@@ -1,10 +1,10 @@
 package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
-import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

@@ -19,8 +19,8 @@ public class ArticleManager {
 
 	@PostConstruct
 	private void init() {
-		messageClient.subscribe(CategoryRemovedEvent.class, event ->
-				repository.get(event.getId()).updateCategory(event.getParent()));
+		messageClient.subscribe(CategoryRemovedEvent.class)
+				.subscribe(event -> repository.get(event.getId()).updateCategory(event.getParent()));
 	}
 
 	/**

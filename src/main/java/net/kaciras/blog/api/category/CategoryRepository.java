@@ -2,9 +2,9 @@ package net.kaciras.blog.api.category;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.Utils;
+import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

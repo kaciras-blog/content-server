@@ -1,6 +1,6 @@
 package net.kaciras.blog.api.article;
 
-import net.kaciras.blog.infrastructure.CollectionUtils;
+import net.kaciras.blog.infrastructure.Misc;
 import org.apache.ibatis.jdbc.SQL;
 
 import java.util.Set;
@@ -38,7 +38,7 @@ public final class SqlProvider {
 		if (sort.isUnsorted()) {
 			sql.ORDER_BY("id DESC"); //默认按发布顺序倒序
 		} else {
-			var order = CollectionUtils.getFirst(sort);
+			var order = Misc.getFirst(sort);
 			var p = order.getProperty();
 
 			if (!allowFields.contains(p))

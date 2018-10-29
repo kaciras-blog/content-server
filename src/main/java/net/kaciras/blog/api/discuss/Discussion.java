@@ -1,13 +1,13 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.*;
+import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.TextUtils;
 import net.kaciras.blog.infrastructure.exception.DataTooBigException;
 import net.kaciras.blog.infrastructure.exception.LegallyProhibitedException;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.sql.DBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

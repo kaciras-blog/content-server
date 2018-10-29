@@ -1,10 +1,9 @@
 package net.kaciras.blog.api;
 
-import net.kaciras.blog.infrastructure.*;
-import net.kaciras.blog.infrastructure.codec.KxCodecConfiguration;
+import net.kaciras.blog.infrastructure.Misc;
+import net.kaciras.blog.infrastructure.autoconfig.*;
 import net.kaciras.blog.infrastructure.message.DirectMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import net.kaciras.blog.infrastructure.principal.KxPrincipalAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;
@@ -31,7 +30,7 @@ import org.springframework.web.client.RestTemplate;
 		KxGlobalCorsAutoConfiguration.class,
 		KxWebUtilsAutoConfiguration.class,
 		KxSpringSessionAutoConfiguration.class,
-		KxCodecConfiguration.class,
+		KxCodecAutoConfiguration.class,
 		KxPrincipalAutoConfiguration.class,
 		DevelopmentAutoConfiguration.class
 })
@@ -60,7 +59,7 @@ public class ServiceApplication {
 	}
 
 	public static void main(String[] args) throws Exception {
-		TlsUtils.disableForHttpsURLConnection();
+		Misc.disableURLConnectionCertVerify();
 		new SpringApplicationBuilder(ServiceApplication.class)
 				.listeners(new ApplicationPidFileWriter()).run(args);
 	}

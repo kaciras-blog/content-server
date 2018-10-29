@@ -68,7 +68,7 @@
 		<dependency>
 			<groupId>net.kaciras.blog</groupId>
 			<artifactId>Infrastructure</artifactId>
-			<version>1.5</version>
+			<version>1.6</version>
 		</dependency>
 
 		<!-- 编译期依赖 -->

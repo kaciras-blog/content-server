@@ -3,7 +3,7 @@ package net.kaciras.blog.api.draft;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kaciras.blog.api.Utils;
-import net.kaciras.blog.infrastructure.sql.DBUtils;
+import net.kaciras.blog.infrastructure.DBUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -22,9 +22,6 @@ spring:
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #                   Following is the non-spring settings
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-development:
-  admin-principal: true
-#  delay: 3s
 
 draft:
   delete-after-publish: false
@@ -36,3 +33,6 @@ discuss:
 kaciras:
   cors:
     origins: "*"
+  development:
+    admin-principal: true
+  #   delay: 3s
