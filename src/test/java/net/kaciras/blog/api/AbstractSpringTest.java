@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @Transactional
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles("test")
+@ActiveProfiles("dev")
 @SpringBootTest
 public abstract class AbstractSpringTest {
 
@@ -29,10 +29,13 @@ public abstract class AbstractSpringTest {
 	protected MockMvc mockMvc;
 
 	@Autowired
+	protected WebApplicationContext wac;
+
+	@Autowired
 	protected ObjectMapper objectMapper;
 
 	@BeforeEach
-	void setup(WebApplicationContext wac) {
+	void setup() {
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac)
 				.addFilter(new ServletSecurityContextFilter())
 				.defaultRequest(get("/")

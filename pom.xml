@@ -3,13 +3,14 @@
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>Kaciras Blog Version 9</name>
-	<description>博客后端，2018-10-18</description>
-	<packaging>jar</packaging>
 
 	<groupId>net.kaciras.blog</groupId>
 	<artifactId>content-service</artifactId>
 	<version>1.0.0</version>
+	<packaging>jar</packaging>
+
+	<name>Kaciras Blog Version 9</name>
+	<description>博客后端，2018-10-18</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -166,6 +167,11 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<skip>true</skip>
+					<forkMode>once</forkMode>
+					<argLine>
+						-javaagent:${settings.localRepository}/org/springframework/spring-instrument/${spring.version}/spring-instrument-${spring.version}.jar
+					</argLine>
+					<useSystemClassLoader>true</useSystemClassLoader>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -202,8 +208,8 @@
 				</executions>
 			</plugin>
 			<!--<plugin>-->
-				<!--<groupId>org.springframework.boot</groupId>-->
-				<!--<artifactId>spring-boot-maven-plugin</artifactId>-->
+			<!--<groupId>org.springframework.boot</groupId>-->
+			<!--<artifactId>spring-boot-maven-plugin</artifactId>-->
 			<!--</plugin>-->
 		</plugins>
 	</build>
