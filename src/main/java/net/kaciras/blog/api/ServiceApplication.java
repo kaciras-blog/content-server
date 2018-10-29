@@ -24,12 +24,11 @@ import org.springframework.web.client.RestTemplate;
  * 在配置文件里排除了一些配置，添加新功能时记得看下有没有需要的依赖被排除了。
  */
 @EnableScheduling
-@EnableTransactionManagement(proxyTargetClass = true) //TODO: not working
+@EnableTransactionManagement(proxyTargetClass = true)
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
 @Import({
 		KxGlobalCorsAutoConfiguration.class,
-		KxCodecConfiguration.class,
 		KxWebUtilsAutoConfiguration.class,
 		KxSpringSessionAutoConfiguration.class,
 		KxCodecConfiguration.class,

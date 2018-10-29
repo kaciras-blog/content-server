@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Transactional
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-@SpringBootTest(classes = ServiceApplication.class, webEnvironment = WebEnvironment.MOCK)
+@SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 public abstract class AbstractSpringTest {
 
 	public static final WebPrincipal ADMIN = new WebPrincipal(WebPrincipal.ADMIN_ID);
