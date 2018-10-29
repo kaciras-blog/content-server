@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@SuppressWarnings("unchecked")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/recommendation/swiper")

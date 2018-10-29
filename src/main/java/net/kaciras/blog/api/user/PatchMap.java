@@ -1,12 +1,12 @@
 package net.kaciras.blog.api.user;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 
 @RequiredArgsConstructor(onConstructor_ = @JsonCreator)
-@Value
+@Getter
 final class PatchMap {
 
 	private final ImageRefrence head;

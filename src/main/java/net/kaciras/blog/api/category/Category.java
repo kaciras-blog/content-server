@@ -9,6 +9,7 @@ import org.springframework.lang.NonNull;
 
 import java.util.List;
 
+@ToString(of = {"id", "name"})
 @EqualsAndHashCode(of = "id", callSuper = false)
 @Data
 @Configurable
@@ -58,7 +59,7 @@ public class Category extends CategoryAttributes {
 	@NonNull
 	public List<Category> getPathTo(int ancestor) {
 		Utils.checkNotNegative(ancestor, "ancestor");
-		if(ancestor == 0) {
+		if (ancestor == 0) {
 			return dao.selectPathToRoot(id);
 		}
 		return dao.selectPathToAncestor(id, ancestor);

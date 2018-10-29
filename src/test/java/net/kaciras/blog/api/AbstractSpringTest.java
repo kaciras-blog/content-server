@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -21,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Transactional
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-@SpringBootTest(webEnvironment = WebEnvironment.MOCK)
+@SpringBootTest
 public abstract class AbstractSpringTest {
 
 	public static final WebPrincipal ADMIN = new WebPrincipal(WebPrincipal.ADMIN_ID);
