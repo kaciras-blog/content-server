@@ -2,7 +2,6 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.*;
 import net.kaciras.blog.infrastructure.DBUtils;
-import net.kaciras.blog.infrastructure.TextUtils;
 import net.kaciras.blog.infrastructure.exception.DataTooBigException;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
@@ -72,13 +71,9 @@ public final class Discussion {
 		if (content == null || content.length() == 0) {
 			throw new RequestArgumentException("评论内容不能为空");
 		}
-		if (TextUtils.getHeight(content, 40) > 64) {
+		if (content.length() > 64 * 40) {
 			throw new DataTooBigException("评论内容过长，请分多次发表");
 		}
-//		占内存
-//		if (TextUtils.isDanger(content)) {
-//			throw new LegallyProhibitedException("评论包含不和谐内容");
-//		}
 		var dis = new Discussion();
 		dis.setUserId(userId);
 		dis.setContent(content);
