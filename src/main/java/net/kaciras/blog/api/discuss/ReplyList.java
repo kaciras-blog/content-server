@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -29,8 +30,12 @@ public final class ReplyList {
 	}
 
 	public List<Discussion> select(int start, int size) {
+		return select(PageRequest.of(start, size));
+	}
+
+	public List<Discussion> select(Pageable pageable) {
 		var query = DiscussionQuery.byParent(parent.getId());
-		query.setPageable(PageRequest.of(start, size));
+		query.setPageable(pageable);
 		return dao.selectList(query);
 	}
 }

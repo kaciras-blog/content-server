@@ -1,6 +1,8 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.ListQueryView;
+import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
@@ -9,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,16 +23,16 @@ class DiscussionController {
 	private final DiscussMapper mapper;
 
 	@GetMapping
-	public Map<String, ?> getList(DiscussionQuery query, Pageable pageable) {
+	public ListQueryView<DiscussionVo> getList(DiscussionQuery query, Pageable pageable) {
 		query.setPageable(pageable);
 
 		var size = discussionService.count(query);
 		if (query.isMetaonly()) {
-			return Map.of("total", size);
+			return new ListQueryView<>(size);
 		}
 
 		var result = mapper.toDiscussionView(discussionService.getList(query));
-		return Map.of("total", size, "items", result);
+		return new ListQueryView<>(size, result);
 	}
 
 	@PostMapping
@@ -61,10 +61,9 @@ class DiscussionController {
 	 * @return 回复列表
 	 */
 	@GetMapping("/{id}/replies")
-	public List<DiscussionVo> getReplies(@PathVariable long id, Pageable pageable) {
-		var query = DiscussionQuery.byParent(id);
-		query.setPageable(pageable);
-		return mapper.toReplyView(discussionService.getList(query));
+	public ListQueryView<DiscussionVo> getReplies(@PathVariable long id, Pageable pageable) {
+		var replies = DBUtils.checkNotNullResource(repository.get(id)).getReplyList();
+		return new ListQueryView<>(replies.size(), mapper.toReplyView(replies.select(pageable)));
 	}
 
 	@PostMapping("/{id}/replies")
