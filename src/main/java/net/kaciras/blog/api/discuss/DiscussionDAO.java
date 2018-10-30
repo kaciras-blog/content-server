@@ -34,6 +34,6 @@ interface DiscussionDAO {
 	 * @return 评论数
 	 */
 	@Select("SELECT COUNT(*) FROM discussion " +
-			"WHERE object_id=#{arg0} AND `type`=#{arg1} AND parent=0")
+			"WHERE object_id=#{oid} AND `type`=#{type} AND parent=0")
 	int selectCountByObject(int oid, int type);
 }

@@ -4,7 +4,6 @@ import lombok.*;
 import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.TextUtils;
 import net.kaciras.blog.infrastructure.exception.DataTooBigException;
-import net.kaciras.blog.infrastructure.exception.LegallyProhibitedException;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
@@ -76,9 +75,10 @@ public final class Discussion {
 		if (TextUtils.getHeight(content, 40) > 64) {
 			throw new DataTooBigException("评论内容过长，请分多次发表");
 		}
-		if (TextUtils.isDanger(content)) {
-			throw new LegallyProhibitedException("评论包含不和谐内容");
-		}
+//		占内存
+//		if (TextUtils.isDanger(content)) {
+//			throw new LegallyProhibitedException("评论包含不和谐内容");
+//		}
 		var dis = new Discussion();
 		dis.setUserId(userId);
 		dis.setContent(content);
