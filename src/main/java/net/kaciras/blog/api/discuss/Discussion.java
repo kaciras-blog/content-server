@@ -58,13 +58,17 @@ public final class Discussion {
 		return new VoterList(this.id);
 	}
 
-	// delete和restore这两个方法我认为应该放在Domain Object里
-	// 因为它们是对deleted属性的修改，而不是真正的删除
-
 	public void updateDeletion(boolean value) {
 		DBUtils.checkEffective(dao.updateDeleted(id, value));
 	}
 
+	/**
+	 * 创建一个评论，该方法会检查评论内容是否合法。
+	 *
+	 * @param userId 评论者ID
+	 * @param content 评论内容
+	 * @return 评论对象
+	 */
 	public static Discussion create(int userId, String content) {
 		if (content == null || content.length() == 0) {
 			throw new RequestArgumentException("评论内容不能为空");

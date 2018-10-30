@@ -23,10 +23,10 @@ public class DraftManager {
 
 	@PostConstruct
 	private void init() {
-		messageClient.subscribe(ArticleCreatedEvent.class)
+		messageClient.getChannel(ArticleCreatedEvent.class)
 				.filter(event -> deleteAfterSubmit)
 				.subscribe(event -> draftRepository.remove(event.getDraftId()));
-		messageClient.subscribe(ArticleUpdatedEvent.class)
+		messageClient.getChannel(ArticleUpdatedEvent.class)
 				.filter(event -> deleteAfterSubmit)
 				.subscribe(event -> draftRepository.remove(event.getDraftId()));
 	}

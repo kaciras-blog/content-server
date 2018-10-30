@@ -66,12 +66,6 @@
 
 
 	<dependencies>
-		<dependency>
-			<groupId>net.kaciras.blog</groupId>
-			<artifactId>Infrastructure</artifactId>
-			<version>1.6</version>
-		</dependency>
-
 		<!-- 编译期依赖 -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -94,6 +88,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<scope>provided</scope>
+		</dependency>
+
+		<!-- 自己的其它项目 -->
+		<dependency>
+			<groupId>net.kaciras.blog</groupId>
+			<artifactId>Infrastructure</artifactId>
+			<version>1.6</version>
 		</dependency>
 
 		<!-- Spring 全家桶 -->
