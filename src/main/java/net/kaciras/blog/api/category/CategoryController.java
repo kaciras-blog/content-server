@@ -15,7 +15,6 @@ import java.util.List;
 class CategoryController {
 
 	private final CategoryRepository repository;
-	private final CategoryManager categoryManager;
 	private final CategoryMapper mapper;
 
 	@GetMapping("/{id}")

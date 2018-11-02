@@ -75,7 +75,6 @@ public class CategoryRepository {
 		if (parent == null) {
 			parent = 0;
 		}
-
 		get(id).moveSubTree(parent);
 		deleteBoth(id);
 

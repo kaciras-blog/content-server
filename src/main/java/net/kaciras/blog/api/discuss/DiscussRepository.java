@@ -42,6 +42,7 @@ class DiscussRepository {
 	}
 
 	public int size(DiscussionQuery query) {
+
 		if (query.isInvalid()) {
 			throw new RequestArgumentException("请指定查询条件");
 		}

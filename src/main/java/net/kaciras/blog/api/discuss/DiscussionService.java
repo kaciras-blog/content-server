@@ -41,7 +41,8 @@ public class DiscussionService {
 	}
 
 	public long add(int objectId, int type, String content) {
-		var dis = Discussion.create(requireAddedUser(), content);
+		checkAddedUser();
+		var dis = Discussion.create(SecurityContext.getUserId(), content);
 		dis.setObjectId(objectId);
 		dis.setType(type);
 		repository.add(dis);
@@ -49,21 +50,19 @@ public class DiscussionService {
 	}
 
 	public long addReply(long disId, String content) {
-		var reply = Discussion.create(requireAddedUser(), content);
+		checkAddedUser();
+		var reply = Discussion.create(SecurityContext.getUserId(), content);
 		repository.get(disId).getReplyList().add(reply);
 		return reply.getId();
 	}
 
-	private int requireAddedUser() {
+	private void checkAddedUser() {
 		var discusser = SecurityContext.getUserId();
 		if (disabled) {
 			throw new PermissionException();
 		}
-		if (discusser == 0) {
-			if (!allowAnonymous)
-				throw new PermissionException();
-			return 0;
+		if (discusser == 0 && !allowAnonymous) {
+			throw new PermissionException();
 		}
-		return discusser;
 	}
 }

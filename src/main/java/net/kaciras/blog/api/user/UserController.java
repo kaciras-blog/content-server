@@ -55,7 +55,7 @@ class UserController {
 	public ResponseEntity<Void> patch(@PathVariable int id, @RequestBody PatchMap patchMap) {
 		var user = repository.get(id);
 
-		if(patchMap.getHead() != null) {
+		if (patchMap.getHead() != null) {
 			user.updateHead(patchMap.getHead());
 		}
 		return ResponseEntity.noContent().build();

@@ -3,7 +3,7 @@ package net.kaciras.blog.api.discuss;
 import lombok.Data;
 
 @Data
-public final class AddRequest {
+final class AddRequest {
 
 	private int objectId;
 

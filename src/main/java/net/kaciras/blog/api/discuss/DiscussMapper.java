@@ -35,8 +35,8 @@ abstract class DiscussMapper {
 	// BUG: 多个IterableMapping不能区分name？
 	public List<DiscussionVo> toReplyView(List<Discussion> replies) {
 		var list = new ArrayList<DiscussionVo>(replies.size());
-		for (var discussion : replies) {
-			list.add(toReplyView(discussion));
+		for (var r : replies) {
+			list.add(toReplyView(r));
 		}
 		return list;
 	}

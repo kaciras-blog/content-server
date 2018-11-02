@@ -9,7 +9,7 @@ import org.springframework.lang.NonNull;
 
 import java.util.List;
 
-@ToString(of = {"id", "name"})
+@ToString(of = {"id"})
 @EqualsAndHashCode(of = "id", callSuper = false)
 @Data
 @Configurable
