@@ -7,7 +7,14 @@ import java.util.List;
 @Mapper
 interface CategoryDAO {
 
+	/**
+	 * 查询一个分类。（针对根分类返回特别的对象）
+	 *
+	 * @param id 分类ID
+	 * @return 分类对象
+	 */
 	@Select("SELECT * FROM category WHERE id=#{id}")
+	@TypeDiscriminator(column = "id", javaType = int.class, cases = @Case(value = "0", type = RootCategory.class))
 	Category selectAttributes(int id);
 
 	@Select("SELECT A.* FROM category AS A " +
@@ -26,6 +33,14 @@ interface CategoryDAO {
 			"theme=#{theme} " +
 			"WHERE id=#{id}")
 	int update(Category category);
+
+	/**
+	 * 修改根分类的属性，一些不可修改的属性将被忽略。
+	 *
+	 * @param attributes 新的属性集合
+	 */
+	@Update("UPDATE category SET cover=#{cover},background=#{background},theme=#{theme} WHERE id=0")
+	void updateRoot(CategoryAttributes attributes);
 
 	@Insert("INSERT INTO category(name, cover, description, background, theme) " +
 			"VALUES(#{name},#{cover},#{description}, #{background}, #{theme})")

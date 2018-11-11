@@ -5,7 +5,20 @@ import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import java.util.Collections;
 import java.util.List;
 
-public final class RootCategory extends Category {
+/**
+ * 根分类，覆盖了分类的一些方法，防止这些操作被错误地用到顶级分类上。
+ */
+final class RootCategory extends Category {
+
+	@Override
+	public Category getParent() {
+		return null;
+	}
+
+	@Override
+	public int getLevel() {
+		return 0;
+	}
 
 	@Override
 	public List<Category> getPathTo(int ancestor) {

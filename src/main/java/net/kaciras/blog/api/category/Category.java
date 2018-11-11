@@ -65,6 +65,10 @@ public class Category extends CategoryAttributes {
 		return dao.selectPathToAncestor(id, ancestor);
 	}
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ 								移动操作
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	public void moveTo(Category target) {
 		if (this.equals(target)) {
 			throw new IllegalArgumentException("不能移动到自己下面");

@@ -9,6 +9,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+
 /**
  * 基于ClosureTable的的数据库存储分类树实现。
  *
@@ -23,10 +25,6 @@ public class CategoryRepository {
 	private final MessageClient messageClient;
 
 	public Category get(int id) {
-		Utils.checkNotNegative(id, "id");
-		if (id == 0) {
-			return new RootCategory();
-		}
 		return DBUtils.checkNotNullResource(categoryDAO.selectAttributes(id));
 	}
 
@@ -35,7 +33,7 @@ public class CategoryRepository {
 	}
 
 	public int sizeOfLevel(int level) {
-		Utils.checkPositive(level, "level");
+		Utils.checkNotNegative(level, "level");
 		return categoryDAO.selectCountByLayer(level);
 	}
 
@@ -43,12 +41,12 @@ public class CategoryRepository {
 	public int add(Category category, int parent) {
 		Utils.checkNotNegative(parent, "parent");
 		if (parent > 0) {
-			helper.requireContains(parent); // getAncestor方法用于检查分类是否存在，下同
+			helper.requireContains(parent);
 		}
 		try {
 			categoryDAO.insert(category);
 		} catch (DataIntegrityViolationException ex) {
-			throw new IllegalArgumentException("分类实体中存在不合法的属性值");
+			throw new IllegalArgumentException("分类实体中存在不合法的属性值", ex);
 		}
 		categoryDAO.insertPath(category.getId(), parent);
 		categoryDAO.insertNode(category.getId());
@@ -62,13 +60,16 @@ public class CategoryRepository {
 	 * @param category 新的分类信息对象
 	 */
 	public void update(Category category) {
-		Utils.checkPositive(category.getId(), "id");
-		DBUtils.checkEffective(categoryDAO.update(category));
+		if (category.getId() == 0) {
+			categoryDAO.updateRoot(category);
+		} else {
+			DBUtils.checkEffective(categoryDAO.update(category));
+		}
 	}
 
 	@Transactional
 	public void remove(int id) {
-		Utils.checkPositive(id, "id");
+		Utils.checkPositive(id, "id"); // 顶级分类不可删除
 		helper.requireContains(id);
 		var parent = categoryDAO.selectAncestor(id, 1);
 
@@ -86,9 +87,7 @@ public class CategoryRepository {
 		Utils.checkPositive(id, "id");
 		helper.requireContains(id);
 		deleteBoth(id);
-		for (int des : categoryDAO.selectDescendant(id)) {
-			deleteBoth(des);
-		}
+		Arrays.stream(categoryDAO.selectDescendant(id)).forEach(this::deleteBoth);
 	}
 
 	/**

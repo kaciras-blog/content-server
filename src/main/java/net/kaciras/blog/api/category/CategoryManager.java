@@ -16,9 +16,6 @@ public class CategoryManager {
 	private final CategoryRepository repository;
 
 	public Banner getBanner(int id) {
-		if (id == 0) {
-			return null;
-		}
 		return getBanner(repository.get(id));
 	}
 
@@ -37,6 +34,10 @@ public class CategoryManager {
 				if (parent.getBackground() != null) {
 					return new Banner(parent.getBackground(), category.getTheme());
 				}
+			}
+			var root = repository.get(0);
+			if (root.getBackground() != null) {
+				return new Banner(root.getBackground(), root.getTheme());
 			}
 		} catch (ResourceNotFoundException e) {
 			logger.warn("Category[id={}] not found when get banner");
