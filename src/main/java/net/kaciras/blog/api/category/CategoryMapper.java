@@ -23,12 +23,12 @@ abstract class CategoryMapper {
 		if(category == null) {
 			return null;
 		}
-		var result = new AggregationVo();
-		copyProps(result, category);
-		result.setParent(categoryView(category.getParent()));
-		result.setChildren(categoryView(category.getChildren()));
-		result.setBanner(categoryManager.getBanner(category));
-		return result;
+		var vo = new AggregationVo();
+		copyProps(vo, category);
+		vo.setParent(categoryView(category.getParent()));
+		vo.setChildren(categoryView(category.getChildren()));
+
+		return vo;
 	}
 
 	@Named("CategoryVo")
@@ -38,6 +38,7 @@ abstract class CategoryMapper {
 		}
 		var vo = new CategoryVo();
 		copyProps(vo, category);
+		vo.setBanner(categoryManager.getBanner(category));
 		return vo;
 	}
 

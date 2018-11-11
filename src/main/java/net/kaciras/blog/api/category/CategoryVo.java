@@ -11,4 +11,6 @@ public class CategoryVo extends CategoryAttributes {
 	private int level;
 
 	private int articleCount;
+
+	private Banner banner;
 }

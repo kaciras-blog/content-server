@@ -12,9 +12,6 @@ import java.util.List;
 @Setter
 final class AggregationVo extends CategoryVo {
 
-	private Banner banner;
-
 	private CategoryVo parent;
-
 	private List<CategoryVo> children;
 }
