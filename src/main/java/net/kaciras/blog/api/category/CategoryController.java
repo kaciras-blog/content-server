@@ -18,8 +18,9 @@ class CategoryController {
 	private final CategoryMapper mapper;
 
 	@GetMapping("/{id}")
-	public CategoryVo get(@PathVariable int id) {
-		return mapper.aggregatedView(repository.get(id));
+	public CategoryVo get(@PathVariable int id, @RequestParam(defaultValue = "false") boolean aggregate) {
+		var category = repository.get(id);
+		return aggregate ? mapper.aggregatedView(category) : mapper.categoryView(category);
 	}
 
 	@GetMapping("/{id}/children")

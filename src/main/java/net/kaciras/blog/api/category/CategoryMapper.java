@@ -20,6 +20,9 @@ abstract class CategoryMapper {
 	private CategoryManager categoryManager;
 
 	public AggregationVo aggregatedView(Category category) {
+		if(category == null) {
+			return null;
+		}
 		var result = new AggregationVo();
 		copyProps(result, category);
 		result.setParent(categoryView(category.getParent()));
