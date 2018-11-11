@@ -35,4 +35,4 @@ kaciras:
     origins: "*"
   development:
     admin-principal: true
-  #   delay: 3s
+#    delay: 3s

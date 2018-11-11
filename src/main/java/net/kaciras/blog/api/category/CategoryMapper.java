@@ -27,7 +27,6 @@ abstract class CategoryMapper {
 		copyProps(vo, category);
 		vo.setParent(categoryView(category.getParent()));
 		vo.setChildren(categoryView(category.getChildren()));
-
 		return vo;
 	}
 
@@ -38,13 +37,13 @@ abstract class CategoryMapper {
 		}
 		var vo = new CategoryVo();
 		copyProps(vo, category);
-		vo.setBanner(categoryManager.getBanner(category));
 		return vo;
 	}
 
 	private void copyProps(CategoryVo vo, Category category) {
 		copyPropsInternal(vo, category);
 		vo.setArticleCount(articleRepository.getCount(category.getId()));
+		vo.setBanner(categoryManager.getBanner(category));
 	}
 
 	abstract void copyPropsInternal(@MappingTarget CategoryVo aggregation, Category category);

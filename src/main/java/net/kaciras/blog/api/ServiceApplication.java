@@ -51,8 +51,9 @@ public class ServiceApplication {
 	}
 
 	@Bean
-	RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
-		var template = new RedisTemplate<String, Object>();
+	RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory factory) {
+		var template = new RedisTemplate<String, byte[]>();
+		template.setEnableDefaultSerializer(false);
 		template.setConnectionFactory(factory);
 		template.setKeySerializer(new StringRedisSerializer());
 		return template;
