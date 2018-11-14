@@ -69,6 +69,24 @@ public class Category extends CategoryAttributes {
  								移动操作
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	/**
+	 * 将一个分类移动到目标分类下面（成为其子分类）。被移动分类的子类将自动上浮（成为指定分类
+	 * 父类的子分类），即使目标是指定分类原本的父类。
+	 * <p>
+	 * 例如下图(省略顶级分类)：
+	 *       1                                    1
+	 *       |                                  / | \
+	 *       2                                 3  4  5
+	 *     / | \        (id=2).moveTo(7)            / \
+	 *    3  4  5       ----------------->         6   7
+	 *         / \                                /  / | \
+	 *       6    7                              8  9  10 2
+	 *      /    /  \
+	 *     8    9    10
+	 *
+	 * @param target 目标分类的id
+	 * @throws IllegalArgumentException 如果target所表示的分类不存在、或此分类的id==target
+	 */
 	public void moveTo(Category target) {
 		if (this.equals(target)) {
 			throw new IllegalArgumentException("不能移动到自己下面");
@@ -77,6 +95,27 @@ public class Category extends CategoryAttributes {
 		moveNode(id, target.getId());
 	}
 
+	/**
+	 * 将一个分类移动到目标分类下面（成为其子分类），被移动分类的子分类也会随着移动。
+	 * 如果目标分类是被移动分类的子类，则先将目标分类（连带子类）移动到被移动分类原来的
+	 * 的位置，再移动需要被移动的分类。
+	 * <p>
+	 * 例如下图(省略顶级分类)：
+	 *       1                                      1
+	 *       |                                      |
+	 *       2                                      7
+	 *     / | \        (id=2).moveTreeTo(7)      / | \
+	 *    3  4  5      -------------------->     9  10  2
+	 *         / \                                  / | \
+	 *       6    7                                3  4  5
+	 *      /    /  \                                    |
+	 *     8    9    10                                  6
+	 *                                                   |
+	 *                                                   8
+	 *
+	 * @param target 目标分类的id
+	 * @throws IllegalArgumentException 如果id或target所表示的分类不存在、或id==target
+	 */
 	public void moveTreeTo(Category target) {
 		if (this.equals(target)) {
 			throw new IllegalArgumentException("不能移动到自己下面");

@@ -2,10 +2,8 @@ package net.kaciras.blog.api.misc;
 
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
-final class SwiperSlide implements Serializable {
+final class SwiperSlide {
 
 	private String name;
 	private String picture;

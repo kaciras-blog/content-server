@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.dao.DataIntegrityViolationException;
 
 /**
- * 点赞者列表
+ * 某个评论的点赞者列表，该列表记录了所有点赞者的ID。
  */
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Configurable

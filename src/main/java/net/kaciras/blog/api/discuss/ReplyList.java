@@ -1,5 +1,6 @@
 package net.kaciras.blog.api.discuss;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -8,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 @Configurable
-@RequiredArgsConstructor
 public final class ReplyList {
 
 	@Autowired
