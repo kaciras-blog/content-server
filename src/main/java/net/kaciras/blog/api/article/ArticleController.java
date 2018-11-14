@@ -63,15 +63,9 @@ class ArticleController {
 			return ResponseEntity.ok().body(vo);
 		}
 
-		/*
-		 * 如果缓存中不存在，则需要创建新的缓存记录。在并发的情况下，使用
-		 * etagCache.putIfAbsent(...)使缓存以先创建的为准，那么后创建的线程将发送一个
-		 * 无效的Etag值到响应中，但对于缓存系统来说这是允许的，无效的Etag头将在
-		 * 下一次访问时被重新设置。
-		 */
+		// 如果缓存中不存在，则需要创建新的缓存记录。
 		if (etag == null) {
-			etag = UUID.randomUUID().toString();
-			etagCache.putIfAbsent(id, etag);
+			etag = etagCache.putIfAbsent(id, UUID.randomUUID().toString());
 			return ResponseEntity.ok().eTag("W/\"" + etag).body(vo);
 		}
 
