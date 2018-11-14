@@ -31,8 +31,10 @@ public class UserManager {
 			return mapper.toUserVo(user);
 		}
 
-		user = restTemplate.getForObject("https://localhost:26480/accounts/{id}",
-				User.class, principal.getId());
+		user = restTemplate.getForObject("https://localhost:26480/accounts/{id}", User.class, principal.getId());
+		if (user == null) {
+			throw new RuntimeException("Session中存在的用户ID，在SecurityCenter却查不出来");
+		}
 		user.setHead(ImageRefrence.parse("noface.gif"));
 		repository.add(user);
 		return mapper.toUserVo(user);
