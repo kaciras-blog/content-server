@@ -14,6 +14,9 @@ interface ArticleDAO {
 	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleMap")
 	Article selectById(int id);
 
+	@Select("SELECT COUNT(*) FROM article")
+	int selectCount();
+
 	/**
 	 * 没指定分类的话单独搞一个方法查询性能好点
 	 *

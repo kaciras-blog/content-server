@@ -32,11 +32,6 @@ public class CategoryRepository {
 		return categoryDAO.selectCount();
 	}
 
-	public int sizeOfLevel(int level) {
-		Utils.checkNotNegative(level, "level");
-		return categoryDAO.selectCountByLayer(level);
-	}
-
 	@Transactional
 	public int add(Category category, int parent) {
 		Utils.checkNotNegative(parent, "parent");

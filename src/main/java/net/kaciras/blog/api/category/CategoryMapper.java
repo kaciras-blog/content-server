@@ -42,7 +42,7 @@ abstract class CategoryMapper {
 
 	private void copyProps(CategoryVo vo, Category category) {
 		copyPropsInternal(vo, category);
-		vo.setArticleCount(articleRepository.getCount(category.getId()));
+		vo.setArticleCount(articleRepository.countByCategory(category.getId()));
 		vo.setBanner(categoryManager.getBanner(category));
 	}
 

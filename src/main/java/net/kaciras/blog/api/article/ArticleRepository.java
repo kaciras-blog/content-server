@@ -58,7 +58,11 @@ public class ArticleRepository {
 		return articleDAO.selectPreview(request);
 	}
 
-	public int getCount(int id) {
+	public int size() {
+		return articleDAO.selectCount();
+	}
+
+	public int countByCategory(int id) {
 		return classifyDAO.selectCountByCategory(id);
 	}
 }
