@@ -32,7 +32,7 @@ public class CategoryManager {
 			}
 			for (var parent : category.getPath()) {
 				if (parent.getBackground() != null) {
-					return new Banner(parent.getBackground(), category.getTheme());
+					return new Banner(parent.getBackground(), parent.getTheme());
 				}
 			}
 			var root = repository.get(0);
