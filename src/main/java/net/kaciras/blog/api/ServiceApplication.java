@@ -59,8 +59,10 @@ public class ServiceApplication {
 		return template;
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String... args) throws Exception {
+		Misc.disableIllegalAccessWarning();
 		Misc.disableURLConnectionCertVerify();
+
 		new SpringApplicationBuilder(ServiceApplication.class)
 				.listeners(new ApplicationPidFileWriter()).run(args);
 	}
