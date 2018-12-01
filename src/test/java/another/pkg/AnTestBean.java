@@ -1,7 +1,6 @@
-package other.pkg;
+package another.pkg;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class AnTestBean {
-}
+public final class AnTestBean {}

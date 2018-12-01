@@ -5,6 +5,7 @@ import net.kaciras.blog.infrastructure.autoconfig.*;
 import net.kaciras.blog.infrastructure.message.DirectMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.annotation.Bean;
@@ -40,16 +41,19 @@ public class ServiceApplication {
 	@SuppressWarnings("unused")
 	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
 
+	@ConditionalOnMissingBean
 	@Bean
 	MessageClient messageClient() {
 		return new DirectMessageClient();
 	}
 
+	@ConditionalOnMissingBean
 	@Bean
 	RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
 
+	@ConditionalOnMissingBean
 	@Bean
 	RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory factory) {
 		var template = new RedisTemplate<String, byte[]>();
