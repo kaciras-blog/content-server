@@ -2,14 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<name>Kaciras Blog Version 10</name>
+	<description>博客后端，2018-11-1</description>
 
 	<groupId>net.kaciras.blog</groupId>
 	<artifactId>content-service</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
-
-	<name>Kaciras Blog Version 9</name>
-	<description>博客后端，2018-10-18</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -58,6 +57,12 @@
 		</dependency>
 
 		<!-- Spring 全家桶 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-instrument</artifactId>
@@ -164,9 +169,26 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<!--<plugin>-->
 			<!--<groupId>org.springframework.boot</groupId>-->
 			<!--<artifactId>spring-boot-maven-plugin</artifactId>-->
+			<!--<configuration>-->
+				<!--<excludeDevtools>true</excludeDevtools>-->
+			<!--</configuration>-->
 			<!--</plugin>-->
 		</plugins>
 	</build>
