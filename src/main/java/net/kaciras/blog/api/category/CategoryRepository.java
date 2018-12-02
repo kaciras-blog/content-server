@@ -20,31 +20,30 @@ import java.util.Arrays;
 @Repository
 public class CategoryRepository {
 
-	private final CategoryDAO categoryDAO;
-	private final DaoHelper helper;
+	private final CategoryDAO dao;
 	private final MessageClient messageClient;
 
 	public Category get(int id) {
-		return DBUtils.checkNotNullResource(categoryDAO.selectAttributes(id));
+		return DBUtils.checkNotNullResource(dao.selectAttributes(id));
 	}
 
 	public int size() {
-		return categoryDAO.selectCount();
+		return dao.selectCount();
 	}
 
 	@Transactional
 	public int add(Category category, int parent) {
 		Utils.checkNotNegative(parent, "parent");
 		if (parent > 0) {
-			helper.requireContains(parent);
+			requireContains(parent);
 		}
 		try {
-			categoryDAO.insert(category);
+			dao.insert(category);
 		} catch (DataIntegrityViolationException ex) {
 			throw new IllegalArgumentException("分类实体中存在不合法的属性值", ex);
 		}
-		categoryDAO.insertPath(category.getId(), parent);
-		categoryDAO.insertNode(category.getId());
+		dao.insertPath(category.getId(), parent);
+		dao.insertNode(category.getId());
 		return category.getId();
 	}
 
@@ -56,17 +55,17 @@ public class CategoryRepository {
 	 */
 	public void update(Category category) {
 		if (category.getId() == 0) {
-			categoryDAO.updateRoot(category);
+			dao.updateRoot(category);
 		} else {
-			DBUtils.checkEffective(categoryDAO.update(category));
+			DBUtils.checkEffective(dao.update(category));
 		}
 	}
 
 	@Transactional
 	public void remove(int id) {
 		Utils.checkPositive(id, "id"); // 顶级分类不可删除
-		helper.requireContains(id);
-		var parent = categoryDAO.selectAncestor(id, 1);
+		requireContains(id);
+		var parent = dao.selectAncestor(id, 1);
 
 		if (parent == null) {
 			parent = 0;
@@ -80,9 +79,9 @@ public class CategoryRepository {
 	@Transactional
 	public void removeTree(int id) {
 		Utils.checkPositive(id, "id");
-		helper.requireContains(id);
+		requireContains(id);
 		deleteBoth(id);
-		Arrays.stream(categoryDAO.selectDescendant(id)).forEach(this::deleteBoth);
+		Arrays.stream(dao.selectDescendant(id)).forEach(this::deleteBoth);
 	}
 
 	/**
@@ -91,7 +90,12 @@ public class CategoryRepository {
 	 * @param id 分类id
 	 */
 	private void deleteBoth(int id) {
-		categoryDAO.delete(id);
-		categoryDAO.deletePath(id);
+		dao.delete(id);
+		dao.deletePath(id);
+	}
+	
+	private void requireContains(int id) {
+		var v = dao.contains(id);
+		if (v == null || !v) throw new IllegalArgumentException("指定的分类不存在");
 	}
 }

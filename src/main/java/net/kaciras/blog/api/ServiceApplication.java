@@ -39,8 +39,7 @@ import org.springframework.web.client.RestTemplate;
 public class ServiceApplication {
 
 	@SuppressWarnings("unused")
-	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {
-	}
+	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
 
 	@ConditionalOnMissingBean
 	@Bean
@@ -77,6 +76,12 @@ public class ServiceApplication {
 				.listeners(new ApplicationPidFileWriter()).run(args);
 	}
 
+	/**
+	 * 判断一个类文件是否在jar包里。
+	 *
+	 * @param clazz 类
+	 * @return 如果是返回true，否则false
+	 */
 	public static boolean isInJar(Class<?> clazz) {
 		var location = clazz.getResource('/' + clazz.getName().replace('.', '/') + ".class");
 		return location.toString().startsWith("jar:");

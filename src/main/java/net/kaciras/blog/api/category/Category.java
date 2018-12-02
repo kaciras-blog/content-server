@@ -9,7 +9,7 @@ import org.springframework.lang.NonNull;
 
 import java.util.List;
 
-@ToString(of = {"id"})
+@ToString(of = "id")
 @EqualsAndHashCode(of = "id", callSuper = false)
 @Data
 @Configurable
@@ -19,11 +19,6 @@ public class Category extends CategoryAttributes {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private CategoryDAO dao;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private DaoHelper helper;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
