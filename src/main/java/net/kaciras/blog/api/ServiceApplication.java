@@ -39,7 +39,8 @@ import org.springframework.web.client.RestTemplate;
 public class ServiceApplication {
 
 	@SuppressWarnings("unused")
-	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
+	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {
+	}
 
 	@ConditionalOnMissingBean
 	@Bean
@@ -67,7 +68,17 @@ public class ServiceApplication {
 		Misc.disableIllegalAccessWarning();
 		Misc.disableURLConnectionCertVerify();
 
+		// 说好的 SpringBoot dev-tool 能自动检查JAR启动的呢？
+		if (isInJar(ServiceApplication.class)) {
+			System.setProperty("spring.devtools.restart.enabled", "false");
+		}
+
 		new SpringApplicationBuilder(ServiceApplication.class)
 				.listeners(new ApplicationPidFileWriter()).run(args);
+	}
+
+	public static boolean isInJar(Class<?> clazz) {
+		var location = clazz.getResource('/' + clazz.getName().replace('.', '/') + ".class");
+		return location.toString().startsWith("jar:");
 	}
 }
