@@ -64,7 +64,7 @@ public class ServiceApplication {
 	}
 
 	public static void main(String... args) throws Exception {
-		Misc.disableURLConnectionCertVerify();
+		Misc.disableHttpClientCertificateVerify();
 		Misc.disableIllegalAccessWarning();
 		Misc.disableSpringDevToolOnJarStartup();
 
