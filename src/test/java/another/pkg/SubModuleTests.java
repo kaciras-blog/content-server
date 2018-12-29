@@ -28,7 +28,7 @@ public class SubModuleTests {
 	@BeforeAll
 	static void setUpClass() throws Exception {
 		Misc.disableIllegalAccessWarning();
-		Misc.disableURLConnectionCertVerify();
+		Misc.disableHttpClientCertificateVerify();
 	}
 
 	/**
