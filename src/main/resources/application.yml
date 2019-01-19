@@ -1,4 +1,5 @@
 server:
+  connection-timeout: 10s
   port: 2375
 
   http2:
