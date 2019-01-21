@@ -30,7 +30,7 @@ public class GraphQLController {
 		this.articleRepository = articleRepository;
 
 		var schemaParser = new SchemaParser();
-		var stream = GraphQLController.class.getClassLoader().getResourceAsStream("schema.graphqls");
+		var stream = GraphQLController.class.getClassLoader().getResourceAsStream("schema.graphql");
 
 		TypeDefinitionRegistry registry;
 		try(var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {

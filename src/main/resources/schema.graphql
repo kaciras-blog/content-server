@@ -4,6 +4,7 @@ schema {
 
 type Query {
 	article(id: ID!): Article
+	articles(start: Int, count: Int): [Article!]!
 }
 
 type Article {
@@ -11,4 +12,11 @@ type Article {
 	title: String!
 	urlTitle: String!
 	create: String!
+	cover: String!
+}
+
+type Category {
+	id: ID!
+	name: String!
+
 }
