@@ -3,6 +3,7 @@ package net.kaciras.blog.api.draft;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 草稿经常变动，就不缓存了
@@ -11,7 +12,7 @@ import java.util.List;
 interface DraftDAO {
 
 	@Select("SELECT * FROM draft_user WHERE id=#{id}")
-	Draft selectById(int id);
+	Optional<Draft> selectById(int id);
 
 	@Select("SELECT * FROM draft_user WHERE user_id=#{uid}")
 	List<Draft> selectByUser(int uid);

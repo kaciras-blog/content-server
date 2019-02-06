@@ -25,8 +25,8 @@ import java.util.List;
 @RequestMapping("/drafts")
 class DraftController {
 
-	private final DraftMapper mapper;
 	private final DraftRepository repository;
+	private final DraftMapper mapper;
 	private final ArticleManager articleManager;
 
 	@GetMapping
@@ -35,7 +35,7 @@ class DraftController {
 	}
 
 	@GetMapping("/{id}")
-	public DraftVo get(@PathVariable("id") int id) {
+	public DraftVo get(@PathVariable int id) {
 		return mapper.toDraftVo(repository.findById(id));
 	}
 
