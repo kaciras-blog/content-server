@@ -29,7 +29,7 @@ interface ArticleDAO {
 
 	@Insert("INSERT INTO article(user_id, category, title, url_title, cover, summary, content) " +
 			"VALUES(#{userId}, #{category}, #{title}, #{urlTitle}, #{cover}, #{summary}, #{content})")
-	@Options(useGeneratedKeys = true, keyColumn = "id")
+	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Article article);
 
 	/**

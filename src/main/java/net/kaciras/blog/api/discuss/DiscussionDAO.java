@@ -9,7 +9,7 @@ interface DiscussionDAO {
 
 	@Insert("INSERT INTO discussion(user_id, object_id, `type`, floor, parent, content) " +
 			"VALUES (#{userId}, #{objectId}, #{type}, #{floor}, #{parent}, #{content})")
-	@Options(useGeneratedKeys = true, keyColumn = "id")
+	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Discussion discuz);
 
 	@SelectProvider(type = SqlProvidor.class, method = "select")
