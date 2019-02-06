@@ -2,6 +2,8 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
+import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,17 +23,18 @@ class DiscussRepository {
 	 * @param dis 评论对象
 	 */
 	@Transactional(isolation = Isolation.SERIALIZABLE)
-	public void add(Discussion dis) {
+	public void add(@NonNull Discussion dis) {
 		var count = dao.selectCountByObject(dis.getObjectId(), dis.getType());
 		dis.setFloor(count); // 评论的楼层是连续的，新评论的楼层就是已有评论的数量
 		dao.insert(dis);
 	}
 
+	@NonNull
 	public Discussion get(long id) {
-		return dao.selectById(id);
+		return dao.selectById(id).orElseThrow(ResourceNotFoundException::new);
 	}
 
-	public List<Discussion> findAll(DiscussionQuery query) {
+	public List<Discussion> findAll(@NonNull DiscussionQuery query) {
 		if (query.getPageable().getPageSize() > 30) {
 			throw new RequestArgumentException("单次查询数量太多");
 		}
@@ -41,8 +44,7 @@ class DiscussRepository {
 		return dao.selectList(query);
 	}
 
-	public int size(DiscussionQuery query) {
-
+	public int size(@NonNull DiscussionQuery query) {
 		if (query.isInvalid()) {
 			throw new RequestArgumentException("请指定查询条件");
 		}

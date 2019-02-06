@@ -3,6 +3,7 @@ package net.kaciras.blog.api.discuss;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 interface DiscussionDAO {
@@ -21,7 +22,7 @@ interface DiscussionDAO {
 
 	@Select("SELECT * FROM discussion WHERE id=#{id}")
 	@ResultMap("net.kaciras.blog.api.discuss.DiscussionDAO.DiscussionMap")
-	Discussion selectById(long id);
+	Optional<Discussion> selectById(long id);
 
 	@Update("UPDATE discussion SET deleted=#{value} WHERE id=#{id}")
 	int updateDeleted(long id, boolean value);

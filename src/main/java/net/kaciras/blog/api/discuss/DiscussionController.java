@@ -2,7 +2,6 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.ListQueryView;
-import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
@@ -62,7 +61,7 @@ class DiscussionController {
 	 */
 	@GetMapping("/{id}/replies")
 	public ListQueryView<DiscussionVo> getReplies(@PathVariable long id, Pageable pageable) {
-		var replies = DBUtils.checkNotNullResource(repository.get(id)).getReplyList();
+		var replies = repository.get(id).getReplyList();
 		return new ListQueryView<>(replies.size(), mapper.toReplyView(replies.select(pageable)));
 	}
 
