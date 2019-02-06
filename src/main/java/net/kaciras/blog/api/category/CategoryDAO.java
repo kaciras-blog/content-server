@@ -44,7 +44,7 @@ interface CategoryDAO {
 
 	@Insert("INSERT INTO category(name, cover, description, background, theme) " +
 			"VALUES(#{name},#{cover},#{description}, #{background}, #{theme})")
-	@Options(useGeneratedKeys = true, keyColumn = "id")
+	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Category entity);
 
 	@Delete("DELETE FROM category WHERE id=#{id}")

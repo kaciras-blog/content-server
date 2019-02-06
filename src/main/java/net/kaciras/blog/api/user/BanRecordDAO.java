@@ -10,7 +10,7 @@ interface BanRecordDAO {
 
 	@Insert("INSERT INTO ban_record(user_id,start,end,operator,cause) " +
 			"VALUES (#{uid},#{record.start},#{record.end},#{record.operator},#{record.cause})")
-	@Options(useGeneratedKeys = true, keyColumn = "id")
+	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insertBanRecord(int uid, BanRecord record);
 
 	@Select("SELECT MAX(A.end) FROM ban_record AS A " +

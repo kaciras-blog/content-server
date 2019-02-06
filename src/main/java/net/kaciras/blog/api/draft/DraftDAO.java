@@ -17,7 +17,7 @@ interface DraftDAO {
 	List<Draft> selectByUser(int uid);
 
 	@Insert("INSERT INTO draft_user(user_id,article_id) VALUES (#{userId},#{articleId})")
-	@Options(useGeneratedKeys = true, keyColumn = "id")
+	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Draft draft);
 
 	@Select("SELECT COUNT(*) FROM draft_user WHERE user_id=#{uid}")
