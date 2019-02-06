@@ -25,7 +25,7 @@ class SwiperController {
 	private final ObjectMapper objectMapper;
 
 	@GetMapping
-	public Object getPages() throws IOException {
+	public List<SwiperSlide> getPages() throws IOException {
 		var encode = redisTemplate.opsForValue().get("swiper");
 		if (encode == null) {
 			return Collections.emptyList();
@@ -34,7 +34,13 @@ class SwiperController {
 				.constructCollectionType(List.class, SwiperSlide.class));
 	}
 
-	//考虑到轮播通常不会有很多页，直接全量更新。
+	/**
+	 * 考虑到轮播通常不会有很多页，直接全量更新。
+	 *
+	 * @param slides 轮播页列表
+	 * @return HTTP响应
+	 * @throws JsonProcessingException 如果出这异常，说明代码有BUG
+	 */
 	@RequireAuthorize
 	@PutMapping
 	public ResponseEntity<Void> update(@RequestBody List<SwiperSlide> slides) throws JsonProcessingException {

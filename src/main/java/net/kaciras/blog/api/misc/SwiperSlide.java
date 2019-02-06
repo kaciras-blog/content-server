@@ -1,10 +1,12 @@
 package net.kaciras.blog.api.misc;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @ToString(of = {"name", "link"})
-@Data
+@Getter
+@Setter
 final class SwiperSlide {
 
 	private String name;

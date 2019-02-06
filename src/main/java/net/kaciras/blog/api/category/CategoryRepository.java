@@ -1,11 +1,13 @@
 package net.kaciras.blog.api.category;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +18,7 @@ import java.util.Arrays;
  *
  * @author Kaciras
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
 public class CategoryRepository {
 
@@ -32,7 +34,7 @@ public class CategoryRepository {
 	}
 
 	@Transactional
-	public int add(Category category, int parent) {
+	public int add(@NonNull Category category, int parent) {
 		Utils.checkNotNegative(parent, "parent");
 		if (parent > 0) {
 			requireContains(parent);
@@ -53,7 +55,7 @@ public class CategoryRepository {
 	 *
 	 * @param category 新的分类信息对象
 	 */
-	public void update(Category category) {
+	public void update(@NonNull Category category) {
 		if (category.getId() == 0) {
 			dao.updateRoot(category);
 		} else {

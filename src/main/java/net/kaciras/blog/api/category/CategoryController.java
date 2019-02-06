@@ -60,8 +60,12 @@ class CategoryController {
 
 	@RequireAuthorize
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(@PathVariable int id) {
-		repository.remove(id);
+	public ResponseEntity<Void> delete(@PathVariable int id, @RequestParam boolean tree) {
+		if (tree) {
+			repository.removeTree(id);
+		} else {
+			repository.remove(id);
+		}
 		return ResponseEntity.noContent().build();
 	}
 }

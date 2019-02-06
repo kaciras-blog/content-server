@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * 暂时都没加事务
- */
+// 暂时都没加事务
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
 public class DraftRepository {

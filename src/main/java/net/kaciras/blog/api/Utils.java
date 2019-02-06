@@ -12,9 +12,5 @@ public final class Utils {
 		if (value < 0) throw new RequestArgumentException("参数" + valname + "不能为负:" + value);
 	}
 
-	public static void checkNotNull(Object obj, String argName) {
-		if (obj == null) throw new RequestArgumentException("参数" + argName + "不能为null");
-	}
-
 	private Utils() {}
 }
