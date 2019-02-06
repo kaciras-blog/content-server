@@ -13,9 +13,6 @@ interface ClassifyDAO {
 	@Update("UPDATE article SET category=#{New} WHERE category=#{old}")
 	void updateCategory(int old, int New);
 
-	@Select("SELECT category FROM article WHERE id=#{id}")
-	int selectById(int id);
-
 	// 感觉性能不太好
 	@Select("SELECT COUNT(*) FROM article AS A " +
 			"JOIN category_tree AS B ON A.category=B.descendant " +

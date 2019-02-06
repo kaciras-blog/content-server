@@ -13,13 +13,14 @@ import javax.annotation.PostConstruct;
 @Service
 public class ArticleManager {
 
+	private final ClassifyDAO classifyDAO;
 	private final ArticleRepository repository;
 	private final MessageClient messageClient;
 
 	@PostConstruct
 	private void init() {
 		messageClient.getChannel(CategoryRemovedEvent.class)
-				.subscribe(event -> repository.get(event.getId()).updateCategory(event.getParent()));
+				.subscribe(event -> classifyDAO.updateCategory(event.getId(), event.getParent()));
 	}
 
 	/**

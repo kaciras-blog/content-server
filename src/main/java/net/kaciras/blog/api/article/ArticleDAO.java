@@ -3,6 +3,7 @@ package net.kaciras.blog.api.article;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 这里不涉及分类字段，分类由ClassifyDAO操作。
@@ -12,7 +13,7 @@ interface ArticleDAO {
 
 	@Select("SELECT * FROM article WHERE id=#{id}")
 	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleMap")
-	Article selectById(int id);
+	Optional<Article> selectById(int id);
 
 	@Select("SELECT COUNT(*) FROM article")
 	int selectCount();
