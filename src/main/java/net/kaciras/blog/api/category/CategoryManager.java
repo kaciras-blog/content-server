@@ -16,7 +16,7 @@ public class CategoryManager {
 	private final CategoryRepository repository;
 
 	public Banner getBanner(int id) {
-		return getBanner(repository.get(id));
+		return repository.get(id).map(this::getBanner).orElse(null);
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class CategoryManager {
 					return new Banner(parent.getBackground(), parent.getTheme());
 				}
 			}
-			var root = repository.get(0);
+			var root = repository.getRoot();
 			if (root.getBackground() != null) {
 				return new Banner(root.getBackground(), root.getTheme());
 			}

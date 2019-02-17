@@ -3,14 +3,13 @@ package net.kaciras.blog.api.article;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.DBUtils;
-import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
@@ -27,30 +26,26 @@ public class ArticleRepository {
 	 * @return 文章对象
 	 * @throws ResourceNotFoundException 如果指定ID的文章不存在
 	 */
-	@NonNull
-	public Article get(int id) {
-		return articleDAO.selectById(id).orElseThrow(ResourceNotFoundException::new);
+	public Optional<Article> get(int id) {
+		return articleDAO.selectById(id);
 	}
 
+	/**
+	 * 添加一篇文章，在添加后新生成的ID将被设置。
+	 *
+	 * @param article 文章对象
+	 */
 	@Transactional
 	public void add(@NonNull Article article) {
-		try {
-			articleDAO.insert(article);
-			insertKeywords(article.getId(), article.getKeywords());
-		} catch (DataIntegrityViolationException ex) {
-			throw new RequestArgumentException();
-		}
+		articleDAO.insert(article);
+		insertKeywords(article.getId(), article.getKeywords());
 	}
 
 	@Transactional
 	public void update(@NonNull Article article) {
-		try {
-			DBUtils.checkEffective(articleDAO.update(article));
-			keywordDAO.clear(article.getId());
-			insertKeywords(article.getId(), article.getKeywords());
-		} catch (DataIntegrityViolationException ex) {
-			throw new RequestArgumentException(ex);
-		}
+		DBUtils.checkEffective(articleDAO.update(article));
+		keywordDAO.clear(article.getId());
+		insertKeywords(article.getId(), article.getKeywords());
 	}
 
 	private void insertKeywords(int articleId, List<String> keywords) {

@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
 import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
+import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
+import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,13 +31,13 @@ public class ArticleAppService {
 	/**
 	 * 获取一个文章，同时检查文章的删除状态以及用户是否具有查看删除文章的权限。
 	 *
-	 * @param id 文章ID
+	 * @param id      文章ID
 	 * @param outside 是否由外部访问的
 	 * @return 文章对象
 	 * @throws ResourceDeletedException 如果文章被标记为删除，且用户没有查看权限
 	 */
 	public Article getArticle(int id, boolean outside) {
-		var article = repository.get(id);
+		var article = repository.get(id).orElseThrow(ResourceNotFoundException::new);
 
 		if (article.isDeleted()
 				&& SecurityContext.checkSelf(article.getUserId(), "SHOW_DELETED")) {
@@ -47,17 +50,27 @@ public class ArticleAppService {
 	}
 
 	public String getContent(int id) {
-		return repository.get(id).getContent();
+		return repository.get(id)
+				.orElseThrow(ResourceNotFoundException::new)
+				.getContent();
 	}
 
 	public void addNew(Article article, int draftId) {
-		repository.add(article);
-		messageClient.send(new ArticleCreatedEvent(article.getId(), draftId, article.getCategory()));
+		try {
+			repository.add(article);
+			messageClient.send(new ArticleCreatedEvent(article.getId(), draftId, article.getCategory()));
+		} catch (DataIntegrityViolationException ex) {
+			throw new RequestArgumentException();
+		}
 	}
 
 	public void updateContent(ArticleContentBase content, int id) {
-		repository.update(article);
-		messageClient.send(new ArticleUpdatedEvent(id, update.getDraftId(), update.getCategory()));
+		try {
+			repository.update(article);
+			messageClient.send(new ArticleUpdatedEvent(id, update.getDraftId(), update.getCategory()));
+		} catch (DataIntegrityViolationException ex) {
+			throw new RequestArgumentException(ex);
+		}
 	}
 
 	public void updateDeletion(int id, boolean deletion) {

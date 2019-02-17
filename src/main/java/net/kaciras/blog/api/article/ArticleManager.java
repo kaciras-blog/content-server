@@ -12,7 +12,6 @@ import javax.annotation.PostConstruct;
 public class ArticleManager {
 
 	private final ClassifyDAO classifyDAO;
-	private final ArticleRepository repository;
 	private final MessageClient messageClient;
 
 	@PostConstruct

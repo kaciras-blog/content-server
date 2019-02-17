@@ -18,12 +18,19 @@ public final class ReplyList {
 
 	private final Discussion parent;
 
-	public void add(Discussion reply) {
+	/**
+	 * 添加新的回复到楼中楼列表中。
+	 *
+	 * @param reply 回复
+	 * @return 生成的回复ID
+	 */
+	public long add(Discussion reply) {
 		reply.setParent(parent.getId());
 		reply.setObjectId(parent.getObjectId());
 		reply.setType(parent.getType());
 		reply.setFloor(parent.getFloor());
 		dao.insert(reply);
+		return reply.getId();
 	}
 
 	public int size() {

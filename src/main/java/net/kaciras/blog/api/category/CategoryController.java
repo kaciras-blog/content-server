@@ -1,7 +1,9 @@
 package net.kaciras.blog.api.category;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -19,28 +21,32 @@ class CategoryController {
 
 	@GetMapping("/{id}")
 	public CategoryVo get(@PathVariable int id, @RequestParam(defaultValue = "false") boolean aggregate) {
-		var category = repository.get(id);
+		var category = getRequired(id);
 		return aggregate ? mapper.aggregatedView(category) : mapper.categoryView(category);
 	}
 
 	@GetMapping("/{id}/children")
 	public List<CategoryVo> getChildren(@PathVariable int id) {
-		return mapper.categoryView(repository.get(id).getChildren());
+		return mapper.categoryView(getRequired(id).getChildren());
 	}
 
 	@RequireAuthorize
 	@PostMapping
 	public ResponseEntity<Void> create(@RequestBody CategoryAttributes category, @RequestParam int parent) {
-		var id = repository.add(mapper.toCategory(category), parent);
-		return ResponseEntity.created(URI.create("/categories/" + id)).build();
+		try {
+			var id = repository.add(mapper.toCategory(category), parent);
+			return ResponseEntity.created(URI.create("/categories/" + id)).build();
+		} catch (DataIntegrityViolationException ex) {
+			throw new IllegalArgumentException("分类实体中存在不合法的属性值", ex);
+		}
 	}
 
 	@Transactional
 	@RequireAuthorize
 	@PostMapping("/transfer")
 	public void move(@RequestParam int id, @RequestParam int parent, @RequestParam boolean treeMode) {
-		var category = repository.get(id);
-		var newParent = repository.get(parent);
+		var category = getRequired(id);
+		var newParent = getRequired(parent);
 
 		if (treeMode) {
 			category.moveTreeTo(newParent);
@@ -52,7 +58,7 @@ class CategoryController {
 	@RequireAuthorize
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody CategoryAttributes attributes) {
-		var category = repository.get(id);
+		var category = getRequired(id);
 		mapper.update(category, attributes);
 		repository.update(category);
 		return ResponseEntity.noContent().build();
@@ -67,5 +73,9 @@ class CategoryController {
 			repository.remove(id);
 		}
 		return ResponseEntity.noContent().build();
+	}
+
+	private Category getRequired(int id) {
+		return repository.get(id).orElseThrow(ResourceNotFoundException::new);
 	}
 }

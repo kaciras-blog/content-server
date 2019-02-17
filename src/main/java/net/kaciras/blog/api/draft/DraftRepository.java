@@ -5,12 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.infrastructure.DBUtils;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 // 暂时都没加事务
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,11 +48,9 @@ public class DraftRepository {
 		draftDAO.insert(draft);
 	}
 
-	@Transactional
-	@NonNull
-	public Draft findById(int id) {
+	public Optional<Draft> findById(int id) {
 		Utils.checkPositive(id, "id");
-		return draftDAO.selectById(id).orElseThrow(ResourceNotFoundException::new);
+		return draftDAO.selectById(id);
 	}
 
 	public void clear(int userId) {

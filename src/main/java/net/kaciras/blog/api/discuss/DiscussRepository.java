@@ -2,14 +2,13 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
@@ -30,25 +29,15 @@ class DiscussRepository {
 		dao.insert(dis);
 	}
 
-	@NonNull
-	public Discussion get(long id) {
-		return dao.selectById(id).orElseThrow(ResourceNotFoundException::new);
+	public Optional<Discussion> get(long id) {
+		return dao.selectById(id);
 	}
 
 	public List<Discussion> findAll(@NonNull DiscussionQuery query) {
-		if (query.getPageable().getPageSize() > 30) {
-			throw new RequestArgumentException("单次查询数量太多");
-		}
-		if (query.isInvalid()) {
-			throw new RequestArgumentException("请指定查询条件");
-		}
 		return dao.selectList(query);
 	}
 
 	public int size(@NonNull DiscussionQuery query) {
-		if (query.isInvalid()) {
-			throw new RequestArgumentException("请指定查询条件");
-		}
 		return dao.selectCount(query);
 	}
 }

@@ -69,28 +69,17 @@ class ArticleController {
 		return ResponseEntity.created(URI.create("/articles/" + article.getId())).build();
 	}
 
-	// 不更改 urlTitle，category，这些属性使用PATCH修改
-	@RequireAuthorize
-	@PutMapping("/{id}")
-	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody PublishRequest update) {
-		/* PATCH 一个端点处理所有？
-		 * {
-		 * 		attributes: {
-		 * 			...ContentBase,
-		 * 			urlTitle: ...
-		 * 		}
-		 * 		content: ...
-		 * 		category: ...
-		 * 		deletion: ...
-		 * }
-		 */
-		var article = repository.get(id);
-
-		mapper.update(article, update);
-
-		return ResponseEntity.noContent().build();
-	}
-
+	/* PATCH 一个端点处理所有？
+	 * {
+	 * 		attributes: {
+	 * 			...ContentBase,
+	 * 			urlTitle: ...
+	 * 		}
+	 * 		content: ...
+	 * 		category: ...
+	 * 		deletion: ...
+	 * }
+	 */
 	@RequireAuthorize
 	@PatchMapping("/{id}")
 	public ResponseEntity<Void> patch(@PathVariable int id, @RequestBody PatchMap patchMap) {
