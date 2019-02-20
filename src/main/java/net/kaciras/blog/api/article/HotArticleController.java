@@ -18,10 +18,10 @@ class HotArticleController {
 	private final ArticleRepository repository;
 	private final ArticleMapper mapper;
 
-	private List<PreviewVo> popular;
+	private List<ArticleVo> popular;
 
 	@GetMapping("/articles")
-	public List<PreviewVo> getHotArticles() {
+	public List<ArticleVo> getHotArticles() {
 		return popular;
 	}
 
@@ -29,6 +29,6 @@ class HotArticleController {
 	void updateHotsTask() {
 		var request = new ArticleListQuery();
 		request.setPageable(PageRequest.of(0, 6, Sort.Direction.DESC, "view_count"));
-		popular = mapper.toPreview(repository.findAll(request), request);
+		popular = mapper.toViewObject(repository.findAll(request));
 	}
 }

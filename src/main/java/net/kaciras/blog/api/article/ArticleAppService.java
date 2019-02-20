@@ -3,14 +3,15 @@ package net.kaciras.blog.api.article;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
-import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.message.MessageClient;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,12 +50,7 @@ public class ArticleAppService {
 		return article;
 	}
 
-	public String getContent(int id) {
-		return repository.get(id)
-				.orElseThrow(ResourceNotFoundException::new)
-				.getContent();
-	}
-
+	@RequireAuthorize
 	public void addNew(Article article, int draftId) {
 		try {
 			repository.add(article);
@@ -64,16 +60,19 @@ public class ArticleAppService {
 		}
 	}
 
-	public void updateContent(ArticleContentBase content, int id) {
-		try {
-			repository.update(article);
-			messageClient.send(new ArticleUpdatedEvent(id, update.getDraftId(), update.getCategory()));
-		} catch (DataIntegrityViolationException ex) {
-			throw new RequestArgumentException(ex);
-		}
-	}
+	@RequireAuthorize
+	@Transactional
+	public void update(int id, PatchMap patchMap) {
+		var article = repository.get(id).orElseThrow(ResourceNotFoundException::new);
 
-	public void updateDeletion(int id, boolean deletion) {
-		repository.get(id).updateDeleted(deletion);
+		if (patchMap.getCategory() != null) {
+			article.updateCategory(patchMap.getCategory());
+		}
+		if (patchMap.getDeletion() != null) {
+			article.updateDeleted(patchMap.getDeletion());
+		}
+		if(patchMap.getUrlTitle() != null) {
+			article.updateUrlTitle(patchMap.getUrlTitle());
+		}
 	}
 }

@@ -1,7 +1,6 @@
 package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 class ArticleController {
 
 	private final ArticleAppService service;
-	private final ArticleManager articleManager;
 	private final ArticleMapper mapper;
 
 	private Map<Integer, String> etagCache = new ConcurrentHashMap<>();
@@ -33,7 +31,7 @@ class ArticleController {
 	@GetMapping
 	public List<ArticleVo> getList(ArticleListQuery request, Pageable pageable) {
 		request.setPageable(pageable);
-		return mapper.toViewObject(service.getList(request), request);
+		return mapper.toViewObject(service.getList(request));
 	}
 
 	@GetMapping("/{id}")
@@ -61,7 +59,6 @@ class ArticleController {
 		return ResponseEntity.ok().eTag("W/\"" + etag).body(vo);
 	}
 
-	@RequireAuthorize
 	@PostMapping
 	public ResponseEntity<Void> post(@RequestBody @Valid PublishRequest request) {
 		var article = mapper.createArticle(request, SecurityContext.getUserId());
@@ -75,25 +72,13 @@ class ArticleController {
 	 * 			...ContentBase,
 	 * 			urlTitle: ...
 	 * 		}
-	 * 		content: ...
 	 * 		category: ...
 	 * 		deletion: ...
 	 * }
 	 */
-	@RequireAuthorize
 	@PatchMapping("/{id}")
 	public ResponseEntity<Void> patch(@PathVariable int id, @RequestBody PatchMap patchMap) {
-		var article = repository.get(id);
-
-		if (patchMap.getCategory() != null) {
-			article.updateCategory(patchMap.getCategory());
-		}
-		if (patchMap.getDeletion() != null) {
-			article.updateDeleted(patchMap.getDeletion());
-		}
-		if(patchMap.getUrlTitle() != null) {
-			article.updateUrlTitle(patchMap.getUrlTitle());
-		}
+		service.update(id, patchMap);
 		return ResponseEntity.noContent().build();
 	}
 }
