@@ -3,6 +3,8 @@ package net.kaciras.blog.api.discuss;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
+import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
+import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,19 +26,25 @@ public class DiscussionService {
 
 	/* - - - - - - - - - - - - - - - 业务方法 - - - - - - - - - - - - - - - - -  */
 
-	private void verifyQuery(DiscussionQuery query) {
+	private void checkPermission(DiscussionQuery query) {
 		if (query.getDeletion() != DeletedState.FALSE && SecurityContext.isNot(query.getUserId())) {
 			SecurityContext.require("POWER_QUERY");
 		}
 	}
 
 	public List<Discussion> getList(DiscussionQuery query) {
-		verifyQuery(query);
+		checkPermission(query);
+		if (query.getPageable().getPageSize() > 30) {
+			throw new RequestArgumentException("单次查询数量太多");
+		}
+		if (query.isInvalid()) {
+			throw new RequestArgumentException("请指定查询条件");
+		}
 		return repository.findAll(query);
 	}
 
 	public int count(DiscussionQuery query) {
-		verifyQuery(query);
+		checkPermission(query);
 		return repository.size(query);
 	}
 
@@ -52,8 +60,10 @@ public class DiscussionService {
 	public long addReply(long disId, String content) {
 		checkAddedUser();
 		var reply = Discussion.create(SecurityContext.getUserId(), content);
-		repository.get(disId).getReplyList().add(reply);
-		return reply.getId();
+		return repository.get(disId)
+				.map(Discussion::getReplyList)
+				.orElseThrow(ResourceNotFoundException::new)
+				.add(reply);
 	}
 
 	private void checkAddedUser() {

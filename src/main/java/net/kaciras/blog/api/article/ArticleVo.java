@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.kaciras.blog.api.category.Banner;
-import net.kaciras.blog.api.user.UserVo;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,26 +14,27 @@ import java.util.List;
 public final class ArticleVo {
 
 	private int id;
-	private String urlTitle;
-	private UserVo author;
-	private int category;
-	private boolean deleted;
 
+	// 文章自身属性，注意不包含内容，内容要单独查询
+	private String urlTitle;
 	private String title;
 	private List<String> keywords;
 	private String summary;
-	private String content;
 
+	// 附加属性
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime create;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime update;
 
-	private int viewCount;
-	private int discussionCount;
-
+	private int vcnt;
+	private int dcnt;
 	private ArticleLink prev;
 	private ArticleLink next;
-	private Banner banner;
+	private boolean deleted;
+
+	// 关联其它的领域对象
+	private int author;
+	private int category;
 }

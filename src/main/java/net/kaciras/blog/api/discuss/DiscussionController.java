@@ -2,7 +2,7 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.ListQueryView;
-import net.kaciras.blog.infrastructure.DBUtils;
+import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
@@ -45,24 +45,24 @@ class DiscussionController {
 	@PatchMapping("/{id}")
 	public ResponseEntity<Void> patch(@PathVariable long id, @RequestBody PatchMap patchMap) {
 		if (patchMap.getDeletion() != null) {
-			repository.get(id).updateDeletion(patchMap.getDeletion());
+			getRequired(id).updateDeletion(patchMap.getDeletion());
 		}
 		return ResponseEntity.noContent().build();
 	}
 
 	/**
 	 * 查询指定评论的回复（楼中楼）。
-	 *
+	 * <p>
 	 * 楼中楼的URL主要使用子资源的形式，虽然getList()方法通过设置请求参数
 	 * 也能做到相同的功能，但使用子资源更加语义化。
 	 *
-	 * @param id 评论ID
+	 * @param id       评论ID
 	 * @param pageable 分页参数
 	 * @return 回复列表
 	 */
 	@GetMapping("/{id}/replies")
 	public ListQueryView<DiscussionVo> getReplies(@PathVariable long id, Pageable pageable) {
-		var replies = DBUtils.checkNotNullResource(repository.get(id)).getReplyList();
+		var replies = getRequired(id).getReplyList();
 		return new ListQueryView<>(replies.size(), mapper.toReplyView(replies.select(pageable)));
 	}
 
@@ -81,7 +81,7 @@ class DiscussionController {
 	@PostMapping("/{id}/votes")
 	public ResponseEntity<Void> postVote(@PathVariable int id) {
 		SecurityContext.requireLogin();
-		repository.get(id).getVoterList().add(SecurityContext.getUserId());
+		getRequired(id).getVoterList().add(SecurityContext.getUserId());
 
 		return ResponseEntity.created(URI.create("discussions/" + id + "/votes")).build();
 	}
@@ -89,9 +89,13 @@ class DiscussionController {
 	@DeleteMapping("/{id}/votes")
 	public ResponseEntity<Void> revokeVote(@PathVariable int id) {
 		SecurityContext.requireLogin();
-		repository.get(id).getVoterList().remove(SecurityContext.getUserId());
+		getRequired(id).getVoterList().remove(SecurityContext.getUserId());
 
 		return ResponseEntity.noContent().build();
+	}
+
+	private Discussion getRequired(long id) {
+		return repository.get(id).orElseThrow(ResourceNotFoundException::new);
 	}
 
 	@ExceptionHandler(ResourceStateException.class)

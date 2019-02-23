@@ -21,7 +21,7 @@ interface DraftMapper {
 	@Named("toDraftVo")
 	default DraftVo toDraftVo(Draft draft) {
 		var vo = createDraftVo(draft);
-		var lastHistory = draft.getHistoryList().findLastest();
+		var lastHistory = draft.getHistoryList().findLatest();
 		vo.setTitle(lastHistory.getTitle());
 		vo.setUpdateTime(lastHistory.getTime());
 		vo.setLastSaveCount(lastHistory.getSaveCount());

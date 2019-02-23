@@ -3,6 +3,7 @@ package net.kaciras.blog.api.category;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 interface CategoryDAO {
@@ -15,7 +16,7 @@ interface CategoryDAO {
 	 */
 	@Select("SELECT * FROM category WHERE id=#{id}")
 	@TypeDiscriminator(column = "id", javaType = int.class, cases = @Case(value = "0", type = RootCategory.class))
-	Category selectAttributes(int id);
+	Optional<Category> selectAttributes(int id);
 
 	@Select("SELECT A.* FROM category AS A " +
 			"JOIN category_tree AS B ON A.id=B.ancestor " +

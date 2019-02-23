@@ -36,7 +36,7 @@ public final class SqlProvider {
 		var sort = pageable.getSort();
 
 		if (sort.isUnsorted()) {
-			sql.ORDER_BY("id DESC"); //默认按发布顺序倒序
+			sql.ORDER_BY("id DESC"); // 默认按发布顺序倒序
 		} else {
 			var order = Misc.getFirst(sort);
 			var p = order.getProperty();

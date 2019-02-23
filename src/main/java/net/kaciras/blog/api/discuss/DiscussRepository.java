@@ -1,14 +1,16 @@
 package net.kaciras.blog.api.discuss;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
 class DiscussRepository {
 
@@ -21,31 +23,21 @@ class DiscussRepository {
 	 * @param dis 评论对象
 	 */
 	@Transactional(isolation = Isolation.SERIALIZABLE)
-	public void add(Discussion dis) {
+	public void add(@NonNull Discussion dis) {
 		var count = dao.selectCountByObject(dis.getObjectId(), dis.getType());
 		dis.setFloor(count); // 评论的楼层是连续的，新评论的楼层就是已有评论的数量
 		dao.insert(dis);
 	}
 
-	public Discussion get(long id) {
+	public Optional<Discussion> get(long id) {
 		return dao.selectById(id);
 	}
 
-	public List<Discussion> findAll(DiscussionQuery query) {
-		if (query.getPageable().getPageSize() > 30) {
-			throw new RequestArgumentException("单次查询数量太多");
-		}
-		if (query.isInvalid()) {
-			throw new RequestArgumentException("请指定查询条件");
-		}
+	public List<Discussion> findAll(@NonNull DiscussionQuery query) {
 		return dao.selectList(query);
 	}
 
-	public int size(DiscussionQuery query) {
-
-		if (query.isInvalid()) {
-			throw new RequestArgumentException("请指定查询条件");
-		}
+	public int size(@NonNull DiscussionQuery query) {
 		return dao.selectCount(query);
 	}
 }

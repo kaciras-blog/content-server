@@ -1,18 +1,18 @@
 package net.kaciras.blog.api.draft;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.infrastructure.DBUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-/**
- * 暂时都没加事务
- */
-@RequiredArgsConstructor
+// 暂时都没加事务
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
 public class DraftRepository {
 
@@ -39,7 +39,7 @@ public class DraftRepository {
 	 * 先使用一条语句检查了用户已有的草稿数量，也可以在数据库层面写触发器实现。
 	 * 在这里检查，默认的事务级别下可能会出现幻读，但这并不会造成严重的影响。
 	 */
-	public void add(Draft draft) {
+	public void add(@NonNull Draft draft) {
 		Utils.checkPositive(draft.getUserId(), "userId");
 		var count = draftDAO.selectCountByUser(draft.getUserId());
 		if (count > userLimit) {
@@ -48,10 +48,9 @@ public class DraftRepository {
 		draftDAO.insert(draft);
 	}
 
-	@Transactional
-	public Draft findById(int id) {
+	public Optional<Draft> findById(int id) {
 		Utils.checkPositive(id, "id");
-		return DBUtils.checkNotNullResource(draftDAO.selectById(id));
+		return draftDAO.selectById(id);
 	}
 
 	public void clear(int userId) {

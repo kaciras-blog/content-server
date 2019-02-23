@@ -1,30 +1,37 @@
 package net.kaciras.blog.api.category;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
 import net.kaciras.blog.infrastructure.message.MessageClient;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * 基于ClosureTable的的数据库存储分类树实现。
  *
  * @author Kaciras
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
 public class CategoryRepository {
 
 	private final CategoryDAO dao;
 	private final MessageClient messageClient;
 
-	public Category get(int id) {
-		return DBUtils.checkNotNullResource(dao.selectAttributes(id));
+	public Optional<Category> get(int id) {
+		return dao.selectAttributes(id);
+	}
+
+	@NonNull
+	public Category getRoot() {
+		return new RootCategory();
 	}
 
 	public int size() {
@@ -32,16 +39,12 @@ public class CategoryRepository {
 	}
 
 	@Transactional
-	public int add(Category category, int parent) {
+	public int add(@NonNull Category category, int parent) {
 		Utils.checkNotNegative(parent, "parent");
 		if (parent > 0) {
 			requireContains(parent);
 		}
-		try {
-			dao.insert(category);
-		} catch (DataIntegrityViolationException ex) {
-			throw new IllegalArgumentException("分类实体中存在不合法的属性值", ex);
-		}
+		dao.insert(category);
 		dao.insertPath(category.getId(), parent);
 		dao.insertNode(category.getId());
 		return category.getId();
@@ -53,7 +56,7 @@ public class CategoryRepository {
 	 *
 	 * @param category 新的分类信息对象
 	 */
-	public void update(Category category) {
+	public void update(@NonNull Category category) {
 		if (category.getId() == 0) {
 			dao.updateRoot(category);
 		} else {
@@ -70,7 +73,7 @@ public class CategoryRepository {
 		if (parent == null) {
 			parent = 0;
 		}
-		get(id).moveSubTree(parent);
+		get(id).orElseThrow().moveSubTree(parent);
 		deleteBoth(id);
 
 		messageClient.send(new CategoryRemovedEvent(id, parent));

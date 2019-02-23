@@ -47,7 +47,7 @@ public final class Discussion {
 
 	public ReplyList getReplyList() {
 		if (parent != 0) {
-			throw new ResourceNotFoundException("楼中楼不能再包含楼中楼了。<-- 有点绕口");
+			throw new ResourceNotFoundException("楼中楼不能再包含楼中楼了");
 		}
 		return new ReplyList(this);
 	}

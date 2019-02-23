@@ -54,16 +54,16 @@ public final class HistoryList {
 	}
 
 	public DraftHistory findBySaveCount(int saveCount) {
-		return DBUtils.checkNotNullResource(historyDAO.select(id, saveCount));
+		return historyDAO.select(id, saveCount);
 	}
 
 	// 不包含 content
-	public List<DraftHistory> findAll() {
-		return historyDAO.selectAll(id);
+	public DraftHistory findLatest() {
+		return historyDAO.select(id, historyDAO.selectLastSaveCount(id));
 	}
 
-	public DraftHistory findLastest() {
-		return DBUtils.checkNotNullResource(historyDAO.select(id, historyDAO.selectLastSaveCount(id)));
+	public List<DraftHistory> findAll() {
+		return historyDAO.selectAll(id);
 	}
 
 	public void update(DraftContent content) {

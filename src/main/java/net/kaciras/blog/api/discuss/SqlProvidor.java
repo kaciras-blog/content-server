@@ -2,6 +2,7 @@ package net.kaciras.blog.api.discuss;
 
 import org.apache.ibatis.jdbc.SQL;
 
+@SuppressWarnings("unused")
 public final class SqlProvidor {
 
 	public String select(DiscussionQuery query) {
@@ -41,5 +42,4 @@ public final class SqlProvidor {
 				break;
 		}
 	}
-
 }

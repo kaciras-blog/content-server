@@ -1,16 +1,18 @@
 package net.kaciras.blog.api.user;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.DBUtils;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
-@RequiredArgsConstructor
+// 未提供删除方法
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
-class UserRepository {
+public class UserRepository {
 
 	private final UserDAO userDao;
 
-	public void add(User user) {
+	public void add(@NonNull User user) {
 		userDao.insert(user);
 	}
 
@@ -19,10 +21,6 @@ class UserRepository {
 			return User.GUEST;
 		}
 		return userDao.select(id);
-	}
-
-	public void delete(int id) {
-		DBUtils.checkEffective(userDao.delete(id));
 	}
 
 	public User getByName(String name) {
