@@ -1,10 +1,12 @@
 schema {
 	query: Query
+	mutation: Mutation
 }
 
 type Query {
 	article(id: ID!): Article
 	articles(start: Int, count: Int): [Article!]!
+	category(id: Int!): Category
 }
 
 type Article {
@@ -16,7 +18,13 @@ type Article {
 }
 
 type Category {
-	id: ID!
+	id: Int!
 	name: String!
 
+	children: [Category]!
+	banner: String
+}
+
+type Mutation {
+	updateUserHead(head: String): Boolean
 }

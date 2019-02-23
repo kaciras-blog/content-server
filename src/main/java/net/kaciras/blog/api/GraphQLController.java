@@ -6,7 +6,6 @@ import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
-import net.kaciras.blog.api.article.ArticleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,23 +22,26 @@ public class GraphQLController {
 
 	private GraphQLSchema graphQLSchema;
 
-	private final ArticleRepository articleRepository;
-
 	@Autowired
-	public GraphQLController(ArticleRepository articleRepository) throws IOException {
-		this.articleRepository = articleRepository;
+	public GraphQLController(ArticleDataFetcher articleDataFetcher,
+							 CategoryDataFetcher categoryDataFetcher,
+							 UserDataFetcher userDataFetcher) throws IOException {
 
-		var schemaParser = new SchemaParser();
 		var stream = GraphQLController.class.getClassLoader().getResourceAsStream("schema.graphql");
-
 		TypeDefinitionRegistry registry;
-		try(var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-			registry = schemaParser.parse(reader);
+		try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+			registry = new SchemaParser().parse(reader);
 		}
 
 		var wiring = RuntimeWiring.newRuntimeWiring()
-				.type("Query", builder -> builder.dataFetcher("article",
-					env -> articleRepository.get(Integer.parseInt(env.getArgument("id"))))).build();
+				.type("Query", builder -> builder
+						.dataFetcher("category", categoryDataFetcher::getById)
+						.dataFetcher("article", articleDataFetcher::getById))
+				.type("Category", builder -> builder
+						.dataFetcher("banner", categoryDataFetcher::getBanner))
+				.type("Mutation", builder -> builder
+						.dataFetcher("updateUserHead", userDataFetcher::updateHead))
+				.build();
 
 		var schemaGenerator = new SchemaGenerator();
 		graphQLSchema = schemaGenerator.makeExecutableSchema(registry, wiring);
@@ -49,6 +51,12 @@ public class GraphQLController {
 	public Object query(@RequestParam String query) {
 		var build = GraphQL.newGraphQL(graphQLSchema).build();
 		var executionResult = build.execute(query);
-		return executionResult.getData();
+		var errors = executionResult.getErrors();
+
+		if (errors.isEmpty()) {
+			return executionResult.getData();
+		} else {
+			return errors.get(0);
+		}
 	}
 }
