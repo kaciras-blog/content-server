@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequestMapping("/articles")
 class ArticleController {
 
-	private final ArticleAppService service;
+	private final ArticleService service;
 	private final ArticleMapper mapper;
 
 	private Map<Integer, String> etagCache = new ConcurrentHashMap<>();

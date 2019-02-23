@@ -15,10 +15,6 @@ public class CategoryManager {
 
 	private final CategoryRepository repository;
 
-	public Banner getBanner(int id) {
-		return repository.get(id).map(this::getBanner).orElse(null);
-	}
-
 	/**
 	 * 获取最适合指定分类的横幅大图。
 	 *

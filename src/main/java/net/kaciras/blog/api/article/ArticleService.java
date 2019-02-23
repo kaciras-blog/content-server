@@ -17,7 +17,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class ArticleAppService {
+public class ArticleService {
 
 	private final ArticleRepository repository;
 	private final MessageClient messageClient;

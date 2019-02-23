@@ -19,17 +19,6 @@ abstract class CategoryMapper {
 	@Autowired
 	private CategoryManager categoryManager;
 
-	public AggregationVo aggregatedView(Category category) {
-		if(category == null) {
-			return null;
-		}
-		var vo = new AggregationVo();
-		copyProps(vo, category);
-		vo.setParent(categoryView(category.getParent()));
-		vo.setChildren(categoryView(category.getChildren()));
-		return vo;
-	}
-
 	@Named("CategoryVo")
 	public CategoryVo categoryView(Category category) {
 		if(category == null) {
