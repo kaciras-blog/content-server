@@ -11,6 +11,7 @@ import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,7 +19,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.client.RestTemplate;
+
+import java.net.InetSocketAddress;
+import java.net.ProxySelector;
+import java.net.http.HttpClient;
 
 /**
  * 在配置文件里排除了一些配置，添加新功能时记得看下有没有需要的依赖被排除了。
@@ -49,18 +53,26 @@ public class ServiceApplication {
 
 	@ConditionalOnMissingBean
 	@Bean
-	RestTemplate restTemplate() {
-		return new RestTemplate();
-	}
-
-	@ConditionalOnMissingBean
-	@Bean
 	RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory factory) {
 		var template = new RedisTemplate<String, byte[]>();
 		template.setEnableDefaultSerializer(false);
 		template.setConnectionFactory(factory);
 		template.setKeySerializer(new StringRedisSerializer());
 		return template;
+	}
+
+	@Profile("prod")
+	@Bean
+	HttpClient httpClient() {
+		return HttpClient.newBuilder().build();
+	}
+
+	@Profile("dev")
+	@Bean("httpClient")
+	HttpClient devHttpClient() {
+		return HttpClient.newBuilder()
+				.proxy(ProxySelector.of(new InetSocketAddress("localhost", 2080)))
+				.build();
 	}
 
 	public static void main(String... args) throws Exception {
