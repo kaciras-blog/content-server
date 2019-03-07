@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.user;
+package net.kaciras.blog.api.principle.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

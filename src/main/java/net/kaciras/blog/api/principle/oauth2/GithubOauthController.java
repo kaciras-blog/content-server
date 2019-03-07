@@ -1,15 +1,20 @@
-package net.kaciras.blog.api.user;
+package net.kaciras.blog.api.principle.oauth2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.kaciras.blog.api.principle.AuthType;
+import net.kaciras.blog.api.principle.SessionService;
+import net.kaciras.blog.api.user.UserManager;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -28,6 +33,10 @@ public class GithubOauthController {
 	private final ObjectMapper objectMapper;
 	private final HttpClient httpClient;
 
+	private final OauthDAO oauthDAO;
+	private final UserManager userManager;
+	private final SessionService sessionService;
+
 	@GetMapping
 	public ResponseEntity<Void> github() {
 		var authUri = UriComponentsBuilder
@@ -42,14 +51,19 @@ public class GithubOauthController {
 	// 用户在Github上确认授权后将跳转到此端点上
 	// Github的 access_token 不过期
 	@GetMapping("/callback")
-	public ResponseEntity<Void> callback(@RequestParam String code) throws IOException, InterruptedException {
-		var token = getAccessToken(code).access_token;
+	public ResponseEntity<Void> callback(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		var token = getAccessToken(request.getParameter("code")).access_token;
 		var profile = getUserProfile(token);
 
-
+		var id = userManager.createNewUser(profile.name);
+		oauthDAO.insert(profile.id, AuthType.Github, id);
+		sessionService.putUser(request, response, id, true);
 
 		return ResponseEntity.status(200).build();
 	}
+
+	@Transactional
+
 
 	private AccessTokenEntity getAccessToken(String code) throws IOException, InterruptedException {
 		var authUri = UriComponentsBuilder

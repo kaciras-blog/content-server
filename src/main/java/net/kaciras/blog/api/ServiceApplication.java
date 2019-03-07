@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.http.HttpClient;
+import java.time.Clock;
 
 /**
  * 在配置文件里排除了一些配置，添加新功能时记得看下有没有需要的依赖被排除了。
@@ -59,6 +60,14 @@ public class ServiceApplication {
 		template.setConnectionFactory(factory);
 		template.setKeySerializer(new StringRedisSerializer());
 		return template;
+	}
+
+	/**
+	 * 使用 JAVA8 的新 API 代替 System.currentTimeMillis() 等旧API，Clock具有更好的语义并且便于Mock测试。
+	 */
+	@Bean
+	Clock clock() {
+		return Clock.systemDefaultZone();
 	}
 
 	@Profile("prod")

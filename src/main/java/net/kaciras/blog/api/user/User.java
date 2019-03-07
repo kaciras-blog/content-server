@@ -19,9 +19,8 @@ public class User {
 	private UserDAO userDAO;
 
 	private int id;
-	private String name;
 
-	private String email;
+	private String name;
 	private ImageRefrence head;
 
 	private boolean deleted;
