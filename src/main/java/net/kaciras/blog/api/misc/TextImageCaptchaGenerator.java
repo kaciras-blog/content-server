@@ -28,9 +28,13 @@ public final class TextImageCaptchaGenerator {
 
 	private final Font font;
 
+	// 使用独立的字体文件，统一不同系统上的字体
 	public TextImageCaptchaGenerator() throws IOException, FontFormatException {
-		// 统一不同系统上的字体
-		try (var stream = TextImageCaptchaGenerator.class.getClassLoader().getResourceAsStream("CENTURY.TTF")) {
+		var fontFile = TextImageCaptchaGenerator.class.getClassLoader().getResource("CENTURY.TTF");
+		if (fontFile == null) {
+			throw new Error("找不到验证码字体文件：CENTURY.TTF");
+		}
+		try (var stream = fontFile.openStream()) {
 			font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(Font.PLAIN, CAPTCHA_HEIGHT - 4);
 		}
 	}

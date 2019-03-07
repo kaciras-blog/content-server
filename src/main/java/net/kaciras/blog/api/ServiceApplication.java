@@ -5,7 +5,6 @@ import net.kaciras.blog.infrastructure.autoconfig.*;
 import net.kaciras.blog.infrastructure.message.DirectMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.annotation.Bean;
@@ -46,19 +45,25 @@ public class ServiceApplication {
 	@SuppressWarnings("unused")
 	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
 
-	@ConditionalOnMissingBean
 	@Bean
 	MessageClient messageClient() {
 		return new DirectMessageClient();
 	}
 
-	@ConditionalOnMissingBean
 	@Bean
 	RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory factory) {
 		var template = new RedisTemplate<String, byte[]>();
 		template.setEnableDefaultSerializer(false);
 		template.setConnectionFactory(factory);
 		template.setKeySerializer(new StringRedisSerializer());
+		return template;
+	}
+
+	@Bean
+	RedisTemplate<byte[], byte[]> bytesRedisTemplate(RedisConnectionFactory connectionFactory) {
+		var template = new RedisTemplate<byte[], byte[]>();
+		template.setEnableDefaultSerializer(false);
+		template.setConnectionFactory(connectionFactory);
 		return template;
 	}
 
@@ -70,7 +75,7 @@ public class ServiceApplication {
 		return Clock.systemDefaultZone();
 	}
 
-	@Profile("prod")
+	@Profile("!dev")
 	@Bean
 	HttpClient httpClient() {
 		return HttpClient.newBuilder().build();

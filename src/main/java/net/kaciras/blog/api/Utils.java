@@ -16,6 +16,13 @@ public final class Utils {
 		if (value < 0) throw new RequestArgumentException("参数" + valname + "不能为负:" + value);
 	}
 
+	/**
+	 * 获取HttpServletRequest的远程地址。
+	 * 该方法为SpringMVC特别处理，解决Mock请求的地址为空问题，以及烦人的UnknownHostException。
+	 *
+	 * @param request 请求
+	 * @return IP地址
+	 */
 	public static InetAddress AddressFromRequest(HttpServletRequest request) {
 		var addr = request.getRemoteAddr();
 
