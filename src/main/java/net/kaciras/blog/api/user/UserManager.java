@@ -5,6 +5,8 @@ import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
+
 @RequiredArgsConstructor
 @Service
 public class UserManager {
@@ -17,10 +19,12 @@ public class UserManager {
 		return mapper.toUserVo(DBUtils.checkNotNullResource(repository.get(id)));
 	}
 
-	public int createNewUser(String name) {
+	public int createNew(String name, InetAddress ip) {
 		var user = new User();
 		user.setName(name);
 		user.setHead(ImageRefrence.parse("akalin.jpg"));
+		user.setRegisterIP(ip);
+
 		repository.add(user);
 		return user.getId();
 	}

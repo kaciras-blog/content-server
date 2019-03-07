@@ -3,6 +3,7 @@ package net.kaciras.blog.api.principle.oauth2;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.api.principle.AuthType;
 import net.kaciras.blog.api.principle.SessionService;
 import net.kaciras.blog.api.user.UserManager;
@@ -48,22 +49,27 @@ public class GithubOauthController {
 		return ResponseEntity.status(302).location(authUri).build();
 	}
 
-	// 用户在Github上确认授权后将跳转到此端点上
 	// Github的 access_token 不过期
 	@GetMapping("/callback")
 	public ResponseEntity<Void> callback(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		var token = getAccessToken(request.getParameter("code")).access_token;
-		var profile = getUserProfile(token);
-
-		var id = userManager.createNewUser(profile.name);
-		oauthDAO.insert(profile.id, AuthType.Github, id);
+		var id = getLocalId(getUserProfile(token), request);
 		sessionService.putUser(request, response, id, true);
-
 		return ResponseEntity.status(200).build();
 	}
 
 	@Transactional
+	protected int getLocalId(UserProfile profile, HttpServletRequest request) {
+		var localId = oauthDAO.select(profile.id, AuthType.Github);
 
+		if (localId.isPresent()) {
+			return localId.getAsInt();
+		}
+
+		var newId = userManager.createNew(profile.name, Utils.AddressFromRequest(request));
+		oauthDAO.insert(profile.id, AuthType.Github, newId);
+		return newId;
+	}
 
 	private AccessTokenEntity getAccessToken(String code) throws IOException, InterruptedException {
 		var authUri = UriComponentsBuilder
@@ -105,7 +111,7 @@ public class GithubOauthController {
 	@Setter
 	private static final class UserProfile {
 		public String name;
-		public int id;
+		public long id;
 		public String avatar_url;
 	}
 }

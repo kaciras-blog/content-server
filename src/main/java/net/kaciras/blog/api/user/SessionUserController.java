@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.principle;
+package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.SessionAttrNames;
@@ -15,14 +15,19 @@ import javax.servlet.http.HttpSession;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/session")
-class SessionController {
+class SessionUserController {
 
 	@GetMapping
 	public int getUserId() {
 		return SecurityContext.getUserId();
 	}
 
-	@DeleteMapping("/account")
+	@GetMapping("/user")
+	public UserVo get(HttpSession session) {
+		return null;
+	}
+
+	@DeleteMapping("/user")
 	public ResponseEntity<Void> logout(HttpSession session) {
 		session.removeAttribute(SessionAttrNames.USER_ID);
 		return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();

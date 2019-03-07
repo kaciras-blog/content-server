@@ -11,8 +11,8 @@ import java.util.OptionalInt;
 interface OauthDAO {
 
 	@Insert("INSERT INTO oauth(oauth_id, type, local_id) VALUES (${oauthId}, ${type}, ${localId})")
-	void insert(int oauthId, AuthType type, int localId);
+	void insert(long oauthId, AuthType type, int localId);
 
 	@Select("SELECT local_id FROM oauth WHERE oauth_id=${oauthId} AND type=${type}")
-	OptionalInt select(int oauthId, AuthType type);
+	OptionalInt select(long oauthId, AuthType type);
 }

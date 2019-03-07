@@ -5,6 +5,9 @@ import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import java.net.InetAddress;
+import java.time.LocalDateTime;
+
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Data
@@ -24,6 +27,8 @@ public class User {
 	private ImageRefrence head;
 
 	private boolean deleted;
+	private LocalDateTime registerTime;
+	private InetAddress registerIP;
 
 	private User(int id, String name) {
 		this.id = id;

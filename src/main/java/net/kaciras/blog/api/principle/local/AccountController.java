@@ -2,6 +2,7 @@ package net.kaciras.blog.api.principle.local;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.SessionAttrNames;
+import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.api.principle.SessionService;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +16,7 @@ import org.springframework.web.server.WebSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.net.InetAddress;
 import java.net.URI;
-import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.time.Clock;
 
@@ -34,8 +33,8 @@ public class AccountController {
 	private final SessionService sessionService;
 
 	@PostMapping
-	public ResponseEntity post(HttpServletRequest request, HttpServletResponse response,
-							   @Valid @RequestBody RegisterRequest dto) throws UnknownHostException {
+	public ResponseEntity<Void> post(HttpServletRequest request, HttpServletResponse response,
+							   @Valid @RequestBody RegisterRequest dto) {
 		var session = request.getSession(true);
 
 		// 检查验证码。注意验证码是一次性的，记得移除
@@ -46,7 +45,7 @@ public class AccountController {
 		}
 
 		var account = Account.create(dto.getName(), dto.getPassword());
-		account.setRegisterAddress(InetAddress.getByName(request.getRemoteAddr()));
+		var regIP = Utils.AddressFromRequest(request);
 
 		try {
 			repository.add(account);

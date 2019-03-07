@@ -1,16 +1,13 @@
 package net.kaciras.blog.api.principle.local;
 
 import lombok.*;
-import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 
 @EqualsAndHashCode(of = "id")
@@ -39,11 +36,6 @@ public final class Account {
 	private byte[] password;
 	private byte[] salt;
 
-	private boolean deleted;
-
-	private LocalDateTime registerTime;
-	private InetAddress registerAddress;
-
 	public void changePassword(String password) {
 		encryptPassword(password);
 		accountDAO.updatePassword(this);
@@ -56,9 +48,6 @@ public final class Account {
 	}
 
 	public boolean checkLogin(String passText) {
-		if (deleted) {
-			throw new ResourceDeletedException("该用户已被删除");
-		}
 		return Arrays.equals(password, encryptPassword(passText, salt));
 	}
 

@@ -5,22 +5,17 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 interface AccountDAO {
 
-	@Insert("INSERT INTO account(name, password, salt, regist_ip) " +
-			"VALUES(#{name}, #{password}, #{salt}, #{registerAddress})")
+	@Insert("INSERT INTO account(name, password, salt) " +
+			"VALUES(#{name}, #{password}, #{salt})")
 	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Account account);
 
-	@Select("SELECT id,name,deleted,regist_ip,regist_time FROM account WHERE id=#{id}")
-	@ResultMap("net.kaciras.blog.security.resultmap.AccountMap")
+	@Select("SELECT id,name FROM account WHERE id=#{id}")
 	Account select(int id);
 
-	@Select("SELECT id,name,password,salt,deleted FROM account WHERE name=#{name}")
-	@ResultMap("net.kaciras.blog.security.resultmap.AccountMap")
+	@Select("SELECT id,name,password,salt FROM account WHERE name=#{name}")
 	Account selectByName(String name);
 
 	@Update("UPDATE account SET password=#{password},salt=#{salt} WHERE id=#{id}")
 	void updatePassword(Account account);
-
-	@Delete("UPDATE account SET deleted=1 WHERE id=#{id}")
-	int updateDeleted(int id);
 }
