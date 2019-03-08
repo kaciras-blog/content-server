@@ -4,6 +4,7 @@
 <mapper namespace="net.kaciras.blog.api.user">
 
 	<resultMap type="net.kaciras.blog.api.user.User" id="UserMap">
+		<result property="authType" column="auth"/>
 		<result property="registerIP" column="regist_ip"/>
 		<result property="registerTime" column="regist_time"/>
 	</resultMap>

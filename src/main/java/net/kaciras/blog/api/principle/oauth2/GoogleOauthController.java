@@ -1,8 +1,8 @@
 package net.kaciras.blog.api.principle.oauth2;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import net.kaciras.blog.api.MultiPartBodyPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,11 +78,11 @@ public class GoogleOauthController {
 		return objectMapper.readValue(res.body(), Map.class);
 	}
 
-	@Setter
+	@RequiredArgsConstructor(onConstructor_ = @JsonCreator)
 	private static class GoogleTokenResp {
-		public String access_token;
-		public String refresh_token;
-		public String token_type;
-		public int expires_in; // 秒,默认1小时
+		public final String access_token;
+		public final String refresh_token;
+		public final String token_type;
+		public final int expires_in; // 秒,默认1小时
 	}
 }

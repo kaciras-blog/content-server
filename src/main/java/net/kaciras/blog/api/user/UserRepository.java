@@ -22,8 +22,4 @@ public class UserRepository {
 		}
 		return userDao.select(id);
 	}
-
-	public User getByName(String name) {
-		return userDao.selectByName(name);
-	}
 }

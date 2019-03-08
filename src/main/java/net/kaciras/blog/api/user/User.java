@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.user;
 
 import lombok.*;
+import net.kaciras.blog.api.principle.AuthType;
 import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -27,6 +28,8 @@ public class User {
 	private ImageRefrence head;
 
 	private boolean deleted;
+
+	private AuthType authType;
 	private LocalDateTime registerTime;
 	private InetAddress registerIP;
 
