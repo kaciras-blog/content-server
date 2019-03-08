@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.principle.AuthType;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -15,7 +14,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
@@ -38,18 +36,17 @@ public class GoogleOauth2Client implements Oauth2Client {
 				.fromUriString("https://accounts.google.com/o/oauth2/auth")
 				.queryParam("client_id", CLIENT_ID)
 				.queryParam("scope", "https://www.googleapis.com/auth/userinfo.profile")
-				.queryParam("state", UUID.randomUUID().toString())
 				.queryParam("response_type", "code")
 				.queryParam("access_type", "offline");
 	}
 
 	@Override
-	public UserInfo getUserInfo(String code, @Nullable String state) throws Exception {
+	public UserInfo getUserInfo(AuthContext context) throws Exception {
 		var formParams = UriComponentsBuilder.newInstance()
 				.queryParam("client_id", CLIENT_ID)
 				.queryParam("client_secret", CLIENT_SECRET)
-				.queryParam("code", code)
-				.queryParam("redirect_uri", "https://localhost:2375/connect/google/callback")
+				.queryParam("code", context.code)
+				.queryParam("redirect_uri", context.currentUri)
 				.queryParam("grant_type", "authorization_code");
 
 		var request = HttpRequest
@@ -76,7 +73,7 @@ public class GoogleOauth2Client implements Oauth2Client {
 				.header("Authorization", "Bearer " + accessToken)
 				.build();
 
-		var res = httpClient.send(request, BodyHandlers.ofInputStream());
+		var res = httpClient.send(request, BodyHandlers.ofString());
 		return objectMapper.readValue(res.body(), GoogleUserInfo.class);
 	}
 
@@ -91,12 +88,13 @@ public class GoogleOauth2Client implements Oauth2Client {
 	@AllArgsConstructor(onConstructor_ = @JsonCreator)
 	private static final class GoogleUserInfo implements UserInfo {
 
-		public final long id;
+		/** 谷歌的ID特别长，不能用long */
+		public final String id;
 		public final String picture;
 		public final String name;
 
 		@Override
-		public long id() {
+		public String id() {
 			return id;
 		}
 

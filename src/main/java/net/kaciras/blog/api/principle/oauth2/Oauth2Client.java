@@ -10,11 +10,12 @@ public interface Oauth2Client {
 
 	UriComponentsBuilder authUri();
 
-	UserInfo getUserInfo(String code, @Nullable String state) throws Exception;
+	UserInfo getUserInfo(AuthContext context) throws Exception;
 
 	interface UserInfo {
 
-		long id();
+		/** 不能用整数，因为并不能保证所有提供者都用整数作ID */
+		String id();
 
 		String name();
 
