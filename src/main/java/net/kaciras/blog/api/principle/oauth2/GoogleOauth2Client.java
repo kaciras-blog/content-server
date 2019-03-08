@@ -2,12 +2,11 @@ package net.kaciras.blog.api.principle.oauth2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import net.kaciras.blog.api.principle.AuthType;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
@@ -19,35 +18,36 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-@RestController
-@RequestMapping("/connect/google")
-public class GoogleOauthController {
+@Component
+public class GoogleOauth2Client implements Oauth2Client {
 
-	private static final String GOOGLE_ID = "834515199449-f1ia0v8b3fa5hnvuimrradoetulc5nvi.apps.googleusercontent.com";
-	private static final String GOOGLE_SECRET = "jT7m_0N5zS-QzuzwGKYnYuFo";
+	private static final String CLIENT_ID = "834515199449-f1ia0v8b3fa5hnvuimrradoetulc5nvi.apps.googleusercontent.com";
+	private static final String CLIENT_SECRET = "jT7m_0N5zS-QzuzwGKYnYuFo";
 
 	private final ObjectMapper objectMapper;
 	private final HttpClient httpClient;
 
-	@GetMapping
-	public ResponseEntity<Void> google() {
-		var authUri = UriComponentsBuilder.fromUriString("https://accounts.google.com/o/oauth2/auth")
-				.queryParam("client_id", GOOGLE_ID)
-				.queryParam("scope", "https://www.googleapis.com/auth/userinfo.profile")
-				.queryParam("redirect_uri", "https://localhost:2375/connect/google/callback")
-				.queryParam("state", UUID.randomUUID().toString())
-				.queryParam("response_type", "code")
-				.queryParam("access_type", "offline")
-				.build().toUri();
-		return ResponseEntity.status(302).location(authUri).build();
+	@Override
+	public AuthType authType() {
+		return AuthType.Google;
 	}
 
-	// 对本应用来说，仅需获取一次就够了，没必要刷新 access_token
-	@GetMapping("/callback")
-	public ResponseEntity<Void> googleCallback(@RequestParam String code) throws IOException, InterruptedException {
+	@Override
+	public UriComponentsBuilder authUri() {
+		return UriComponentsBuilder
+				.fromUriString("https://accounts.google.com/o/oauth2/auth")
+				.queryParam("client_id", CLIENT_ID)
+				.queryParam("scope", "https://www.googleapis.com/auth/userinfo.profile")
+				.queryParam("state", UUID.randomUUID().toString())
+				.queryParam("response_type", "code")
+				.queryParam("access_type", "offline");
+	}
+
+	@Override
+	public UserInfo getUserInfo(String code, @Nullable String state) throws Exception {
 		var formParams = UriComponentsBuilder.newInstance()
-				.queryParam("client_id", GOOGLE_ID)
-				.queryParam("client_secret", GOOGLE_SECRET)
+				.queryParam("client_id", CLIENT_ID)
+				.queryParam("client_secret", CLIENT_SECRET)
 				.queryParam("code", code)
 				.queryParam("redirect_uri", "https://localhost:2375/connect/google/callback")
 				.queryParam("grant_type", "authorization_code");
@@ -58,15 +58,12 @@ public class GoogleOauthController {
 				.header("Content-Type", "application/x-www-form-urlencoded")
 				.build();
 
-		var res = httpClient.send(request, BodyHandlers.ofInputStream());
+		var res = httpClient.send(request, BodyHandlers.ofString());
 		if (res.statusCode() != 200) {
 			throw new Error("Oauth Error" + res.body());
 		}
 		var tokenEntity = objectMapper.readValue(res.body(), GoogleTokenResp.class);
-		var profile = getUserProfile(tokenEntity.access_token);
-
-		// todo
-		return ResponseEntity.status(200).build();
+		return getUserProfile(tokenEntity.access_token);
 	}
 
 	private UserInfo getUserProfile(String accessToken) throws IOException, InterruptedException {
@@ -78,11 +75,12 @@ public class GoogleOauthController {
 		var request = HttpRequest.newBuilder(uu)
 				.header("Authorization", "Bearer " + accessToken)
 				.build();
+
 		var res = httpClient.send(request, BodyHandlers.ofInputStream());
-		return objectMapper.readValue(res.body(), UserInfo.class);
+		return objectMapper.readValue(res.body(), GoogleUserInfo.class);
 	}
 
-	@RequiredArgsConstructor(onConstructor_ = @JsonCreator)
+	@AllArgsConstructor(onConstructor_ = @JsonCreator)
 	private static final class GoogleTokenResp {
 		public final String access_token;
 		public final String refresh_token;
@@ -90,10 +88,26 @@ public class GoogleOauthController {
 		public final int expires_in; // 秒,默认1小时
 	}
 
-	@RequiredArgsConstructor(onConstructor_ = @JsonCreator)
-	private static final class UserInfo {
-		public long id;
-		public String name;
-		public String picture;
+	@AllArgsConstructor(onConstructor_ = @JsonCreator)
+	private static final class GoogleUserInfo implements UserInfo {
+
+		public final long id;
+		public final String picture;
+		public final String name;
+
+		@Override
+		public long id() {
+			return id;
+		}
+
+		@Override
+		public String head() {
+			return picture;
+		}
+
+		@Override
+		public String name() {
+			return name;
+		}
 	}
 }

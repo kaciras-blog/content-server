@@ -42,13 +42,13 @@ public class AccountController {
 									 @Valid @RequestBody RegisterRequest dto) {
 		checkCaptcha(request.getSession(true), dto.getCaptcha());
 
-		var id = temmp0(dto, Utils.AddressFromRequest(request));
+		var id = createUser(dto, Utils.AddressFromRequest(request));
 		sessionService.putUser(request, response, id, true);
 		return ResponseEntity.created(URI.create("/accounts/" + id)).build();
 	}
 
 	@Transactional
-	protected int temmp0(RegisterRequest request, InetAddress ip) {
+	protected int createUser(RegisterRequest request, InetAddress ip) {
 		try {
 			var id = userManager.createNew(request.getName(), AuthType.Local, ip);
 			var account = Account.create(id, request.getName(), request.getPassword());
