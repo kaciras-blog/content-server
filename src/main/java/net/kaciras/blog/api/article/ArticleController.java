@@ -10,14 +10,10 @@ import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 @RestController
@@ -30,12 +26,6 @@ class ArticleController {
 
 	private final MessageClient messageClient;
 
-	private Map<Integer, String> etagCache = new ConcurrentHashMap<>();
-
-	// TODO: messaging system
-	@SuppressWarnings("FieldCanBeLocal")
-	private boolean disableCache = true;
-
 	@GetMapping
 	public List<PreviewVo> getList(ArticleListQuery request, Pageable pageable) {
 		request.setPageable(pageable);
@@ -46,31 +36,12 @@ class ArticleController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<ArticleVo> get(@PathVariable int id, WebRequest request,
-										 @RequestParam(defaultValue = "false") boolean rv) {
-		var etag = etagCache.get(id);
-		if (request.checkNotModified(etag)) {
-			return ResponseEntity.status(304).build();
-		}
-
+	public ArticleVo get(@PathVariable int id, @RequestParam(defaultValue = "false") boolean rv) {
 		var article = articleManager.getLiveArticle(id);
-		var vo = mapper.toViewObject(article);
-
 		if (rv) {
 			article.recordView(); //增加浏览量
 		}
-		if (disableCache) {
-			return ResponseEntity.ok().body(vo);
-		}
-
-		// 如果缓存中不存在，则需要创建新的缓存记录。
-		if (etag == null) {
-			etag = etagCache.putIfAbsent(id, UUID.randomUUID().toString());
-			return ResponseEntity.ok().eTag("W/\"" + etag).body(vo);
-		}
-
-		// 缓存已存在，但是客户端没有记录，则添加已缓存的Etag到客户端
-		return ResponseEntity.ok().eTag("W/\"" + etag).body(vo);
+		return mapper.toViewObject(article);
 	}
 
 	@RequireAuthorize

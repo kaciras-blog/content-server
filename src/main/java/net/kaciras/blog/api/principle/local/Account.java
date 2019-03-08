@@ -33,6 +33,7 @@ public final class Account {
 
 	private int id;
 	private String name;
+
 	private byte[] password;
 	private byte[] salt;
 
@@ -77,8 +78,9 @@ public final class Account {
 	 * @param password 密码
 	 * @return 账户对象
 	 */
-	public static Account create(String name, String password) {
+	public static Account create(int id, String name, String password) {
 		var account = new Account();
+		account.setId(id);
 		account.setName(name);
 		account.encryptPassword(password);
 		return account;

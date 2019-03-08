@@ -17,14 +17,12 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/session")
 class SessionUserController {
 
-	@GetMapping
-	public int getUserId() {
-		return SecurityContext.getUserId();
-	}
+	private final UserRepository repository;
+	private final UserMapper userMapper;
 
 	@GetMapping("/user")
-	public UserVo get(HttpSession session) {
-		return null;
+	public UserVo get() {
+		return userMapper.toUserVo(repository.get(SecurityContext.getUserId()));
 	}
 
 	@DeleteMapping("/user")

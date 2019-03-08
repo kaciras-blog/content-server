@@ -1,19 +1,19 @@
 package net.kaciras.blog.api.principle.local;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.hibernate.validator.constraints.Length;
 
 @RequiredArgsConstructor(onConstructor_ = @JsonCreator)
-@Value
+@Getter
 final class LoginRequest {
 
 	@Length(min = 1, max = 16)
-	private String name;
+	private final String name;
 
 	@Length(min = 8, max = 128)
-	private String password;
+	private final String password;
 
-	private boolean remember;
+	private final boolean remember;
 }
