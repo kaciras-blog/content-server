@@ -36,3 +36,5 @@ kaciras:
         domain: kaciras.net
   cors:
     origins: https://blog.kaciras.net
+  oauth:
+    www-host: blog.kaciras.net

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.principle.AuthType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -18,11 +19,14 @@ import java.net.http.HttpResponse.BodyHandlers;
 @Component
 public class GithubOauth2Client implements Oauth2Client {
 
-	private static final String CLIENT_ID = "08878e62e2f3cb5be51b";
-	private static final String CLIENT_SECRET = "04b1aebe5770a4458bfa17d79bc5cd1988dcba45";
-
 	private final ObjectMapper objectMapper;
 	private final HttpClient httpClient;
+
+	@Value("${kaciras.oauth.github.client-id}")
+	private String clientId;
+
+	@Value("${kaciras.oauth.github.client-secret}")
+	private String clientSecret;
 
 	@Override
 	public AuthType authType() {
@@ -33,7 +37,7 @@ public class GithubOauth2Client implements Oauth2Client {
 	public UriComponentsBuilder authUri() {
 		return UriComponentsBuilder
 				.fromUriString("https://github.com/login/oauth/authorize")
-				.queryParam("client_id", CLIENT_ID)
+				.queryParam("client_id", clientId)
 				.queryParam("scope", "read:user")
 				.queryParam("response_type", "code");
 	}
@@ -42,8 +46,8 @@ public class GithubOauth2Client implements Oauth2Client {
 	public UserInfo getUserInfo(AuthContext context) throws Exception {
 		var authUri = UriComponentsBuilder
 				.fromUriString("https://github.com/login/oauth/access_token")
-				.queryParam("client_id", CLIENT_ID)
-				.queryParam("client_secret", CLIENT_SECRET)
+				.queryParam("client_id", clientId)
+				.queryParam("client_secret", clientSecret)
 				.queryParam("code", context.code)
 				.queryParam("state", context.state)
 				.build().toUri();

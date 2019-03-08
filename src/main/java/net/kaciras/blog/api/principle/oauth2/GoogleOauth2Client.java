@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.principle.AuthType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -19,11 +20,14 @@ import java.net.http.HttpResponse.BodyHandlers;
 @Component
 public class GoogleOauth2Client implements Oauth2Client {
 
-	private static final String CLIENT_ID = "834515199449-f1ia0v8b3fa5hnvuimrradoetulc5nvi.apps.googleusercontent.com";
-	private static final String CLIENT_SECRET = "jT7m_0N5zS-QzuzwGKYnYuFo";
-
 	private final ObjectMapper objectMapper;
 	private final HttpClient httpClient;
+
+	@Value("${kaciras.oauth.google.client-id}")
+	private String clientId;
+
+	@Value("${kaciras.oauth.google.client-secret}")
+	private String clientSecret;
 
 	@Override
 	public AuthType authType() {
@@ -34,17 +38,18 @@ public class GoogleOauth2Client implements Oauth2Client {
 	public UriComponentsBuilder authUri() {
 		return UriComponentsBuilder
 				.fromUriString("https://accounts.google.com/o/oauth2/auth")
-				.queryParam("client_id", CLIENT_ID)
+				.queryParam("client_id", clientId)
 				.queryParam("scope", "https://www.googleapis.com/auth/userinfo.profile")
 				.queryParam("response_type", "code")
 				.queryParam("access_type", "offline");
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	@Override
 	public UserInfo getUserInfo(AuthContext context) throws Exception {
 		var formParams = UriComponentsBuilder.newInstance()
-				.queryParam("client_id", CLIENT_ID)
-				.queryParam("client_secret", CLIENT_SECRET)
+				.queryParam("client_id", clientId)
+				.queryParam("client_secret", clientSecret)
 				.queryParam("code", context.code)
 				.queryParam("redirect_uri", context.currentUri)
 				.queryParam("grant_type", "authorization_code");

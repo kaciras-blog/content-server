@@ -32,7 +32,7 @@ class SessionRepository {
 	 * @param userId 用户ID
 	 */
 	@SuppressWarnings("ConstantConditions")
-	void clearAll(int userId) {
+	public void clearAll(int userId) {
 		var key = (PREFIX + userId).getBytes();
 		var records = redisTemplate.opsForSet().members(key);
 
@@ -44,6 +44,9 @@ class SessionRepository {
 		}
 	}
 
+	/**
+	 * 会话如果过期，那么也没有办法及时清理，所以需要搞一个定时清理。
+	 */
 	@Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
 	void cleanAccountRecords() {
 		var options = ScanOptions.scanOptions().match(PREFIX + "*").build();
@@ -52,11 +55,14 @@ class SessionRepository {
 
 		while (accounts.hasNext()) {
 			var recordSet = accounts.next();
-			Optional.ofNullable(redisTemplate.opsForSet().members(recordSet))
+			var invaild = Optional.ofNullable(redisTemplate.opsForSet().members(recordSet))
 					.orElse(Set.of())
 					.stream()
 					.filter(k -> Optional.ofNullable(redisTemplate.hasKey(k)).orElse(false))
-					.forEach(k -> redisTemplate.opsForSet().remove(recordSet, new Object[]{k}));
+					.toArray();
+			if(invaild.length > 0) {
+				redisTemplate.opsForSet().remove(recordSet, invaild);
+			}
 		}
 	}
 }

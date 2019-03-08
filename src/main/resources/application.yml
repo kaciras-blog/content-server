@@ -12,11 +12,7 @@ server:
     max-threads: 2
 
 spring:
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
+
   autoconfigure:
     exclude:
     - org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
