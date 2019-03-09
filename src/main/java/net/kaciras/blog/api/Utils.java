@@ -39,5 +39,9 @@ public final class Utils {
 		}
 	}
 
+	public static boolean nullableBool(Boolean value) {
+		return value == null ? false: value;
+	}
+
 	private Utils() {}
 }

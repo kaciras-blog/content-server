@@ -48,6 +48,12 @@ public final class Account {
 		this.password = encryptPassword(password, salt);
 	}
 
+	/**
+	 * 检查给定的密码能否登陆该账号。
+	 *
+	 * @param passText 密码
+	 * @return 如果密码正确返回true
+	 */
 	public boolean checkLogin(String passText) {
 		return Arrays.equals(password, encryptPassword(passText, salt));
 	}

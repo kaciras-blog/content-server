@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class UserVo {
+public final class UserVo {
 
 	private int id;
 	private AuthType authType;

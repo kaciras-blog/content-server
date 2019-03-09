@@ -46,7 +46,7 @@ public class GoogleOauth2Client implements Oauth2Client {
 
 	@SuppressWarnings("ConstantConditions")
 	@Override
-	public UserInfo getUserInfo(AuthContext context) throws Exception {
+	public UserInfo getUserInfo(OAuth2Context context) throws Exception {
 		var formParams = UriComponentsBuilder.newInstance()
 				.queryParam("client_id", clientId)
 				.queryParam("client_secret", clientSecret)

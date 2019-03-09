@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
  * 如Github可以再次发送state、google需要再传一次callback的URI，这里统一提供。
  */
 @RequiredArgsConstructor
-public final class AuthContext {
+public final class OAuth2Context {
 
 	public final String code;
 	public final String currentUri;

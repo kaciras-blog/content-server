@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.principle;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.Utils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,7 +20,7 @@ import java.util.Set;
 @Repository("AppSessionRepository")
 class SessionRepository {
 
-	/** Redis键前缀，例如用户ID=123的键位 ac:123 */
+	/** Redis键前缀，例如用户ID=123的键为 ac:123 */
 	private static final String PREFIX = "ac:";
 
 	private final RedisTemplate<byte[], byte[]> redisTemplate;
@@ -40,7 +41,7 @@ class SessionRepository {
 
 		if (records != null) {
 			records.stream()
-					.filter(k -> Optional.ofNullable(redisTemplate.hasKey(k)).orElse(false))
+					.filter(k -> Utils.nullableBool(redisTemplate.hasKey(k)))
 					.forEach(redisTemplate::unlink);
 			redisTemplate.unlink(key);
 		}
@@ -60,7 +61,7 @@ class SessionRepository {
 			var invaild = Optional.ofNullable(redisTemplate.opsForSet().members(recordSet))
 					.orElse(Set.of())
 					.stream()
-					.filter(k -> Optional.ofNullable(redisTemplate.hasKey(k)).orElse(false))
+					.filter(k -> Utils.nullableBool(redisTemplate.hasKey(k)))
 					.toArray();
 			if(invaild.length > 0) {
 				redisTemplate.opsForSet().remove(recordSet, invaild);

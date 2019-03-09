@@ -10,7 +10,7 @@ public interface Oauth2Client {
 
 	UriComponentsBuilder authUri();
 
-	UserInfo getUserInfo(AuthContext context) throws Exception;
+	UserInfo getUserInfo(OAuth2Context context) throws Exception;
 
 	interface UserInfo {
 

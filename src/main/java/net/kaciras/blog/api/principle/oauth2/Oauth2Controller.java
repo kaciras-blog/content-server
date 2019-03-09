@@ -117,7 +117,7 @@ public class Oauth2Controller {
 				.fromUriString(request.getRequestURL().toString())
 				.replaceQuery(null).toUriString();
 
-		var context = new AuthContext(request.getParameter("code"), currentUri, state);
+		var context = new OAuth2Context(request.getParameter("code"), currentUri, state);
 		var info = client.getUserInfo(context);
 		var localId = getLocalId(info, request, client.authType());
 		sessionService.putUser(request, response, localId, true);
