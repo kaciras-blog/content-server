@@ -27,7 +27,7 @@ import java.time.Clock;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/accounts")
-public class AccountController {
+class AccountController {
 
 	private static final long CAPTCHA_LIFE_TIME = 5 * 60 * 1000;
 
@@ -40,7 +40,7 @@ public class AccountController {
 	@PostMapping
 	public ResponseEntity<Void> post(HttpServletRequest request, HttpServletResponse response,
 									 @Valid @RequestBody RegisterRequest dto) {
-		checkCaptcha(request.getSession(true), dto.getCaptcha());
+		checkCaptcha(request.getSession(true), dto.captcha);
 
 		var id = createUser(dto, Utils.AddressFromRequest(request));
 		sessionService.putUser(request, response, id, true);
@@ -50,8 +50,8 @@ public class AccountController {
 	@Transactional
 	protected int createUser(RegisterRequest request, InetAddress ip) {
 		try {
-			var id = userManager.createNew(request.getName(), AuthType.Local, ip);
-			var account = Account.create(id, request.getName(), request.getPassword());
+			var id = userManager.createNew(request.name, AuthType.Local, ip);
+			var account = Account.create(id, request.name, request.password);
 			repository.add(account);
 			return account.getId();
 		} catch (SQLException e) {
@@ -84,12 +84,12 @@ public class AccountController {
 	public ResponseEntity<Void> login(HttpServletRequest request,
 									  HttpServletResponse response,
 									  @RequestBody @Valid LoginRequest loginVo) {
-		var account = repository.findByName(loginVo.getName());
+		var account = repository.findByName(loginVo.name);
 
-		if (account == null || !account.checkLogin(loginVo.getPassword())) {
+		if (account == null || !account.checkLogin(loginVo.password)) {
 			throw new RequestArgumentException("密码错误或用户不存在");
 		} else {
-			sessionService.putUser(request, response, account.getId(), loginVo.isRemember());
+			sessionService.putUser(request, response, account.getId(), loginVo.remember);
 			return ResponseEntity.created(URI.create("/session/user")).build();
 		}
 	}

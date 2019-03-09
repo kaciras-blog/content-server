@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,12 +30,12 @@ class SessionUserController {
 	}
 
 	@PatchMapping
-	public ResponseEntity<Void> patch(@RequestBody PatchMap patchMap) {
+	public ResponseEntity<Void> patch(@RequestBody @Valid PatchMap patchMap) {
 		SecurityContext.requireLogin();
 		var user = repository.get(SecurityContext.getUserId());
 
-		user.setHead(patchMap.getHead());
-		user.setName(patchMap.getName());
+		user.setHead(patchMap.head);
+		user.setName(patchMap.name);
 		repository.update(user);
 
 		return ResponseEntity.noContent().build();
