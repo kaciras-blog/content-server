@@ -118,7 +118,7 @@ public final class TextImageCaptchaGenerator {
 	 * 随机生成一个颜色的整数表示，其RGB每通道都是在[lo, hi]区间的随机值。
 	 *
 	 * @param lo 单通道下限，不能为负，未检查
-	 * @param hi 单通道上限，不能大于255，为检查
+	 * @param hi 单通道上限，不能大于255，未检查
 	 * @return 颜色值ARGB
 	 */
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
