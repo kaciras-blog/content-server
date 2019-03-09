@@ -37,9 +37,4 @@ public class User {
 		this.id = id;
 		this.name = name;
 	}
-
-	public void updateHead(ImageRefrence head) {
-		this.head = head;
-		userDAO.updateHead(head);
-	}
 }

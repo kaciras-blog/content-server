@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 public class UserVo {
 
 	private int id;
+	private AuthType authType;
+
 	private String name;
 	private ImageRefrence head;
-
-	private AuthType authType;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime registerTime;

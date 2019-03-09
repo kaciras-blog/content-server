@@ -34,10 +34,10 @@ kaciras:
   cors:
     origins: "*"
   development:
-    admin-principal: true
+    admin-principal: false
   oauth:
     www-host: localhost
-    gitbub:
+    github:
       client-id: 08878e62e2f3cb5be51b
       client-secret: 04b1aebe5770a4458bfa17d79bc5cd1988dcba45
     google:

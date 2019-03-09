@@ -1,6 +1,5 @@
 package net.kaciras.blog.api.user;
 
-import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
@@ -11,13 +10,13 @@ interface UserDAO {
 	@Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
 	void insert(User user);
 
-	@Select("SELECT id,name,head,deleted FROM `user` WHERE id=#{id}")
+	@Select("SELECT * FROM `user` WHERE id=#{id}")
 	@ResultMap("net.kaciras.blog.api.user.UserMap")
 	User select(int id);
 
 	@Delete("UPDATE `user` SET deleted=1 WHERE id=#{id}")
 	int delete(int id);
 
-	@Update("UPDATE `user` SET head=#{head} WHERE id=#{id}")
-	void updateHead(ImageRefrence head);
+	@Update("UPDATE `user` SET name=#{name} head=#{head} WHERE id=#{id}")
+	int updateProfile(User user);
 }

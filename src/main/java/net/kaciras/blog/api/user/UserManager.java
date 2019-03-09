@@ -15,9 +15,17 @@ public class UserManager {
 	private final UserRepository repository;
 	private final UserMapper mapper;
 
-	// TODO: 在哪转换对象
+	/**
+	 * 获取指定ID用户的信息。
+	 * 该视图是面向公共的，一些敏感字段必须过滤掉。
+	 *
+	 * @param id 用户ID
+	 * @return 用户信息
+	 */
 	public UserVo getUser(int id) {
-		return mapper.toUserVo(DBUtils.checkNotNullResource(repository.get(id)));
+		var view = mapper.toUserVo(DBUtils.checkNotNullResource(repository.get(id)));
+		view.setAuthType(null);
+		return view;
 	}
 
 	public int createNew(String name, AuthType authType, InetAddress ip) {
