@@ -1,10 +1,12 @@
 package net.kaciras.blog.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import net.kaciras.blog.infrastructure.Misc;
 import net.kaciras.blog.infrastructure.autoconfig.*;
 import net.kaciras.blog.infrastructure.message.DirectMessageClient;
 import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.annotation.Bean;
@@ -65,6 +67,15 @@ public class ServiceApplication {
 		template.setEnableDefaultSerializer(false);
 		template.setConnectionFactory(connectionFactory);
 		return template;
+	}
+
+	/**
+	 * 在序列化JSON时过滤掉为null的字段，可以减小一些体积并屏蔽不可见的字段。
+	 * 该类型的Bean还有几个，为了防止重名给它起个App开头的名字。
+	 */
+	@Bean("AppJacksonCustomizer")
+	Jackson2ObjectMapperBuilderCustomizer jacksonCustomizer() {
+		return builder -> builder.serializationInclusion(Include.NON_NULL);
 	}
 
 	/**

@@ -12,9 +12,11 @@ import java.util.Set;
 /**
  * 为了保证服务端能够主动删除Session，使用了Redis的Set来记录每个用户的Session。
  * 该仓库使用Radis的Set来记录 UserId -> [SessionIds]。
+ *
+ * "SessionRepository" 这个名字和 Spring 内置的 Bean 冲突了，所以要改个名。
  */
 @RequiredArgsConstructor
-@Repository("_liveSessionRepository")
+@Repository("AppSessionRepository")
 class SessionRepository {
 
 	/** Redis键前缀，例如用户ID=123的键位 ac:123 */
