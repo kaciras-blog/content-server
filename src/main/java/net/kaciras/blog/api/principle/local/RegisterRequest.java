@@ -1,14 +1,14 @@
 package net.kaciras.blog.api.principle.local;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
-@RequiredArgsConstructor(onConstructor_ = @JsonCreator)
+@AllArgsConstructor(onConstructor_ = @JsonCreator)
 @Getter
 final class RegisterRequest {
 

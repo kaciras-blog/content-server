@@ -1,13 +1,14 @@
 package net.kaciras.blog.api.discuss;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Data
+@AllArgsConstructor(onConstructor_ = @JsonCreator)
+@Getter
 final class AddRequest {
 
-	private int objectId;
-
-	private int type;
-
-	private String content;
+	private final int objectId;
+	private final int type;
+	private final String content;
 }

@@ -49,7 +49,7 @@ public class Oauth2Controller {
 	private String wwwHost;
 
 	@Autowired
-	void initClientMap(Collection<Oauth2Client> beans) {
+	private void initClientMap(Collection<Oauth2Client> beans) {
 		clientMap = beans.stream()
 				.collect(Collectors.toMap(b -> b.authType().name().toLowerCase(), Lambdas.keepIntact()));
 	}

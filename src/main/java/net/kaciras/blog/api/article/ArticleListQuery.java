@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-public class ArticleListQuery {
+public final class ArticleListQuery {
 
 	private Pageable pageable;
 

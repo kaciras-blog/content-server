@@ -25,8 +25,9 @@ class HotArticleController {
 		return popular;
 	}
 
-	@Scheduled(fixedDelay = 5 * 60 * 1000)
-	void updateHotsTask() {
+	// Scheduled 注解忽略访问修饰符
+	@Scheduled(fixedDelay = 15 * 60 * 1000)
+	private void updateHotsTask() {
 		var request = new ArticleListQuery();
 		request.setPageable(PageRequest.of(0, 6, Sort.Direction.DESC, "view_count"));
 		popular = mapper.toPreview(repository.findAll(request), request);
