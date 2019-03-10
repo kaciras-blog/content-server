@@ -1,0 +1,25 @@
+测试环境：
+CPU: Intel i5-4200M
+RAM: DDR3-1600
+System: Centos7 Linux4.17.12
+Virtualization: Micorsoft Hyper-V
+Redis: 5.0.0 malloc=jemalloc-5.1.0 bits=64
+
+测试结果：
+EVALSHA d0f6eda87376dff00ccfda43e0b4879c3f449f6a 1 192.168.0.1 1 2 90000 50 360
+
+100000 requests completed in 2.55 seconds
+10 parallel clients
+3 bytes payload
+keep alive: 1
+
+99.26% <= 1 milliseconds
+99.83% <= 2 milliseconds
+99.86% <= 3 milliseconds
+99.89% <= 4 milliseconds
+99.92% <= 5 milliseconds
+99.96% <= 6 milliseconds
+99.98% <= 7 milliseconds
+99.99% <= 8 milliseconds
+100.00% <= 8 milliseconds
+39169.61 requests per second
