@@ -1,5 +1,6 @@
 package net.kaciras.blog.api.misc;
 
+import lombok.Cleanup;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -34,9 +35,8 @@ public final class TextImageCaptchaGenerator {
 		if (fontFile == null) {
 			throw new Error("找不到验证码字体文件：CENTURY.TTF");
 		}
-		try (var stream = fontFile.openStream()) {
-			font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(Font.PLAIN, CAPTCHA_HEIGHT - 4);
-		}
+		@Cleanup var stream = fontFile.openStream();
+		font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(Font.PLAIN, CAPTCHA_HEIGHT - 4);
 	}
 
 	/**

@@ -40,7 +40,7 @@ class AccountController {
 	@PostMapping
 	public ResponseEntity<Void> post(HttpServletRequest request, HttpServletResponse response,
 									 @Valid @RequestBody RegisterRequest dto) {
-		checkCaptcha(request.getSession(true), dto.captcha);
+		checkCaptcha(request.getSession(true), dto.getCaptcha());
 
 		var id = createUser(dto, Utils.AddressFromRequest(request));
 		sessionService.putUser(request, response, id, true);
@@ -50,8 +50,8 @@ class AccountController {
 	@Transactional
 	protected int createUser(RegisterRequest request, InetAddress ip) {
 		try {
-			var id = userManager.createNew(request.name, AuthType.Local, ip);
-			var account = Account.create(id, request.name, request.password);
+			var id = userManager.createNew(request.getName(), AuthType.Local, ip);
+			var account = Account.create(id, request.getName(), request.getPassword());
 			repository.add(account);
 			return account.getId();
 		} catch (SQLException e) {
@@ -84,12 +84,12 @@ class AccountController {
 	public ResponseEntity<Void> login(HttpServletRequest request,
 									  HttpServletResponse response,
 									  @RequestBody @Valid LoginRequest loginVo) {
-		var account = repository.findByName(loginVo.name);
+		var account = repository.findByName(loginVo.getName());
 
-		if (account == null || !account.checkLogin(loginVo.password)) {
+		if (account == null || !account.checkLogin(loginVo.getPassword())) {
 			throw new RequestArgumentException("密码错误或用户不存在");
 		} else {
-			sessionService.putUser(request, response, account.getId(), loginVo.remember);
+			sessionService.putUser(request, response, account.getId(), loginVo.isRemember());
 			return ResponseEntity.created(URI.create("/session/user")).build();
 		}
 	}
