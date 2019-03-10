@@ -14,6 +14,8 @@ import java.util.UUID;
 @Service
 public class SessionService {
 
+	private static final String CSRF_COOKIE_NAME = "CSRF-Token";
+
 	private final SessionCookieProperties cookieProperties;
 
 	public void putUser(HttpServletRequest request, HttpServletResponse response, int id, boolean remenber) {
@@ -21,7 +23,7 @@ public class SessionService {
 		session.setAttribute(SessionAttributes.USER_ID, id);
 
 		var csrfToken = UUID.randomUUID().toString();
-		var csrfCookie = new Cookie("CSRF-Token", csrfToken);
+		var csrfCookie = new Cookie(CSRF_COOKIE_NAME, csrfToken);
 		csrfCookie.setPath("/");
 		csrfCookie.setDomain(cookieProperties.getDomain());
 

@@ -5,7 +5,9 @@ public enum RedisKeys {
 	SwiperList("swiper"),
 
 	/** 一个账户所有会话的集合 */
-	AccountSessions("ac:");
+	AccountSessions("ac:"),
+
+	OauthSession("oas:");
 
 	private final String prefix;
 

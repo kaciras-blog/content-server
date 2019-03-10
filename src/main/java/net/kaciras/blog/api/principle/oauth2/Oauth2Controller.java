@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.RedisKeys;
 import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.api.principle.AuthType;
 import net.kaciras.blog.api.principle.SessionService;
@@ -34,8 +35,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/connect")
 public class Oauth2Controller {
-
-	private static final String OAUTH_STATE = "oas:";
 
 	private final SessionService sessionService;
 	private final OauthDAO oauthDAO;
@@ -75,7 +74,7 @@ public class Oauth2Controller {
 		 *     一人的。
 		 */
 		var authSession = new OauthSession(UUID.randomUUID().toString(), request.getParameter("ret"));
-		var key = OAUTH_STATE + request.getSession(true).getId();
+		var key = RedisKeys.OauthSession.of(request.getSession(true).getId());
 		redisTemplate.opsForValue()
 				.set(key, objectMapper.writeValueAsBytes(authSession), Duration.ofMinutes(10));
 
@@ -100,7 +99,7 @@ public class Oauth2Controller {
 		}
 
 		// 以下两步验证state，防止CSRF攻击
-		var key = OAUTH_STATE + request.getSession(true).getId();
+		var key = RedisKeys.OauthSession.of(request.getSession(true).getId());
 		var record = redisTemplate.opsForValue().get(key);
 		if (record == null) {
 			return ResponseEntity.status(410).body("认证请求无效或已过期，请重新登录");
