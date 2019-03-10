@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +44,7 @@ class SwiperController {
 	 */
 	@RequireAuthorize
 	@PutMapping
-	public ResponseEntity<Void> update(@RequestBody List<SwiperSlide> slides) throws JsonProcessingException {
+	public ResponseEntity<Void> update(@RequestBody @Valid List<SwiperSlide> slides) throws Exception {
 		redisTemplate.opsForValue().set("swiper", objectMapper.writeValueAsBytes(slides));
 		return ResponseEntity.noContent().build();
 	}
