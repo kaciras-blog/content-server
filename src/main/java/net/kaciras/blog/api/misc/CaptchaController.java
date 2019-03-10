@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.misc;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SessionAttrNames;
+import net.kaciras.blog.api.SessionAttributes;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,7 +33,7 @@ public class CaptchaController {
 		resp.setContentType("image/jpeg");
 
 		var captcha = generator.generate(resp.getOutputStream());
-		session.setAttribute(SessionAttrNames.CAPTCHA_SESSION_NAME, captcha);
-		session.setAttribute(SessionAttrNames.CAPTCHA_SESSION_TIME, clock.millis());
+		session.setAttribute(SessionAttributes.CAPTCHA, captcha);
+		session.setAttribute(SessionAttributes.CAPTCHA_TIME, clock.millis());
 	}
 }

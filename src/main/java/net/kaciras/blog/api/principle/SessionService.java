@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.principle;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SessionAttrNames;
+import net.kaciras.blog.api.SessionAttributes;
 import net.kaciras.blog.infrastructure.autoconfig.SessionCookieProperties;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class SessionService {
 
 	public void putUser(HttpServletRequest request, HttpServletResponse response, int id, boolean remenber) {
 		var session = request.getSession(true);
-		session.setAttribute(SessionAttrNames.USER_ID, id);
+		session.setAttribute(SessionAttributes.USER_ID, id);
 
 		var csrfToken = UUID.randomUUID().toString();
 		var csrfCookie = new Cookie("CSRF-Token", csrfToken);

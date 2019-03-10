@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.principle;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.RedisKeys;
 import net.kaciras.blog.api.Utils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
@@ -20,13 +21,10 @@ import java.util.Set;
 @Repository("AppSessionRepository")
 class SessionRepository {
 
-	/** Redis键前缀，例如用户ID=123的键为 ac:123 */
-	private static final String PREFIX = "ac:";
-
 	private final RedisTemplate<byte[], byte[]> redisTemplate;
 
 	public void add(int userId, String sessionId) {
-		redisTemplate.boundSetOps((PREFIX + userId).getBytes()).add(sessionId.getBytes());
+		redisTemplate.boundSetOps(RedisKeys.AccountSessions.of(userId).getBytes()).add(sessionId.getBytes());
 	}
 
 	/**
@@ -36,7 +34,7 @@ class SessionRepository {
 	 */
 	@SuppressWarnings("ConstantConditions")
 	public void clearAll(int userId) {
-		var key = (PREFIX + userId).getBytes();
+		var key = RedisKeys.AccountSessions.of(userId).getBytes();
 		var records = redisTemplate.opsForSet().members(key);
 
 		if (records != null) {
@@ -52,7 +50,7 @@ class SessionRepository {
 	 */
 	@Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
 	void cleanAccountRecords() {
-		var options = ScanOptions.scanOptions().match(PREFIX + "*").build();
+		var options = ScanOptions.scanOptions().match(RedisKeys.AccountSessions.of("*")).build();
 		var conn = redisTemplate.getRequiredConnectionFactory().getConnection();
 		var accounts = conn.scan(options);
 

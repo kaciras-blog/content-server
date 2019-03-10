@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SessionAttrNames;
+import net.kaciras.blog.api.SessionAttributes;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ class SessionUserController {
 
 	@DeleteMapping
 	public ResponseEntity<Void> logout(HttpSession session) {
-		session.removeAttribute(SessionAttrNames.USER_ID);
+		session.removeAttribute(SessionAttributes.USER_ID);
 		return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
 	}
 

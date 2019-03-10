@@ -1,18 +1,20 @@
 package net.kaciras.blog.api;
 
+import lombok.experimental.UtilityClass;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public final class Utils {
+@UtilityClass
+public class Utils {
 
-	public static void checkPositive(int value, String valname) {
+	public void checkPositive(int value, String valname) {
 		if (value <= 0) throw new RequestArgumentException("参数" + valname + "必须是正数:" + value);
 	}
 
-	public static void checkNotNegative(int value, String valname) {
+	public void checkNotNegative(int value, String valname) {
 		if (value < 0) throw new RequestArgumentException("参数" + valname + "不能为负:" + value);
 	}
 
@@ -23,7 +25,7 @@ public final class Utils {
 	 * @param request 请求
 	 * @return IP地址
 	 */
-	public static InetAddress AddressFromRequest(HttpServletRequest request) {
+	public InetAddress AddressFromRequest(HttpServletRequest request) {
 		var addr = request.getRemoteAddr();
 
 		// 没有地址说明是Mock来的请求
@@ -39,9 +41,7 @@ public final class Utils {
 		}
 	}
 
-	public static boolean nullableBool(Boolean value) {
+	public boolean nullableBool(Boolean value) {
 		return value == null ? false: value;
 	}
-
-	private Utils() {}
 }

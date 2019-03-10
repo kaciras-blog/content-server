@@ -3,6 +3,7 @@ package net.kaciras.blog.api.misc;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.RedisKeys;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ class SwiperController {
 
 	@GetMapping
 	public List<SwiperSlide> getPages() throws IOException {
-		var encode = redisTemplate.opsForValue().get("swiper");
+		var encode = redisTemplate.opsForValue().get(RedisKeys.SwiperList.value());
 		if (encode == null) {
 			return Collections.emptyList();
 		}
@@ -45,7 +46,7 @@ class SwiperController {
 	@RequireAuthorize
 	@PutMapping
 	public ResponseEntity<Void> update(@RequestBody @Valid List<SwiperSlide> slides) throws Exception {
-		redisTemplate.opsForValue().set("swiper", objectMapper.writeValueAsBytes(slides));
+		redisTemplate.opsForValue().set(RedisKeys.SwiperList.value(), objectMapper.writeValueAsBytes(slides));
 		return ResponseEntity.noContent().build();
 	}
 }

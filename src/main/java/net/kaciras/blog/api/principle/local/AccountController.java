@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.principle.local;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.SessionAttrNames;
+import net.kaciras.blog.api.SessionAttributes;
 import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.api.principle.AuthType;
 import net.kaciras.blog.api.principle.SessionService;
@@ -68,13 +68,13 @@ class AccountController {
 	 * @throws RequestArgumentException 如果检查出错误
 	 */
 	private void checkCaptcha(HttpSession session, @NonNull String value) {
-		var except = session.getAttribute(SessionAttrNames.CAPTCHA_SESSION_NAME);
-		session.removeAttribute(SessionAttrNames.CAPTCHA_SESSION_NAME);
+		var except = session.getAttribute(SessionAttributes.CAPTCHA);
+		session.removeAttribute(SessionAttributes.CAPTCHA);
 		if (!value.equals(except)) {
 			throw new RequestArgumentException("验证码错误");
 		}
 
-		var time = (long) session.getAttribute(SessionAttrNames.CAPTCHA_SESSION_TIME);
+		var time = (long) session.getAttribute(SessionAttributes.CAPTCHA_TIME);
 		if (clock.millis() - time > CAPTCHA_LIFE_TIME) {
 			throw new RequestArgumentException("验证码已过期，请重试");
 		}
