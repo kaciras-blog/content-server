@@ -48,8 +48,8 @@ public class GithubOauth2Client implements Oauth2Client {
 				.fromUriString("https://github.com/login/oauth/access_token")
 				.queryParam("client_id", clientId)
 				.queryParam("client_secret", clientSecret)
-				.queryParam("code", context.code)
-				.queryParam("state", context.state)
+				.queryParam("code", context.getCode())
+				.queryParam("state", context.getState())
 				.build().toUri();
 
 		var request = HttpRequest.newBuilder(authUri)
@@ -80,18 +80,18 @@ public class GithubOauth2Client implements Oauth2Client {
 
 	@AllArgsConstructor(onConstructor_ = @JsonCreator)
 	private static final class AccessTokenEntity {
-		public final String access_token;
-		public final String scope;
-		public final String token_type;
+		private final String access_token;
+//		private final String scope;
+//		private final String token_type;
 	}
 
 	@AllArgsConstructor(onConstructor_ = @JsonCreator)
 	private static final class UserProfile implements UserInfo {
 
-		public final String id;
-		public final String login;
-		public final String name;
-		public final String avatar_url;
+		private final String id;
+		private final String login;
+		private final String name;
+		private final String avatar_url;
 
 		@Override
 		public String id() {

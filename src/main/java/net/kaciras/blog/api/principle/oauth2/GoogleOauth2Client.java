@@ -50,8 +50,8 @@ public class GoogleOauth2Client implements Oauth2Client {
 		var formParams = UriComponentsBuilder.newInstance()
 				.queryParam("client_id", clientId)
 				.queryParam("client_secret", clientSecret)
-				.queryParam("code", context.code)
-				.queryParam("redirect_uri", context.currentUri)
+				.queryParam("code", context.getCode())
+				.queryParam("redirect_uri", context.getCurrentUri())
 				.queryParam("grant_type", "authorization_code");
 
 		var request = HttpRequest
@@ -64,7 +64,7 @@ public class GoogleOauth2Client implements Oauth2Client {
 		if (res.statusCode() != 200) {
 			throw new Error("Oauth Error" + res.body());
 		}
-		var tokenEntity = objectMapper.readValue(res.body(), GoogleTokenResp.class);
+		var tokenEntity = objectMapper.readValue(res.body(), AccessTokenEntity.class);
 		return getUserProfile(tokenEntity.access_token);
 	}
 
@@ -83,20 +83,20 @@ public class GoogleOauth2Client implements Oauth2Client {
 	}
 
 	@AllArgsConstructor(onConstructor_ = @JsonCreator)
-	private static final class GoogleTokenResp {
-		public final String access_token;
-		public final String refresh_token;
-		public final String token_type;
-		public final int expires_in; // 秒,默认1小时
+	private static final class AccessTokenEntity {
+		private final String access_token;
+//		private final String refresh_token;
+//		private final String token_type;
+//		private final int expires_in;  // 秒,默认1小时
 	}
 
 	@AllArgsConstructor(onConstructor_ = @JsonCreator)
 	private static final class GoogleUserInfo implements UserInfo {
 
 		/** 谷歌的ID特别长，不能用long */
-		public final String id;
-		public final String picture;
-		public final String name;
+		private final String id;
+		private final String picture;
+		private final String name;
 
 		@Override
 		public String id() {

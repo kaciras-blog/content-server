@@ -1,5 +1,6 @@
 package net.kaciras.blog.api.principle.oauth2;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -7,9 +8,10 @@ import lombok.RequiredArgsConstructor;
  * 如Github可以再次发送state、google需要再传一次callback的URI，这里统一提供。
  */
 @RequiredArgsConstructor
+@Getter
 public final class OAuth2Context {
 
-	public final String code;
-	public final String currentUri;
-	public final String state;
+	private final String code;
+	private final String currentUri;
+	private final String state;
 }
