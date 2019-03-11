@@ -8,7 +8,7 @@
 ---
 --- 如果所需令牌数大于桶容量，则返回值无意义，这留给客户端自己检查
 ---
---- 该脚本每秒能执行4万次，详情见 RateLimiterBenchmark.txt
+--- 经测试，该脚本执行速度非常快，详情见 RateLimiterBenchmark.txt
 ---
 local required = tonumber(ARGV[1])
 local now = tonumber(ARGV[2])
