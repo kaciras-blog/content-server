@@ -4,10 +4,12 @@ public enum RedisKeys {
 
 	SwiperList("swiper"),
 
+	OauthSession("oas:"),
+
 	/** 一个账户所有会话的集合 */
 	AccountSessions("ac:"),
 
-	OauthSession("oas:");
+	RateLimit("rt:");
 
 	private final String prefix;
 

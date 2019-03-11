@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -57,7 +57,7 @@ public class ServiceApplication {
 		var template = new RedisTemplate<String, byte[]>();
 		template.setEnableDefaultSerializer(false);
 		template.setConnectionFactory(factory);
-		template.setKeySerializer(new StringRedisSerializer());
+		template.setKeySerializer(RedisSerializer.string());
 		return template;
 	}
 
