@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.principle.oauth2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -82,7 +83,7 @@ public class GoogleOauth2Client implements Oauth2Client {
 		return objectMapper.readValue(res.body(), GoogleUserInfo.class);
 	}
 
-	@AllArgsConstructor(onConstructor_ = @JsonCreator)
+	@AllArgsConstructor(onConstructor_ = @JsonCreator(mode = Mode.PROPERTIES))
 	private static final class AccessTokenEntity {
 		private final String access_token;
 //		private final String refresh_token;

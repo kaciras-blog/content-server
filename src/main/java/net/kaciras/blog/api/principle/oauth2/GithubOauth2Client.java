@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.principle.oauth2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -78,7 +79,12 @@ public class GithubOauth2Client implements Oauth2Client {
 		return objectMapper.readValue(res.body(), UserProfile.class);
 	}
 
-	@AllArgsConstructor(onConstructor_ = @JsonCreator)
+	/*
+	 * 构造方法只有一个参数的时候，JsonCreator默认的策略采用Mode.DELEGATING模式，而多个
+	 * 参数的情况下才是Mode.PROPERTIES。
+	 * 这里只有一个参数，所以需要显示指定Mode.PROPERTIES模式
+	 */
+	@AllArgsConstructor(onConstructor_ = @JsonCreator(mode = Mode.PROPERTIES))
 	private static final class AccessTokenEntity {
 		private final String access_token;
 //		private final String scope;
