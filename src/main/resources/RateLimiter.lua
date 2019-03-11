@@ -19,14 +19,15 @@ local data = redis.pcall("HMGET", KEYS[1], "time", "permits")
 local lastAcquire = data[1]
 local currPermits = data[2]
 
---- 没有设置过，需要初始化。Lua中 false 和 nli 是falsy的
+--- 没有设置过，需要初始化。
+--- Lua中 false 和 nli 是falsy的，可以直接用 if 判断
 if not lastAcquire then
-    currPermits = maximum
     lastAcquire = now
+    currPermits = maximum
 end
 
 local timeToWait = 0
-currPermits = math.min(currPermits, currPermits + (now - lastAcquire) * rate)
+currPermits = math.min(maximum, currPermits + (now - lastAcquire) * rate)
 
 --- redis.call() 与 redis.pcall() 的区别是 call 抛异常，而 pcall 返回错误信息
 if required <= currPermits then
@@ -35,6 +36,6 @@ else
     timeToWait = math.ceil((required - currPermits) / rate)
 end
 
---- 运行到此处时，Redis里一定存在该IP的记录
+--- 断言：此时Redis里一定存在该KEY的记录
 redis.call("EXPIRE", KEYS[1], tonumber(ARGV[5]))
 return timeToWait
