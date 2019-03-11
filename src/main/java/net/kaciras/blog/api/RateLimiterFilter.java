@@ -29,7 +29,8 @@ public class RateLimiterFilter extends HttpFilter {
 
 	@Override
 	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-		var waitTime = rateLimiter.acquire(request.getRemoteHost(), 1);
+		var key = RedisKeys.RateLimit.of(request.getRemoteHost());
+		var waitTime = rateLimiter.acquire(key, 1);
 		if (waitTime > 0) {
 			response.setStatus(429);
 			response.setHeader("X-RateLimit-Wait", Long.toString(waitTime));

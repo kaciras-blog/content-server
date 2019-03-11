@@ -15,12 +15,14 @@ import java.util.List;
 @Setter
 public final class RedisRateLimiter {
 
+	private static final String SCRIPT_PATH = "/RateLimiter.lua";
+
 	private final Clock clock;
 	private final RedisTemplate<String, Object> redisTemplate;
 	private final RedisScript<Long> script;
 
 	private int bucketSize = 5;
-	private double rate = 0.1;
+	private double rate = 1;
 	private int cacheTime = 60;
 
 	public RedisRateLimiter(Clock clock, RedisConnectionFactory factory) {
@@ -35,20 +37,19 @@ public final class RedisRateLimiter {
 
 		var script = new DefaultRedisScript<Long>();
 		script.setResultType(Long.class);
-		script.setLocation(new ClassPathResource("/RateLimiter.lua"));
+		script.setLocation(new ClassPathResource(SCRIPT_PATH));
 		this.script = script;
 	}
 
-	public long acquire(String id, int permits) {
+	public long acquire(String key, int permits) {
 		if (permits > bucketSize) {
 			throw new IllegalArgumentException("所需令牌数大于桶的容量");
 		}
 		var now = clock.instant().getEpochSecond();
-		var keys = List.of(RedisKeys.RateLimit.of(id));
+		var waitTime = redisTemplate.execute(script, List.of(key), permits, now, bucketSize, rate, cacheTime);
 
-		var waitTime = redisTemplate.execute(script, keys, permits, now, bucketSize, rate, cacheTime);
 		if (waitTime == null) {
-			throw new AssertionError("限速脚本返回了空值，ID=" + id);
+			throw new AssertionError("限速脚本返回了空值，ID=" + key);
 		}
 		return waitTime;
 	}
