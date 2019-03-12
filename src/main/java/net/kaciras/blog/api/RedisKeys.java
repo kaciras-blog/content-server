@@ -9,7 +9,7 @@ public enum RedisKeys {
 	/** 一个账户所有会话的集合 */
 	AccountSessions("ac:"),
 
-	RateLimit("rt:");
+	RateLimit("rl:");
 
 	private final String prefix;
 
