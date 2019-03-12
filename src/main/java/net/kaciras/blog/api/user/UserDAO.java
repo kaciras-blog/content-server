@@ -17,6 +17,6 @@ interface UserDAO {
 	@Delete("UPDATE `user` SET deleted=1 WHERE id=#{id}")
 	int delete(int id);
 
-	@Update("UPDATE `user` SET name=#{name} head=#{head} WHERE id=#{id}")
+	@Update("UPDATE `user` SET name=#{name}, head=#{head} WHERE id=#{id}")
 	int updateProfile(User user);
 }
