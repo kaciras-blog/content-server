@@ -4,7 +4,7 @@ RAM: DDR3-1600
 System: Centos7 Linux 4.17.12
 Redis: 5.0.0 malloc=jemalloc-5.1.0 bits=64
 
-====== EVALSHA 47416ecd4b47c742ccf78fe2239438178fabd40d 1 192.168.0.1 1 2 90000 50 360 ======
+====== EVALSHA 472a04e7bf5405e99f077dfa20c7070eafd3c961 1 192.168.0.1 1 2 90000 50 360 ======
   100000 requests completed in 2.30 seconds
   5 parallel clients
   3 bytes payload
@@ -43,7 +43,7 @@ MSET (10 keys): 72411.30 requests per second
 System: Centos7 Linux 5.0.0
 Redis: 5.0.3 malloc=jemalloc-5.1.0 bits=64
 
-====== EVALSHA 47416ecd4b47c742ccf78fe2239438178fabd40d 1 192.168.0.1 1 2 90000 50 360 ======
+====== EVALSHA 472a04e7bf5405e99f077dfa20c7070eafd3c961 1 192.168.0.1 1 2 90000 50 360 ======
   100000 requests completed in 5.50 seconds
   5 parallel clients
   3 bytes payload
