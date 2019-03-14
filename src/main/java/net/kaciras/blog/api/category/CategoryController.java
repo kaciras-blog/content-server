@@ -58,14 +58,15 @@ class CategoryController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@RequireAuthorize
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(@PathVariable int id, @RequestParam boolean tree) {
-		if (tree) {
-			repository.removeTree(id);
-		} else {
-			repository.remove(id);
-		}
-		return ResponseEntity.noContent().build();
-	}
+// 暂不支持删除，删除后文章的迁移问题
+//	@RequireAuthorize
+//	@DeleteMapping("/{id}")
+//	public ResponseEntity<Void> delete(@PathVariable int id, @RequestParam boolean tree) {
+//		if (tree) {
+//			repository.removeTree(id);
+//		} else {
+//			repository.remove(id);
+//		}
+//		return ResponseEntity.noContent().build();
+//	}
 }

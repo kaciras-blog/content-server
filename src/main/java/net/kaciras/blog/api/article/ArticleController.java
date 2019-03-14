@@ -2,11 +2,10 @@ package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.DeletedState;
-import net.kaciras.blog.infrastructure.event.article.ArticleCreatedEvent;
-import net.kaciras.blog.infrastructure.event.article.ArticleUpdatedEvent;
-import net.kaciras.blog.infrastructure.message.MessageClient;
+import net.kaciras.blog.api.draft.DraftRepository;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +23,10 @@ class ArticleController {
 	private final ArticleManager articleManager;
 	private final ArticleMapper mapper;
 
-	private final MessageClient messageClient;
+	private final DraftRepository draftRepository;
+
+	@Value("${draft.delete-after-publish}")
+	private boolean deleteAfterSubmit;
 
 	@GetMapping
 	public List<PreviewVo> getList(ArticleListQuery request, Pageable pageable) {
@@ -50,20 +52,24 @@ class ArticleController {
 		var article = mapper.createArticle(request, SecurityContext.getUserId());
 		repository.add(article);
 
-		messageClient.send(new ArticleCreatedEvent(article.getId(), request.getDraftId(), request.getCategory()));
+		if(deleteAfterSubmit) {
+			draftRepository.remove(request.getDraftId());
+		}
 		return ResponseEntity.created(URI.create("/articles/" + article.getId())).build();
 	}
 
 	// 不更改 urlTitle，category，这些属性使用PATCH修改
 	@RequireAuthorize
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody PublishRequest update) {
+	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody PublishRequest request) {
 		var article = repository.get(id);
 
-		mapper.update(article, update);
+		mapper.update(article, request);
 		repository.update(article);
 
-		messageClient.send(new ArticleUpdatedEvent(id, update.getDraftId(), update.getCategory()));
+		if(deleteAfterSubmit) {
+			draftRepository.remove(request.getDraftId());
+		}
 		return ResponseEntity.noContent().build();
 	}
 

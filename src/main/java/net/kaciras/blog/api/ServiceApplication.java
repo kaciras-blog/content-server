@@ -3,8 +3,6 @@ package net.kaciras.blog.api;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import net.kaciras.blog.infrastructure.Misc;
 import net.kaciras.blog.infrastructure.autoconfig.*;
-import net.kaciras.blog.infrastructure.message.DirectMessageClient;
-import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -46,11 +44,6 @@ public class ServiceApplication {
 
 	@SuppressWarnings("unused")
 	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
-
-	@Bean
-	MessageClient messageClient() {
-		return new DirectMessageClient();
-	}
 
 	@Bean
 	RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory factory) {

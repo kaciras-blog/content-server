@@ -4,8 +4,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.infrastructure.DBUtils;
-import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
-import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
@@ -23,7 +21,6 @@ import java.util.Arrays;
 public class CategoryRepository {
 
 	private final CategoryDAO dao;
-	private final MessageClient messageClient;
 
 	public Category get(int id) {
 		return DBUtils.checkNotNullResource(dao.selectAttributes(id));
@@ -74,8 +71,6 @@ public class CategoryRepository {
 		}
 		get(id).moveSubTree(parent);
 		deleteBoth(id);
-
-		messageClient.send(new CategoryRemovedEvent(id, parent));
 	}
 
 	@Transactional
