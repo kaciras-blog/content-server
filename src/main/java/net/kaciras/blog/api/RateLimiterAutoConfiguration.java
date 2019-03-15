@@ -16,11 +16,11 @@ public class RateLimiterAutoConfiguration {
 	private final RateLimiterProperties properties;
 
 	@Bean
-	RateLimiterFilter rateLimiterFilter(Clock clock, RedisConnectionFactory factory) {
+	RateLimitFilter rateLimiterFilter(Clock clock, RedisConnectionFactory factory) {
 		var limiter = new RedisRateLimiter(clock, factory);
 		limiter.setRate(properties.getRate());
 		limiter.setBucketSize(properties.getBucketSize());
 		limiter.setCacheTime(properties.getCacheTime());
-		return new RateLimiterFilter(limiter);
+		return new RateLimitFilter(limiter);
 	}
 }

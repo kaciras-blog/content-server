@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @Slf4j
-public class RateLimiterFilter extends HttpFilter {
+public class RateLimitFilter extends HttpFilter {
 
 	private static final String WAIT_HEADER = "X-RateLimit-Wait";
 
