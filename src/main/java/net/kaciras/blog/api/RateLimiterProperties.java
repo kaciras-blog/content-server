@@ -13,7 +13,7 @@ public final class RateLimiterProperties {
 	private double rate = 1;
 
 	/** 令牌桶容量（令牌）*/
-	private int bucketSize = 5;
+	private int bucketSize = 6;
 
 	/** 令牌桶在Redis里保存的时间（秒）*/
 	private int cacheTime = 60;
