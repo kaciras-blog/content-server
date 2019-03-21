@@ -48,13 +48,15 @@ class DraftController {
 	@Transactional
 	@PostMapping
 	public ResponseEntity<Void> createDraft(@RequestParam(required = false) Integer article) {
+		var content = article != null
+				? mapper.fromArticle(articleManager.getLiveArticle(article))
+				: DraftContent.initial();
+
 		var draft = new Draft();
 		draft.setUserId(SecurityContext.getUserId());
 		draft.setArticleId(article);
 		repository.add(draft);
 
-		var content = article == null ? DraftContent.initial()
-				: mapper.fromArticle(articleManager.getLiveArticle(article));
 		draft.getHistoryList().add(content);
 
 		return ResponseEntity.created(URI.create("/drafts/" + draft.getId())).build();
