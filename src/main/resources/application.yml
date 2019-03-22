@@ -27,7 +27,6 @@ spring:
     - org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration
     - org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration
 
-
   main:
     banner-mode: "off"
 
