@@ -72,7 +72,7 @@ public class ServiceApplication {
 	}
 
 	/**
-	 * 使用 JAVA8 的新 API 代替 System.currentTimeMillis() 等旧API，Clock具有更好的语义并且便于Mock测试。
+	 * 使用 JAVA8 的新 API 代替 System.currentTimeMillis()，Clock 具有更好的语义并且便于Mock测试。
 	 */
 	@Bean
 	Clock clock() {
