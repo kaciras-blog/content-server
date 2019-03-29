@@ -30,6 +30,7 @@ public class RateLimitFilter extends HttpFilter {
 			if (waitTime > 0) {
 				response.setStatus(429);
 				response.setHeader(RATE_LIMIT_HEADER, Long.toString(waitTime));
+				response.getWriter().write("操作太快，请歇会再试");
 				return;
 			}
 		}
