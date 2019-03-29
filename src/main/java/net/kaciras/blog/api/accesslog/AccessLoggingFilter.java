@@ -15,10 +15,14 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
-public class AccessLoggingFilter extends HttpFilter {
+public final class AccessLoggingFilter extends HttpFilter {
+
+	private static final int UA_MAX_LENGTH = 255;
+	private static final int MAX_DELAY = 65535;
 
 	private final Clock clock;
 
@@ -47,11 +51,15 @@ public class AccessLoggingFilter extends HttpFilter {
 		record.setIp(Utils.AddressFromRequest(request));
 		record.setPath(request.getRequestURI());
 		record.setStatusCode(response.getStatus());
-		record.setUserAgent(request.getHeader("User-Agent"));
 		record.setStartTime(LocalDateTime.ofInstant(startInstant, clock.getZone()));
 
+		// 正常的 User-Agent 不会太长，过长的一般也没什么意义，这里直接截断到255字符以内
+		Optional.ofNullable(request.getHeader("User-Agent"))
+				.map(userAgent -> userAgent.substring(0, Math.min(userAgent.length(), UA_MAX_LENGTH)))
+				.ifPresent(record::setUserAgent);
+
 		var delay = Duration.between(startInstant, clock.instant()).toMillis();
-		record.setDelay(Math.min(delay, 65535)); // 响应超时，再大的数也没有意义，限制到65535。
+		record.setDelay(Math.min(delay, MAX_DELAY)); // 响应超时，再大的数也没有意义，限制到65535。
 
 		accessLoggingDAO.insert(record);
 	}
