@@ -1,4 +1,4 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.graphql;
 
 import graphql.GraphQL;
 import graphql.schema.GraphQLSchema;

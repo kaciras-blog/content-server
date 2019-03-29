@@ -1,4 +1,4 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.graphql;
 
 import graphql.schema.DataFetchingEnvironment;
 import lombok.RequiredArgsConstructor;

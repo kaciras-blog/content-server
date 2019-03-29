@@ -1,4 +1,4 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.graphql;
 
 import graphql.schema.DataFetchingEnvironment;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ public class CategoryDataFetcher {
 	private final CategoryManager manager;
 
 	public Category getById(DataFetchingEnvironment environment) {
-		return repository.get(environment.getArgument("id")).orElse(null);
+		return repository.get(environment.getArgument("id"));
 	}
 
 	public String getBanner(DataFetchingEnvironment environment) {
