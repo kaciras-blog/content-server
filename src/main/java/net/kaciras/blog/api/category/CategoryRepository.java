@@ -4,14 +4,12 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.infrastructure.DBUtils;
-import net.kaciras.blog.infrastructure.event.category.CategoryRemovedEvent;
-import net.kaciras.blog.infrastructure.message.MessageClient;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * 基于ClosureTable的的数据库存储分类树实现。
@@ -23,15 +21,9 @@ import java.util.Optional;
 public class CategoryRepository {
 
 	private final CategoryDAO dao;
-	private final MessageClient messageClient;
 
-	public Optional<Category> get(int id) {
-		return dao.selectAttributes(id);
-	}
-
-	@NonNull
-	public Category getRoot() {
-		return new RootCategory();
+	public Category get(int id) {
+		return DBUtils.checkNotNullResource(dao.selectAttributes(id));
 	}
 
 	public int size() {
@@ -44,7 +36,11 @@ public class CategoryRepository {
 		if (parent > 0) {
 			requireContains(parent);
 		}
-		dao.insert(category);
+		try {
+			dao.insert(category);
+		} catch (DataIntegrityViolationException ex) {
+			throw new IllegalArgumentException("分类实体中存在不合法的属性值", ex);
+		}
 		dao.insertPath(category.getId(), parent);
 		dao.insertNode(category.getId());
 		return category.getId();
@@ -73,10 +69,8 @@ public class CategoryRepository {
 		if (parent == null) {
 			parent = 0;
 		}
-		get(id).orElseThrow().moveSubTree(parent);
+		get(id).moveSubTree(parent);
 		deleteBoth(id);
-
-		messageClient.send(new CategoryRemovedEvent(id, parent));
 	}
 
 	@Transactional

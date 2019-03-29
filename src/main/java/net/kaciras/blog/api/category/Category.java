@@ -2,7 +2,6 @@ package net.kaciras.blog.api.category;
 
 import lombok.*;
 import net.kaciras.blog.api.Utils;
-import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.lang.NonNull;
@@ -19,11 +18,6 @@ public class Category extends CategoryAttributes {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private CategoryDAO dao;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private MessageClient messageClient;
 
 	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 

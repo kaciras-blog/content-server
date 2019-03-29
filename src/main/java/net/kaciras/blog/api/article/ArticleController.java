@@ -1,84 +1,92 @@
 package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.DeletedState;
+import net.kaciras.blog.api.draft.DraftRepository;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/articles")
 class ArticleController {
 
-	private final ArticleService service;
+	private final ArticleRepository repository;
+	private final ArticleManager articleManager;
 	private final ArticleMapper mapper;
 
-	private Map<Integer, String> etagCache = new ConcurrentHashMap<>();
+	private final DraftRepository draftRepository;
 
-	// TODO: messaging system
-	@SuppressWarnings("FieldCanBeLocal")
-	private boolean disableCache = true;
+	@Value("${draft.delete-after-publish}")
+	private boolean deleteAfterSubmit;
 
 	@GetMapping
-	public List<ArticleVo> getList(ArticleListQuery request, Pageable pageable) {
+	public List<PreviewVo> getList(ArticleListQuery request, Pageable pageable) {
 		request.setPageable(pageable);
-		return mapper.toViewObject(service.getList(request));
+		if (request.getDeletion() != DeletedState.FALSE) {
+			SecurityContext.require("SHOW_DELETED");
+		}
+		return mapper.toPreview(repository.findAll(request), request);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<ArticleVo> get(@PathVariable int id, WebRequest request,
-										 @RequestParam(defaultValue = "false") boolean rv) {
-		var etag = etagCache.get(id);
-		if (request.checkNotModified(etag)) {
-			return ResponseEntity.status(304).build();
+	public ArticleVo get(@PathVariable int id, @RequestParam(defaultValue = "false") boolean rv) {
+		var article = articleManager.getLiveArticle(id);
+		if (rv) {
+			article.recordView(); //增加浏览量
 		}
-
-		var article = service.getArticle(id, rv);
-		var vo = mapper.toViewObject(article);
-
-		if (disableCache) {
-			return ResponseEntity.ok().body(vo);
-		}
-
-		// 如果缓存中不存在，则需要创建新的缓存记录。
-		if (etag == null) {
-			etag = etagCache.putIfAbsent(id, UUID.randomUUID().toString());
-			return ResponseEntity.ok().eTag("W/\"" + etag).body(vo);
-		}
-
-		// 缓存已存在，但是客户端没有记录，则添加已缓存的Etag到客户端
-		return ResponseEntity.ok().eTag("W/\"" + etag).body(vo);
+		return mapper.toViewObject(article);
 	}
 
+	@RequireAuthorize
 	@PostMapping
 	public ResponseEntity<Void> post(@RequestBody @Valid PublishRequest request) {
 		var article = mapper.createArticle(request, SecurityContext.getUserId());
-		service.addNew(article, request.getDraftId());
+		repository.add(article);
+
+		if(deleteAfterSubmit) {
+			draftRepository.remove(request.getDraftId());
+		}
 		return ResponseEntity.created(URI.create("/articles/" + article.getId())).build();
 	}
 
-	/* PATCH 一个端点处理所有？
-	 * {
-	 * 		attributes: {
-	 * 			...ContentBase,
-	 * 			urlTitle: ...
-	 * 		}
-	 * 		category: ...
-	 * 		deletion: ...
-	 * }
-	 */
+	// 不更改 urlTitle，category，这些属性使用PATCH修改
+	@RequireAuthorize
+	@PutMapping("/{id}")
+	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody PublishRequest request) {
+		var article = repository.get(id);
+
+		mapper.update(article, request);
+		repository.update(article);
+
+		if(deleteAfterSubmit) {
+			draftRepository.remove(request.getDraftId());
+		}
+		return ResponseEntity.noContent().build();
+	}
+
+	@RequireAuthorize
 	@PatchMapping("/{id}")
 	public ResponseEntity<Void> patch(@PathVariable int id, @RequestBody PatchMap patchMap) {
-		service.update(id, patchMap);
+		var article = repository.get(id);
+
+		if (patchMap.getCategory() != null) {
+			article.updateCategory(patchMap.getCategory());
+		}
+		if (patchMap.getDeletion() != null) {
+			article.updateDeleted(patchMap.getDeletion());
+		}
+		if(patchMap.getUrlTitle() != null) {
+			article.updateUrlTitle(patchMap.getUrlTitle());
+		}
 		return ResponseEntity.noContent().build();
 	}
 }

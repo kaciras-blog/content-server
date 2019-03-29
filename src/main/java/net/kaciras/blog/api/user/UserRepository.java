@@ -2,6 +2,7 @@ package net.kaciras.blog.api.user;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.DBUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
@@ -10,20 +11,20 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserRepository {
 
-	private final UserDAO userDao;
+	private final UserDAO userDAO;
 
 	public void add(@NonNull User user) {
-		userDao.insert(user);
+		userDAO.insert(user);
 	}
 
 	public User get(int id) {
 		if (id == 0) {
 			return User.GUEST;
 		}
-		return userDao.select(id);
+		return userDAO.select(id);
 	}
 
-	public User getByName(String name) {
-		return userDao.selectByName(name);
+	public void update(User user) {
+		DBUtils.checkEffective(userDAO.updateProfile(user));
 	}
 }

@@ -59,7 +59,11 @@ public final class HistoryList {
 
 	// 不包含 content
 	public DraftHistory findLatest() {
-		return historyDAO.select(id, historyDAO.selectLastSaveCount(id));
+		var latest = historyDAO.selectLastSaveCount(id);
+		if (latest == null) {
+			throw new Error("草稿主表与历史表不一致，id=" + id);
+		}
+		return historyDAO.select(id, latest);
 	}
 
 	public List<DraftHistory> findAll() {

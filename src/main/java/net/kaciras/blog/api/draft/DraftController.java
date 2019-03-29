@@ -1,9 +1,7 @@
 package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.article.ArticleRepository;
-import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
+import net.kaciras.blog.api.article.ArticleManager;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.http.HttpStatus;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 草稿相关的API
@@ -30,7 +27,7 @@ class DraftController {
 
 	private final DraftRepository repository;
 	private final DraftMapper mapper;
-	private final ArticleRepository articleRepository;
+	private final ArticleManager articleManager;
 
 	@GetMapping
 	public List<DraftVo> getList() {
@@ -39,9 +36,7 @@ class DraftController {
 
 	@GetMapping("/{id}")
 	public DraftVo get(@PathVariable int id) {
-		return repository.findById(id)
-				.map(mapper::toDraftVo)
-				.orElseThrow(ResourceNotFoundException::new);
+		return mapper.toDraftVo(repository.findById(id));
 	}
 
 	/**
@@ -53,11 +48,9 @@ class DraftController {
 	@Transactional
 	@PostMapping
 	public ResponseEntity<Void> createDraft(@RequestParam(required = false) Integer article) {
-		var content = Optional.ofNullable(article)
-				.map(id -> articleRepository.get(article)
-						.map(mapper::fromArticle)
-						.orElseThrow(RequestArgumentException::new))
-				.orElseGet(DraftContent::initial);
+		var content = article != null
+				? mapper.fromArticle(articleManager.getLiveArticle(article))
+				: DraftContent.initial();
 
 		var draft = new Draft();
 		draft.setUserId(SecurityContext.getUserId());
@@ -65,6 +58,7 @@ class DraftController {
 		repository.add(draft);
 
 		draft.getHistoryList().add(content);
+
 		return ResponseEntity.created(URI.create("/drafts/" + draft.getId())).build();
 	}
 

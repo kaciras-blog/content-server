@@ -5,7 +5,6 @@ import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.exception.DataTooBigException;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
-import net.kaciras.blog.infrastructure.message.MessageClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -21,11 +20,6 @@ public final class Discussion {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private DiscussionDAO dao;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private MessageClient messageClient;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -1,0 +1,78 @@
+测试环境（本地Hyper-V虚拟机）：
+CPU: Intel i5-4200M
+RAM: DDR3-1600
+System: Centos7 Linux 4.17.12
+Redis: 5.0.0 malloc=jemalloc-5.1.0 bits=64
+
+====== EVALSHA 472a04e7bf5405e99f077dfa20c7070eafd3c961 1 192.168.0.1 1 2 90000 50 360 ======
+  100000 requests completed in 2.30 seconds
+  5 parallel clients
+  3 bytes payload
+  keep alive: 1
+
+99.94% <= 1 milliseconds
+99.98% <= 2 milliseconds
+99.99% <= 4 milliseconds
+100.00% <= 5 milliseconds
+100.00% <= 5 milliseconds
+43554.01 requests per second
+
+对照(redis-benchmark -c 5 -q):
+PING_INLINE: 52029.14 requests per second
+PING_BULK: 70871.72 requests per second
+SET: 73637.70 requests per second
+GET: 72254.34 requests per second
+INCR: 74404.77 requests per second
+LPUSH: 76628.36 requests per second
+RPUSH: 62383.03 requests per second
+LPOP: 74571.22 requests per second
+RPOP: 71073.21 requests per second
+SADD: 69735.01 requests per second
+HSET: 71174.38 requests per second
+SPOP: 70422.54 requests per second
+LPUSH (needed to benchmark LRANGE): 73855.24 requests per second
+LRANGE_100 (first 100 elements): 43649.06 requests per second
+LRANGE_300 (first 300 elements): 19669.55 requests per second
+LRANGE_500 (first 450 elements): 12672.67 requests per second
+LRANGE_600 (first 600 elements): 10043.19 requests per second
+MSET (10 keys): 72411.30 requests per second
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+测试环境（本博客的服务器 bandwagonhost 20G VPS）：
+System: Centos7 Linux 5.0.0
+Redis: 5.0.3 malloc=jemalloc-5.1.0 bits=64
+
+====== EVALSHA 472a04e7bf5405e99f077dfa20c7070eafd3c961 1 192.168.0.1 1 2 90000 50 360 ======
+  100000 requests completed in 5.50 seconds
+  5 parallel clients
+  3 bytes payload
+  keep alive: 1
+
+99.88% <= 1 milliseconds
+99.97% <= 2 milliseconds
+99.99% <= 5 milliseconds
+99.99% <= 7 milliseconds
+100.00% <= 11 milliseconds
+100.00% <= 11 milliseconds
+18175.21 requests per second
+
+对照(redis-benchmark -c 5 -q):
+PING_INLINE: 48638.13 requests per second
+PING_BULK: 51519.84 requests per second
+SET: 46360.68 requests per second
+GET: 50226.02 requests per second
+INCR: 43630.02 requests per second
+LPUSH: 38240.92 requests per second
+RPUSH: 38328.86 requests per second
+LPOP: 38744.67 requests per second
+RPOP: 43802.02 requests per second
+SADD: 50075.11 requests per second
+HSET: 42643.92 requests per second
+SPOP: 49358.34 requests per second
+LPUSH (needed to benchmark LRANGE): 42158.52 requests per second
+LRANGE_100 (first 100 elements): 30220.61 requests per second
+LRANGE_300 (first 300 elements): 13347.57 requests per second
+LRANGE_500 (first 450 elements): 9124.09 requests per second
+LRANGE_600 (first 600 elements): 7021.49 requests per second
+MSET (10 keys): 28595.94 requests per second

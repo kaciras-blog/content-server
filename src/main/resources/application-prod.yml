@@ -30,9 +30,21 @@ logging:
   file: content-service.log
 
 kaciras:
-  spring:
-    session:
-      cookie:
-        domain: kaciras.net
+
+  session:
+    cookie:
+      domain: kaciras.net
+
   cors:
     origins: https://blog.kaciras.net
+
+  oauth:
+    www-host: blog.kaciras.net
+
+    google:
+      client-id: 686605909250-m65kb168sb2gbddhr37bjdon9hklrcc8.apps.googleusercontent.com
+      client-secret: q_qqA0tuLiw5WZZzTsZIYFwp
+
+    github:
+      client-id: 6e5034c34ee4b1b581d3
+      client-secret: 2306a57b3d3a916a77c16b56a9ba45ab5d2cc27a

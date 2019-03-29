@@ -1,13 +1,15 @@
 package net.kaciras.blog.api.discuss;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import net.kaciras.blog.api.ListSelectRequest;
 
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@Data
+@Getter
+@Setter
 public final class DiscussionQuery extends ListSelectRequest {
 
 	boolean metaonly;

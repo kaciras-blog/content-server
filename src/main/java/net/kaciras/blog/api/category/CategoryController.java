@@ -1,7 +1,9 @@
 package net.kaciras.blog.api.category;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -12,41 +14,59 @@ import java.util.List;
 @RequestMapping("/categories")
 class CategoryController {
 
-	private final CategoryService service;
+	private final CategoryRepository repository;
 	private final CategoryMapper mapper;
 
 	@GetMapping("/{id}")
-	public CategoryVo get(@PathVariable int id) {
-		return mapper.categoryView(service.get(id));
+	public CategoryVo get(@PathVariable int id, @RequestParam(defaultValue = "false") boolean aggregate) {
+		var category = repository.get(id);
+		return aggregate ? mapper.aggregatedView(category) : mapper.categoryView(category);
 	}
 
 	@GetMapping("/{id}/children")
 	public List<CategoryVo> getChildren(@PathVariable int id) {
-		return mapper.categoryView(service.get(id).getChildren());
+		return mapper.categoryView(repository.get(id).getChildren());
 	}
 
+	@RequireAuthorize
 	@PostMapping
 	public ResponseEntity<Void> create(@RequestBody CategoryAttributes category, @RequestParam int parent) {
-		var id = service.create(mapper.toCategory(category), parent);
+		var id = repository.add(mapper.toCategory(category), parent);
 		return ResponseEntity.created(URI.create("/categories/" + id)).build();
 	}
 
+	@Transactional
+	@RequireAuthorize
 	@PostMapping("/transfer")
 	public void move(@RequestParam int id, @RequestParam int parent, @RequestParam boolean treeMode) {
-		service.move(id, parent, treeMode);
+		var category = repository.get(id);
+		var newParent = repository.get(parent);
+
+		if (treeMode) {
+			category.moveTreeTo(newParent);
+		} else {
+			category.moveTo(newParent);
+		}
 	}
 
+	@RequireAuthorize
 	@PutMapping("/{id}")
 	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody CategoryAttributes attributes) {
-		var category = service.get(id);
+		var category = repository.get(id);
 		mapper.update(category, attributes);
-		service.update(category);
+		repository.update(category);
 		return ResponseEntity.noContent().build();
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> delete(@PathVariable int id, @RequestParam boolean tree) {
-		service.delete(id, tree);
-		return ResponseEntity.noContent().build();
-	}
+// 暂不支持删除，删除后文章的迁移问题
+//	@RequireAuthorize
+//	@DeleteMapping("/{id}")
+//	public ResponseEntity<Void> delete(@PathVariable int id, @RequestParam boolean tree) {
+//		if (tree) {
+//			repository.removeTree(id);
+//		} else {
+//			repository.remove(id);
+//		}
+//		return ResponseEntity.noContent().build();
+//	}
 }
