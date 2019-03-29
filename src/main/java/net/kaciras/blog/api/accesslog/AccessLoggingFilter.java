@@ -48,10 +48,10 @@ public final class AccessLoggingFilter extends HttpFilter {
 	// 垃圾@Async对内部调用不代理，即使设置了 proxyTargetClass 也没用
 	private void log(HttpServletRequest request, HttpServletResponse response, Instant startInstant) {
 		var record = new AccessRecord();
+		record.setStartTime(LocalDateTime.ofInstant(startInstant, clock.getZone()));
 		record.setIp(Utils.AddressFromRequest(request));
 		record.setPath(request.getRequestURI());
 		record.setStatusCode(response.getStatus());
-		record.setStartTime(LocalDateTime.ofInstant(startInstant, clock.getZone()));
 
 		// 正常的 User-Agent 不会太长，过长的一般也没什么意义，这里直接截断到255字符以内
 		Optional.ofNullable(request.getHeader("User-Agent"))

@@ -31,15 +31,20 @@ discuss:
   anonymous: true
 
 kaciras:
-  cors:
-    origins: "*"
+
   development:
     admin-principal: false
+
+  cors:
+    origins: "*"
+
   oauth:
     www-host: localhost
-    github:
-      client-id: 08878e62e2f3cb5be51b
-      client-secret: 04b1aebe5770a4458bfa17d79bc5cd1988dcba45
+
     google:
       client-id: 834515199449-f1ia0v8b3fa5hnvuimrradoetulc5nvi.apps.googleusercontent.com
       client-secret: jT7m_0N5zS-QzuzwGKYnYuFo
+
+    github:
+      client-id: 08878e62e2f3cb5be51b
+      client-secret: 04b1aebe5770a4458bfa17d79bc5cd1988dcba45
