@@ -6,12 +6,12 @@ import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.TypeDefinitionRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -20,18 +20,11 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("/graphql")
 public class GraphQLController {
 
-	private GraphQLSchema graphQLSchema;
+	private final GraphQLSchema graphQLSchema;
 
-	@Autowired
 	public GraphQLController(ArticleDataFetcher articleDataFetcher,
 							 CategoryDataFetcher categoryDataFetcher,
 							 UserDataFetcher userDataFetcher) throws IOException {
-
-		var stream = GraphQLController.class.getClassLoader().getResourceAsStream("schema.graphql");
-		TypeDefinitionRegistry registry;
-		try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-			registry = new SchemaParser().parse(reader);
-		}
 
 		var wiring = RuntimeWiring.newRuntimeWiring()
 				.type("Query", builder -> builder
@@ -44,19 +37,30 @@ public class GraphQLController {
 				.build();
 
 		var schemaGenerator = new SchemaGenerator();
-		graphQLSchema = schemaGenerator.makeExecutableSchema(registry, wiring);
+		graphQLSchema = schemaGenerator.makeExecutableSchema(loadTypeDefinition(), wiring);
+	}
+
+	private TypeDefinitionRegistry loadTypeDefinition() throws IOException {
+		var schema = GraphQLController.class.getClassLoader().getResource("schema.graphql");
+		if (schema == null) {
+			throw new FileNotFoundException("Can't find GraphQL schema file");
+		}
+		try (var reader = new InputStreamReader(schema.openStream(), StandardCharsets.UTF_8)) {
+			return new SchemaParser().parse(reader);
+		}
 	}
 
 	@GetMapping
-	public Object query(@RequestParam String query) {
-		var build = GraphQL.newGraphQL(graphQLSchema).build();
-		var executionResult = build.execute(query);
-		var errors = executionResult.getErrors();
+	public Object handleRequest(@RequestBody String query) {
+		var executionResult = GraphQL
+				.newGraphQL(graphQLSchema)
+				.build()
+				.execute(query);
 
-		if (errors.isEmpty()) {
-			return executionResult.getData();
-		} else {
+		var errors = executionResult.getErrors();
+		if (!errors.isEmpty()) {
 			return errors.get(0);
 		}
+		return executionResult.getData();
 	}
 }
