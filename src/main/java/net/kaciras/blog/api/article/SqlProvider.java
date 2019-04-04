@@ -24,7 +24,7 @@ public final class SqlProvider {
 
 		var category = query.getCategory();
 		if (category > 0) {
-			if(query.isRecursive()) {
+			if (query.isRecursive()) {
 				//TODO: coupling 耦合
 				sql.JOIN("category_tree AS B ON A.category=B.descendant").WHERE("B.ancestor=#{category}");
 			} else {

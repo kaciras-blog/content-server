@@ -57,7 +57,7 @@ public final class Discussion {
 	/**
 	 * 创建一个评论，该方法会检查评论内容是否合法。
 	 *
-	 * @param userId 评论者ID
+	 * @param userId  评论者ID
 	 * @param content 评论内容
 	 * @return 评论对象
 	 */

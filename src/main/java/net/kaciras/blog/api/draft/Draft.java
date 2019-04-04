@@ -21,10 +21,14 @@ public final class Draft {
 	private int id;
 	private int userId;
 
-	/** 文章来源，null表示新文章，否则表示修改文章 */
+	/**
+	 * 文章来源，null表示新文章，否则表示修改文章
+	 */
 	private Integer articleId;
 
-	/** 创建时间 */
+	/**
+	 * 创建时间
+	 */
 	private LocalDateTime time;
 
 	public HistoryList getHistoryList() {

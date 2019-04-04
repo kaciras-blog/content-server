@@ -16,7 +16,9 @@ public final class DraftHistory extends DraftContent {
 	private int saveCount;
 	private int wordCount;
 
-	/** 保存时间 */
+	/**
+	 * 保存时间
+	 */
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime time;
 }

@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * 为了保证服务端能够主动删除Session，使用了Redis的Set来记录每个用户的Session。
  * 该仓库使用Radis的Set来记录 UserId -> [SessionIds]。
- *
+ * <p>
  * "SessionRepository" 这个名字和 Spring 内置的 Bean 冲突了，所以要改个名。
  */
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ class SessionRepository {
 
 	/**
 	 * 删除指定用户所有的会话，这将注销该用户的所有终端的登录。
-	 * 
+	 *
 	 * @param userId 用户ID
 	 */
 	@SuppressWarnings("ConstantConditions")
@@ -61,7 +61,7 @@ class SessionRepository {
 					.stream()
 					.filter(k -> Utils.nullableBool(redisTemplate.hasKey(k)))
 					.toArray();
-			if(invaild.length > 0) {
+			if (invaild.length > 0) {
 				redisTemplate.opsForSet().remove(recordSet, invaild);
 			}
 		}

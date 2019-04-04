@@ -50,7 +50,8 @@ import java.time.Clock;
 public class ServiceApplication {
 
 	@SuppressWarnings("unused")
-	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
+	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {
+	}
 
 	@Bean
 	RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory factory) {
@@ -81,13 +82,13 @@ public class ServiceApplication {
 	/**
 	 * TaskSchedulingAutoConfiguration.taskScheduler 因为 RedisHttpSessionConfiguration 实现了
 	 * SchedulingConfigurer 来加入一个清理过期会话的任务而不被启用。
-	 *
+	 * <p>
 	 * 这是因为（我猜的）SchedulingConfigurer 功能过大可以修改 ScheduledTaskRegistrar 的调度器，
 	 * 保守起见禁止了默认的调度器Bean。
-	 *
+	 * <p>
 	 * 虽然本应用中的 RedisHttpSessionConfiguration 并不会修改调度器，但 TaskSchedulingAutoConfiguration
 	 * 却是废了，故直接在这里创建调度器。
-	 *
+	 * <p>
 	 * 与 TaskSchedulingAutoConfiguration 相比，这里创建不支持配置文件(spring.task.scheduling)，如果要用回自动
 	 * 配置的话，需要将 applucation.yml 中 spring.autoconfigure.exclude 相关项去掉
 	 *

@@ -36,7 +36,7 @@ interface ArticleDAO {
 	/**
 	 * 更改一个文章的删除状态，并不会真正地从数据库中删除或插入它。
 	 *
-	 * @param id 文章ID。
+	 * @param id    文章ID。
 	 * @param value 删除标记的值
 	 */
 	@Update("UPDATE article SET deleted=#{value} WHERE id=#{id}")

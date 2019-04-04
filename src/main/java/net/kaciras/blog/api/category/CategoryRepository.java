@@ -90,7 +90,7 @@ public class CategoryRepository {
 		dao.delete(id);
 		dao.deletePath(id);
 	}
-	
+
 	private void requireContains(int id) {
 		var v = dao.contains(id);
 		if (v == null || !v) throw new IllegalArgumentException("指定的分类不存在");

@@ -8,4 +8,5 @@ import org.mapstruct.ReportingPolicy;
  * 为什么要用个接口+注解呢，我觉得是因为注解引用的必须是静态的吧。
  */
 @MapperConfig(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
-public interface MapStructConfig {}
+public interface MapStructConfig {
+}

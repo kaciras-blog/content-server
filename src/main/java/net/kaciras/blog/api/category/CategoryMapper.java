@@ -20,7 +20,7 @@ abstract class CategoryMapper {
 	private CategoryManager categoryManager;
 
 	public AggregationVo aggregatedView(Category category) {
-		if(category == null) {
+		if (category == null) {
 			return null;
 		}
 		var vo = new AggregationVo();
@@ -32,7 +32,7 @@ abstract class CategoryMapper {
 
 	@Named("CategoryVo")
 	public CategoryVo categoryView(Category category) {
-		if(category == null) {
+		if (category == null) {
 			return null;
 		}
 		var vo = new CategoryVo();

@@ -15,4 +15,5 @@ import org.springframework.context.annotation.Import;
 @Import(KxCodecAutoConfiguration.class)
 @SpringBootApplication
 @ComponentScan(excludeFilters = @Filter(type = FilterType.ANNOTATION, value = SpringBootApplication.class))
-public class TestApplication {}
+public class TestApplication {
+}

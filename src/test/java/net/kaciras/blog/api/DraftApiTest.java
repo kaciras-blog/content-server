@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 class DraftApiTest extends AbstractSpringTest {
 
 	@Test
-	void testGetList() throws Exception{
+	void testGetList() throws Exception {
 		var c = new Category();
 		var dao = Category.class.getDeclaredField("dao");
 		dao.setAccessible(true);

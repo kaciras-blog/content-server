@@ -29,7 +29,7 @@ public final class SqlProvidor {
 			if (query.getUserId() != null) {
 				sql.WHERE("user_id = #{userId}");
 			}
-			if(!query.isMetaonly()) {
+			if (!query.isMetaonly()) {
 				sql.WHERE("parent = 0"); // 文章列表查询数量时包含楼中楼
 			}
 		}

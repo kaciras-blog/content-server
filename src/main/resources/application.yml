@@ -15,17 +15,17 @@ spring:
 
   autoconfigure:
     exclude:
-    - org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
-    - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
-    - org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
-    - org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration
-    - org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration
-    - org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
-    - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+      - org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
+      - org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+      - org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration
+      - org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration
+      - org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
 
-    # 暂时用不到 Multipart 和 WebSocket
-    - org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration
-    - org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration
+      # 暂时用不到 Multipart 和 WebSocket
+      - org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration
+      - org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration
 
   main:
     banner-mode: "off"

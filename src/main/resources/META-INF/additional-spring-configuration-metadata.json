@@ -23,4 +23,5 @@
 			"type": "java.lang.String",
 			"description": "前端页面的host，用于验证登陆跳转."
 		}
-	] }
+	]
+}

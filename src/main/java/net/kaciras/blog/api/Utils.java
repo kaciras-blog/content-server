@@ -42,6 +42,6 @@ public class Utils {
 	}
 
 	public boolean nullableBool(Boolean value) {
-		return value == null ? false: value;
+		return value == null ? false : value;
 	}
 }

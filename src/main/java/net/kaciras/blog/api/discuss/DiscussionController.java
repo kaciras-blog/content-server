@@ -51,11 +51,11 @@ class DiscussionController {
 
 	/**
 	 * 查询指定评论的回复（楼中楼）。
-	 *
+	 * <p>
 	 * 楼中楼的URL主要使用子资源的形式，虽然getList()方法通过设置请求参数
 	 * 也能做到相同的功能，但使用子资源更加语义化。
 	 *
-	 * @param id 评论ID
+	 * @param id       评论ID
 	 * @param pageable 分页参数
 	 * @return 回复列表
 	 */

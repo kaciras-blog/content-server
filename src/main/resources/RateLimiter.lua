@@ -24,25 +24,25 @@ local currPermits = data[2]
 --- Lua 中 false 和 nli 是 falsy 的，可以直接用 if 判断
 if not lastAcquire then
 
-    --- Redis里没有记录过，直接使用参数作为初始值。
-    lastAcquire = now
-    currPermits = maximum
+	--- Redis里没有记录过，直接使用参数作为初始值。
+	lastAcquire = now
+	currPermits = maximum
 else
 
-    --- 当前令牌（令牌）= 上次剩余（令牌）+（当前时间（时间）- 上次获取时间（时间））* 添加速率（令牌/时间）
-    --- 注意不能超出桶的容量
-    currPermits = math.min(maximum, currPermits + (now - lastAcquire) * rate)
+	--- 当前令牌（令牌）= 上次剩余（令牌）+（当前时间（时间）- 上次获取时间（时间））* 添加速率（令牌/时间）
+	--- 注意不能超出桶的容量
+	currPermits = math.min(maximum, currPermits + (now - lastAcquire) * rate)
 end
 
 local timeToWait = 0
 
 --- 如果所需令牌小于当前令牌则成功，保存剩余令牌和这次获取的时间，否则失败返回需要等待的时间
 if required <= currPermits then
-    redis.call("HMSET", KEYS[1], "time", now, "permits", currPermits - required)
+	redis.call("HMSET", KEYS[1], "time", now, "permits", currPermits - required)
 else
-    --- 需要等待的时间（时间）= （所需令牌（令牌）- 当前令牌（令牌））/ 速率（令牌/时间）
-    --- 知识点：Lua的浮点数直接返回会被Redis截断成整数，所以这里要向上取整
-    timeToWait = math.ceil((required - currPermits) / rate)
+	--- 需要等待的时间（时间）= （所需令牌（令牌）- 当前令牌（令牌））/ 速率（令牌/时间）
+	--- 知识点：Lua的浮点数直接返回会被Redis截断成整数，所以这里要向上取整
+	timeToWait = math.ceil((required - currPermits) / rate)
 end
 
 --- 刷新纪录的过期时间

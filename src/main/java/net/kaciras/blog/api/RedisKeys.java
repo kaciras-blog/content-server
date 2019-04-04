@@ -6,7 +6,9 @@ public enum RedisKeys {
 
 	OauthSession("oas:"),
 
-	/** 一个账户所有会话的集合 */
+	/**
+	 * 一个账户所有会话的集合
+	 */
 	AccountSessions("ac:"),
 
 	RateLimit("rl:");

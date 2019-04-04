@@ -48,7 +48,7 @@ public final class RedisRateLimiter {
 	/**
 	 * 获取指定数量的令牌，返回桶内拥有足够令牌所需要等待的时间，返回0表示获取成功。
 	 *
-	 * @param key 表示获取者的键，一般是对方的IP或ID之类的
+	 * @param key     表示获取者的键，一般是对方的IP或ID之类的
 	 * @param permits 要获取的令牌数量
 	 * @return 需要等待的时间（秒）
 	 */

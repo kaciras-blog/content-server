@@ -30,7 +30,7 @@ interface DiscussionDAO {
 	/**
 	 * 查找指定对象的评论数量，不包含评论的回复（楼中楼）。
 	 *
-	 * @param oid 对象ID
+	 * @param oid  对象ID
 	 * @param type 对象类型
 	 * @return 评论数
 	 */

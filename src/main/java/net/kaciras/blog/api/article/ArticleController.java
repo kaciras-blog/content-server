@@ -52,7 +52,7 @@ class ArticleController {
 		var article = mapper.createArticle(request, SecurityContext.getUserId());
 		repository.add(article);
 
-		if(deleteAfterSubmit) {
+		if (deleteAfterSubmit) {
 			draftRepository.remove(request.getDraftId());
 		}
 		return ResponseEntity.created(URI.create("/articles/" + article.getId())).build();
@@ -67,7 +67,7 @@ class ArticleController {
 		mapper.update(article, request);
 		repository.update(article);
 
-		if(deleteAfterSubmit) {
+		if (deleteAfterSubmit) {
 			draftRepository.remove(request.getDraftId());
 		}
 		return ResponseEntity.noContent().build();
@@ -84,7 +84,7 @@ class ArticleController {
 		if (patchMap.getDeletion() != null) {
 			article.updateDeleted(patchMap.getDeletion());
 		}
-		if(patchMap.getUrlTitle() != null) {
+		if (patchMap.getUrlTitle() != null) {
 			article.updateUrlTitle(patchMap.getUrlTitle());
 		}
 		return ResponseEntity.noContent().build();

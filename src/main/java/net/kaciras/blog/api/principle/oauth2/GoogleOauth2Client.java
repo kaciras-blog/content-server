@@ -94,7 +94,9 @@ public class GoogleOauth2Client implements Oauth2Client {
 	@AllArgsConstructor(onConstructor_ = @JsonCreator)
 	private static final class GoogleUserInfo implements UserInfo {
 
-		/** 谷歌的ID特别长，不能用long */
+		/**
+		 * 谷歌的ID特别长，不能用long
+		 */
 		private final String id;
 		private final String picture;
 		private final String name;

@@ -23,7 +23,7 @@ public class CaptchaController {
 	 * 生成验证码图片，并绑定会话属性。前端通常是一个img元素使用src属性发出请求。
 	 *
 	 * @param session 会话
-	 * @param resp 响应
+	 * @param resp    响应
 	 * @throws IOException 如果发生IO错误
 	 */
 	@GetMapping
