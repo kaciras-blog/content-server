@@ -3,7 +3,7 @@ package net.kaciras.blog.api.user;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.principle.AuthType;
 import net.kaciras.blog.infrastructure.DBUtils;
-import net.kaciras.blog.infrastructure.codec.ImageRefrence;
+import net.kaciras.blog.infrastructure.codec.ImageReference;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
@@ -31,7 +31,7 @@ public class UserManager {
 	public int createNew(String name, AuthType authType, InetAddress ip) {
 		var user = new User();
 		user.setName(name);
-		user.setHead(ImageRefrence.parse("akalin.jpg"));
+		user.setHead(ImageReference.parse("akalin.jpg"));
 		user.setAuthType(authType);
 		user.setRegisterIP(ip);
 

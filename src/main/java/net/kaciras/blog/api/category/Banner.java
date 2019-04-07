@@ -1,11 +1,11 @@
 package net.kaciras.blog.api.category;
 
 import lombok.Value;
-import net.kaciras.blog.infrastructure.codec.ImageRefrence;
+import net.kaciras.blog.infrastructure.codec.ImageReference;
 
 @Value
 public final class Banner {
 
-	private ImageRefrence image;
+	private ImageReference image;
 	private int theme;
 }

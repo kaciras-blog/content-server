@@ -13,11 +13,11 @@ interface DiscussionDAO {
 	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Discussion discuz);
 
-	@SelectProvider(type = SqlProvidor.class, method = "select")
+	@SelectProvider(type = SqlProvider.class, method = "select")
 	@ResultMap("net.kaciras.blog.api.discuss.DiscussionDAO.DiscussionMap")
 	List<Discussion> selectList(DiscussionQuery query);
 
-	@SelectProvider(type = SqlProvidor.class, method = "selectCount")
+	@SelectProvider(type = SqlProvider.class, method = "selectCount")
 	int selectCount(DiscussionQuery query);
 
 	@Select("SELECT * FROM discussion WHERE id=#{id}")

@@ -3,7 +3,7 @@ package net.kaciras.blog.api.discuss;
 import org.apache.ibatis.jdbc.SQL;
 
 @SuppressWarnings("unused")
-public final class SqlProvidor {
+public final class SqlProvider {
 
 	public String select(DiscussionQuery query) {
 		var sql = new SQL().SELECT("*").FROM("discussion");

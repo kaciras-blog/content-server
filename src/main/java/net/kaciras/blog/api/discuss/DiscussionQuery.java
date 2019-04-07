@@ -35,7 +35,7 @@ public final class DiscussionQuery extends ListSelectRequest {
 	public static DiscussionQuery byArticle(int article) {
 		var r = new DiscussionQuery(article, 0, null, null);
 		r.setMetaonly(true);
-		return r; // TODO: optmize API
+		return r; // TODO: optimize API
 	}
 
 	public static DiscussionQuery byParent(long parent) {

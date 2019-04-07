@@ -18,7 +18,7 @@ public class SessionService {
 
 	private final SessionCookieProperties cookieProperties;
 
-	public void putUser(HttpServletRequest request, HttpServletResponse response, int id, boolean remenber) {
+	public void putUser(HttpServletRequest request, HttpServletResponse response, int id, boolean remember) {
 		var session = request.getSession(true);
 		session.setAttribute(SessionAttributes.USER_ID, id);
 
@@ -27,7 +27,7 @@ public class SessionService {
 		csrfCookie.setPath("/");
 		csrfCookie.setDomain(cookieProperties.getDomain());
 
-		if (remenber) {
+		if (remember) {
 			csrfCookie.setMaxAge(session.getMaxInactiveInterval());
 		}
 		response.addCookie(csrfCookie);

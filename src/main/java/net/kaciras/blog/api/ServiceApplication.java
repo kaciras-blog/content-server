@@ -50,8 +50,7 @@ import java.time.Clock;
 public class ServiceApplication {
 
 	@SuppressWarnings("unused")
-	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {
-	}
+	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
 
 	@Bean
 	RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory factory) {
@@ -90,7 +89,7 @@ public class ServiceApplication {
 	 * 却是废了，故直接在这里创建调度器。
 	 * <p>
 	 * 与 TaskSchedulingAutoConfiguration 相比，这里创建不支持配置文件(spring.task.scheduling)，如果要用回自动
-	 * 配置的话，需要将 applucation.yml 中 spring.autoconfigure.exclude 相关项去掉
+	 * 配置的话，需要将 application.yml 中 spring.autoconfigure.exclude 相关项去掉
 	 *
 	 * @see org.springframework.scheduling.config.ScheduledTaskRegistrar
 	 * @see RedisHttpSessionConfiguration#configureTasks
@@ -102,6 +101,7 @@ public class ServiceApplication {
 		taskScheduler.setPoolSize(1);
 		taskScheduler.setThreadNamePrefix("SharedThreadPool-");
 		customizers.forEach(customizer -> customizer.customize(taskScheduler));
+
 		return taskScheduler;
 	}
 

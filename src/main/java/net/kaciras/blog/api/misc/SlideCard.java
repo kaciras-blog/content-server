@@ -3,6 +3,7 @@ package net.kaciras.blog.api.misc;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import net.kaciras.blog.infrastructure.codec.ImageReference;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
@@ -10,17 +11,17 @@ import javax.validation.constraints.NotEmpty;
 @ToString(of = {"name", "link"})
 @Getter
 @Setter
-final class SwiperSlide {
+final class SlideCard {
 
-	@NotEmpty
+	@Length(max = 20)
 	private String name;
 
 	@NotEmpty
 	private String link;
 
 	@NotEmpty
-	private String picture;
+	private ImageReference picture;
 
-	@Length(max = 255)
+	@Length(max = 100)
 	private String description;
 }

@@ -2,15 +2,16 @@ package net.kaciras.blog.api;
 
 public enum RedisKeys {
 
-	SwiperList("swiper"),
+	/** 推荐卡片列表 */
+	SlideList("slides"),
 
+	/** Oauth2登陆会话前缀 */
 	OauthSession("oas:"),
 
-	/**
-	 * 一个账户所有会话的集合
-	 */
+	/** 一个账户所有会话的集合前缀 */
 	AccountSessions("ac:"),
 
+	/** 限速器记录前缀 */
 	RateLimit("rl:");
 
 	private final String prefix;

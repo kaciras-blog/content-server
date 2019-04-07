@@ -16,8 +16,8 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/recommendation/swiper")
-class SwiperController {
+@RequestMapping("/recommendation/slides")
+class SlideController {
 
 	/**
 	 * 轮播需要保证次序，并且支持删除、插入到任意位置，Redis内置的数据类型
@@ -27,13 +27,13 @@ class SwiperController {
 	private final ObjectMapper objectMapper;
 
 	@GetMapping
-	public List<SwiperSlide> getPages() throws IOException {
-		var encode = redisTemplate.opsForValue().get(RedisKeys.SwiperList.value());
+	public List<SlideCard> getPages() throws IOException {
+		var encode = redisTemplate.opsForValue().get(RedisKeys.SlideList.value());
 		if (encode == null) {
 			return Collections.emptyList();
 		}
 		return objectMapper.readValue(encode, objectMapper.getTypeFactory()
-				.constructCollectionType(List.class, SwiperSlide.class));
+				.constructCollectionType(List.class, SlideCard.class));
 	}
 
 	/**
@@ -45,8 +45,8 @@ class SwiperController {
 	 */
 	@RequireAuthorize
 	@PutMapping
-	public ResponseEntity<Void> update(@RequestBody @Valid List<SwiperSlide> slides) throws Exception {
-		redisTemplate.opsForValue().set(RedisKeys.SwiperList.value(), objectMapper.writeValueAsBytes(slides));
+	public ResponseEntity<Void> update(@RequestBody @Valid List<SlideCard> slides) throws Exception {
+		redisTemplate.opsForValue().set(RedisKeys.SlideList.value(), objectMapper.writeValueAsBytes(slides));
 		return ResponseEntity.noContent().build();
 	}
 }

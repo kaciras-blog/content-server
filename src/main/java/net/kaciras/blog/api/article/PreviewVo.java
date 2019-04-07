@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import net.kaciras.blog.api.user.UserVo;
-import net.kaciras.blog.infrastructure.codec.ImageRefrence;
+import net.kaciras.blog.infrastructure.codec.ImageReference;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +23,7 @@ public final class PreviewVo {
 
 	private UserVo author;
 	private String title;
-	private ImageRefrence cover;
+	private ImageReference cover;
 	private List<String> keywords;
 	private String summary;
 

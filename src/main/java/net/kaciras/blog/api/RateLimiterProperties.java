@@ -15,9 +15,9 @@ public final class RateLimiterProperties {
 	private double rate = 1.5;
 
 	/**
-	 * 令牌桶容量（令牌）
+	 * 令牌桶容量，同时也是单位时间能获取的上限（令牌）
 	 */
-	private int bucketSize = 12;
+	private int bucketSize = 10;
 
 	/**
 	 * 令牌桶在Redis里保存的时间（秒）

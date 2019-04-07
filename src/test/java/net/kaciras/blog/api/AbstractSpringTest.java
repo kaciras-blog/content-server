@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public abstract class AbstractSpringTest {
 
 	public static final WebPrincipal ADMIN = new WebPrincipal(WebPrincipal.ADMIN_ID);
-	public static final WebPrincipal ANYNOMOUS = new WebPrincipal(WebPrincipal.ANYNOMOUS_ID);
+	public static final WebPrincipal ANONYMOUS = new WebPrincipal(WebPrincipal.ANONYMOUS_ID);
 
 	protected MockMvc mockMvc;
 
@@ -37,7 +37,7 @@ public abstract class AbstractSpringTest {
 				.addFilter(new ServletSecurityContextFilter())
 				.defaultRequest(get("/")
 						.contentType(MediaType.APPLICATION_JSON_UTF8)
-						.principal(ANYNOMOUS))
+						.principal(ANONYMOUS))
 				.build();
 	}
 }

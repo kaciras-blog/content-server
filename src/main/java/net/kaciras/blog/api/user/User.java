@@ -2,7 +2,7 @@ package net.kaciras.blog.api.user;
 
 import lombok.*;
 import net.kaciras.blog.api.principle.AuthType;
-import net.kaciras.blog.infrastructure.codec.ImageRefrence;
+import net.kaciras.blog.infrastructure.codec.ImageReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -25,7 +25,7 @@ public class User {
 	private int id;
 
 	private String name;
-	private ImageRefrence head;
+	private ImageReference head;
 
 	private boolean deleted;
 

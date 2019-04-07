@@ -2,7 +2,7 @@ package net.kaciras.blog.api.article;
 
 import lombok.Data;
 import lombok.ToString;
-import net.kaciras.blog.infrastructure.codec.ImageRefrence;
+import net.kaciras.blog.infrastructure.codec.ImageReference;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ abstract class ArticleContentBase {
 
 	private List<String> keywords;
 
-	private ImageRefrence cover;
+	private ImageReference cover;
 
 	private String summary;
 

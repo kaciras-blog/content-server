@@ -56,13 +56,13 @@ class SessionRepository {
 
 		while (accounts.hasNext()) {
 			var recordSet = accounts.next();
-			var invaild = Optional.ofNullable(redisTemplate.opsForSet().members(recordSet))
+			var invalid = Optional.ofNullable(redisTemplate.opsForSet().members(recordSet))
 					.orElse(Set.of())
 					.stream()
 					.filter(k -> Utils.nullableBool(redisTemplate.hasKey(k)))
 					.toArray();
-			if (invaild.length > 0) {
-				redisTemplate.opsForSet().remove(recordSet, invaild);
+			if (invalid.length > 0) {
+				redisTemplate.opsForSet().remove(recordSet, invalid);
 			}
 		}
 	}

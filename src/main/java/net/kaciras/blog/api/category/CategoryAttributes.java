@@ -2,7 +2,7 @@ package net.kaciras.blog.api.category;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kaciras.blog.infrastructure.codec.ImageRefrence;
+import net.kaciras.blog.infrastructure.codec.ImageReference;
 
 /**
  * 包含一个分类自身相关的属性，不包括id，parent等用于
@@ -13,8 +13,8 @@ import net.kaciras.blog.infrastructure.codec.ImageRefrence;
 public class CategoryAttributes {
 
 	private String name;
-	private ImageRefrence cover;
+	private ImageReference cover;
 	private String description;
-	private ImageRefrence background;
+	private ImageReference background;
 	private int theme;
 }

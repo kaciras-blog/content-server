@@ -2,14 +2,14 @@ package net.kaciras.blog.api.draft;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kaciras.blog.infrastructure.codec.ImageRefrence;
+import net.kaciras.blog.infrastructure.codec.ImageReference;
 
 @Getter
 @Setter
 public class DraftContent {
 
 	private String title;
-	private ImageRefrence cover;
+	private ImageReference cover;
 	private String keywords;
 	private String summary;
 	private String content;
@@ -25,7 +25,7 @@ public class DraftContent {
 		content.setSummary("");
 		content.setKeywords("");
 		content.setContent("");
-		content.setCover(ImageRefrence.parse("placeholder.png"));
+		content.setCover(ImageReference.parse("placeholder.png"));
 		return content;
 	}
 }
