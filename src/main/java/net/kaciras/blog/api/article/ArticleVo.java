@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import net.kaciras.blog.api.category.Banner;
-import net.kaciras.blog.api.user.UserVo;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +16,6 @@ public final class ArticleVo {
 
 	private int id;
 	private String urlTitle;
-	private UserVo author;
 	private int category;
 	private boolean deleted;
 

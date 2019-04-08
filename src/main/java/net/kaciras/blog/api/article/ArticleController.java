@@ -49,7 +49,7 @@ class ArticleController {
 	@RequireAuthorize
 	@PostMapping
 	public ResponseEntity<Void> post(@RequestBody @Valid PublishRequest request) {
-		var article = mapper.createArticle(request, SecurityContext.getUserId());
+		var article = mapper.createArticle(request);
 		repository.add(article);
 
 		if (deleteAfterSubmit) {

@@ -2,7 +2,6 @@ package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
-import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 public class ArticleManager {
 
 	private final ArticleRepository repository;
-
 
 	/**
 	 * 获取一个文章，但会检查文章的删除状态以及用户是否具有查看删除文章的权限。
@@ -22,8 +20,7 @@ public class ArticleManager {
 	public Article getLiveArticle(int id) {
 		var article = repository.get(id);
 
-		if (article.isDeleted()
-				&& SecurityContext.checkSelf(article.getUserId(), "SHOW_DELETED")) {
+		if (article.isDeleted()) {
 			throw new ResourceDeletedException();
 		}
 		return article;

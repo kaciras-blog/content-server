@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.kaciras.blog.api.user.UserVo;
 import net.kaciras.blog.infrastructure.codec.ImageReference;
 
 import java.time.LocalDateTime;
@@ -21,7 +20,6 @@ public final class PreviewVo {
 	private int id;
 	private String urlTitle;
 
-	private UserVo author;
 	private String title;
 	private ImageReference cover;
 	private List<String> keywords;

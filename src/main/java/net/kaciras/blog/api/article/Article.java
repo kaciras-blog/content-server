@@ -29,7 +29,7 @@ public final class Article extends ArticleContentBase {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 	private int id;
-	private int userId;
+	private int category;
 
 	/**
 	 * 显示在URL中的标题，有利于SEO，不要出现与URL中的特殊字符。
@@ -42,10 +42,8 @@ public final class Article extends ArticleContentBase {
 
 	private LocalDateTime create;
 	private LocalDateTime update;
-	private int category;
-	private boolean deleted;
-
 	private int viewCount;
+	private boolean deleted;
 
 	public void recordView() {
 		articleDAO.increaseViewCount(getId());

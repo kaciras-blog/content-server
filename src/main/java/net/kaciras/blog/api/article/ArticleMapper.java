@@ -6,7 +6,6 @@ import net.kaciras.blog.api.category.CategoryManager;
 import net.kaciras.blog.api.category.CategoryRepository;
 import net.kaciras.blog.api.discuss.DiscussionQuery;
 import net.kaciras.blog.api.discuss.DiscussionService;
-import net.kaciras.blog.api.user.UserManager;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -23,9 +22,6 @@ abstract class ArticleMapper {
 
 	@Autowired
 	private DiscussionService discussionService;
-
-	@Autowired
-	private UserManager userManager;
 
 	@Autowired
 	private CategoryRepository categoryRepository;
@@ -55,7 +51,6 @@ abstract class ArticleMapper {
 	 */
 	PreviewVo toPreview(Article article, ArticleListQuery request) {
 		var vo = createPreviewFrom(article);
-		vo.setAuthor(userManager.getUser(article.getUserId()));
 		vo.setDcnt(discussionService.count(DiscussionQuery.byArticle(article.getId())));
 		vo.setCpath(mapCategoryPath(categoryRepository
 				.get(article.getCategory()).getPathTo(request.getCategory())));
@@ -74,13 +69,11 @@ abstract class ArticleMapper {
 	 * 由发表请求创建文章对象，是文章的工厂方法。
 	 *
 	 * @param request 发表请求
-	 * @param userId  当前用户ID
 	 * @return 文章对象
 	 */
-	public Article createArticle(PublishRequest request, int userId) {
+	public Article createArticle(PublishRequest request) {
 		var article = new Article();
 		update(article, request);
-		article.setUserId(userId);
 
 		article.setUrlTitle(StringUtils.trimTrailingCharacter(urlKeywords
 				.matcher(request.getUrlTitle()).replaceAll("-"), '-'));

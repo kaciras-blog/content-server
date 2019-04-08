@@ -28,8 +28,8 @@ interface ArticleDAO {
 	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleMap")
 	List<Article> selectPreview(ArticleListQuery query);
 
-	@Insert("INSERT INTO article(user_id, category, title, url_title, cover, summary, content) " +
-			"VALUES(#{userId}, #{category}, #{title}, #{urlTitle}, #{cover}, #{summary}, #{content})")
+	@Insert("INSERT INTO article(category, title, url_title, cover, summary, content) " +
+			"VALUES(#{category}, #{title}, #{urlTitle}, #{cover}, #{summary}, #{content})")
 	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Article article);
 
@@ -53,7 +53,7 @@ interface ArticleDAO {
 	void increaseViewCount(int id);
 
 	@Select("SELECT id, title, url_title FROM article " +
-			"WHERE id ${compartor} #{id} AND deleted=0 LIMIT 1")
+			"WHERE id ${comparator} #{id} AND deleted=0 LIMIT 1")
 	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleLinkMap")
-	ArticleLink getNeighbor(@Param("id") int id, @Param("compartor") String compartor);
+	ArticleLink getNeighbor(int id, String comparator);
 }
