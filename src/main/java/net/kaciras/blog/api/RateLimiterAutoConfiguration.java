@@ -1,10 +1,14 @@
 package net.kaciras.blog.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 
 import java.time.Clock;
 
@@ -15,9 +19,20 @@ public class RateLimiterAutoConfiguration {
 
 	private final RateLimiterProperties properties;
 
+	@ConditionalOnMissingBean
 	@Bean
-	RateLimitFilter rateLimiterFilter(Clock clock, RedisConnectionFactory factory) {
-		var limiter = new RedisRateLimiter(clock, factory);
+	RedisTemplate<String, Object> genericToStringRedisTemplate(RedisConnectionFactory factory) {
+		var redisTemplate = new RedisTemplate<String, Object>();
+		redisTemplate.setConnectionFactory(factory);
+		redisTemplate.setEnableDefaultSerializer(false);
+		redisTemplate.setKeySerializer(RedisSerializer.string());
+		redisTemplate.setValueSerializer(new GenericToStringSerializer<>(Object.class));
+		return redisTemplate;
+	}
+
+	@Bean
+	RateLimitFilter rateLimiterFilter(Clock clock, RedisTemplate<String, Object> template) {
+		var limiter = new RedisRateLimiter(clock, template);
 		limiter.setRate(properties.getRate());
 		limiter.setBucketSize(properties.getBucketSize());
 		limiter.setCacheTime(properties.getCacheTime());
