@@ -27,7 +27,10 @@ public class RateLimitFilter extends HttpFilter {
 
 		if (ip != null) {
 			var waitTime = rateLimiter.acquire(RedisKeys.RateLimit.of(ip), 1);
-			if (waitTime > 0) {
+			if (waitTime < 0) {
+				response.setStatus(403);
+				return;
+			} else if (waitTime > 0) {
 				response.setStatus(429);
 				response.setHeader(RATE_LIMIT_HEADER, Long.toString(waitTime));
 				response.getWriter().write("操作太快，请歇会再试");

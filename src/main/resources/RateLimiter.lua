@@ -1,14 +1,14 @@
 ---
 --- 调用方式：EVALSHA [sha] 1 [key] 所需令牌 当前时间(时间) 桶容量 速率(令牌/时间) 键超时(秒)
---- 时间的单位由客户端决定，不同的单位将导致精度不同，但要保证 "当前时间" 和 "速率" 的时间单位要一致。
---- 所有参数都是必需的不能省略。
---- 返回：0 表示通过，大于 0 表示需要等待的时间
+--- 时间的单位由客户端决定，不同的单位将导致精度不同。所有参数都是必需的不能省略。
+--- 返回：0 表示通过，大于 0 表示需要等待的时间。如果速率为0，可能返回负数(Long.MIN_VALUE)
 ---
 --- 为啥需要传当前时间？因为Redis为了安全禁止访问os模块，也就无法在脚本内获取时间；并且由
 --- 客户端控制时间的话就能对时间做Mock，测试更方便
 ---
---- 如果所需令牌数大于桶容量，则返回值无意义，这留给客户端自己检查
+--- 如果所需令牌数大于桶容量，则返回值无意义，这留给客户端去检查
 ---
+--- Redis 对 Lua 脚本的说明见：https://redis.io/commands/eval
 --- 经测试，该脚本执行速度非常快，详情见 test/java/resources/RateLimiterBenchmark.txt
 ---
 local requirement = tonumber(ARGV[1])
@@ -24,12 +24,12 @@ local currPermits = data[2]
 --- Lua 中 nli 是 falsy 的，可以直接用 if 判断
 if not lastAcquire then
 
-	--- Redis里没有记录过，直接使用参数作为初始值。
+	--- Redis里没有记录过，直接使用参数作为当前值。
 	lastAcquire = now
 	currPermits = bucketSize
 else
 
-	--- 当前令牌（令牌）= 上次剩余（令牌）+（当前时间（时间）- 上次获取时间（时间））* 添加速率（令牌/时间）
+	--- 当前令牌（令牌）= 上次剩余（令牌）+（当前时间(时间)- 上次获取时间(时间)）* 添加速率（令牌/时间）
 	--- 注意不能超出桶的容量
 	currPermits = math.min(bucketSize, currPermits + (now - lastAcquire) * rate)
 end
