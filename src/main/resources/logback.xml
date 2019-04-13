@@ -4,7 +4,7 @@
 
 	<logger name="net.kaciras.blog" level="INFO"/>
 
-	<!-- ExceptionReslover默认会记录一个警告，给他去掉 -->
+	<!-- ExceptionResolver 默认会记录一个警告，给他去掉 -->
 	<logger name="org.springframework.web.servlet.mvc.method" level="ERROR"/>
 
 	<!-- Spring 和 Tomcat引擎 的日志没啥看头 -->

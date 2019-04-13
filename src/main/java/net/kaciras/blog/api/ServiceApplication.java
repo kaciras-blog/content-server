@@ -128,14 +128,15 @@ public class ServiceApplication {
 
 	@Profile("!dev")
 	@Bean
-	HttpClient httpClient() {
-		return HttpClient.newBuilder().build();
+	HttpClient httpClient(ThreadPoolTaskScheduler threadPool) {
+		return HttpClient.newBuilder().executor(threadPool).build();
 	}
 
 	@Profile("dev")
 	@Bean("httpClient")
-	HttpClient devHttpClient() {
+	HttpClient devHttpClient(ThreadPoolTaskScheduler threadPool) {
 		return HttpClient.newBuilder()
+				.executor(threadPool)
 				.proxy(ProxySelector.of(new InetSocketAddress("localhost", 2080)))
 				.build();
 	}

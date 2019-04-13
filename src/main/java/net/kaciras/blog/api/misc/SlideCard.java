@@ -7,6 +7,7 @@ import net.kaciras.blog.infrastructure.codec.ImageReference;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @ToString(of = {"name", "link"})
 @Getter
@@ -19,7 +20,7 @@ final class SlideCard {
 	@NotEmpty
 	private String link;
 
-	@NotEmpty
+	@NotNull
 	private ImageReference picture;
 
 	@Length(max = 100)

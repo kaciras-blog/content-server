@@ -9,18 +9,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 public final class RateLimiterProperties {
 
-	/**
-	 * 允许的速率（令牌/秒）
-	 */
+	/** 允许的速率（令牌/秒）*/
 	private double rate = 1.5;
 
-	/**
-	 * 令牌桶容量，同时也是单位时间能获取的上限（令牌）
-	 */
+	/** 令牌桶容量，同时也是单位时间能获取的上限（令牌）*/
 	private int bucketSize = 10;
 
-	/**
-	 * 令牌桶在Redis里保存的时间（秒）
-	 */
+	/** 令牌桶在Redis里保存的时间（秒）*/
 	private int cacheTime = 60;
 }
