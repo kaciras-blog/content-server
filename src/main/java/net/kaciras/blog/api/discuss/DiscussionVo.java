@@ -12,16 +12,15 @@ import java.util.List;
 @Setter
 public final class DiscussionVo {
 
-	private long id;
+	private int id;
 	private int objectId;
-	private int type;
 	private int floor;
 	private int parent;
 
 	private UserVo user;
 	private String content;
 
-	private List<DiscussionVo> replies;
+	private List<DiscussionVo> replies; // TODO 总数
 	private int replyCount;
 
 	private int voteCount;

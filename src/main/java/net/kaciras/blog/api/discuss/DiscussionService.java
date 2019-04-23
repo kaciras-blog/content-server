@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.article.ArticleRepository;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import java.util.List;
 public class DiscussionService {
 
 	private final DiscussRepository repository;
+	private final ArticleRepository articleRepository;
 
 	@Value("${discuss.anonymous}")
 	private boolean allowAnonymous;
@@ -24,6 +26,16 @@ public class DiscussionService {
 	@Value("${discuss.review}")
 	private boolean review;
 
+	// 检查用户是否能够评论
+	private void checkAddedUser() {
+		if (disabled) {
+			throw new PermissionException();
+		}
+		if (!allowAnonymous) {
+			SecurityContext.requireLogin();
+		}
+	}
+
 	public List<Discussion> getList(DiscussionQuery query) {
 		return repository.findAll(query);
 	}
@@ -32,12 +44,11 @@ public class DiscussionService {
 		return repository.size(query);
 	}
 
-	public long add(int objectId, int type, String content, InetAddress address) {
+	public long add(int objectId, String content, InetAddress address) {
 		checkAddedUser();
+		articleRepository.get(objectId); // 检查文章是否存在
 
-		var discussion = Discussion.create(SecurityContext.getUserId(), content);
-		discussion.setObjectId(objectId);
-		discussion.setType(type);
+		var discussion = Discussion.create(objectId, SecurityContext.getUserId(), 0, content);
 		discussion.setAddress(address);
 		discussion.setState(review ? DiscussionState.Pending : DiscussionState.Visible);
 
@@ -45,23 +56,15 @@ public class DiscussionService {
 		return discussion.getId();
 	}
 
-	public long addReply(long disId, String content, InetAddress address) {
+	public long addReply(long discussionId, String content, InetAddress address) {
 		checkAddedUser();
+		var parent = repository.get(discussionId);
 
-		var reply = Discussion.create(SecurityContext.getUserId(), content);
+		var reply = Discussion.create(parent.getObjectId(), SecurityContext.getUserId(), parent.getId(), content);
 		reply.setAddress(address);
 		reply.setState(review ? DiscussionState.Pending : DiscussionState.Visible);
 
-		repository.get(disId).getReplyList().add(reply);
+		parent.getReplyList().add(reply);
 		return reply.getId();
-	}
-
-	private void checkAddedUser() {
-		if (disabled) {
-			throw new PermissionException();
-		}
-		if (!allowAnonymous) {
-			SecurityContext.requireLogin();
-		}
 	}
 }

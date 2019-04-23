@@ -8,8 +8,8 @@ import java.util.Optional;
 @Mapper
 interface DiscussionDAO {
 
-	@Insert("INSERT INTO discussion(user_id, object_id, `type`, floor, parent, content, state, address) " +
-			"VALUES (#{userId}, #{objectId}, #{type}, #{floor}, #{parent}, #{content}, #{state}, #{address})")
+	@Insert("INSERT INTO discussion(user_id, object_id, floor, parent, content, state, address) " +
+			"VALUES (#{userId}, #{objectId}, #{floor}, #{parent}, #{content}, #{state}, #{address})")
 	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Discussion discussion);
 
@@ -30,11 +30,9 @@ interface DiscussionDAO {
 	/**
 	 * 查询指定对象的评论数量，不包含评论的回复（楼中楼）。
 	 *
-	 * @param oid  对象ID
-	 * @param type 对象类型
+	 * @param objectId 对象ID
 	 * @return 评论数
 	 */
-	@Select("SELECT COUNT(*) FROM discussion " +
-			"WHERE object_id=#{oid} AND `type`=#{type} AND parent=0")
-	int selectCountByObject(int oid, int type);
+	@Select("SELECT COUNT(*) FROM discussion WHERE object_id=#{objectId} AND parent=0")
+	int selectCountByObject(int objectId);
 }

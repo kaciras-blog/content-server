@@ -25,7 +25,7 @@ class DiscussRepository {
 	 */
 	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void add(@NonNull Discussion dis) {
-		var count = dao.selectCountByObject(dis.getObjectId(), dis.getType());
+		var count = dao.selectCountByObject(dis.getObjectId());
 		dis.setFloor(count); // 评论的楼层是连续的，新评论的楼层就是已有评论的数量
 		dao.insert(dis);
 	}

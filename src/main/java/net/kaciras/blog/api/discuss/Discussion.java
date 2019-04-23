@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "userId", "objectId"})
 @Data
@@ -26,21 +27,26 @@ public final class Discussion {
 
 	private int id;
 
+	// 创建时就需要的字段
 	private int objectId;
-	private int type;
-
-	private int floor;
+	private int userId;
 	private int parent;
-
 	private String content;
 
-	private DiscussionState state;
-
-	private int userId;
 	private LocalDateTime time;
 	private InetAddress address;
+	private int floor;
 
+	// 可变字段
+	private DiscussionState state;
 	private int voteCount;
+
+	private Discussion(int objectId, int userId, int parent, String content) {
+		this.objectId = objectId;
+		this.userId = userId;
+		this.parent = parent;
+		this.content = content;
+	}
 
 	public ReplyList getReplyList() {
 		if (parent != 0) {
@@ -64,16 +70,13 @@ public final class Discussion {
 	 * @param content 评论内容
 	 * @return 评论对象
 	 */
-	public static Discussion create(int userId, String content) {
+	public static Discussion create(int objectId, int userId, int parent, String content) {
 		if (content == null || content.length() == 0) {
 			throw new RequestArgumentException("评论内容不能为空");
 		}
 		if (content.length() > 64 * 40) {
 			throw new DataTooBigException("评论内容过长，请分多次发表");
 		}
-		var dis = new Discussion();
-		dis.setUserId(userId);
-		dis.setContent(content);
-		return dis;
+		return new Discussion(objectId, userId, parent, content);
 	}
 }

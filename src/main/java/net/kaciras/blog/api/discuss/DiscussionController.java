@@ -54,7 +54,7 @@ class DiscussionController {
 	@PostMapping
 	public ResponseEntity post(HttpServletRequest request, @RequestBody AddRequest message) {
 		var addr = Utils.AddressFromRequest(request);
-		var id = discussionService.add(message.getObjectId(), message.getType(), message.getContent(), addr);
+		var id = discussionService.add(message.getObjectId(), message.getContent(), addr);
 		return ResponseEntity.created(URI.create("/discussions/" + id)).build();
 	}
 
@@ -84,10 +84,10 @@ class DiscussionController {
 		return new ListQueryView<>(replies.size(), mapper.toReplyView(replies.select(query)));
 	}
 
-	@PostMapping("/{id}/replies")
-	public ResponseEntity<Void> addReply(HttpServletRequest request, @PathVariable long id, @RequestBody String content) {
+	@PostMapping("/{parent}/replies")
+	public ResponseEntity<Void> addReply(HttpServletRequest request, @PathVariable long parent, @RequestBody String content) {
 		var addr = Utils.AddressFromRequest(request);
-		var newId = discussionService.addReply(id, content, addr);
+		var newId = discussionService.addReply(parent, content, addr);
 		return ResponseEntity.created(URI.create("/discussions/" + newId)).build();
 	}
 
