@@ -7,6 +7,7 @@ import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -40,18 +41,24 @@ public class DiscussionService {
 		return repository.size(query);
 	}
 
-	public long add(int objectId, int type, String content) {
+	public long add(int objectId, int type, String content, InetAddress address) {
 		checkAddedUser();
-		var dis = Discussion.create(SecurityContext.getUserId(), content);
-		dis.setObjectId(objectId);
-		dis.setType(type);
-		repository.add(dis);
-		return dis.getId();
+
+		var discussion = Discussion.create(SecurityContext.getUserId(), content);
+		discussion.setObjectId(objectId);
+		discussion.setType(type);
+		discussion.setAddress(address);
+
+		repository.add(discussion);
+		return discussion.getId();
 	}
 
-	public long addReply(long disId, String content) {
+	public long addReply(long disId, String content, InetAddress address) {
 		checkAddedUser();
+
 		var reply = Discussion.create(SecurityContext.getUserId(), content);
+		reply.setAddress(address);
+
 		repository.get(disId).getReplyList().add(reply);
 		return reply.getId();
 	}

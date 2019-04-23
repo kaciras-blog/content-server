@@ -2,6 +2,7 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.ListQueryView;
+import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 @RequiredArgsConstructor
@@ -35,8 +37,9 @@ class DiscussionController {
 	}
 
 	@PostMapping
-	public ResponseEntity post(@RequestBody AddRequest request) {
-		var id = discussionService.add(request.getObjectId(), request.getType(), request.getContent());
+	public ResponseEntity post(HttpServletRequest request, @RequestBody AddRequest message) {
+		var addr = Utils.AddressFromRequest(request);
+		var id = discussionService.add(message.getObjectId(), message.getType(), message.getContent(), addr);
 		return ResponseEntity.created(URI.create("/discussions/" + id)).build();
 	}
 
@@ -66,8 +69,9 @@ class DiscussionController {
 	}
 
 	@PostMapping("/{id}/replies")
-	public ResponseEntity<Void> addReply(@PathVariable long id, @RequestBody String content) {
-		var newId = discussionService.addReply(id, content);
+	public ResponseEntity<Void> addReply(HttpServletRequest request, @PathVariable long id, @RequestBody String content) {
+		var addr = Utils.AddressFromRequest(request);
+		var newId = discussionService.addReply(id, content, addr);
 		return ResponseEntity.created(URI.create("/discussions/" + newId)).build();
 	}
 

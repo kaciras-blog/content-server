@@ -8,6 +8,7 @@ import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import java.net.InetAddress;
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(of = "id")
@@ -33,10 +34,10 @@ public final class Discussion {
 
 	private int userId;
 	private String content;
-
 	private LocalDateTime time;
-	private boolean deleted;
+	private InetAddress address;
 
+	private boolean deleted;
 	private int voteCount;
 
 	public ReplyList getReplyList() {
