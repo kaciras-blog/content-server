@@ -1,7 +1,6 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,22 +21,14 @@ public class DiscussionService {
 	@Value("${discuss.disable}")
 	private boolean disabled;
 
-
-	/* - - - - - - - - - - - - - - - 业务方法 - - - - - - - - - - - - - - - - -  */
-
-	private void verifyQuery(DiscussionQuery query) {
-		if (query.getDeletion() != DeletedState.FALSE && SecurityContext.isNot(query.getUserId())) {
-			SecurityContext.require("POWER_QUERY");
-		}
-	}
+	@Value("${discuss.review}")
+	private boolean review;
 
 	public List<Discussion> getList(DiscussionQuery query) {
-		verifyQuery(query);
 		return repository.findAll(query);
 	}
 
 	public int count(DiscussionQuery query) {
-		verifyQuery(query);
 		return repository.size(query);
 	}
 
@@ -48,6 +39,7 @@ public class DiscussionService {
 		discussion.setObjectId(objectId);
 		discussion.setType(type);
 		discussion.setAddress(address);
+		discussion.setState(review ? DiscussionState.Pending : DiscussionState.Visible);
 
 		repository.add(discussion);
 		return discussion.getId();
@@ -58,18 +50,18 @@ public class DiscussionService {
 
 		var reply = Discussion.create(SecurityContext.getUserId(), content);
 		reply.setAddress(address);
+		reply.setState(review ? DiscussionState.Pending : DiscussionState.Visible);
 
 		repository.get(disId).getReplyList().add(reply);
 		return reply.getId();
 	}
 
 	private void checkAddedUser() {
-		var discusser = SecurityContext.getUserId();
 		if (disabled) {
 			throw new PermissionException();
 		}
-		if (discusser == 0 && !allowAnonymous) {
-			throw new PermissionException();
+		if (!allowAnonymous) {
+			SecurityContext.requireLogin();
 		}
 	}
 }

@@ -7,6 +7,7 @@ import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ abstract class DiscussMapper {
 
 		vo.setVoted(model.getVoterList().contains(SecurityContext.getUserId()));
 		vo.setReplyCount(replyList.size());
-		vo.setReplies(toReplyView(replyList.select(0, 5)));
+		vo.setReplies(toReplyView(replyList.select(new DiscussionQuery().setPageable(PageRequest.of(0,5)))));
 		return vo;
 	}
 

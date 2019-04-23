@@ -3,6 +3,7 @@ package net.kaciras.blog.api.discuss;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.ListQueryView;
 import net.kaciras.blog.api.Utils;
+import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
@@ -23,15 +24,29 @@ class DiscussionController {
 
 	private final DiscussMapper mapper;
 
+	/**
+	 * 验证查询参数是否合法，该方法只检查用户的请求，对于内部查询不限制。
+	 *
+	 * @param query 查询对象
+	 */
+	private void verifyQuery(DiscussionQuery query) {
+		if (query.getObjectId() == null && query.getUserId() == null && query.getState() == null) {
+			throw new RequestArgumentException();
+		}
+		if (query.getState() != DiscussionState.Visible) {
+			SecurityContext.require("POWER_QUERY");
+		}
+		if (query.getPageable().getPageSize() > 20) {
+			throw new RequestArgumentException("查询的数量过多");
+		}
+	}
+
 	@GetMapping
 	public ListQueryView<DiscussionVo> getList(DiscussionQuery query, Pageable pageable) {
 		query.setPageable(pageable);
+		verifyQuery(query);
 
 		var size = discussionService.count(query);
-		if (query.isMetaonly()) {
-			return new ListQueryView<>(size);
-		}
-
 		var result = mapper.toDiscussionView(discussionService.getList(query));
 		return new ListQueryView<>(size, result);
 	}
@@ -46,8 +61,8 @@ class DiscussionController {
 	@RequireAuthorize
 	@PatchMapping("/{id}")
 	public ResponseEntity<Void> patch(@PathVariable long id, @RequestBody PatchMap patchMap) {
-		if (patchMap.getDeletion() != null) {
-			repository.get(id).updateDeletion(patchMap.getDeletion());
+		if (patchMap.state != null) {
+			repository.get(id).updateState(patchMap.state);
 		}
 		return ResponseEntity.noContent().build();
 	}
@@ -63,9 +78,10 @@ class DiscussionController {
 	 * @return 回复列表
 	 */
 	@GetMapping("/{id}/replies")
-	public ListQueryView<DiscussionVo> getReplies(@PathVariable long id, Pageable pageable) {
+	public ListQueryView<DiscussionVo> getReplies(@PathVariable int id, Pageable pageable) {
 		var replies = repository.get(id).getReplyList();
-		return new ListQueryView<>(replies.size(), mapper.toReplyView(replies.select(pageable)));
+		var query = new DiscussionQuery().setObjectId(id).setPageable(pageable);
+		return new ListQueryView<>(replies.size(), mapper.toReplyView(replies.select(query)));
 	}
 
 	@PostMapping("/{id}/replies")

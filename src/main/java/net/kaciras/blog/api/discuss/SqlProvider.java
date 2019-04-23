@@ -23,23 +23,18 @@ public final class SqlProvider {
 		if (query.getParent() != null) {
 			sql.WHERE("parent = #{parent}");
 		} else {
-			if (query.getObjectId() != null && query.getType() != null) {
-				sql.WHERE("object_id = #{objectId} AND `type` = #{type}");
+			if (query.getObjectId() != null) {
+				sql.WHERE("object_id = #{objectId}");
 			}
 			if (query.getUserId() != null) {
 				sql.WHERE("user_id = #{userId}");
 			}
-			if (!query.isMetaonly()) {
-				sql.WHERE("parent = 0"); // 文章列表查询数量时包含楼中楼
-			}
+//			if (!query.isMetaonly()) {
+//				sql.WHERE("parent = 0"); // 文章列表查询数量时包含楼中楼
+//			}
 		}
-		switch (query.getDeletion()) {
-			case FALSE:
-				sql.WHERE("deleted = 0");
-				break;
-			case TRUE:
-				sql.WHERE("deleted = 1");
-				break;
+		if (query.getState() != null) {
+			sql.WHERE("state = #{state}");
 		}
 	}
 }

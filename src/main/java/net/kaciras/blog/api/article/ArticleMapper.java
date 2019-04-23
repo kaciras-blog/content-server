@@ -51,7 +51,7 @@ abstract class ArticleMapper {
 	 */
 	PreviewVo toPreview(Article article, ArticleListQuery request) {
 		var vo = createPreviewFrom(article);
-		vo.setDcnt(discussionService.count(DiscussionQuery.byArticle(article.getId())));
+		vo.setDcnt(discussionService.count(new DiscussionQuery().setObjectId(article.getId())));
 		vo.setCpath(mapCategoryPath(categoryRepository
 				.get(article.getCategory()).getPathTo(request.getCategory())));
 		return vo;

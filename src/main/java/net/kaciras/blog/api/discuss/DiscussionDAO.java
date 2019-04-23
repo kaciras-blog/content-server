@@ -8,10 +8,10 @@ import java.util.Optional;
 @Mapper
 interface DiscussionDAO {
 
-	@Insert("INSERT INTO discussion(user_id, object_id, `type`, floor, parent, content, address) " +
-			"VALUES (#{userId}, #{objectId}, #{type}, #{floor}, #{parent}, #{content}, #{address})")
+	@Insert("INSERT INTO discussion(user_id, object_id, `type`, floor, parent, content, state, address) " +
+			"VALUES (#{userId}, #{objectId}, #{type}, #{floor}, #{parent}, #{content}, #{state}, #{address})")
 	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
-	void insert(Discussion discuz);
+	void insert(Discussion discussion);
 
 	@SelectProvider(type = SqlProvider.class, method = "select")
 	@ResultMap("net.kaciras.blog.api.discuss.DiscussionDAO.DiscussionMap")
@@ -24,11 +24,11 @@ interface DiscussionDAO {
 	@ResultMap("net.kaciras.blog.api.discuss.DiscussionDAO.DiscussionMap")
 	Optional<Discussion> selectById(long id);
 
-	@Update("UPDATE discussion SET deleted=#{value} WHERE id=#{id}")
-	int updateDeleted(long id, boolean value);
+	@Update("UPDATE discussion SET state=#{state} WHERE id=#{id}")
+	int updateState(long id, DiscussionState state);
 
 	/**
-	 * 查找指定对象的评论数量，不包含评论的回复（楼中楼）。
+	 * 查询指定对象的评论数量，不包含评论的回复（楼中楼）。
 	 *
 	 * @param oid  对象ID
 	 * @param type 对象类型

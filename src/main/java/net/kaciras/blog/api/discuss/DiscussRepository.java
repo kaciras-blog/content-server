@@ -39,16 +39,10 @@ class DiscussRepository {
 		if (query.getPageable().getPageSize() > 30) {
 			throw new RequestArgumentException("单次查询数量太多");
 		}
-		if (query.isInvalid()) {
-			throw new RequestArgumentException("请指定查询条件");
-		}
 		return dao.selectList(query);
 	}
 
 	public int size(@NonNull DiscussionQuery query) {
-		if (query.isInvalid()) {
-			throw new RequestArgumentException("请指定查询条件");
-		}
 		return dao.selectCount(query);
 	}
 }

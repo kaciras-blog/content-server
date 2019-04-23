@@ -24,20 +24,22 @@ public final class Discussion {
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-	private long id;
+	private int id;
 
 	private int objectId;
 	private int type;
 
 	private int floor;
-	private long parent;
+	private int parent;
+
+	private String content;
+
+	private DiscussionState state;
 
 	private int userId;
-	private String content;
 	private LocalDateTime time;
 	private InetAddress address;
 
-	private boolean deleted;
 	private int voteCount;
 
 	public ReplyList getReplyList() {
@@ -51,8 +53,8 @@ public final class Discussion {
 		return new VoterList(this.id);
 	}
 
-	public void updateDeletion(boolean value) {
-		DBUtils.checkEffective(dao.updateDeleted(id, value));
+	public void updateState(DiscussionState state) {
+		DBUtils.checkEffective(dao.updateState(id, state));
 	}
 
 	/**
