@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+/**
+ * 对 Mybatis 一些特性的验证
+ */
 @ActiveProfiles("test")
 @SpringBootTest
 final class MybatisTest {

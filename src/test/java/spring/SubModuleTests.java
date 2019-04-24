@@ -1,4 +1,4 @@
-package another.pkg;
+package spring;
 
 import net.kaciras.blog.api.ServiceApplication;
 import net.kaciras.blog.api.article.ArticleRepository;
@@ -47,7 +47,7 @@ public class SubModuleTests {
 	}
 
 	/**
-	 * 可以使用多个配置源来创建应用上下文。
+	 * 验证可以使用多个配置源来创建应用上下文。
 	 */
 	@Test
 	void testMultiSource() throws IOException, InterruptedException {

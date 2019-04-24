@@ -1,4 +1,4 @@
-package another.pkg;
+package spring;
 
 import net.kaciras.blog.infrastructure.autoconfig.KxCodecAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
