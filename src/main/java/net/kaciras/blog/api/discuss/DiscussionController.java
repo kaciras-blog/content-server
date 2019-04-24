@@ -36,6 +36,9 @@ class DiscussionController {
 		if (query.getState() != DiscussionState.Visible) {
 			SecurityContext.require("POWER_QUERY");
 		}
+		if (query.getPageable() == null) {
+			throw new RequestArgumentException();
+		}
 		if (query.getPageable().getPageSize() > 20) {
 			throw new RequestArgumentException("查询的数量过多");
 		}

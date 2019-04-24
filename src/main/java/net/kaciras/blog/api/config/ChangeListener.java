@@ -2,6 +2,7 @@ package net.kaciras.blog.api.config;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.func.ThrowingConsumer;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

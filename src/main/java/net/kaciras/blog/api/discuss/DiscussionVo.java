@@ -20,7 +20,7 @@ public final class DiscussionVo {
 	private UserVo user;
 	private String content;
 
-	private List<DiscussionVo> replies; // TODO 总数
+	private List<DiscussionVo> replies;
 	private int replyCount;
 
 	private int voteCount;

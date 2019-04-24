@@ -75,7 +75,7 @@ public final class Discussion {
 			throw new RequestArgumentException("评论内容不能为空");
 		}
 		if (content.length() > 64 * 40) {
-			throw new DataTooBigException("评论内容过长，请分多次发表");
+			throw new DataTooBigException("评论内容过长");
 		}
 		return new Discussion(objectId, userId, parent, content);
 	}

@@ -10,7 +10,7 @@ import java.util.Map;
 
 @RequestMapping("/config")
 @RestController
-public class ConfigController {
+class ConfigController {
 
 	@GetMapping
 	public void getProperties(List<String> keys) {

@@ -9,7 +9,9 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -84,7 +86,15 @@ public class ConfigService implements BeanPostProcessor, InitializingBean {
 	}
 
 	public <T> T get(String name, Class<T> type, T defau1t) {
-		return null;
+		var value = configStore.load(Collections.singletonList(name)).get(name);
+		if (value == null) {
+			return defau1t;
+		}
+		return (T) value;//?
+	}
+
+	public Map<String, Object> batchGet(List<String> keys) {
+		return configStore.load(keys);
 	}
 
 	public void set(String name, Object value) {

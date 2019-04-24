@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Mapper(config = MapStructConfig.class)
 abstract class DiscussMapper {
 
