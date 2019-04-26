@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.func.ThrowingConsumer;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -15,7 +14,7 @@ final class ChangeListener<T> {
 	private final List<Consumer<T>> listeners = new ArrayList<>(1);
 
 	@Getter
-	private final Type type;
+	private final Class<T> type;
 
 	public void fire(T value) {
 		listeners.forEach(lis -> lis.accept(value));

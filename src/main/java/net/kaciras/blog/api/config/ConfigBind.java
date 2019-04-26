@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface ConfigBind {
 
-	/** 要绑定的配置项名，该配置项修改后将自动设置被绑定的字段，或调用被注解的方法 */
+	/** 要绑定的配置项名，该配置项修改后将自动设置被注解的字段，或调用被注解的方法 */
 	String value();
 }

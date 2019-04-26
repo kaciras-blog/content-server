@@ -1,5 +1,6 @@
 package net.kaciras.blog.api.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
@@ -8,8 +9,11 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -19,12 +23,16 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SING
 
 @RequiredArgsConstructor
 @Service
-public class ConfigService implements BeanPostProcessor, ApplicationContextAware {
+public class ConfigService implements BeanPostProcessor, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
 
-	private final ConfigStore configStore;
+	/** 适配 listenerMap 里不存在的键 */
+	private static final ChangeListener EMPTY = new ChangeListener(Object.class);
 
 	// 无需使用线程安全的Map，因为它仅在启动时修改
 	private final Map<String, ChangeListener> listenerMap = new HashMap<>();
+
+	private final ConfigStore configStore;
+	private final ObjectMapper objectMapper;
 
 	private BeanDefinitionRegistry beanRegistry;
 
@@ -33,6 +41,7 @@ public class ConfigService implements BeanPostProcessor, ApplicationContextAware
 		this.beanRegistry = (BeanDefinitionRegistry) context;
 	}
 
+	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) {
 		var clazz = bean.getClass();
 
@@ -40,17 +49,19 @@ public class ConfigService implements BeanPostProcessor, ApplicationContextAware
 			return bean;
 		}
 
-		// TODO: beanName 过滤第三方依赖，和(inner bean)#xxxx
 		String scope;
 		try {
 			scope = beanRegistry.getBeanDefinition(beanName).getScope();
-		} catch (NoSuchBeanDefinitionException e) {
+		} catch (NoSuchBeanDefinitionException ignore) {
 			return bean;
 		}
 
-		// 只绑定单例 bean，因为没法知道原型 bean 什么时候销毁从而解绑
+		/*
+		 * 目前只绑定单例 bean，因为没法知道原型 bean 什么时候销毁从而解绑。
+		 * 另外原型bean可能频繁创建，每次注入都从数据库读取性能差。当前也没有用原型bean
+		 */
 		if (SCOPE_SINGLETON.equals(scope) || "".equals(scope)) {
-			// method binding
+
 			for (var method : clazz.getDeclaredMethods()) {
 				var bind = method.getDeclaredAnnotation(ConfigBind.class);
 				if (bind == null) {
@@ -91,35 +102,43 @@ public class ConfigService implements BeanPostProcessor, ApplicationContextAware
 		return bean;
 	}
 
-	// TODO: 这个在 postProcessBeforeInitialization 之前调用
-//	@Override
-//	public void afterPropertiesSet() throws Exception {
-//		for (var prop : configStore) {
-//			var listener = listenerMap.get(prop.key);
-//			if (listener != null) {
-//				listener.fire(prop.value);
-//			}
-//		}
-//	}
-
-	public <T> T get(String name, Class<T> type, T defau1t) {
-		var value = configStore.load(Collections.singletonList(name)).get(name);
-		if (value == null) {
-			return defau1t;
-		}
-		return (T) value;//?
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+		configStore.loadAll().forEach(p -> listenerMap.getOrDefault(p.key, EMPTY).fire(p.value));
 	}
 
-	public Map<String, Object> batchGet(List<String> keys) {
+	private <T> T deserialize(String string, Class<T> type) {
+		try {
+			return objectMapper.readValue(string, type);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public <T> T get(String name, Class<T> type, T defau1t) {
+		var value = configStore.load(Collections.singletonList(name));
+		if (value.isEmpty()) {
+			return defau1t;
+		}
+		return deserialize(value.get(0), type);
+	}
+
+	public List<String> batchGet(List<String> keys) {
 		return configStore.load(keys);
 	}
 
-	public void set(String name, Object value) {
-		configStore.save(name, value);
-		var listener = listenerMap.get(name);
-		if (listener != null) {
-			listener.fire(value);
-		}
+	public void set(String name, String value) {
+		batchSet(Map.of(name, value));
 	}
 
+	public void batchSet(Map<String, String> properties) {
+		configStore.save(properties);
+		for (var e : properties.entrySet()) {
+			var listener = listenerMap.get(e.getKey());
+			if (listener == null) {
+				continue;
+			}
+			listener.fire(deserialize(e.getValue(), listener.getType()));
+		}
+	}
 }
