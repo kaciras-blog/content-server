@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.kaciras.blog.api.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,7 +21,7 @@ public final class VoterList {
 	@Setter(AccessLevel.NONE)
 	private VoteDAO voteDAO;
 
-	private final long discussion;
+	private final int discussion;
 
 	/**
 	 * 点赞，一个用户只能点赞一次
@@ -59,7 +60,6 @@ public final class VoterList {
 	 * @return 如果点赞过了返回true
 	 */
 	public boolean contains(int userId) {
-		var res = voteDAO.contains(discussion, userId);
-		return res != null && res;
+		return Utils.nullableBool(voteDAO.contains(discussion, userId));
 	}
 }

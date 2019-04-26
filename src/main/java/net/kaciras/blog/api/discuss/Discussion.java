@@ -4,7 +4,6 @@ import lombok.*;
 import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.exception.DataTooBigException;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -48,19 +47,16 @@ public final class Discussion {
 		this.content = content;
 	}
 
-	public ReplyList getReplyList() {
-		if (parent != 0) {
-			throw new ResourceNotFoundException("楼中楼不能再包含楼中楼了");
-		}
-		return new ReplyList(this);
-	}
-
 	public VoterList getVoterList() {
 		return new VoterList(this.id);
 	}
 
 	public void updateState(DiscussionState state) {
 		DBUtils.checkEffective(dao.updateState(id, state));
+	}
+
+	public Discussion createReply(int userId, String content) {
+		return create(objectId, userId, id, content);
 	}
 
 	/**

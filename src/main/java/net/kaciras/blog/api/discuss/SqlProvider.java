@@ -22,18 +22,19 @@ public final class SqlProvider {
 		return sql.toString();
 	}
 
+	// 前三个都带索引，state暂时没有索引所以放最后
 	private void putFilters(SQL sql, DiscussionQuery query) {
 		if (query.getUserId() != null) {
 			sql.WHERE("user_id = #{userId}");
+		}
+		if (query.getParent() != null) {
+			sql.WHERE("parent = #{parent}");
 		}
 		if (query.getObjectId() != null) {
 			sql.WHERE("object_id = #{objectId}");
 		}
 		if (query.getState() != null) {
 			sql.WHERE("state = #{state}");
-		}
-		if (query.getParent() != null) {
-			sql.WHERE("parent = #{parent}");
 		}
 	}
 }

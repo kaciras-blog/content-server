@@ -5,6 +5,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.data.domain.Pageable;
 
+import javax.validation.constraints.NotNull;
+
 @Accessors(chain = true)
 @Getter
 @Setter
@@ -12,9 +14,10 @@ public final class DiscussionQuery {
 
 	private Integer objectId;
 	private Integer userId;
-	private DiscussionState state;
-
 	private Integer parent;
+
+	@NotNull
+	private DiscussionState state = DiscussionState.Visible;
 
 	private Pageable pageable;
 }

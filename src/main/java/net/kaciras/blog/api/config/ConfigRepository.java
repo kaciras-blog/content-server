@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 
 @RequiredArgsConstructor
 @Repository
-public class ConfigStore {
+public class ConfigRepository {
 
 	private final RedisTemplate<String, String> redisTemplate;
 

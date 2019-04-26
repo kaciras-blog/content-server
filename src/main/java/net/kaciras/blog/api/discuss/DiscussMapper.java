@@ -16,6 +16,9 @@ import java.util.List;
 abstract class DiscussMapper {
 
 	@Autowired
+	private DiscussionService discussionService;
+
+	@Autowired
 	private UserManager userManager;
 
 	@IterableMapping(qualifiedByName = "DIS")
@@ -24,11 +27,14 @@ abstract class DiscussMapper {
 	@Named("DIS")
 	DiscussionVo convertDiscussion(Discussion model) {
 		var vo = toReplyView(model);
-		var replyList = model.getReplyList();
-
 		vo.setVoted(model.getVoterList().contains(SecurityContext.getUserId()));
-		vo.setReplyCount(replyList.size());
-		vo.setReplies(toReplyView(replyList.select(new DiscussionQuery().setPageable(PageRequest.of(0,5)))));
+
+		var query = new DiscussionQuery()
+				.setParent(model.getId())
+				.setPageable(PageRequest.of(0,5));
+
+		vo.setReplyCount(discussionService.count(query));
+		vo.setReplies(toReplyView(discussionService.getList(query)));
 		return vo;
 	}
 

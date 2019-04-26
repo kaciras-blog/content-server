@@ -1,5 +1,6 @@
 package net.kaciras.blog.api.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -12,7 +13,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.annotation.ElementType;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @ActiveProfiles("test")
@@ -25,10 +30,10 @@ public class ConfigServiceTest {
 	static class TestConfig {
 
 		@Bean
-		public ConfigStore configStore() {
-			var configStore = Mockito.mock(ConfigStore.class);
+		public ConfigRepository configRepository() {
+			var configStore = Mockito.mock(ConfigRepository.class);
 			Mockito.when(configStore.loadAll())
-					.thenReturn(Stream.of(new ConfigStore.Property("test.init", "1.5")));
+					.thenReturn(Stream.of(new ConfigRepository.Property("test.init", "1.5")));
 			return configStore;
 		}
 	}
@@ -57,5 +62,42 @@ public class ConfigServiceTest {
 	@Test
 	void testInit() {
 		Assertions.assertThat(testBean.getInitValue()).isEqualTo(1.5);
+	}
+
+	@Autowired
+	ObjectMapper objectMapper;
+
+	@Test
+	void testA() throws IOException {
+		var w = new StringWriter();
+		var gen = objectMapper.getFactory().createGenerator(w);
+		gen.writeStartObject();
+
+		gen.writeFieldName("ida");
+		gen.writeRawValue("123456");
+
+		gen.writeFieldName("escape");
+		gen.writeRawValue("我擦\"ee");
+
+		gen.writeEndObject();
+		gen.flush();
+
+		var str = w.toString();
+		System.out.println(str);
+		var map = objectMapper.readValue(str, Map.class);
+		System.out.println(map);
+	}
+
+	@Test
+	void testB() throws IOException {
+		var r = new StringReader("{ \"ida\": [123, 45] }");
+		var p = objectMapper.getFactory().createParser(r);
+		p.nextToken();
+		p.nextFieldName();
+
+		p.readValueAs(String.class);
+		var next = p.nextValue();
+
+		System.out.println(next);
 	}
 }

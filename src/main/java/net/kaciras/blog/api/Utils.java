@@ -41,6 +41,13 @@ public class Utils {
 		}
 	}
 
+	/**
+	 * Mybatis 的Mapper对于boolean类型的返回值，不会把空结果集转换为 false，而是 null.
+	 * 像查询记录是否存在这样的需求就得绕一下。
+	 *
+	 * @param value 布尔对象
+	 * @return 如果value是null返回false，否则返回其非装箱值。
+	 */
 	public boolean nullableBool(Boolean value) {
 		return value == null ? false : value;
 	}

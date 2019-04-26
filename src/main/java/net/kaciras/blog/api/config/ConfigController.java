@@ -1,5 +1,6 @@
 package net.kaciras.blog.api.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,9 +18,11 @@ import java.util.stream.IntStream;
 class ConfigController {
 
 	private final ConfigService configService;
+	private final ObjectMapper objectMapper;
 
 	@GetMapping
 	public Map<String, String> getProperties(List<String> keys) {
+
 		var values = configService.batchGet(keys);
 		return IntStream.range(0, keys.size())
 				.collect(HashMap::new, (map, i) -> map.put(keys.get(1), values.get(i)), Map::putAll);

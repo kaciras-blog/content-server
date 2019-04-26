@@ -2,6 +2,7 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.article.ArticleRepository;
+import net.kaciras.blog.api.config.ConfigBind;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +24,7 @@ public class DiscussionService {
 	@Value("${discuss.disable}")
 	private boolean disabled;
 
-	@Value("${discuss.review}")
+	@ConfigBind("discuss.review")
 	private boolean review;
 
 	// 检查用户是否能够评论
@@ -60,11 +61,27 @@ public class DiscussionService {
 		checkAddedUser();
 		var parent = repository.get(discussionId);
 
-		var reply = Discussion.create(parent.getObjectId(), SecurityContext.getUserId(), parent.getId(), content);
+		var reply = parent.createReply(SecurityContext.getUserId(), content);
 		reply.setAddress(address);
 		reply.setState(review ? DiscussionState.Pending : DiscussionState.Visible);
 
-		parent.getReplyList().add(reply);
+		repository.add(reply);
 		return reply.getId();
+	}
+
+	public void update(int id, PatchMap patchMap) {
+		if (patchMap.state != null) {
+			repository.get(id).updateState(patchMap.state);
+		}
+	}
+
+	public void voteUp(int id, int userId) {
+		SecurityContext.requireLogin();
+		repository.get(id).getVoterList().add(userId);
+	}
+
+	public void revokeVote(int id, int userId) {
+		SecurityContext.requireLogin();
+		repository.get(id).getVoterList().remove(userId);
 	}
 }

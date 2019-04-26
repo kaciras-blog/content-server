@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.ListQueryView;
 import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
-import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +18,7 @@ import java.net.URI;
 @RequestMapping("/discussions")
 class DiscussionController {
 
-	private final DiscussRepository repository;
 	private final DiscussionService discussionService;
-
 	private final DiscussMapper mapper;
 
 	/**
@@ -51,6 +48,7 @@ class DiscussionController {
 
 		var size = discussionService.count(query);
 		var result = mapper.toDiscussionView(discussionService.getList(query));
+
 		return new ListQueryView<>(size, result);
 	}
 
@@ -63,10 +61,8 @@ class DiscussionController {
 
 	@RequireAuthorize
 	@PatchMapping("/{id}")
-	public ResponseEntity<Void> patch(@PathVariable long id, @RequestBody PatchMap patchMap) {
-		if (patchMap.state != null) {
-			repository.get(id).updateState(patchMap.state);
-		}
+	public ResponseEntity<Void> patch(@PathVariable int id, @RequestBody PatchMap patchMap) {
+		discussionService.update(id, patchMap);
 		return ResponseEntity.noContent().build();
 	}
 
@@ -82,15 +78,21 @@ class DiscussionController {
 	 */
 	@GetMapping("/{id}/replies")
 	public ListQueryView<DiscussionVo> getReplies(@PathVariable int id, Pageable pageable) {
-		var replies = repository.get(id).getReplyList();
-		var query = new DiscussionQuery().setObjectId(id).setPageable(pageable);
-		return new ListQueryView<>(replies.size(), mapper.toReplyView(replies.select(query)));
+		var query = new DiscussionQuery()
+				.setParent(id)
+				.setPageable(pageable);
+
+		var total = discussionService.count(query);
+		var replies = discussionService.getList(query);
+
+		return new ListQueryView<>(total, mapper.toReplyView(replies));
 	}
 
 	@PostMapping("/{parent}/replies")
-	public ResponseEntity<Void> addReply(HttpServletRequest request, @PathVariable long parent, @RequestBody String content) {
-		var addr = Utils.AddressFromRequest(request);
-		var newId = discussionService.addReply(parent, content, addr);
+	public ResponseEntity<Void> addReply(HttpServletRequest request,
+										 @PathVariable int parent,
+										 @RequestBody String content) {
+		var newId = discussionService.addReply(parent, content, Utils.AddressFromRequest(request));
 		return ResponseEntity.created(URI.create("/discussions/" + newId)).build();
 	}
 
@@ -98,26 +100,16 @@ class DiscussionController {
 	 * 点赞功能，每个用户对每个评论只能点赞一次，若重复点赞则返回409.
 	 *
 	 * @param id 要点赞的评论ID
-	 * @return 响应
 	 */
 	@PostMapping("/{id}/votes")
 	public ResponseEntity<Void> postVote(@PathVariable int id) {
-		SecurityContext.requireLogin();
-		repository.get(id).getVoterList().add(SecurityContext.getUserId());
-
+		discussionService.voteUp(id, SecurityContext.getUserId());
 		return ResponseEntity.created(URI.create("discussions/" + id + "/votes")).build();
 	}
 
 	@DeleteMapping("/{id}/votes")
 	public ResponseEntity<Void> revokeVote(@PathVariable int id) {
-		SecurityContext.requireLogin();
-		repository.get(id).getVoterList().remove(SecurityContext.getUserId());
-
+		discussionService.revokeVote(id, SecurityContext.getUserId());
 		return ResponseEntity.noContent().build();
-	}
-
-	@ExceptionHandler(ResourceStateException.class)
-	public ResponseEntity<Void> handleException() {
-		return ResponseEntity.status(409).build();
 	}
 }

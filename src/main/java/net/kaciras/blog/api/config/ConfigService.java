@@ -23,7 +23,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SING
 @Service
 public class ConfigService implements BeanPostProcessor, ApplicationContextAware, ApplicationListener<ContextRefreshedEvent> {
 
-	private final ConfigStore configStore;
+	private final ConfigRepository configRepository;
 	private final ObjectMapper objectMapper;
 
 	private final BindingRegistry bindingRegistry = new BindingRegistry();
@@ -62,7 +62,8 @@ public class ConfigService implements BeanPostProcessor, ApplicationContextAware
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-		configStore.loadAll().forEach(p -> bindingRegistry.update(p.key, p.value));
+		configRepository.loadAll()
+				.forEach(p -> bindingRegistry.update(p.key, type -> deserialize(p.value, type)));
 	}
 
 	private <T> T deserialize(String string, Class<T> type) {
@@ -74,7 +75,7 @@ public class ConfigService implements BeanPostProcessor, ApplicationContextAware
 	}
 
 	public <T> T get(String name, Class<T> type, T defau1t) {
-		var value = configStore.load(Collections.singletonList(name));
+		var value = configRepository.load(Collections.singletonList(name));
 		if (value.isEmpty()) {
 			return defau1t;
 		}
@@ -82,7 +83,7 @@ public class ConfigService implements BeanPostProcessor, ApplicationContextAware
 	}
 
 	public List<String> batchGet(List<String> keys) {
-		return configStore.load(keys);
+		return configRepository.load(keys);
 	}
 
 	public void set(String name, String value) {
@@ -90,7 +91,7 @@ public class ConfigService implements BeanPostProcessor, ApplicationContextAware
 	}
 
 	public void batchSet(Map<String, String> properties) {
-		configStore.save(properties);
-		properties.forEach(bindingRegistry::update);
+		configRepository.save(properties);
+		properties.forEach((k, v) -> bindingRegistry.update(k, type -> deserialize(v, type)));
 	}
 }
