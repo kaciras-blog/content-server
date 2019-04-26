@@ -9,18 +9,18 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
-final class ChangeListener<T> {
+final class ChangeListener {
 
-	private final List<Consumer<T>> listeners = new ArrayList<>(1);
+	private final List<Consumer<Object>> listeners = new ArrayList<>(1);
 
 	@Getter
-	private final Class<T> type;
+	private final Class<?> type;
 
-	public void fire(T value) {
+	public void fire(Object value) {
 		listeners.forEach(lis -> lis.accept(value));
 	}
 
-	public void add(ThrowingConsumer<T> consumer) {
+	public void add(ThrowingConsumer<Object> consumer) {
 		listeners.add(consumer);
 	}
 }

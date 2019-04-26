@@ -9,6 +9,10 @@ server:
 
 spring:
 
+  # 这个必须设置一下，SpringBoot默认不允许覆盖
+  main:
+    allow-bean-definition-overriding: true
+
   datasource:
     url: jdbc:mariadb://192.168.0.11:3316/blog?allowMultiQueries=true
     username: root
