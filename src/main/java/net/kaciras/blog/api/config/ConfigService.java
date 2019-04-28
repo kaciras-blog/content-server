@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -50,11 +51,11 @@ public class ConfigService implements BeanPostProcessor, ApplicationContextAware
 			 * 目前只绑定单例 bean，因为没法知道原型 bean 什么时候销毁从而解绑。
 			 * 另外原型bean可能频繁创建，每次注入都从数据库读取性能差。当前也没有用原型bean
 			 */
-			if (SCOPE_SINGLETON.equals(scope) || "".equals(scope)) {
+			if (StringUtils.isEmpty(scope) || SCOPE_SINGLETON.equals(scope)) {
 				bindingRegistry.scanForBinding(bean);
 			}
 		} catch (NoSuchBeanDefinitionException ignore) {
-			// 一些Bean触发了这个方法，但是在 BeanRegistry 却找不到定义
+			// 一些 Bean 触发了这个方法，但是在 BeanRegistry 里却没有定义
 		}
 
 		return bean;

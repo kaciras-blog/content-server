@@ -17,6 +17,7 @@ import java.net.UnknownHostException;
 @Slf4j
 public class RateLimitFilter extends HttpFilter {
 
+	/** 当达到限制时返回一个响应头告诉客户端相关信息 */
 	private static final String RATE_LIMIT_HEADER = "X-RateLimit-Wait";
 
 	private final RedisRateLimiter rateLimiter;

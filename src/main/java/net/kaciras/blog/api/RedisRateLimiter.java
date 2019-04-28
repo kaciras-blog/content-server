@@ -39,19 +39,19 @@ public final class RedisRateLimiter {
 	/**
 	 * 获取指定数量的令牌，返回桶内拥有足够令牌所需要等待的时间。
 	 *
-	 * @param key     表示获取者的键，一般是对方的IP或ID之类的
+	 * @param id      标识获取者的身份，一般是对方的IP之类的
 	 * @param permits 要获取的令牌数量
 	 * @return 需要等待的时间（秒），0表示成功，小于0表示永远无法完成
 	 */
-	public long acquire(String key, int permits) {
+	public long acquire(String id, int permits) {
 		if (permits > bucketSize) {
 			return -1;
 		}
 		var now = clock.instant().getEpochSecond();
-		var waitTime = redisTemplate.execute(script, List.of(key), permits, now, bucketSize, rate, cacheTime);
+		var waitTime = redisTemplate.execute(script, List.of(id), permits, now, bucketSize, rate, cacheTime);
 
 		if (waitTime == null) {
-			throw new RuntimeException("限速脚本返回了空值，ID=" + key);
+			throw new RuntimeException("限速脚本返回了空值，ID=" + id);
 		}
 		return waitTime;
 	}
