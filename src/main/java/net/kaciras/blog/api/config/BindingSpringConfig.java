@@ -3,17 +3,17 @@ package net.kaciras.blog.api.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.util.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Modifier;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
-
 @RequiredArgsConstructor
+@Component
 public class BindingSpringConfig implements BeanPostProcessor, ApplicationContextAware {
 
 	private final ConfigService configService;
@@ -31,20 +31,20 @@ public class BindingSpringConfig implements BeanPostProcessor, ApplicationContex
 			return bean;
 		}
 
+		/*
+		 * 目前只绑定单例 bean，因为没法知道原型 bean 什么时候销毁从而解绑。
+		 * 另外原型bean可能频繁创建，每次注入都从数据库读取性能差。当前也没有用原型bean
+		 */
 		try {
-			var scope = beanRegistry.getBeanDefinition(beanName).getScope();
-
-			/*
-			 * 目前只绑定单例 bean，因为没法知道原型 bean 什么时候销毁从而解绑。
-			 * 另外原型bean可能频繁创建，每次注入都从数据库读取性能差。当前也没有用原型bean
-			 */
-			if (StringUtils.isEmpty(scope) || SCOPE_SINGLETON.equals(scope)) {
-				scanForBinding(bean, clazz, beanName);
+			var definition = beanRegistry.getBeanDefinition(beanName);
+			if (BeanDefinition.SCOPE_PROTOTYPE.equals(definition.getScope())) {
+				return bean;
 			}
 		} catch (NoSuchBeanDefinitionException ignore) {
 			// 一些 Bean 触发了这个方法，但是在 BeanRegistry 里却没有定义
 		}
 
+		scanForBinding(bean, clazz, beanName);
 		return bean;
 	}
 
