@@ -2,6 +2,7 @@ package net.kaciras.blog.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ class ConfigController {
 		return configService.get(name);
 	}
 
+	@RequireAuthorize
 	@PatchMapping("/{name}")
 	public void setProperties(HttpServletRequest request, @PathVariable String name) throws IOException {
 		var config = configService.get(name);
