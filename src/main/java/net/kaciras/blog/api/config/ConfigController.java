@@ -2,15 +2,10 @@ package net.kaciras.blog.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.IntStream;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @RequestMapping("/config")
@@ -20,16 +15,15 @@ class ConfigController {
 	private final ConfigService configService;
 	private final ObjectMapper objectMapper;
 
-	@GetMapping
-	public Map<String, String> getProperties(List<String> keys) {
-
-		var values = configService.batchGet(keys);
-		return IntStream.range(0, keys.size())
-				.collect(HashMap::new, (map, i) -> map.put(keys.get(1), values.get(i)), Map::putAll);
+	@GetMapping("/{name}")
+	public Object getProperties(@PathVariable String name) {
+		return configService.get(name);
 	}
 
-	@PatchMapping
-	public void setProperties(Map<String, String> props) {
-		configService.batchSet(props);
+	@PatchMapping("/{name}")
+	public void setProperties(HttpServletRequest request, @PathVariable String name) throws IOException {
+		var config = configService.get(name);
+		objectMapper.readerForUpdating(config).readValue(request.getReader());
+		configService.set(name, config);
 	}
 }

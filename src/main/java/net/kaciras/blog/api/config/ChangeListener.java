@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+@SuppressWarnings("unchecked")
 @RequiredArgsConstructor
 final class ChangeListener {
 
-	private final List<Consumer<Object>> listeners = new ArrayList<>(1);
+	private final List<Consumer> listeners = new ArrayList<>(1);
 
 	@Getter
 	private final Class<?> type;
@@ -20,7 +21,7 @@ final class ChangeListener {
 		listeners.forEach(lis -> lis.accept(value));
 	}
 
-	public void add(ThrowingConsumer<Object> consumer) {
+	public void add(ThrowingConsumer consumer) {
 		listeners.add(consumer);
 	}
 }
