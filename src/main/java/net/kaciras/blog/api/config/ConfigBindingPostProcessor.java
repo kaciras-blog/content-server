@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Modifier;
 
 /**
- * 在Spring容器启动时扫描所有bean，将标记了{@link BoundConfig}的字段绑定到{@link ConfigService}
+ * 在Spring容器启动时扫描所有bean，将标记了{@link BindConfig} 的字段绑定到{@link ConfigService}
  */
 @RequiredArgsConstructor
 @Component
-public class ConfigBindingPostProcessor implements BeanPostProcessor, ApplicationContextAware {
+public final class ConfigBindingPostProcessor implements BeanPostProcessor, ApplicationContextAware {
 
 	private final ConfigService configService;
 
@@ -49,7 +49,7 @@ public class ConfigBindingPostProcessor implements BeanPostProcessor, Applicatio
 		}
 
 		for (var field : clazz.getDeclaredFields()) {
-			var bind = field.getDeclaredAnnotation(BoundConfig.class);
+			var bind = field.getDeclaredAnnotation(BindConfig.class);
 			if (bind == null) {
 				continue;
 			}

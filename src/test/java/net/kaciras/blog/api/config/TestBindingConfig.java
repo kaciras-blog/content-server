@@ -26,6 +26,10 @@ public class TestBindingConfig implements ValidatedConfig{
 		return bigger > smaller;
 	}
 
+	// [2019-4-30] Jackson 默认不从private字段读取属性。
+	// 如果漏了 getter 会报错 - InvalidDefinitionException: No serializer found for class
+	@Setter
+	@Getter
 	private static final class SubConfig {
 		private boolean boolValue;
 	}

@@ -65,6 +65,7 @@ public class ConfigService {
 		configRepository.save(name, value);
 	}
 
+	// 两种校验方式，以后可能会扩展？
 	private void validate(String name, Object value) {
 		if (value instanceof ValidatedConfig) {
 			var success = ((ValidatedConfig) value).validate();

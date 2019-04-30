@@ -4,14 +4,14 @@ import java.lang.annotation.*;
 
 /**
  * 标记字段或方法需要绑定到配置项，用法：
- * {@code @BoundConfig("abc") }
+ * {@code @BindConfig("abc") }
  * {@code int property = 123; }
  * 表示将字段 property 绑定到 abc 配置项上，其具有默认值 123。
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface BoundConfig {
+public @interface BindConfig {
 
 	/** 要绑定的配置项名，该配置项修改后将自动设置被注解的字段，或调用被注解的方法 */
 	String value();
