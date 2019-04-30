@@ -2,7 +2,6 @@ package net.kaciras.blog.api.config;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.func.ThrowingConsumer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ final class ChangeListener {
 		listeners.forEach(lis -> lis.accept(value));
 	}
 
-	public void add(ThrowingConsumer consumer) {
+	public void add(Consumer consumer) {
 		listeners.add(consumer);
 	}
 }

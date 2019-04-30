@@ -1,8 +1,7 @@
 package net.kaciras.blog.api.config;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
-import net.kaciras.blog.infrastructure.func.ThrowingConsumer;
+import net.kaciras.blog.infrastructure.func.UncheckedConsumer;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolationException;
@@ -10,6 +9,7 @@ import javax.validation.ValidationException;
 import javax.validation.Validator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service // 目前还没彻底跟Spring分离
@@ -21,28 +21,43 @@ public class ConfigService {
 	private final Validator validator;
 	private final ConfigRepository configRepository;
 
-	public <T> void bind(String name, Class<T> type, ThrowingConsumer<T> setter) {
+	public <T> void bind(String name, Class<T> type, UncheckedConsumer<T> setter) {
 		setter.accept(getConfigObject(name, type));
 		var listener = bindings.computeIfAbsent(name, (__) -> new ChangeListener(type));
 		listener.add(setter);
 	}
 
+	/**
+	 * 根据配置名获取配置对象，该配置对象是新建的，对其所做的修改不会直接影响配置的使用者。
+	 * 若要应用修改，请使用 set 方法显示应用某个配置对象。
+	 * 返回的配置对象始终从存储中加载，而不是某个正在使用的对象，使用 set 以外的方法修改配置将不影响此犯法的返回值。
+	 *
+	 * @param name 配置名
+	 * @param <T>  配置对象的类型
+	 * @return 配置对象，如果不存在绑定记录则返回null
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> T get(String name) {
 		var binding = bindings.get(name);
 		if (binding == null) {
-			throw new ResourceNotFoundException("未注册（绑定）的配置，你必须先绑定，" + name);
+			return null;
 		}
 		return (T) getConfigObject(name, binding.getType());
 	}
 
+	/**
+	 * 【注意】懒得再把参数复制一份了，所以该方法不具有隔离性。
+	 *
+	 * @param name 配置名
+	 * @param value 新的配置，不能为null
+	 */
 	public void set(String name, Object value) {
-		validate(name, value);
+		validate(name, Objects.requireNonNull(value));
 
 		var binding = bindings.get(name);
 		if (binding != null) {
 			if (binding.getType() != value.getClass()) {
-				throw new RuntimeException("配置类型不符");
+				throw new IllegalArgumentException("配置类型不符");
 			}
 			binding.fire(value);
 		}
@@ -63,6 +78,7 @@ public class ConfigService {
 		}
 	}
 
+	// 从存储中加载，如果存储中没有则使用默认构造方法创建
 	private <T> T getConfigObject(String name, Class<T> type) {
 		try {
 			var config = configRepository.load(name, type);

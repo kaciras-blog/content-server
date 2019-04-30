@@ -1,103 +1,92 @@
 package net.kaciras.blog.api.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.lang.annotation.ElementType;
-import java.util.Map;
-import java.util.stream.Stream;
+import javax.validation.ValidationException;
+import javax.validation.Validator;
 
+@Import({JacksonAutoConfiguration.class, ValidationAutoConfiguration.class})
 @ActiveProfiles("test")
-@SpringBootTest(classes = ConfigServiceTest.TestConfig.class)
+@SpringBootTest
+@SpringBootConfiguration
 public class ConfigServiceTest {
 
-	@Import(JacksonAutoConfiguration.class)
-	@ComponentScan
-	@Configuration
-	static class TestConfig {
-
-		@Bean
-		public ConfigRepository configRepository() {
-			var configStore = Mockito.mock(ConfigRepository.class);
-			Mockito.when(configStore.loadAll())
-					.thenReturn(Stream.of(new ConfigRepository.Property("test.init", "1.5")));
-			return configStore;
-		}
-	}
-
 	@Autowired
+	private Validator validator;
+
+	@MockBean
+	private ConfigRepository repository;
+
+	// 每个测试都重新创建，避免bind方法污染
 	private ConfigService configService;
 
-	@Autowired
-	private TestBindingBean testBean;
+	private TestBindingConfig config;
 
-	@Test
-	void testFire() {
-		Assertions.assertThat(testBean.getIntValue()).isEqualTo(33);
-		configService.set("test.int", "-123");
-		Assertions.assertThat(testBean.getIntValue()).isEqualTo(-123);
-	}
-
-	/** 测试能够将枚举名转换为枚举值 */
-	@Test
-	void testEnumDeserialize() {
-		Assertions.assertThat(testBean.getEnumValue()).isEqualTo(ElementType.FIELD);
-		configService.set("test.enum", "\"PACKAGE\"");
-		Assertions.assertThat(testBean.getEnumValue()).isEqualTo(ElementType.PACKAGE);
+	@BeforeEach
+	void setUp() {
+		configService = new ConfigService(validator, repository);
+		configService.bind("test", TestBindingConfig.class, v -> config = v);
 	}
 
 	@Test
-	void testInit() {
-		Assertions.assertThat(testBean.getInitValue()).isEqualTo(1.5);
-	}
-
-	@Autowired
-	ObjectMapper objectMapper;
-
-	@Test
-	void testA() throws IOException {
-		var w = new StringWriter();
-		var gen = objectMapper.getFactory().createGenerator(w);
-		gen.writeStartObject();
-
-		gen.writeFieldName("ida");
-		gen.writeRawValue("123456");
-
-		gen.writeFieldName("escape");
-		gen.writeRawValue("我擦\"ee");
-
-		gen.writeEndObject();
-		gen.flush();
-
-		var str = w.toString();
-		System.out.println(str);
-		var map = objectMapper.readValue(str, Map.class);
-		System.out.println(map);
+	void testBindInit() {
+		Assertions.assertThat(config.getIntValue()).isEqualTo(33);
 	}
 
 	@Test
-	void testB() throws IOException {
-		var r = new StringReader("{ \"ida\": [123, 45] }");
-		var p = objectMapper.getFactory().createParser(r);
-		p.nextToken();
-		p.nextFieldName();
+	void testBindUpdate() {
+		var newConfig = new TestBindingConfig();
+		newConfig.setIntValue(-123);
+		configService.set("test", newConfig);
 
-		p.readValueAs(String.class);
-		var next = p.nextValue();
+		Assertions.assertThat(config.getIntValue()).isEqualTo(-123);
+	}
 
-		System.out.println(next);
+	@Test
+	void testBindInvalidType() {
+		Assertions.assertThatThrownBy(() -> configService.set("test", null))
+				.isInstanceOf(NullPointerException.class);
+
+		Assertions.assertThatThrownBy(() -> configService.set("test", Boolean.FALSE))
+				.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Test
+	void testGetWithoutBind() {
+		Assertions.assertThat(configService.<Object>get("not.bind")).isNull();
+	}
+
+	/** ConfigService.get 会创建一个新对象 */
+	@Test
+	void testIsolation() {
+		Assertions.assertThat(configService.<TestBindingConfig>get("test")).isNotSameAs(config);
+	}
+
+	@Test
+	void testJsr303Validate() {
+		var newConfig = new TestBindingConfig();
+		newConfig.setSubConfig(null);
+
+		Assertions.assertThatThrownBy(() -> configService.set("test", newConfig))
+				.isInstanceOf(ValidationException.class);
+	}
+
+	@Test
+	void testCustomValidate() {
+		var newConfig = new TestBindingConfig();
+		newConfig.setSmaller(newConfig.getBigger() + 666);
+
+		Assertions.assertThatThrownBy(() -> configService.set("test", newConfig))
+				.isInstanceOf(ValidationException.class);
 	}
 }

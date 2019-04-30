@@ -12,11 +12,15 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Modifier;
 
+/**
+ * 在Spring容器启动时扫描所有bean，将标记了{@link BoundConfig}的字段绑定到{@link ConfigService}
+ */
 @RequiredArgsConstructor
 @Component
-public class BindingSpringConfig implements BeanPostProcessor, ApplicationContextAware {
+public class ConfigBindingPostProcessor implements BeanPostProcessor, ApplicationContextAware {
 
 	private final ConfigService configService;
+
 	private BeanDefinitionRegistry beanRegistry;
 
 	@Override
@@ -44,22 +48,18 @@ public class BindingSpringConfig implements BeanPostProcessor, ApplicationContex
 			// 一些 Bean 触发了这个方法，但是在 BeanRegistry 里却没有定义
 		}
 
-		scanForBinding(bean, clazz, beanName);
-		return bean;
-	}
-
-	public void scanForBinding(Object object, Class<?> clazz, String beanName) {
 		for (var field : clazz.getDeclaredFields()) {
 			var bind = field.getDeclaredAnnotation(BoundConfig.class);
 			if (bind == null) {
 				continue;
 			}
 			if ((field.getModifiers() & Modifier.FINAL) != 0) {
-				throw new BeanInitializationException(beanName + "绑定的字段不能为final：" + field.getName());
+				throw new BeanInitializationException(beanName + " - 绑定的字段不能为final：" + field.getName());
 			}
 			field.setAccessible(true);
-			configService.bind(bind.value(), field.getType(), value -> field.set(object, value));
+			configService.bind(bind.value(), field.getType(), value -> field.set(bean, value));
 		}
-	}
 
+		return bean;
+	}
 }

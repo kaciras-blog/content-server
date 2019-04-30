@@ -24,9 +24,21 @@ public class ConfigRepository {
 		}
 	}
 
+	/**
+	 * 从配置存储中加载指定的配置对象。
+	 *
+	 * @param name 配置名
+	 * @param type 配置对象的类型
+	 * @param <T>  配置对象的类型
+	 * @return 配置对象，如果没有就返回null
+	 */
 	public <T> T load(String name, Class<T> type) {
+		var data = redisTemplate.opsForValue().get(name);
+		if (data == null) {
+			return null;
+		}
 		try {
-			return objectMapper.readValue(redisTemplate.opsForValue().get(name), type);
+			return objectMapper.readValue(data, type);
 		} catch (IOException e) {
 			throw new SerializationException("配置读取失败", e);
 		}
