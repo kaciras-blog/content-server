@@ -11,8 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * 目前还没彻底跟Spring分离
+ * 【注意】懒得再把参数复制一份了，所以该方法不具有隔离性。
+ */
 @RequiredArgsConstructor
-@Service // 目前还没彻底跟Spring分离
+@Service
 public class ConfigService {
 
 	// 目前仅在启动时修改，不存在线程安全问题
@@ -46,9 +50,10 @@ public class ConfigService {
 	}
 
 	/**
-	 * 【注意】懒得再把参数复制一份了，所以该方法不具有隔离性。
+	 * 设置指定的配置，新的配置将应用到所有绑定了的地方，并保存在存储中以便
+	 * 下次使用。
 	 *
-	 * @param name 配置名
+	 * @param name  配置名
 	 * @param value 新的配置，不能为null
 	 */
 	public void set(String name, Object value) {
@@ -84,7 +89,9 @@ public class ConfigService {
 		try {
 			var config = configRepository.load(name, type);
 			if (config == null) {
-				config = type.getConstructor().newInstance();
+				var ctor = type.getDeclaredConstructor();
+				ctor.setAccessible(true);
+				config = ctor.newInstance();
 			}
 			validate(name, config);
 			return config;

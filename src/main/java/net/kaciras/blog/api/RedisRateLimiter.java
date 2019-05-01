@@ -11,11 +11,12 @@ import java.util.List;
 
 /**
  * 基于令牌桶算法的限速器，使用Redis存储相关记录。
- * 该类仅作为Java语言的接口，算法的具体实现在Lua脚本(resources/RateLimiter.lua)里由Redis执行
+ *
  */
 @Setter
 public final class RedisRateLimiter {
 
+	/** 该类仅作为 Java 语言的接口，算法的实现在 Lua 脚本里，由 Redis 执行 */
 	private static final String SCRIPT_FILE = "RateLimiter.lua";
 
 	private final Clock clock;

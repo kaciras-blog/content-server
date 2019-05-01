@@ -11,6 +11,8 @@ import net.kaciras.blog.api.principle.AuthType;
 import net.kaciras.blog.api.principle.SessionService;
 import net.kaciras.blog.api.principle.oauth2.Oauth2Client.UserInfo;
 import net.kaciras.blog.api.user.UserManager;
+import net.kaciras.blog.infrastructure.exception.PermissionException;
+import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
 import net.kaciras.blog.infrastructure.func.Lambdas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
@@ -33,7 +36,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/connect")
+@RequestMapping("/connect/{type}")
 public class Oauth2Controller {
 
 	private final SessionService sessionService;
@@ -54,11 +57,18 @@ public class Oauth2Controller {
 				.collect(Collectors.toMap(b -> b.authType().name().toLowerCase(), Lambdas.keepIntact()));
 	}
 
-	@GetMapping("/{type}")
+	/**
+	 * OAuth 认证第一步，开始登录会话，获取带有state字段的跳转链接。
+	 * 用户将被重定向到第三方授权页面。
+	 *
+	 * @param type    第三方名称
+	 * @param request 请求对象
+	 */
+	@GetMapping
 	public ResponseEntity<Void> redirect(@PathVariable String type, HttpServletRequest request) throws JsonProcessingException {
 		var client = clientMap.get(type);
 		if (client == null) {
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.notFound().build();
 		}
 
 		/*
@@ -91,42 +101,40 @@ public class Oauth2Controller {
 		return ResponseEntity.status(302).location(authUri).build();
 	}
 
-	@GetMapping("/{type}/callback")
+	/**
+	 * OAuth 认证第二步，用户在第三方服务上确认授权，带着授权码code返回到该请求。
+	 * 本服务需要根据使用该授权码来从第三方服务获取必要的信息以完成登录。
+	 *
+	 * @param type     第三方名称
+	 * @param request  请求对象
+	 * @param response 响应对象
+	 */
+	@GetMapping("/callback")
 	public ResponseEntity<?> callback(@PathVariable String type, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		var client = clientMap.get(type);
 		if (client == null) {
-			return ResponseEntity.badRequest().build();
+			return ResponseEntity.notFound().build();
 		}
 
-		// 以下两步验证state，防止CSRF攻击
-		var key = RedisKeys.OauthSession.of(request.getSession(true).getId());
-		var record = redisTemplate.opsForValue().get(key);
-		if (record == null) {
-			return ResponseEntity.status(410).body("认证请求无效或已过期，请重新登录");
-		}
-
-		var oauthSession = objectMapper.readValue(record, OauthSession.class);
-		redisTemplate.unlink(key);
-		var state = request.getParameter("state");
-		if (!oauthSession.state.equals(state)) {
-			return ResponseEntity.status(403).body("认证参数错误，您可能点击了不安全的链接");
-		}
+		// 获取会话，并检查state字段
+		var oauthSession = retrieveOAuthSession(request);
 
 		var currentUri = UriComponentsBuilder
 				.fromUriString(request.getRequestURL().toString())
 				.replaceQuery(null).toUriString();
 
-		var context = new OAuth2Context(request.getParameter("code"), currentUri, state);
+		var context = new OAuth2Context(request.getParameter("code"), currentUri, oauthSession.state);
+
 		var info = client.getUserInfo(context);
 		var localId = getLocalId(info, request, client.authType());
 		sessionService.putUser(request, response, localId, true);
 
-		// 没有跳转，可能不是从页面过来的请求，但也算正常请求。
+		// 没有跳转，可能不是从页面过来的请求，但也算正常请求
 		if (oauthSession.returnUri == null) {
 			return ResponseEntity.ok().build();
 		}
 
-		// 强制域名，以防防跳转到其他网站
+		// 强制域名，以防跳转到其他网站
 		var ret = UriComponentsBuilder
 				.fromUriString(oauthSession.returnUri)
 				.scheme("https").host(wwwHost);
@@ -134,6 +142,40 @@ public class Oauth2Controller {
 		return ResponseEntity.status(302).location(ret.build().toUri()).build();
 	}
 
+	/**
+	 * 根据请求获取保存的认证会话，同时会检查请求中的 state 字段与会话中的是否
+	 * 一致，如果不一致则抛出异常中止认证。
+	 *
+	 * @param request 请求对象
+	 * @return 认证会话
+	 * @throws ResourceDeletedException 如果认证会话过期了
+	 * @throws PermissionException      如果会话中的state与请求中的不同
+	 */
+	private OauthSession retrieveOAuthSession(HttpServletRequest request) throws IOException {
+		var key = RedisKeys.OauthSession.of(request.getSession(true).getId());
+		var record = redisTemplate.opsForValue().get(key);
+		if (record == null) {
+			throw new ResourceDeletedException("认证请求无效或已过期，请重新登录");
+		}
+
+		redisTemplate.unlink(key);
+		var oauthSession = objectMapper.readValue(record, OauthSession.class);
+
+		var state = request.getParameter("state");
+		if (!oauthSession.state.equals(state)) {
+			throw new PermissionException("参数错误，您可能点击了不安全的链接，或遭到了钓鱼攻击");
+		}
+		return oauthSession;
+	}
+
+	/**
+	 * 根据第三方用户ID和类型从数据库里查询本地用户ID
+	 *
+	 * @param profile  第三方用户信息
+	 * @param request  请求对象
+	 * @param authType 第三方类型
+	 * @return 本地用户的ID
+	 */
 	@Transactional
 	protected int getLocalId(UserInfo profile, HttpServletRequest request, AuthType authType) {
 		var localId = oauthDAO.select(profile.id(), authType);

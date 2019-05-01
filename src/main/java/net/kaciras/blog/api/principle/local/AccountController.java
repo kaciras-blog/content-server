@@ -38,8 +38,9 @@ class AccountController {
 	private final UserManager userManager;
 
 	@PostMapping
-	public ResponseEntity<Void> post(HttpServletRequest request, HttpServletResponse response,
-									 @Valid @RequestBody RegisterRequest dto) {
+	public ResponseEntity<Void> post(@Valid @RequestBody RegisterRequest dto,
+									 HttpServletRequest request,
+									 HttpServletResponse response) {
 		checkCaptcha(request.getSession(true), dto.getCaptcha());
 
 		var id = createUser(dto, Utils.AddressFromRequest(request));
@@ -80,17 +81,17 @@ class AccountController {
 		}
 	}
 
+	// 原来叫 /session/user，后来嫌麻烦改成 /accounts/login
 	@PostMapping("/login")
-	public ResponseEntity<Void> login(HttpServletRequest request,
-									  HttpServletResponse response,
-									  @RequestBody @Valid LoginRequest loginVo) {
+	public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginVo,
+									  HttpServletRequest request,
+									  HttpServletResponse response) {
 		var account = repository.findByName(loginVo.getName());
 
 		if (account == null || !account.checkLogin(loginVo.getPassword())) {
-			throw new RequestArgumentException("密码错误或用户不存在");
-		} else {
-			sessionService.putUser(request, response, account.getId(), loginVo.isRemember());
-			return ResponseEntity.created(URI.create("/session/user")).build();
+			return ResponseEntity.badRequest().body("密码错误或用户不存在");
 		}
+		sessionService.putUser(request, response, account.getId(), loginVo.isRemember());
+		return ResponseEntity.created(URI.create("/session/user")).build();
 	}
 }

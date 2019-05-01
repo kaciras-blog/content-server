@@ -14,13 +14,13 @@ public interface Oauth2Client {
 
 	interface UserInfo {
 
-		/**
-		 * 不能用整数，因为并不能保证所有提供者都用整数作ID
-		 */
+		/** 不能用整数，因为并是所有提供者都用整数作ID */
 		String id();
 
+		/** 第三方系统中的用户名 */
 		String name();
 
+		/** 第三方系统中用户的头像，可能不存在 */
 		@Nullable
 		String head();
 	}

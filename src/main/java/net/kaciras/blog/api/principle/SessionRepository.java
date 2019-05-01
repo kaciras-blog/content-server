@@ -13,13 +13,13 @@ import java.util.Set;
 
 /**
  * 为了保证服务端能够主动删除Session，使用了Redis的Set来记录每个用户的Session。
- * 该仓库使用Radis的Set来记录 UserId -> [SessionIds]。
+ * 该仓库使用 Redis 的Set来记录 UserId -> [SessionIds]。
  * <p>
  * "SessionRepository" 这个名字和 Spring 内置的 Bean 冲突了，所以要改个名。
  */
 @RequiredArgsConstructor
 @Repository("AppSessionRepository")
-class SessionRepository {
+public final class SessionRepository {
 
 	private final RedisTemplate<byte[], byte[]> redisTemplate;
 

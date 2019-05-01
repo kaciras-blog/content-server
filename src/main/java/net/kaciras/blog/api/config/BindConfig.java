@@ -5,8 +5,8 @@ import java.lang.annotation.*;
 /**
  * 标记字段或方法需要绑定到配置项，用法：
  * {@code @BindConfig("abc") }
- * {@code int property = 123; }
- * 表示将字段 property 绑定到 abc 配置项上，其具有默认值 123。
+ * {@code private SomeConfig config; }
+ * 表示将字段 config 绑定，相当于调用了 configService.bind("abc", SomeConfig.class, newConfig -> config = newConfig);
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

@@ -2,8 +2,8 @@ package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.principle.AuthType;
-import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.codec.ImageReference;
+import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
@@ -23,7 +23,11 @@ public class UserManager {
 	 * @return 用户信息
 	 */
 	public UserVo getUser(int id) {
-		var view = mapper.toUserVo(DBUtils.checkNotNullResource(repository.get(id)));
+		var user = repository.get(id);
+		if (user == null) {
+			throw new ResourceNotFoundException("User[id=" + id + "] 不存在");
+		}
+		var view = mapper.toUserVo(user);
 		view.setAuthType(null);
 		return view;
 	}

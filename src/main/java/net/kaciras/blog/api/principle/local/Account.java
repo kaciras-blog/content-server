@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.principle.local;
 
 import lombok.*;
+import net.kaciras.blog.api.principle.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -28,6 +29,11 @@ public final class Account {
 	@Setter(AccessLevel.NONE)
 	private AccountDAO accountDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private SessionRepository sessionRepository;
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -37,15 +43,15 @@ public final class Account {
 	private byte[] password;
 	private byte[] salt;
 
+	/**
+	 * 修改密码，修改成功后所有与该用户相关的会话将注销。
+	 *
+	 * @param password 新密码
+	 */
 	public void changePassword(String password) {
 		encryptPassword(password);
 		accountDAO.updatePassword(this);
-	}
-
-	private void encryptPassword(String password) {
-		salt = new byte[HASH_SIZE >> 3];
-		SECURE_RANDOM.nextBytes(salt);
-		this.password = encryptPassword(password, salt);
+		sessionRepository.clearAll(id);
 	}
 
 	/**
@@ -58,6 +64,12 @@ public final class Account {
 		return Arrays.equals(password, encryptPassword(passText, salt));
 	}
 
+	private void encryptPassword(String password) {
+		this.salt = new byte[HASH_SIZE >> 3];
+		SECURE_RANDOM.nextBytes(salt);
+		this.password = encryptPassword(password, salt);
+	}
+
 	/**
 	 * 生成盐值，并对密码进行HASH加密。
 	 * SHA3算法不需要采用HMAC来加盐，直接跟密码连在一起即可。
@@ -66,7 +78,7 @@ public final class Account {
 	 * @param salt     盐值
 	 * @return 加密后的密码
 	 */
-	private byte[] encryptPassword(String password, byte[] salt) {
+	private static byte[] encryptPassword(String password, byte[] salt) {
 		try {
 			var sha3 = MessageDigest.getInstance("SHA3-" + HASH_SIZE);
 			sha3.update(password.getBytes(StandardCharsets.UTF_8));
