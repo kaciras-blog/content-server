@@ -2,7 +2,6 @@ package net.kaciras.blog.api.misc;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.SessionAttributes;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,8 +26,9 @@ public class CaptchaController {
 	 * @param resp    响应
 	 * @throws IOException 如果发生IO错误
 	 */
-	@GetMapping(produces = MediaType.IMAGE_JPEG_VALUE)
+	@GetMapping
 	public void getCaptcha(HttpSession session, HttpServletResponse resp) throws IOException {
+		resp.setContentType("image/jpeg");
 
 		/*
 		 * Cache-Control：
