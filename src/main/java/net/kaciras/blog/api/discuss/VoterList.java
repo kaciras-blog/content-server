@@ -47,7 +47,7 @@ public final class VoterList {
 	 */
 	public boolean remove(int userId) {
 		if (voteDAO.deleteRecord(discussion, userId) > 0) {
-			voteDAO.descreaseVote(discussion);
+			voteDAO.decreaseVote(discussion);
 			return true;
 		}
 		return false;
