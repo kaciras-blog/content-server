@@ -16,10 +16,11 @@ import java.util.Set;
  * 该仓库使用 Redis 的Set来记录 UserId -> [SessionIds]。
  * <p>
  * "SessionRepository" 这个名字和 Spring 内置的 Bean 冲突了，所以要改个名。
+ * [注意] 由于 @Scheduled 需要创建子类，所以该类不能为 final.
  */
 @RequiredArgsConstructor
 @Repository("AppSessionRepository")
-public final class SessionRepository {
+public class SessionRepository {
 
 	private final RedisTemplate<byte[], byte[]> redisTemplate;
 
