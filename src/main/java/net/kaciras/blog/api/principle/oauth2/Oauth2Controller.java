@@ -76,7 +76,7 @@ public class Oauth2Controller {
 		 * state参数用于防止CSRF：
 		 *
 		 *     攻击者首先点击此链接并认证，拿到code后不跳转，而是将跳转的连接发给受害者，受害者
-		 *     点击该跳转链接后将使用攻击者的code进行登录，这导致受害者登录了攻击者的账号，攻击者
+		 *     点击该跳转链接后将使用攻击者的code进行登录。这导致受害者登录了攻击者的账号，攻击者
 		 *     可以诱骗受害者充值或填写敏感信息。
 		 *
 		 *     加入state参数后，它将在跳转链接里被带上。state值与会话相关联，攻击者无法修改受害者
@@ -169,12 +169,12 @@ public class Oauth2Controller {
 	}
 
 	/**
-	 * 根据第三方用户ID和类型从数据库里查询本地用户ID
+	 * 根据第三方用户ID和类型从数据库里查询本地用户ID。
 	 *
 	 * @param profile  第三方用户信息
 	 * @param request  请求对象
 	 * @param authType 第三方类型
-	 * @return 本地用户的ID
+	 * @return 本地用户的ID，如果不存在则会创建
 	 */
 	@Transactional
 	protected int getLocalId(UserInfo profile, HttpServletRequest request, AuthType authType) {

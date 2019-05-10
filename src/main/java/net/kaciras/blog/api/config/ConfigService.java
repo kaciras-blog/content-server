@@ -50,8 +50,7 @@ public class ConfigService {
 	}
 
 	/**
-	 * 设置指定的配置，新的配置将应用到所有绑定了的地方，并保存在存储中以便
-	 * 下次使用。
+	 * 设置指定的配置，新的配置将应用到所有绑定了的地方，并保存在存储中以便下次使用。
 	 *
 	 * @param name  配置名
 	 * @param value 新的配置，不能为null
@@ -99,5 +98,4 @@ public class ConfigService {
 			throw new RuntimeException("无法实例化配置：" + type, e);
 		}
 	}
-
 }

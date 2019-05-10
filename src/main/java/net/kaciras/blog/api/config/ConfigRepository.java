@@ -26,6 +26,7 @@ public class ConfigRepository {
 
 	/**
 	 * 从配置存储中加载指定的配置对象。
+	 * 多次调用应当返回不同（包括嵌套对象）的实例，修改任一实例的任何属性不能影响其他实例（类似深拷贝）。
 	 *
 	 * @param name 配置名
 	 * @param type 配置对象的类型

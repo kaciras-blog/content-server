@@ -14,6 +14,8 @@ import java.lang.reflect.Modifier;
 
 /**
  * 在Spring容器启动时扫描所有bean，将标记了{@link BindConfig} 的字段绑定到{@link ConfigService}
+ * @see BindConfig
+ * @see ConfigService
  */
 @RequiredArgsConstructor
 @Component

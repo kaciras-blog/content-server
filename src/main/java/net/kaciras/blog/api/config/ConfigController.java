@@ -6,8 +6,8 @@ import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.Reader;
 
 @RequiredArgsConstructor
 @RequestMapping("/config/{name}")
@@ -28,12 +28,12 @@ class ConfigController {
 
 	@RequireAuthorize
 	@PatchMapping
-	public ResponseEntity<Object> setProperties(HttpServletRequest request, @PathVariable String name) throws IOException {
+	public ResponseEntity<Object> setProperties(Reader body, @PathVariable String name) throws IOException {
 		var config = configService.get(name);
 		if (config == null) {
 			return ResponseEntity.notFound().build();
 		}
-		objectMapper.readerForUpdating(config).readValue(request.getReader());
+		objectMapper.readerForUpdating(config).readValue(body);
 		configService.set(name, config);
 		return ResponseEntity.noContent().build();
 	}
