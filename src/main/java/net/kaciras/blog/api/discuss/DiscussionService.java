@@ -2,11 +2,12 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.article.ArticleRepository;
-import net.kaciras.blog.api.config.ConfigBind;
+import net.kaciras.blog.api.config.BindConfig;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
+import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.InetAddress;
 import java.util.List;
@@ -17,22 +18,17 @@ public class DiscussionService {
 
 	private final DiscussRepository repository;
 	private final ArticleRepository articleRepository;
+	private final DiscussionDAO dao;
 
-	@Value("${discuss.anonymous}")
-	private boolean allowAnonymous;
+	@BindConfig("discussion")
+	private DiscussionOptions options;
 
-	@Value("${discuss.disable}")
-	private boolean disabled;
-
-	@ConfigBind("discuss.review")
-	private boolean review;
-
-	// 检查用户是否能够评论
-	private void checkAddedUser() {
-		if (disabled) {
+	/** 检查用户是否能够评论 */
+	private void checkDiscussable() {
+		if (!options.isEnabled()) {
 			throw new PermissionException();
 		}
-		if (!allowAnonymous) {
+		if (!options.isAllowAnonymous()) {
 			SecurityContext.requireLogin();
 		}
 	}
@@ -46,33 +42,29 @@ public class DiscussionService {
 	}
 
 	public long add(int objectId, String content, InetAddress address) {
-		checkAddedUser();
+		checkDiscussable();
 		articleRepository.get(objectId); // 检查文章是否存在
 
 		var discussion = Discussion.create(objectId, SecurityContext.getUserId(), 0, content);
 		discussion.setAddress(address);
-		discussion.setState(review ? DiscussionState.Pending : DiscussionState.Visible);
+		discussion.setState(options.isReview() ? DiscussionState.Pending : DiscussionState.Visible);
 
 		repository.add(discussion);
 		return discussion.getId();
 	}
 
 	public long addReply(long discussionId, String content, InetAddress address) {
-		checkAddedUser();
+		checkDiscussable();
 		var parent = repository.get(discussionId);
-
+		if (parent.getParent() != 0) {
+			throw new RequestArgumentException();
+		}
 		var reply = parent.createReply(SecurityContext.getUserId(), content);
-		reply.setAddress(address);
-		reply.setState(review ? DiscussionState.Pending : DiscussionState.Visible);
 
+		reply.setAddress(address);
+		reply.setState(options.isReview() ? DiscussionState.Pending : DiscussionState.Visible);
 		repository.add(reply);
 		return reply.getId();
-	}
-
-	public void update(int id, PatchMap patchMap) {
-		if (patchMap.state != null) {
-			repository.get(id).updateState(patchMap.state);
-		}
 	}
 
 	public void voteUp(int id, int userId) {
@@ -83,5 +75,18 @@ public class DiscussionService {
 	public void revokeVote(int id, int userId) {
 		SecurityContext.requireLogin();
 		repository.get(id).getVoterList().remove(userId);
+	}
+
+	/**
+	 * 批量更新评论的状态。
+	 * TODO:
+	 * 因为单个更新属于批量更新的特例，所以它也使用了这个方法。但如果遇到了需要在JAVA代码
+	 * 里鉴权等逻辑，则无法用一条SQL直接更新，还是得一个个UPDATE，目前还没找到更好的方法。
+	 *
+	 * @param patchMap 更新记录
+	 */
+	@Transactional
+	public void batchUpdate(PatchMap patchMap) {
+		patchMap.ids.forEach(id -> dao.updateState(id, patchMap.state));
 	}
 }

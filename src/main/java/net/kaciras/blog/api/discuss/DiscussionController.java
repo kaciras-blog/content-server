@@ -59,10 +59,10 @@ class DiscussionController {
 		return ResponseEntity.created(URI.create("/discussions/" + id)).build();
 	}
 
-	@RequireAuthorize
-	@PatchMapping("/{id}")
-	public ResponseEntity<Void> patch(@PathVariable int id, @RequestBody PatchMap patchMap) {
-		discussionService.update(id, patchMap);
+	@RequireAuthorize // 当前仅支持管理者更新评论
+	@PatchMapping
+	public ResponseEntity<Void> patch(@RequestBody PatchMap patchMap) {
+		discussionService.batchUpdate(patchMap);
 		return ResponseEntity.noContent().build();
 	}
 

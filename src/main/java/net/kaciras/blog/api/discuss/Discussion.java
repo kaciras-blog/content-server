@@ -1,7 +1,6 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.*;
-import net.kaciras.blog.infrastructure.DBUtils;
 import net.kaciras.blog.infrastructure.exception.DataTooBigException;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +48,6 @@ public final class Discussion {
 
 	public VoterList getVoterList() {
 		return new VoterList(this.id);
-	}
-
-	public void updateState(DiscussionState state) {
-		DBUtils.checkEffective(dao.updateState(id, state));
 	}
 
 	public Discussion createReply(int userId, String content) {

@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 interface VoteDAO {
 
-	@Insert("INSERT INTO discussion_vote (id,user) VALUES (#{id}, #{userId})")
+	@Insert("INSERT INTO discussion_vote (id, user) VALUES (#{id}, #{userId})")
 	void insertRecord(long id, int userId);
 
 	@Delete("DELETE FROM discussion_vote WHERE id=#{id} AND user=#{userId}")

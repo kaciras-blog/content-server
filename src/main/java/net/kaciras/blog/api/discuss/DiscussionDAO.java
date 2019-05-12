@@ -31,7 +31,7 @@ interface DiscussionDAO {
 	 * 查询指定对象的评论数量，不包含评论的回复（楼中楼）。
 	 *
 	 * @param objectId 对象ID
-	 * @return 评论数
+	 * @return 评论数，不含楼中楼
 	 */
 	@Select("SELECT COUNT(*) FROM discussion WHERE object_id=#{objectId} AND parent=0")
 	int selectCountByObject(int objectId);

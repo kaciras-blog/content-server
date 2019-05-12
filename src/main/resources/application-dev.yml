@@ -26,10 +26,6 @@ spring:
 draft:
   delete-after-publish: false
 
-discuss:
-  disable: false
-  anonymous: true
-
 kaciras:
 
   development:
