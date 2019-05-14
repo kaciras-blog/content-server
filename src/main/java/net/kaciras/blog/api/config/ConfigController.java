@@ -28,13 +28,13 @@ class ConfigController {
 
 	@RequireAuthorize
 	@PatchMapping
-	public ResponseEntity<Object> setProperties(Reader body, @PathVariable String name) throws IOException {
+	public ResponseEntity<Object> setProperties(@PathVariable String name, Reader body) throws IOException {
 		var config = configService.get(name);
 		if (config == null) {
 			return ResponseEntity.notFound().build();
 		}
 		objectMapper.readerForUpdating(config).readValue(body);
 		configService.set(name, config);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok(config);
 	}
 }
