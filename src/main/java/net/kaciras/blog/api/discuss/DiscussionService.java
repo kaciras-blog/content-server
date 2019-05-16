@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.article.ArticleRepository;
 import net.kaciras.blog.api.config.BindConfig;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
-import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,30 +40,21 @@ public class DiscussionService {
 		return repository.size(query);
 	}
 
-	public long add(int objectId, String content, InetAddress address) {
+	public long add(AddRequest request, InetAddress address) {
 		checkDiscussable();
-		articleRepository.get(objectId); // 检查文章是否存在
+		articleRepository.get(request.getObjectId()); // 检查文章是否存在
+		Discussion dis;
 
-		var discussion = Discussion.create(objectId, SecurityContext.getUserId(), 0, content);
-		discussion.setAddress(address);
-		discussion.setState(options.isReview() ? DiscussionState.Pending : DiscussionState.Visible);
-
-		repository.add(discussion);
-		return discussion.getId();
-	}
-
-	public long addReply(long discussionId, String content, InetAddress address) {
-		checkDiscussable();
-		var parent = repository.get(discussionId);
-		if (parent.getParent() != 0) {
-			throw new RequestArgumentException();
+		if (request.getParent() != 0) {
+			dis = repository.get(request.getParent()).createReply(SecurityContext.getUserId(), request.getContent());
+		} else {
+			dis = Discussion.create(request.getObjectId(), SecurityContext.getUserId(), 0, request.getContent());
 		}
-		var reply = parent.createReply(SecurityContext.getUserId(), content);
+		dis.setAddress(address);
+		dis.setState(options.isReview() ? DiscussionState.Moderation : DiscussionState.Visible);
 
-		reply.setAddress(address);
-		reply.setState(options.isReview() ? DiscussionState.Pending : DiscussionState.Visible);
-		repository.add(reply);
-		return reply.getId();
+		repository.add(dis);
+		return dis.getId();
 	}
 
 	public void voteUp(int id, InetAddress address) {
@@ -79,7 +69,7 @@ public class DiscussionService {
 	 * 批量更新评论的状态。
 	 * TODO:
 	 * 因为单个更新属于批量更新的特例，所以它也使用了这个方法。但如果遇到了需要在JAVA代码
-	 * 里鉴权等逻辑，则无法用一条SQL直接更新，还是得一个个UPDATE，目前还没找到更好的方法。
+	 * 里鉴权等逻辑，则无法用一条SQL直接更新，还是得一个个UPDATE，目前也没找到更好的方法。
 	 *
 	 * @param patchMap 更新记录
 	 */

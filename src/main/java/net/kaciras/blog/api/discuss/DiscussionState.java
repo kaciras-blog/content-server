@@ -5,5 +5,5 @@ public enum DiscussionState {
 
 	Visible, // 正常显示
 	Deleted, // 已删除
-	Pending, // 等待审核
+	Moderation, // 等待审核
 }

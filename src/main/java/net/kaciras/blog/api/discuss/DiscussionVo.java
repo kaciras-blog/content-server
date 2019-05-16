@@ -14,20 +14,25 @@ public final class DiscussionVo {
 
 	private int id;
 	private int objectId;
-	private int floor;
+	private int type;
 	private int parent;
+	private int floor;
 
 	private UserVo user;
 	private String content;
 
-	private List<DiscussionVo> replies;
-	private int replyCount;
-
-	private int voteCount;
 	private boolean deleted;
-
-	private boolean voted;
+	private int voteCount;
 
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime time;
+
+	// 下面是非共有字段
+
+	private boolean voted;
+	private List<DiscussionVo> replies;
+	private int replyCount;
+
+	/** 被评论的对象，该字段不限制类型，不同的对象可能类型也不同 */
+	private Object target;
 }

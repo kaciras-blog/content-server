@@ -27,14 +27,9 @@ spring:
 draft:
   delete-after-publish: false
 
-discuss:
-  disable: false
-  anonymous: true
-
 kaciras:
-  spring:
-    session:
-      cookie:
-        domain: kaciras.net
+  session:
+    cookie:
+      domain: kaciras.net
   cors:
     origins: https://blog.kaciras.net

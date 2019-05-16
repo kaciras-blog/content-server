@@ -18,6 +18,7 @@ public final class DiscussionQuery {
 
 	@NotNull
 	private DiscussionState state = DiscussionState.Visible;
+	private boolean title;
 
 	private Pageable pageable;
 }

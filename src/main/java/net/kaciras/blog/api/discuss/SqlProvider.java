@@ -33,8 +33,7 @@ public final class SqlProvider {
 		if (query.getObjectId() != null) {
 			sql.WHERE("object_id = #{objectId}");
 		}
-		if (query.getState() != null) {
-			sql.WHERE("state = #{state}");
-		}
+		// assert query.state != null
+		sql.WHERE("state = #{state}");
 	}
 }

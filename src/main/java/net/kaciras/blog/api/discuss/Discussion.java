@@ -27,6 +27,7 @@ public final class Discussion {
 
 	// 创建时就需要的字段
 	private int objectId;
+	private int type;
 	private int userId;
 	private int parent;
 	private String content;
@@ -39,7 +40,7 @@ public final class Discussion {
 	private DiscussionState state;
 	private int voteCount;
 
-	private Discussion(int objectId, int userId, int parent, String content) {
+	private Discussion(int objectId, int type, int userId, int parent, String content) {
 		this.objectId = objectId;
 		this.userId = userId;
 		this.parent = parent;
@@ -68,6 +69,6 @@ public final class Discussion {
 		if (content.length() > 64 * 40) {
 			throw new DataTooBigException("评论内容过长");
 		}
-		return new Discussion(objectId, userId, parent, content);
+		return new Discussion(objectId, 0, userId, parent, content);
 	}
 }

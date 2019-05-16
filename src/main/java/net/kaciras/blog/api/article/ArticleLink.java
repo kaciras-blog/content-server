@@ -1,8 +1,10 @@
 package net.kaciras.blog.api.article;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Value
+@AllArgsConstructor
+@Getter
 public final class ArticleLink {
 
 	private final int id;

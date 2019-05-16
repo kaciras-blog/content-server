@@ -6,6 +6,7 @@ import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,43 +20,49 @@ import java.net.URI;
 class DiscussionController {
 
 	private final DiscussionService discussionService;
-	private final DiscussMapper mapper;
+	private final ViewModelMapper mapper;
 
 	/**
 	 * 验证查询参数是否合法，该方法只检查用户的请求，对于内部查询不限制。
+	 * 查询至少包含对象ID、用户ID、评论ID其中之一的过滤条件，如果是管理则可以无视。
 	 *
 	 * @param query 查询对象
 	 */
 	private void verifyQuery(DiscussionQuery query) {
-		if (query.getObjectId() == null && query.getUserId() == null && query.getState() == null) {
-			throw new RequestArgumentException();
+		if (query.getObjectId() == null && query.getUserId() == null && query.getParent() == null) {
+			SecurityContext.require("POWER_QUERY");
 		}
 		if (query.getState() != DiscussionState.Visible) {
 			SecurityContext.require("POWER_QUERY");
 		}
 		if (query.getPageable() == null) {
-			throw new RequestArgumentException();
-		}
-		if (query.getPageable().getPageSize() > 20) {
+			query.setPageable(PageRequest.of(0, 20));
+		} else if (query.getPageable().getPageSize() > 20) {
 			throw new RequestArgumentException("查询的数量过多");
 		}
 	}
 
 	@GetMapping
-	public ListQueryView<DiscussionVo> getList(DiscussionQuery query, Pageable pageable) {
+	public ListQueryView<DiscussionVo> getList(HttpServletRequest request, DiscussionQuery query, Pageable pageable) {
 		query.setPageable(pageable);
 		verifyQuery(query);
 
 		var size = discussionService.count(query);
-		var result = mapper.toDiscussionView(discussionService.getList(query));
+		var result = discussionService.getList(query);
 
-		return new ListQueryView<>(size, result);
+		if (query.isTitle()) {
+			return new ListQueryView<>(size, mapper.toLinkedView(result));
+		}
+		if (query.getParent() != 0) {
+			return new ListQueryView<>(size, mapper.toReplyView(result));
+		}
+		return new ListQueryView<>(size, mapper.toAggregatedView(result, Utils.AddressFromRequest(request)));
 	}
 
 	@PostMapping
 	public ResponseEntity post(HttpServletRequest request, @RequestBody AddRequest message) {
 		var addr = Utils.AddressFromRequest(request);
-		var id = discussionService.add(message.getObjectId(), message.getContent(), addr);
+		var id = discussionService.add(message, addr);
 		return ResponseEntity.created(URI.create("/discussions/" + id)).build();
 	}
 
@@ -64,36 +71,6 @@ class DiscussionController {
 	public ResponseEntity<Void> patch(@RequestBody PatchMap patchMap) {
 		discussionService.batchUpdate(patchMap);
 		return ResponseEntity.noContent().build();
-	}
-
-	/**
-	 * 查询指定评论的回复（楼中楼）。
-	 * <p>
-	 * 楼中楼的URL主要使用子资源的形式，虽然getList()方法通过设置请求参数
-	 * 也能做到相同的功能，但使用子资源更加语义化。
-	 *
-	 * @param id       评论ID
-	 * @param pageable 分页参数
-	 * @return 回复列表
-	 */
-	@GetMapping("/{id}/replies")
-	public ListQueryView<DiscussionVo> getReplies(@PathVariable int id, Pageable pageable) {
-		var query = new DiscussionQuery()
-				.setParent(id)
-				.setPageable(pageable);
-
-		var total = discussionService.count(query);
-		var replies = discussionService.getList(query);
-
-		return new ListQueryView<>(total, mapper.toReplyView(replies));
-	}
-
-	@PostMapping("/{parent}/replies")
-	public ResponseEntity<Void> addReply(HttpServletRequest request,
-										 @PathVariable int parent,
-										 @RequestBody String content) {
-		var newId = discussionService.addReply(parent, content, Utils.AddressFromRequest(request));
-		return ResponseEntity.created(URI.create("/discussions/" + newId)).build();
 	}
 
 	/**
