@@ -1,5 +1,7 @@
 package net.kaciras.blog.api.discuss;
 
+import net.kaciras.blog.infrastructure.Misc;
+import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import org.apache.ibatis.jdbc.SQL;
 
 @SuppressWarnings("unused")
@@ -13,6 +15,18 @@ public final class SqlProvider {
 		if (pageable == null) {
 			return sql.toString();
 		}
+
+		if (pageable.getSort().isSorted()) {
+			var order = Misc.getFirst(pageable.getSort());
+			var column = order.getProperty();
+
+			// 仅支持一个字段，切必须为id或vote
+			if (!column.equals("id") && !column.equals("vote")) {
+				throw new RequestArgumentException();
+			}
+			sql.ORDER_BY(String.format("%s %s", column, order.getDirection()));
+		}
+
 		return sql.toString() + String.format(" LIMIT %d,%d", pageable.getPageNumber(), pageable.getPageSize());
 	}
 

@@ -44,16 +44,17 @@ public class DiscussionService {
 		checkDiscussable();
 		Discussion dis;
 
-		if (request.getParent() != 0) {
+		if (request.getParent() == 0) {
 			// 检查文章是否存在。目前仅有两个类型，而且区别逻辑较少，所以暂时没有做抽象
 			if(request.getType() == 0) {
 				articleRepository.get(request.getObjectId());
 			}
-			dis = repository.get(request.getParent()).createReply(SecurityContext.getUserId(), request.getContent());
-		} else {
 			dis = Discussion.create(request.getObjectId(), request.getType(),
 					SecurityContext.getUserId(), 0, request.getContent());
+		} else {
+			dis = repository.get(request.getParent()).createReply(SecurityContext.getUserId(), request.getContent());
 		}
+
 		dis.setAddress(address);
 		dis.setState(options.isReview() ? DiscussionState.Moderation : DiscussionState.Visible);
 
