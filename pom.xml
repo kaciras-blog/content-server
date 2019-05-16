@@ -25,6 +25,13 @@
 	</properties>
 
 	<dependencies>
+
+		<!-- fix a bug in spring boot 2.1.5, see https://github.com/spring-projects/spring-boot/issues/16871 -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
+
 		<!-- 自己的其它项目 -->
 		<dependency>
 			<groupId>net.kaciras.blog</groupId>
