@@ -102,14 +102,14 @@ class DiscussionController {
 	 * @param id 要点赞的评论ID
 	 */
 	@PostMapping("/{id}/votes")
-	public ResponseEntity<Void> postVote(@PathVariable int id) {
-		discussionService.voteUp(id, SecurityContext.getUserId());
+	public ResponseEntity<Void> postVote(@PathVariable int id, HttpServletRequest request) {
+		discussionService.voteUp(id, Utils.AddressFromRequest(request));
 		return ResponseEntity.created(URI.create("discussions/" + id + "/votes")).build();
 	}
 
 	@DeleteMapping("/{id}/votes")
-	public ResponseEntity<Void> revokeVote(@PathVariable int id) {
-		discussionService.revokeVote(id, SecurityContext.getUserId());
+	public ResponseEntity<Void> revokeVote(@PathVariable int id, HttpServletRequest request) {
+		discussionService.revokeVote(id, Utils.AddressFromRequest(request));
 		return ResponseEntity.noContent().build();
 	}
 }

@@ -67,14 +67,12 @@ public class DiscussionService {
 		return reply.getId();
 	}
 
-	public void voteUp(int id, int userId) {
-		SecurityContext.requireLogin();
-		repository.get(id).getVoterList().add(userId);
+	public void voteUp(int id, InetAddress address) {
+		repository.get(id).getVoterList().add(address);
 	}
 
-	public void revokeVote(int id, int userId) {
-		SecurityContext.requireLogin();
-		repository.get(id).getVoterList().remove(userId);
+	public void revokeVote(int id, InetAddress address) {
+		repository.get(id).getVoterList().remove(address);
 	}
 
 	/**

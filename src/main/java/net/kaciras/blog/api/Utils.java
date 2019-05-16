@@ -2,6 +2,7 @@ package net.kaciras.blog.api;
 
 import lombok.experimental.UtilityClass;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
+import org.springframework.lang.NonNull;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
@@ -23,8 +24,9 @@ public class Utils {
 	 * 该方法为SpringMVC特别处理，解决Mock请求的地址为空问题，以及烦人的UnknownHostException。
 	 *
 	 * @param request 请求
-	 * @return IP地址
+	 * @return IP地址，不会为null
 	 */
+	@NonNull
 	public InetAddress AddressFromRequest(HttpServletRequest request) {
 		var addr = request.getRemoteAddr();
 

@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.net.InetAddress;
+
 /**
  * 评论的点赞者列表，该列表记录了所有点赞者的ID。
  */
@@ -25,14 +27,14 @@ public final class VoterList {
 	private final int discussion;
 
 	/**
-	 * 点赞，一个用户只能点赞一次
+	 * 点赞，一个IP只能点赞一次
 	 *
-	 * @param userId 点赞用户的id
+	 * @param address 点赞者的IP地址
 	 * @throws ResourceStateException 若是已经点赞过或出现其他错误
 	 */
-	public void add(int userId) {
+	public void add(InetAddress address) {
 		try {
-			voteDAO.insertRecord(discussion, userId);
+			voteDAO.insertRecord(discussion, address);
 			voteDAO.increaseVote(discussion);
 		} catch (DataIntegrityViolationException ex) {
 			throw new ResourceStateException();
@@ -42,23 +44,23 @@ public final class VoterList {
 	/**
 	 * 取消点赞，只有先点赞了才能取消
 	 *
-	 * @param userId 点赞用户的id
+	 * @param address 点赞者的IP地址
 	 * @throws ResourceStateException 如果用户还未点赞过
 	 */
-	public void remove(int userId) {
-		if (voteDAO.deleteRecord(discussion, userId) <= 0) {
+	public void remove(InetAddress address) {
+		if (voteDAO.deleteRecord(discussion, address) <= 0) {
 			throw new ResourceStateException();
 		}
 		voteDAO.decreaseVote(discussion);
 	}
 
 	/**
-	 * 指定用户是否点赞过该评论。
+	 * 检查指定IP是否点赞过该评论。
 	 *
-	 * @param userId 用户ID
+	 * @param address IP地址
 	 * @return 如果点赞过了返回true
 	 */
-	public boolean contains(int userId) {
-		return Utils.nullableBool(voteDAO.contains(discussion, userId));
+	public boolean contains(InetAddress address) {
+		return Utils.nullableBool(voteDAO.contains(discussion, address));
 	}
 }
