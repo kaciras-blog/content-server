@@ -13,12 +13,14 @@ import javax.validation.constraints.NotNull;
 public final class DiscussionQuery {
 
 	private Integer objectId;
+	private Integer type;
+
 	private Integer userId;
 	private Integer parent;
 
 	@NotNull
 	private DiscussionState state = DiscussionState.Visible;
-	private boolean title;
+	private boolean linked;
 
 	private Pageable pageable;
 }

@@ -31,7 +31,7 @@ public final class SqlProvider {
 			sql.WHERE("parent = #{parent}");
 		}
 		if (query.getObjectId() != null) {
-			sql.WHERE("object_id = #{objectId}");
+			sql.WHERE("object_id = #{objectId} AND type=#{type}");
 		}
 		// assert query.state != null
 		sql.WHERE("state = #{state}");

@@ -42,6 +42,7 @@ public final class Discussion {
 
 	private Discussion(int objectId, int type, int userId, int parent, String content) {
 		this.objectId = objectId;
+		this.type = type;
 		this.userId = userId;
 		this.parent = parent;
 		this.content = content;
@@ -52,7 +53,7 @@ public final class Discussion {
 	}
 
 	public Discussion createReply(int userId, String content) {
-		return create(objectId, userId, id, content);
+		return create(objectId, type, userId, id, content);
 	}
 
 	/**
@@ -62,13 +63,13 @@ public final class Discussion {
 	 * @param content 评论内容
 	 * @return 评论对象
 	 */
-	public static Discussion create(int objectId, int userId, int parent, String content) {
+	public static Discussion create(int objectId, int type, int userId, int parent, String content) {
 		if (content == null || content.length() == 0) {
 			throw new RequestArgumentException("评论内容不能为空");
 		}
 		if (content.length() > 64 * 40) {
 			throw new DataTooBigException("评论内容过长");
 		}
-		return new Discussion(objectId, 0, userId, parent, content);
+		return new Discussion(objectId, type, userId, parent, content);
 	}
 }

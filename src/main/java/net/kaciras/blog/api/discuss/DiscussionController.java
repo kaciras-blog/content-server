@@ -50,7 +50,7 @@ class DiscussionController {
 		var size = discussionService.count(query);
 		var result = discussionService.getList(query);
 
-		if (query.isTitle()) {
+		if (query.isLinked()) {
 			return new ListQueryView<>(size, mapper.toLinkedView(result));
 		}
 		if (query.getParent() != 0) {
