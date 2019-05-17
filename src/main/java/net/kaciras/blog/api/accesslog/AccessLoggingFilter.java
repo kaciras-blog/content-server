@@ -2,6 +2,7 @@ package net.kaciras.blog.api.accesslog;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.Utils;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Order(-10)
 @RequiredArgsConstructor
 @Component
 public final class AccessLoggingFilter extends HttpFilter {

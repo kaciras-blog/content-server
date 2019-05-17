@@ -2,6 +2,7 @@ package net.kaciras.blog.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 
 import javax.servlet.FilterChain;
@@ -15,6 +16,7 @@ import java.net.UnknownHostException;
 
 @RequiredArgsConstructor
 @Slf4j
+@Order(Integer.MIN_VALUE + 20) // 比CORS过滤器低一点，比其他的高
 public class RateLimitFilter extends HttpFilter {
 
 	/** 当达到限制时返回一个响应头告诉客户端相关信息 */
@@ -41,12 +43,17 @@ public class RateLimitFilter extends HttpFilter {
 		chain.doFilter(request, response);
 	}
 
+	/*
+	 * 【警告】关于CORS预检请求的处理：
+	 *
+	 * CORS预检请求(OPTIONS 带有 Origin 和 Access-Control-Request-Method)发起的时机和数量无法预测，但
+	 * 在 CorsFilter 里已经过滤掉了。
+	 * 于不合规范的 OPTIONS 请求视为非正常行为，一样进行速率限制，故这里不检查请求的方法。
+	 *
+	 * @see org.springframework.web.filter.CorsFilter#doFilterInternal
+	 */
 	@Nullable
 	private String getRemoteAddress(HttpServletRequest request) {
-		if ("OPTIONS".equals(request.getMethod())) {
-			return null; // OPTIONS 请求不消耗资源
-		}
-
 		var addr = Utils.AddressFromRequest(request);
 
 		// 服务端渲染或反向代理，需要拿到真实IP
