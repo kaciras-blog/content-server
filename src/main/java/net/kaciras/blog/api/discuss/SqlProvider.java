@@ -23,7 +23,7 @@ public final class SqlProvider {
 			if (!column.equals("id") && !column.equals("vote")) {
 				throw new RequestArgumentException("排序字段仅支持id和vote");
 			}
-			sql.ORDER_BY(order.toString());
+			sql.ORDER_BY(column + " " + order.getDirection());
 		}
 
 		return sql.toString() + String.format(" LIMIT %d,%d", pageable.getPageNumber(), pageable.getPageSize());
