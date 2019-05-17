@@ -16,7 +16,7 @@ import java.util.Set;
  * 该仓库使用 Redis 的Set来记录 UserId -> [SessionIds]。
  * <p>
  * "SessionRepository" 这个名字和 Spring 内置的 Bean 冲突了，所以要改个名。
- * [注意] 由于 @Scheduled 需要创建子类，所以该类不能为 final.
+ * 【注意】由于 @Scheduled 需要创建子类，所以该类不能为 final.
  */
 @RequiredArgsConstructor
 @Repository("AppSessionRepository")
@@ -51,13 +51,16 @@ public class SessionRepository {
 	 */
 	@Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
 	void cleanAccountRecords() {
-		var options = ScanOptions.scanOptions().match(RedisKeys.AccountSessions.of("*")).build();
+		var options = ScanOptions.scanOptions()
+				.match(RedisKeys.AccountSessions.of("*"))
+				.build();
 		var conn = redisTemplate.getRequiredConnectionFactory().getConnection();
 		var accounts = conn.scan(options);
 
 		while (accounts.hasNext()) {
 			var recordSet = accounts.next();
-			var invalid = Optional.ofNullable(redisTemplate.opsForSet().members(recordSet))
+			var invalid = Optional
+					.ofNullable(redisTemplate.opsForSet().members(recordSet))
 					.orElse(Set.of())
 					.stream()
 					.filter(k -> Utils.nullableBool(redisTemplate.hasKey(k)))

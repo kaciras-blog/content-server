@@ -88,9 +88,9 @@ public class Oauth2Controller {
 		redisTemplate.opsForValue()
 				.set(key, objectMapper.writeValueAsBytes(authSession), Duration.ofMinutes(10));
 
+		// 【注意】request.getRequestURL() 不包含参数和hash部分
 		var redirect = UriComponentsBuilder
 				.fromUriString(request.getRequestURL().toString())
-				.replaceQuery(null)
 				.path("/callback");
 
 		var authUri = client.authUri()
@@ -110,7 +110,10 @@ public class Oauth2Controller {
 	 * @param response 响应对象
 	 */
 	@GetMapping("/callback")
-	public ResponseEntity<?> callback(@PathVariable String type, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ResponseEntity<?> callback(@PathVariable String type,
+									  HttpServletRequest request,
+									  HttpServletResponse response) throws Exception {
+
 		var client = clientMap.get(type);
 		if (client == null) {
 			return ResponseEntity.notFound().build();
@@ -119,11 +122,8 @@ public class Oauth2Controller {
 		// 获取会话，并检查state字段
 		var oauthSession = retrieveOAuthSession(request);
 
-		var currentUri = UriComponentsBuilder
-				.fromUriString(request.getRequestURL().toString())
-				.replaceQuery(null).toUriString();
-
-		var context = new OAuth2Context(request.getParameter("code"), currentUri, oauthSession.state);
+		var code = request.getParameter("code");
+		var context = new OAuth2Context(code, request.getRequestURL().toString(), oauthSession.state);
 
 		var info = client.getUserInfo(context);
 		var localId = getLocalId(info, request, client.authType());
@@ -134,12 +134,14 @@ public class Oauth2Controller {
 			return ResponseEntity.ok().build();
 		}
 
-		// 强制域名，以防跳转到其他网站
-		var ret = UriComponentsBuilder
+		// 强制域名和协议，以防跳转到其他网站
+		var redirect = UriComponentsBuilder
 				.fromUriString(oauthSession.returnUri)
-				.scheme("https").host(wwwHost);
+				.scheme("https")
+				.host(wwwHost)
+				.build().toUri();
 
-		return ResponseEntity.status(302).location(ret.build().toUri()).build();
+		return ResponseEntity.status(302).location(redirect).build();
 	}
 
 	/**
