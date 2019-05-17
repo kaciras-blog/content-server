@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 final class DiscussionOptions {
 
-	/** 是否关闭评论功能 */
+	/** 是否开启评论功能 */
 	private boolean enabled = true;
 
 	/** 是否允许不登录评论 */

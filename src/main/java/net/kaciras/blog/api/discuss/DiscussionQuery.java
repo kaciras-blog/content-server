@@ -16,10 +16,12 @@ public final class DiscussionQuery {
 	private Integer type;
 
 	private Integer userId;
+
 	private Integer parent;
 
 	@NotNull
 	private DiscussionState state = DiscussionState.Visible;
+
 	private boolean linked;
 
 	private Pageable pageable;

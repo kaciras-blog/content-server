@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.article.ArticleRepository;
 import net.kaciras.blog.api.config.BindConfig;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
+import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,9 @@ public class DiscussionService {
 	}
 
 	public List<Discussion> getList(DiscussionQuery query) {
+		if (query.getPageable().getPageSize() > 30) {
+			throw new RequestArgumentException("单次查询数量太多");
+		}
 		return repository.findAll(query);
 	}
 
@@ -42,24 +46,24 @@ public class DiscussionService {
 
 	public long add(AddRequest request, InetAddress address) {
 		checkDiscussable();
-		Discussion dis;
+		var user = SecurityContext.getUserId();
+		Discussion discussion;
 
 		if (request.getParent() == 0) {
 			// 检查文章是否存在。目前仅有两个类型，而且区别逻辑较少，所以暂时没有做抽象
-			if(request.getType() == 0) {
+			if (request.getType() == 0) {
 				articleRepository.get(request.getObjectId());
 			}
-			dis = Discussion.create(request.getObjectId(), request.getType(),
-					SecurityContext.getUserId(), 0, request.getContent());
+			discussion = Discussion.create(request.getObjectId(), request.getType(), user, request.getContent());
 		} else {
-			dis = repository.get(request.getParent()).createReply(SecurityContext.getUserId(), request.getContent());
+			discussion = repository.get(request.getParent()).createReply(user, request.getContent());
 		}
 
-		dis.setAddress(address);
-		dis.setState(options.isReview() ? DiscussionState.Moderation : DiscussionState.Visible);
+		discussion.setAddress(address);
+		discussion.setState(options.isReview() ? DiscussionState.Moderation : DiscussionState.Visible);
 
-		repository.add(dis);
-		return dis.getId();
+		repository.add(discussion);
+		return discussion.getId();
 	}
 
 	public void voteUp(int id, InetAddress address) {

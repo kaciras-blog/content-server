@@ -34,5 +34,5 @@ interface DiscussionDAO {
 	 * @return 评论数，不含楼中楼
 	 */
 	@Select("SELECT COUNT(*) FROM discussion WHERE object_id=#{objectId} AND type=#{type} AND parent=0")
-	int selectCountByObject(int objectId, int type);
+	int selectTopLevelCount(int objectId, int type);
 }

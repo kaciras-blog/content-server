@@ -57,13 +57,19 @@ public final class Discussion {
 	}
 
 	/**
-	 * 创建一个评论，该方法会检查评论内容是否合法。
+	 * 创建一个顶层评论，该方法会检查评论内容是否合法。
 	 *
+	 * @param objectId 评论对象ID
+	 * @param type 评论对象类型
 	 * @param userId  评论者ID
 	 * @param content 评论内容
 	 * @return 评论对象
 	 */
-	public static Discussion create(int objectId, int type, int userId, int parent, String content) {
+	public static Discussion create(int objectId, int type, int userId, String content) {
+		return create(objectId, type, userId, 0, content);
+	}
+
+	private static Discussion create(int objectId, int type, int userId, int parent, String content) {
 		if (content == null || content.length() == 0) {
 			throw new RequestArgumentException("评论内容不能为空");
 		}
