@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @Configurable
 public class User {
 
-	public static final User GUEST = new User(0, "游客", ImageReference.parse("akalin.jpg"));
+	/** 数据库里也有适配 */
+	public static final User GUEST = new User(0, "(游客)", ImageReference.parse("akalin.jpg"));
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
