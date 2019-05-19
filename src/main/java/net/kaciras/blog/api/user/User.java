@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Configurable
 public class User {
 
-	public static final User GUEST = new User(0, "游客");
+	public static final User GUEST = new User(0, "游客", ImageReference.parse("akalin.jpg"));
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -33,8 +33,9 @@ public class User {
 	private LocalDateTime registerTime;
 	private InetAddress registerIP;
 
-	private User(int id, String name) {
+	private User(int id, String name, ImageReference head) {
 		this.id = id;
 		this.name = name;
+		this.head = head;
 	}
 }
