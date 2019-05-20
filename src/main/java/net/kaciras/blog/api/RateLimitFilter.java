@@ -16,8 +16,8 @@ import java.net.UnknownHostException;
 
 @RequiredArgsConstructor
 @Slf4j
-@Order(Integer.MIN_VALUE + 20) // 比CORS过滤器低一点，比其他的高
-public class RateLimitFilter extends HttpFilter {
+@Order(Integer.MIN_VALUE + 21) // 比CORS过滤器低一点，比其他的高
+public final class RateLimitFilter extends HttpFilter {
 
 	/** 当达到限制时返回一个响应头告诉客户端相关信息 */
 	private static final String RATE_LIMIT_HEADER = "X-RateLimit-Wait";
@@ -53,7 +53,7 @@ public class RateLimitFilter extends HttpFilter {
 	 * @see org.springframework.web.filter.CorsFilter#doFilterInternal
 	 */
 	@Nullable
-	private String getRemoteAddress(HttpServletRequest request) {
+	public static String getRemoteAddress(HttpServletRequest request) {
 		var addr = Utils.AddressFromRequest(request);
 
 		// 服务端渲染或反向代理，需要拿到真实IP

@@ -38,4 +38,17 @@ public class RateLimiterAutoConfiguration {
 		limiter.setCacheTime(properties.getCacheTime());
 		return new RateLimitFilter(limiter);
 	}
+
+	@Bean
+	EffectRateLimitFilter effectRateLimitFilter(
+			Clock clock,
+			RedisTemplate<String, Object> oTemplate,
+			RedisTemplate<String, byte[]> bTemplate) {
+
+		var limiter = new RedisRateLimiter(clock, oTemplate);
+		limiter.setRate(0.5);
+		limiter.setBucketSize(4);
+		limiter.setCacheTime(8);
+		return new EffectRateLimitFilter(limiter, bTemplate);
+	}
 }

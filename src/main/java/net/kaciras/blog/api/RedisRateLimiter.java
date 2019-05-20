@@ -11,7 +11,6 @@ import java.util.List;
 
 /**
  * 基于令牌桶算法的限速器，使用Redis存储相关记录。
- *
  */
 @Setter
 public final class RedisRateLimiter {
@@ -21,6 +20,7 @@ public final class RedisRateLimiter {
 
 	private final Clock clock;
 	private final RedisTemplate<String, Object> redisTemplate;
+
 	private final RedisScript<Long> script;
 
 	private int bucketSize;
