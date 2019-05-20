@@ -33,8 +33,8 @@ public class RateLimiterAutoConfiguration {
 	@Bean
 	RateLimitFilter rateLimiterFilter(Clock clock, RedisTemplate<String, Object> template) {
 		var limiter = new RedisRateLimiter(clock, template);
-		limiter.setRate(properties.getRate());
-		limiter.setBucketSize(properties.getBucketSize());
+		limiter.setRate(properties.getGeneric().getRate());
+		limiter.setBucketSize(properties.getGeneric().getBucketSize());
 		return new RateLimitFilter(limiter);
 	}
 
@@ -45,8 +45,8 @@ public class RateLimiterAutoConfiguration {
 			RedisTemplate<String, byte[]> bTemplate) {
 
 		var limiter = new RedisRateLimiter(clock, oTemplate);
-		limiter.setRate(0.5);
-		limiter.setBucketSize(4);
+		limiter.setRate(properties.getEffective().getRate());
+		limiter.setBucketSize(properties.getEffective().getBucketSize());
 		return new EffectRateLimitFilter(limiter, bTemplate);
 	}
 }
