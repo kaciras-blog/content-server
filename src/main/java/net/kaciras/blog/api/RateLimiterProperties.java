@@ -14,7 +14,4 @@ public final class RateLimiterProperties {
 
 	/** 令牌桶容量，同时也是单位时间能获取的上限（令牌）*/
 	private int bucketSize = 16;
-
-	/** 令牌桶在Redis里保存的时间（秒），至少要为：bucketSize / rate */
-	private int cacheTime = 60;
 }

@@ -35,7 +35,6 @@ public class RateLimiterAutoConfiguration {
 		var limiter = new RedisRateLimiter(clock, template);
 		limiter.setRate(properties.getRate());
 		limiter.setBucketSize(properties.getBucketSize());
-		limiter.setCacheTime(properties.getCacheTime());
 		return new RateLimitFilter(limiter);
 	}
 
@@ -48,7 +47,6 @@ public class RateLimiterAutoConfiguration {
 		var limiter = new RedisRateLimiter(clock, oTemplate);
 		limiter.setRate(0.5);
 		limiter.setBucketSize(4);
-		limiter.setCacheTime(8);
 		return new EffectRateLimitFilter(limiter, bTemplate);
 	}
 }

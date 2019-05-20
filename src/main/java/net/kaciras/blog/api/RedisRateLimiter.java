@@ -25,7 +25,6 @@ public final class RedisRateLimiter {
 
 	private int bucketSize;
 	private double rate;
-	private int cacheTime;
 
 	public RedisRateLimiter(Clock clock, RedisTemplate<String, Object> redisTemplate) {
 		this.clock = clock;
@@ -48,8 +47,10 @@ public final class RedisRateLimiter {
 		if (permits > bucketSize) {
 			return -1;
 		}
+		// TODO: cacheTime 在lua里计算，时间单位的问题
 		var now = clock.instant().getEpochSecond();
-		var waitTime = redisTemplate.execute(script, List.of(id), permits, now, bucketSize, rate, cacheTime);
+		var ttl = bucketSize / rate;
+		var waitTime = redisTemplate.execute(script, List.of(id), permits, now, bucketSize, rate, ttl);
 
 		if (waitTime == null) {
 			throw new RuntimeException("限速脚本返回了空值，ID=" + id);
