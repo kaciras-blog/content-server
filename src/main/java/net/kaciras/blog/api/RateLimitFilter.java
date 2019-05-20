@@ -16,7 +16,7 @@ import java.net.UnknownHostException;
 
 @RequiredArgsConstructor
 @Slf4j
-@Order(Integer.MIN_VALUE + 21) // 比CORS过滤器低一点，比其他的高
+@Order(Integer.MIN_VALUE + 21)
 public final class RateLimitFilter extends HttpFilter {
 
 	/** 当达到限制时返回一个响应头告诉客户端相关信息 */

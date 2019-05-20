@@ -11,6 +11,8 @@ import java.util.List;
 
 /**
  * 基于令牌桶算法的限速器，使用Redis存储相关记录。
+ *
+ * bucketSize 和 rate 必须大于0，这里没做检查。小于等于0的情况暂时没想到有啥用，以后有需求再看。
  */
 @Setter
 public final class RedisRateLimiter {

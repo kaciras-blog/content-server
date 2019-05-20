@@ -16,7 +16,7 @@ import java.time.Duration;
 
 @RequiredArgsConstructor
 @Slf4j
-@Order(Integer.MIN_VALUE + 20)
+@Order(Integer.MIN_VALUE + 20) // 比CORS过滤器低一点，比其他的高
 public class EffectRateLimitFilter extends HttpFilter {
 
 	private static final byte[] rejectMsg = "请求频率太快，你的IP被封禁1小时".getBytes(StandardCharsets.UTF_8);

@@ -22,10 +22,10 @@ public final class RateLimiterProperties {
 	@Getter @Setter
 	public static final class TokenBucket {
 
-		/** 允许的速率（令牌/秒）*/
+		/** 允许的速率（令牌/秒），必须大于0 */
 		private double rate;
 
-		/** 令牌桶容量，同时也是单位时间能获取的上限（令牌）*/
+		/** 令牌桶容量，同时也是单位时间能获取的上限（令牌），必须大于0 */
 		private int bucketSize;
 	}
 }
