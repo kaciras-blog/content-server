@@ -1,11 +1,11 @@
-package net.kaciras.blog.api.principle.oauth2;
+package net.kaciras.blog.api.principal.oauth2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.principle.AuthType;
+import net.kaciras.blog.api.principal.AuthType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;

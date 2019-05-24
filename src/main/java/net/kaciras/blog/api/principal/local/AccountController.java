@@ -1,10 +1,10 @@
-package net.kaciras.blog.api.principle.local;
+package net.kaciras.blog.api.principal.local;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.SessionAttributes;
 import net.kaciras.blog.api.Utils;
-import net.kaciras.blog.api.principle.AuthType;
-import net.kaciras.blog.api.principle.SessionService;
+import net.kaciras.blog.api.principal.AuthType;
+import net.kaciras.blog.api.principal.SessionService;
 import net.kaciras.blog.api.user.UserManager;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import org.springframework.http.ResponseEntity;

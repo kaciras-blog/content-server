@@ -1,6 +1,6 @@
-package net.kaciras.blog.api.principle.oauth2;
+package net.kaciras.blog.api.principal.oauth2;
 
-import net.kaciras.blog.api.principle.AuthType;
+import net.kaciras.blog.api.principal.AuthType;
 import org.springframework.lang.Nullable;
 import org.springframework.web.util.UriComponentsBuilder;
 

@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.principle.local;
+package net.kaciras.blog.api.principal.local;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.DBUtils;

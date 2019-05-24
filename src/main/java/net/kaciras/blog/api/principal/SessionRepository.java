@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.principle;
+package net.kaciras.blog.api.principal;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.RedisKeys;

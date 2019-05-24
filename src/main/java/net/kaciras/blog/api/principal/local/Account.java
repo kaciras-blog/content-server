@@ -1,7 +1,7 @@
-package net.kaciras.blog.api.principle.local;
+package net.kaciras.blog.api.principal.local;
 
 import lombok.*;
-import net.kaciras.blog.api.principle.SessionRepository;
+import net.kaciras.blog.api.principal.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

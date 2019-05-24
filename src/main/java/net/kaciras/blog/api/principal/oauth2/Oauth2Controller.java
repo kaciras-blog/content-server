@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.principle.oauth2;
+package net.kaciras.blog.api.principal.oauth2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -7,9 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.RedisKeys;
 import net.kaciras.blog.api.Utils;
-import net.kaciras.blog.api.principle.AuthType;
-import net.kaciras.blog.api.principle.SessionService;
-import net.kaciras.blog.api.principle.oauth2.Oauth2Client.UserInfo;
+import net.kaciras.blog.api.principal.AuthType;
+import net.kaciras.blog.api.principal.SessionService;
+import net.kaciras.blog.api.principal.oauth2.Oauth2Client.UserInfo;
 import net.kaciras.blog.api.user.UserManager;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;

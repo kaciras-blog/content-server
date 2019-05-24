@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.principle.local;
+package net.kaciras.blog.api.principal.local;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
