@@ -89,7 +89,7 @@ class AccountController {
 		var account = repository.findByName(loginVo.getName());
 
 		if (account == null || !account.checkLogin(loginVo.getPassword())) {
-			return ResponseEntity.badRequest().body("密码错误或用户不存在");
+			throw new RequestArgumentException("密码错误或用户不存在");
 		}
 		sessionService.putUser(request, response, account.getId(), loginVo.isRemember());
 		return ResponseEntity.created(URI.create("/session/user")).build();
