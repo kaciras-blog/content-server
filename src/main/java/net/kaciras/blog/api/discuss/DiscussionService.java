@@ -60,7 +60,7 @@ public class DiscussionService {
 		}
 
 		discussion.setAddress(address);
-		discussion.setState(options.isReview() ? DiscussionState.Moderation : DiscussionState.Visible);
+		discussion.setState(options.isModeration() ? DiscussionState.Moderation : DiscussionState.Visible);
 
 		repository.add(discussion);
 		return discussion.getId();

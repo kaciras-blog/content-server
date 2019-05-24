@@ -12,5 +12,5 @@ final class DiscussionOptions {
 	private boolean allowAnonymous = true;
 
 	/** 评论是否需要审核后才显示 */
-	private boolean review;
+	private boolean moderation;
 }
