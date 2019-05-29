@@ -34,7 +34,7 @@ public class EffectRateLimitFilter extends HttpFilter {
 			chain.doFilter(request, response);
 			return;
 		}
-		var ip = RateLimitFilter.getRemoteAddress(request);
+		var ip = RateLimitFilter.getClientAddress(request);
 		var blockKey = "eb:" + ip;
 
 		if (Utils.nullableBool(redisTemplate.hasKey(blockKey))) {
@@ -42,7 +42,7 @@ public class EffectRateLimitFilter extends HttpFilter {
 		} else if (rateLimiter.acquire("er:" + ip, 1) > 0) {
 			reject(response);
 			redisTemplate.opsForValue().set(blockKey, empty, banTime);
-			logger.warn("{}请求过快，被封禁1小时", ip);
+			logger.warn("{} 请求过快，被封禁1小时", ip);
 		} else {
 			chain.doFilter(request, response);
 		}

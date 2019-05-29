@@ -14,6 +14,15 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+/*
+ * 【警告】关于CORS预检请求的处理：
+ *
+ * CORS预检请求(OPTIONS 带有 Origin 和 Access-Control-Request-Method)发起的时机和数量无法预测，但
+ * 在 CorsFilter 里已经过滤掉了。
+ * 于不合规范的 OPTIONS 请求视为非正常行为，一样进行速率限制，故这里不检查请求的方法。
+ *
+ * @see org.springframework.web.filter.CorsFilter#doFilterInternal
+ */
 @RequiredArgsConstructor
 @Slf4j
 @Order(Integer.MIN_VALUE + 21)
@@ -26,7 +35,7 @@ public final class RateLimitFilter extends HttpFilter {
 
 	@Override
 	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-		var ip = getRemoteAddress(request);
+		var ip = getClientAddress(request);
 
 		if (ip != null) {
 			var waitTime = rateLimiter.acquire(RedisKeys.RateLimit.of(ip), 1);
@@ -43,17 +52,8 @@ public final class RateLimitFilter extends HttpFilter {
 		chain.doFilter(request, response);
 	}
 
-	/*
-	 * 【警告】关于CORS预检请求的处理：
-	 *
-	 * CORS预检请求(OPTIONS 带有 Origin 和 Access-Control-Request-Method)发起的时机和数量无法预测，但
-	 * 在 CorsFilter 里已经过滤掉了。
-	 * 于不合规范的 OPTIONS 请求视为非正常行为，一样进行速率限制，故这里不检查请求的方法。
-	 *
-	 * @see org.springframework.web.filter.CorsFilter#doFilterInternal
-	 */
 	@Nullable
-	public static String getRemoteAddress(HttpServletRequest request) {
+	public static String getClientAddress(HttpServletRequest request) {
 		var addr = Utils.AddressFromRequest(request);
 
 		// 服务端渲染或反向代理，需要拿到真实IP
@@ -65,7 +65,7 @@ public final class RateLimitFilter extends HttpFilter {
 			try {
 				return InetAddress.getByName(forward).toString();
 			} catch (UnknownHostException e) {
-				logger.warn("X-Forwarded-For 的值无效：" + forward);
+				logger.warn("无效的 X-Forwarded-For：" + forward);
 				return null; // 其他服务器的有错误才会发送无效的头，保守起见不限流
 			}
 		}
