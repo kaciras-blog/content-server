@@ -2,6 +2,7 @@ package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.DeletedState;
+import net.kaciras.blog.api.ListQueryView;
 import net.kaciras.blog.api.draft.DraftRepository;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,12 +29,15 @@ class ArticleController {
 	private boolean deleteAfterSubmit;
 
 	@GetMapping
-	public List<PreviewVo> getList(ArticleListQuery request, Pageable pageable) {
-		request.setPageable(pageable);
-		if (request.getDeletion() != DeletedState.FALSE) {
+	public ListQueryView<PreviewVo> getList(ArticleListQuery query, Pageable pageable) {
+		query.setPageable(pageable);
+		if (query.getDeletion() != DeletedState.FALSE) {
 			SecurityContext.require("SHOW_DELETED");
 		}
-		return mapper.toPreview(repository.findAll(request), request);
+		var items = mapper.toPreview(repository.findAll(query), query);
+		var total = repository.countByCategory(query);
+
+		return new ListQueryView<>(total, items);
 	}
 
 	@GetMapping("/{id}")

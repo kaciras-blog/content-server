@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.category;
 
 import net.kaciras.blog.api.MapStructConfig;
+import net.kaciras.blog.api.article.ArticleListQuery;
 import net.kaciras.blog.api.article.ArticleRepository;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
@@ -42,7 +43,10 @@ abstract class CategoryMapper {
 
 	private void copyProps(CategoryVo vo, Category category) {
 		copyPropsInternal(vo, category);
-		vo.setArticleCount(articleRepository.countByCategory(category.getId()));
+
+		var query = ArticleListQuery.ofCategory(category.getId(), true);
+		vo.setArticleCount(articleRepository.countByCategory(query));
+
 		vo.setBanner(categoryManager.getBanner(category));
 	}
 

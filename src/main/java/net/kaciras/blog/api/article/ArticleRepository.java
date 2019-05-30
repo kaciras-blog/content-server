@@ -59,15 +59,18 @@ public class ArticleRepository {
 				.forEach(kw -> keywordDAO.insert(articleId, kw));
 	}
 
-	public List<Article> findAll(@NonNull ArticleListQuery request) {
-		return articleDAO.selectPreview(request);
+	public List<Article> findAll(@NonNull ArticleListQuery query) {
+		return articleDAO.selectPreview(query);
 	}
 
 	public int size() {
 		return articleDAO.selectCount();
 	}
 
-	public int countByCategory(int id) {
-		return classifyDAO.selectCountByCategory(id);
+	public int countByCategory(@NonNull ArticleListQuery query) {
+		if (query.getCategory() == 0 && query.isRecursive()) {
+			return size();
+		}
+		return classifyDAO.selectCount(query);
 	}
 }

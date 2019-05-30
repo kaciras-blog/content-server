@@ -1,12 +1,13 @@
 package net.kaciras.blog.api.article;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import net.kaciras.blog.api.DeletedState;
 import org.springframework.data.domain.Pageable;
 
 import javax.validation.constraints.NotNull;
 
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Setter
 public final class ArticleListQuery {
@@ -16,7 +17,6 @@ public final class ArticleListQuery {
 	private int userId;
 
 	private int category;
-
 	private boolean recursive;
 
 	/**
@@ -24,4 +24,8 @@ public final class ArticleListQuery {
 	 */
 	@NotNull
 	private DeletedState deletion = DeletedState.FALSE;
+
+	public static ArticleListQuery ofCategory(int id, boolean recursive) {
+		return new ArticleListQuery(null, 0, id, recursive, DeletedState.FALSE);
+	}
 }
