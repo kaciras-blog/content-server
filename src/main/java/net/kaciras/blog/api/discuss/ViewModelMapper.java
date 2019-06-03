@@ -58,7 +58,7 @@ abstract class ViewModelMapper {
 	 */
 	public final void attachTarget(DiscussionVo viewObject) {
 		if (viewObject.getType() == 1) {
-			viewObject.setTarget("关于博主");
+			viewObject.setTarget("（关于页）关于博主");
 		} else {
 			viewObject.setTarget(articleManager.getLink(viewObject.getObjectId()));
 		}
