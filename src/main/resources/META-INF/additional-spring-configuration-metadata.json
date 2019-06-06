@@ -22,6 +22,11 @@
 			"name": "kaciras.oauth.www-host",
 			"type": "java.lang.String",
 			"description": "前端页面的host，用于验证登陆跳转."
+		},
+		{
+			"name": "kaciras.http-client-proxy",
+			"type": "java.lang.String",
+			"description": "本地HTTP客户端（用于OAuth2等）使用的代理地址."
 		}
 	]
 }

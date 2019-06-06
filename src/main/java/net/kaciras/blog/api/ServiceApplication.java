@@ -15,8 +15,8 @@ import org.springframework.boot.task.TaskSchedulerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -126,19 +126,17 @@ public class ServiceApplication {
 		return Clock.systemDefaultZone();
 	}
 
-	@Profile("!dev")
 	@Bean
-	HttpClient httpClient(ThreadPoolTaskScheduler threadPool) {
-		return HttpClient.newBuilder().executor(threadPool).build();
-	}
+	HttpClient httpClient(ThreadPoolTaskScheduler threadPool, Environment env) {
+		var builder = HttpClient.newBuilder().executor(threadPool);
 
-	@Profile("dev")
-	@Bean("httpClient")
-	HttpClient devHttpClient(ThreadPoolTaskScheduler threadPool) {
-		return HttpClient.newBuilder()
-				.executor(threadPool)
-				.proxy(ProxySelector.of(new InetSocketAddress("localhost", 2080)))
-				.build();
+		var proxy = env.getProperty("kaciras.http-client-proxy");
+		if (proxy != null) {
+			var pair = proxy.split(":", 2);
+			builder.proxy(ProxySelector.of(new InetSocketAddress(pair[0], Integer.parseInt(pair[1]))));
+		}
+
+		return builder.build();
 	}
 
 	public static void main(String... args) throws Exception {

@@ -19,14 +19,16 @@ spring:
     port: 33671
     password: ZuDNpaB7]vv_iBynJG6ZwPexPPewP]kf
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-#                   Following is the non-spring settings
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#                                 custom properties
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 draft:
   delete-after-publish: false
 
 kaciras:
+
+  http-client-proxy: "localhost:2080"
 
   development:
     admin-principal: false
@@ -36,11 +38,9 @@ kaciras:
 
   oauth:
     www-host: localhost
-
     google:
       client-id: 834515199449-f1ia0v8b3fa5hnvuimrradoetulc5nvi.apps.googleusercontent.com
       client-secret: jT7m_0N5zS-QzuzwGKYnYuFo
-
     github:
       client-id: 08878e62e2f3cb5be51b
       client-secret: 04b1aebe5770a4458bfa17d79bc5cd1988dcba45
