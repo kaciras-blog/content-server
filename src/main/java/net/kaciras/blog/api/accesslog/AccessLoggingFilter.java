@@ -35,10 +35,6 @@ public final class AccessLoggingFilter extends HttpFilter {
 
 	@Override
 	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-		if ("OPTIONS".equals(request.getMethod())) {
-			chain.doFilter(request, response);
-			return;
-		}
 		var instant = clock.instant();
 		try {
 			chain.doFilter(request, response);
