@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
+/**
+ * Effect 指有副作用的请求，如提交评论等
+ */
 @RequiredArgsConstructor
 @Slf4j
 @Order(Integer.MIN_VALUE + 20) // 比CORS过滤器低一点，比其他的高
@@ -35,14 +38,14 @@ public class EffectRateLimitFilter extends HttpFilter {
 			return;
 		}
 		var ip = RateLimitFilter.getClientAddress(request);
-		var blockKey = "eb:" + ip;
+		var blockKey = RedisKeys.EffectBlocking.of(ip);
 
 		if (Utils.nullableBool(redisTemplate.hasKey(blockKey))) {
 			reject(response);
-		} else if (rateLimiter.acquire("er:" + ip, 1) > 0) {
+		} else if (rateLimiter.acquire(RedisKeys.EffectRate.of(ip), 1) > 0) {
 			reject(response);
-			redisTemplate.opsForValue().set(blockKey, empty, banTime);
 			logger.warn("{} 请求过快，被封禁1小时", ip);
+			redisTemplate.opsForValue().set(blockKey, empty, banTime);
 		} else {
 			chain.doFilter(request, response);
 		}

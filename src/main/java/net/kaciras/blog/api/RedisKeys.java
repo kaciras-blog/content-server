@@ -11,8 +11,14 @@ public enum RedisKeys {
 	/** 一个账户所有会话的集合前缀 */
 	AccountSessions("ac:"),
 
-	/** 限速器记录前缀 */
-	RateLimit("rl:");
+	/** 通用限速器记录的前缀 */
+	RateLimit("rl:"),
+
+	/** 非安全请求限速器记录的前缀 */
+	EffectRate("er:"),
+
+	/** 触发非安全请求封禁的记录前缀 */
+	EffectBlocking("eb:");
 
 	private final String prefix;
 

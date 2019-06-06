@@ -49,7 +49,7 @@ public final class RedisRateLimiter {
 		if (permits > bucketSize) {
 			return -1;
 		}
-		// TODO: cacheTime 在lua里计算，时间单位的问题
+		// TODO: ttl 移入lua里计算，怎么统一时间单位
 		var now = clock.instant().getEpochSecond();
 		var ttl = bucketSize / rate;
 		var waitTime = redisTemplate.execute(script, List.of(id), permits, now, bucketSize, rate, ttl);
