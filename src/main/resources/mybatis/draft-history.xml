@@ -18,7 +18,7 @@
 			   FROM (SELECT MIN(save_count) AS save_count FROM draft WHERE id = #{id}) AS Self)
 	</delete>
 
-	<resultMap type="net.kaciras.blog.api.draft.DraftHistory" id="DraftHistoryMap">
+	<resultMap type="net.kaciras.blog.api.draft.History" id="DraftHistoryMap">
 		<result column="save_count" property="saveCount"/>
 	</resultMap>
 </mapper>

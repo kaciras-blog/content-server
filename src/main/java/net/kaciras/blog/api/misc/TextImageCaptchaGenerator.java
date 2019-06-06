@@ -90,7 +90,7 @@ public final class TextImageCaptchaGenerator {
 		var yawpRate = 0.08f; // 噪声率
 		var area = (int) (yawpRate * w * h);
 		for (var i = 0; i < area; i++) {
-			image.setRGB(RANDOM.nextInt(w), RANDOM.nextInt(h), rendomColorValue(0, 0xFF));
+			image.setRGB(RANDOM.nextInt(w), RANDOM.nextInt(h), randomColorValue(0, 0xFF));
 		}
 
 		g2.setFont(font);
@@ -111,7 +111,7 @@ public final class TextImageCaptchaGenerator {
 	}
 
 	private Color randomColor(int lo, int hi) {
-		return new Color(rendomColorValue(lo, hi));
+		return new Color(randomColorValue(lo, hi));
 	}
 
 	/**
@@ -122,7 +122,7 @@ public final class TextImageCaptchaGenerator {
 	 * @return 颜色值ARGB
 	 */
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
-	private int rendomColorValue(int lo, int hi) {
+	private int randomColorValue(int lo, int hi) {
 		return IntStream.range(0, 3)
 				.map(i -> lo + RANDOM.nextInt(hi - lo))
 				.reduce((rgb, channel) -> rgb << 8 | channel)

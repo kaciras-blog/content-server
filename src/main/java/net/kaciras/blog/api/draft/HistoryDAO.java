@@ -15,7 +15,7 @@ interface HistoryDAO {
 
 	@Select("SELECT *, CHAR_LENGTH(content) AS wordCount FROM draft WHERE id=#{id} AND save_count=#{saveCount}")
 	@ResultMap("net.kaciras.blog.api.draft.HistoryDAO.DraftHistoryMap")
-	DraftHistory select(int id, int saveCount);
+	History select(int id, int saveCount);
 
 	// SQL in xml file.
 	void insert(int id, int saveCount, DraftContent draft);
@@ -29,7 +29,7 @@ interface HistoryDAO {
 	@Select("SELECT save_count, CHAR_LENGTH(content) AS wordCount, `time` " +
 			"FROM draft WHERE id=#{id} ORDER BY save_count DESC")
 	@ResultMap("net.kaciras.blog.api.draft.HistoryDAO.DraftHistoryMap")
-	List<DraftHistory> selectAll(int id);
+	List<History> selectAll(int id);
 
 	@Update("UPDATE draft SET " +
 			"title=#{value.title}," +

@@ -17,12 +17,12 @@ class HistoryController {
 	private final DraftRepository repository;
 
 	@GetMapping
-	public List<DraftHistory> getHistories(@PathVariable int id) {
+	public List<History> getHistories(@PathVariable int id) {
 		return repository.findById(id).getHistoryList().findAll();
 	}
 
 	@GetMapping("/{saveCount}")
-	public DraftHistory getHistory(@PathVariable int id, @PathVariable int saveCount) {
+	public History getHistory(@PathVariable int id, @PathVariable int saveCount) {
 		return repository.findById(id)
 				.getHistoryList()
 				.findBySaveCount(saveCount);

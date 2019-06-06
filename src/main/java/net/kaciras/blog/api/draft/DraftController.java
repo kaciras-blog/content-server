@@ -1,7 +1,8 @@
 package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.article.ArticleManager;
+import net.kaciras.blog.api.ListQueryView;
+import net.kaciras.blog.api.article.ArticleService;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.http.HttpStatus;
@@ -10,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 /**
  * 草稿相关的API
@@ -27,11 +27,12 @@ class DraftController {
 
 	private final DraftRepository repository;
 	private final DraftMapper mapper;
-	private final ArticleManager articleManager;
+	private final ArticleService articleService;
 
 	@GetMapping
-	public List<DraftVo> getList() {
-		return mapper.toDraftVo(repository.findByUser(SecurityContext.getUserId()));
+	public ListQueryView<DraftVo> getList() {
+		var items = repository.findByUser(SecurityContext.getUserId());
+		return new ListQueryView<>(items.size(), mapper.toDraftVo(items));
 	}
 
 	@GetMapping("/{id}")
@@ -43,7 +44,6 @@ class DraftController {
 	 * 创建一个新的草稿，其内容可能是默认内容或从指定的文章生成。
 	 *
 	 * @param article 文章ID，如果不为null则从文章生成草稿
-	 * @return HTTP回复
 	 */
 	@Transactional
 	@PostMapping
@@ -55,8 +55,8 @@ class DraftController {
 		var draft = new Draft();
 		draft.setUserId(SecurityContext.getUserId());
 		draft.setArticleId(article);
-		repository.add(draft);
 
+		repository.add(draft);
 		draft.getHistoryList().add(content);
 
 		return ResponseEntity.created(URI.create("/drafts/" + draft.getId())).build();

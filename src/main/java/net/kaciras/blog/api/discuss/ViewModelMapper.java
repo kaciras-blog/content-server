@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.discuss;
 
 import net.kaciras.blog.api.MapStructConfig;
-import net.kaciras.blog.api.article.ArticleManager;
+import net.kaciras.blog.api.article.ArticleService;
 import net.kaciras.blog.api.user.UserManager;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 abstract class ViewModelMapper {
 
 	@Autowired
-	private ArticleManager articleManager;
+	private ArticleService articleService;
 
 	@Autowired
 	private UserManager userManager;
@@ -60,7 +60,7 @@ abstract class ViewModelMapper {
 		if (viewObject.getType() == 1) {
 			viewObject.setTarget("（关于页）关于博主");
 		} else {
-			viewObject.setTarget(articleManager.getLink(viewObject.getObjectId()));
+			viewObject.setTarget(articleService.getLink(viewObject.getObjectId()));
 		}
 	}
 

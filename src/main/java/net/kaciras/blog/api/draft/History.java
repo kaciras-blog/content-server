@@ -11,14 +11,12 @@ import java.time.LocalDateTime;
  */
 @EqualsAndHashCode(callSuper = false)
 @Data
-public final class DraftHistory extends DraftContent {
+public final class History extends DraftContent {
 
 	private int saveCount;
 	private int wordCount;
 
-	/**
-	 * 保存时间
-	 */
+	/** 保存时间 */
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime time;
 }

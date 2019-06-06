@@ -4,14 +4,26 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kaciras.blog.infrastructure.codec.ImageReference;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 @Getter
 @Setter
 public class DraftContent {
 
+	@NotEmpty
 	private String title;
+
+	@NotNull
 	private ImageReference cover;
+
+	@NotNull
 	private String keywords;
+
+	@NotNull
 	private String summary;
+
+	@NotNull
 	private String content;
 
 	/**
@@ -21,7 +33,7 @@ public class DraftContent {
 	 */
 	public static DraftContent initial() {
 		var content = new DraftContent();
-		content.setTitle("");
+		content.setTitle("新文章");
 		content.setSummary("");
 		content.setKeywords("");
 		content.setContent("");

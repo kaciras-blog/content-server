@@ -3,10 +3,10 @@ package net.kaciras.blog.api;
 public enum RedisKeys {
 
 	/** 推荐卡片列表 */
-	SlideList("slides"),
+	SlideList("cards"),
 
 	/** Oauth2登陆会话前缀 */
-	OauthSession("oas:"),
+	OauthSession("oa:"),
 
 	/** 一个账户所有会话的集合前缀 */
 	AccountSessions("ac:"),

@@ -16,7 +16,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/recommendation/slides")
+@RequestMapping("/recommendation/cards")
 class SlideController {
 
 	/**
@@ -39,14 +39,14 @@ class SlideController {
 	/**
 	 * 考虑到轮播通常不会有很多页，直接全量更新。
 	 *
-	 * @param slides 轮播页列表
+	 * @param cards 卡片列表
 	 * @return HTTP响应
 	 * @throws JsonProcessingException 如果出这异常，说明代码有BUG
 	 */
 	@RequireAuthorize
 	@PutMapping
-	public ResponseEntity<Void> update(@RequestBody @Valid List<SlideCard> slides) throws Exception {
-		redisTemplate.opsForValue().set(RedisKeys.SlideList.value(), objectMapper.writeValueAsBytes(slides));
+	public ResponseEntity<Void> update(@RequestBody @Valid List<SlideCard> cards) throws Exception {
+		redisTemplate.opsForValue().set(RedisKeys.SlideList.value(), objectMapper.writeValueAsBytes(cards));
 		return ResponseEntity.noContent().build();
 	}
 }

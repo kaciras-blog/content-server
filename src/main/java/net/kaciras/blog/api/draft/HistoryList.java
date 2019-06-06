@@ -14,9 +14,7 @@ import java.util.List;
 @Configurable
 public final class HistoryList {
 
-	/**
-	 * 每篇草稿最多保存的历史记录数
-	 */
+	/** 每篇草稿最多保存的历史记录数 */
 	private static final int historyLimit = 10;
 
 	@Autowired
@@ -53,12 +51,12 @@ public final class HistoryList {
 		return newSaveCount;
 	}
 
-	public DraftHistory findBySaveCount(int saveCount) {
+	public History findBySaveCount(int saveCount) {
 		return historyDAO.select(id, saveCount);
 	}
 
 	// 不包含 content
-	public DraftHistory findLatest() {
+	public History findLatest() {
 		var latest = historyDAO.selectLastSaveCount(id);
 		if (latest == null) {
 			throw new Error("草稿主表与历史表不一致，id=" + id);
@@ -66,7 +64,7 @@ public final class HistoryList {
 		return historyDAO.select(id, latest);
 	}
 
-	public List<DraftHistory> findAll() {
+	public List<History> findAll() {
 		return historyDAO.selectAll(id);
 	}
 
