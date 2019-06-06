@@ -41,11 +41,9 @@ class ArticleController {
 	}
 
 	@GetMapping("/{id}")
-	public ArticleVo get(@PathVariable int id, @RequestParam(defaultValue = "false") boolean rv) {
+	public ArticleVo get(@PathVariable int id) {
 		var article = articleManager.getLiveArticle(id);
-		if (rv) {
-			article.recordView(); //增加浏览量
-		}
+		article.increaseViewCount();
 		return mapper.toViewObject(article);
 	}
 

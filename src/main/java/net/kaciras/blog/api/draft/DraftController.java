@@ -2,7 +2,7 @@ package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.ListQueryView;
-import net.kaciras.blog.api.article.ArticleService;
+import net.kaciras.blog.api.article.ArticleManager;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ class DraftController {
 
 	private final DraftRepository repository;
 	private final DraftMapper mapper;
-	private final ArticleService articleService;
+	private final ArticleManager articleManager;
 
 	@GetMapping
 	public ListQueryView<DraftVo> getList() {

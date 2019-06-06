@@ -64,7 +64,6 @@ abstract class ArticleMapper {
 
 	abstract List<SimpleCategoryVo> mapCategoryPath(List<Category> categories);
 
-
 	/**
 	 * 由发表请求创建文章对象，是文章的工厂方法。
 	 *

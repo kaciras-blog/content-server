@@ -45,7 +45,7 @@ public final class Article extends ArticleContentBase {
 	private int viewCount;
 	private boolean deleted;
 
-	public void recordView() {
+	public void increaseViewCount() {
 		articleDAO.increaseViewCount(getId());
 	}
 
