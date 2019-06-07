@@ -10,10 +10,10 @@ import java.util.List;
 @Mapper
 interface HistoryDAO {
 
-	@Select("SELECT MAX(save_count) FROM draft WHERE id=#{id}")
+	@Select("SELECT MAX(save_count) FROM draft_history WHERE id=#{id}")
 	Integer selectLastSaveCount(int id);
 
-	@Select("SELECT *, CHAR_LENGTH(content) AS wordCount FROM draft WHERE id=#{id} AND save_count=#{saveCount}")
+	@Select("SELECT *, CHAR_LENGTH(content) AS wordCount FROM draft_history WHERE id=#{id} AND save_count=#{saveCount}")
 	@ResultMap("net.kaciras.blog.api.draft.HistoryDAO.DraftHistoryMap")
 	History select(int id, int saveCount);
 
@@ -23,15 +23,15 @@ interface HistoryDAO {
 	// SQL in xml file.
 	void deleteOldest(int id);
 
-	@Select("SELECT COUNT(*) FROM draft WHERE id=#{id}")
+	@Select("SELECT COUNT(*) FROM draft_history WHERE id=#{id}")
 	int selectCount(int id);
 
 	@Select("SELECT save_count, CHAR_LENGTH(content) AS wordCount, `time` " +
-			"FROM draft WHERE id=#{id} ORDER BY save_count DESC")
+			"FROM draft_history WHERE id=#{id} ORDER BY save_count DESC")
 	@ResultMap("net.kaciras.blog.api.draft.HistoryDAO.DraftHistoryMap")
 	List<History> selectAll(int id);
 
-	@Update("UPDATE draft SET " +
+	@Update("UPDATE draft_history SET " +
 			"title=#{value.title}," +
 			"cover=#{value.cover}," +
 			"summary=#{value.summary}," +

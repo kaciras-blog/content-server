@@ -4,14 +4,14 @@
 <mapper namespace="net.kaciras.blog.api.draft.HistoryDAO">
 
 	<insert id="insert">
-		INSERT INTO draft (id, save_count, title, cover, summary, keywords, content)
+		INSERT INTO draft_history (id, save_count, title, cover, summary, keywords, content)
 		VALUES (#{id}, #{saveCount}, #{draft.title}, #{draft.cover}, #{draft.summary}, #{draft.keywords},
 				#{draft.content})
 	</insert>
 
 	<delete id="deleteOldest">
 		DELETE
-		FROM draft
+		FROM draft_history
 		WHERE id = #{id}
 		  AND save_count =
 			  (SELECT save_count

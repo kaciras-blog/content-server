@@ -11,17 +11,17 @@ import java.util.Optional;
 @Mapper
 interface DraftDAO {
 
-	@Select("SELECT * FROM draft_user WHERE id=#{id}")
+	@Select("SELECT * FROM draft WHERE id=#{id}")
 	Optional<Draft> selectById(int id);
 
-	@Select("SELECT * FROM draft_user WHERE user_id=#{uid}")
+	@Select("SELECT * FROM draft WHERE user_id=#{uid}")
 	List<Draft> selectByUser(int uid);
 
-	@Insert("INSERT INTO draft_user(user_id,article_id) VALUES (#{userId},#{articleId})")
+	@Insert("INSERT INTO draft(user_id, article_id) VALUES (#{userId}, #{articleId})")
 	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Draft draft);
 
-	@Select("SELECT COUNT(*) FROM draft_user WHERE user_id=#{uid}")
+	@Select("SELECT COUNT(*) FROM draft WHERE user_id=#{uid}")
 	int selectCountByUser(int uid);
 
 	/**
@@ -32,7 +32,7 @@ interface DraftDAO {
 	 */
 	@Delete({
 			"DELETE FROM draft WHERE id=#{id};",
-			"DELETE FROM draft_user WHERE id=#{id}"
+			"DELETE FROM draft_history WHERE id=#{id};",
 	})
 	int deleteById(int id);
 
@@ -42,8 +42,8 @@ interface DraftDAO {
 	 * @param uid 用户id
 	 */
 	@Delete({
-			"DELETE FROM draft_user WHERE user_id=#{uid};",
-			"DELETE FROM draft WHERE id IN (SELECT id FROM draft_user WHERE user_id=#{uid});"
+			"DELETE FROM draft WHERE user_id=#{uid};",
+			"DELETE FROM draft_history WHERE id IN (SELECT id FROM draft WHERE user_id=#{uid});"
 	})
 	void deleteAll(int uid);
 }
