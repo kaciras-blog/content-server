@@ -28,7 +28,7 @@ class SlideController {
 
 	@GetMapping
 	public List<SlideCard> getPages() throws IOException {
-		var encode = redisTemplate.opsForValue().get(RedisKeys.SlideList.value());
+		var encode = redisTemplate.opsForValue().get(RedisKeys.CardList.value());
 		if (encode == null) {
 			return Collections.emptyList();
 		}
@@ -46,7 +46,7 @@ class SlideController {
 	@RequireAuthorize
 	@PutMapping
 	public ResponseEntity<Void> update(@RequestBody @Valid List<SlideCard> cards) throws Exception {
-		redisTemplate.opsForValue().set(RedisKeys.SlideList.value(), objectMapper.writeValueAsBytes(cards));
+		redisTemplate.opsForValue().set(RedisKeys.CardList.value(), objectMapper.writeValueAsBytes(cards));
 		return ResponseEntity.noContent().build();
 	}
 }

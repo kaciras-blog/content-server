@@ -2,11 +2,11 @@ package net.kaciras.blog.api;
 
 public enum RedisKeys {
 
-	/** 推荐卡片列表 */
-	SlideList("cards"),
-
 	/** Oauth2登陆会话前缀 */
 	OauthSession("oa:"),
+
+	/** 推荐卡片列表 */
+	CardList("cards"),
 
 	/** 一个账户所有会话的集合前缀 */
 	AccountSessions("ac:"),

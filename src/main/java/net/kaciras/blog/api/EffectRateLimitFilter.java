@@ -2,6 +2,7 @@ package net.kaciras.blog.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.kaciras.blog.infrastructure.Misc;
 import net.kaciras.blog.infrastructure.ratelimit.RateLimiter;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -31,8 +32,7 @@ public class EffectRateLimitFilter extends AbstractRateLimitFilter {
 
 	@Override
 	protected boolean check(InetAddress ip, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		var method = request.getMethod();
-		if ("GET".equals(method) || "HEAD".equals(method)) {
+		if (Misc.isSafeRequest(request)) {
 			return true;
 		}
 		var blockKey = RedisKeys.EffectBlocking.of(ip);
