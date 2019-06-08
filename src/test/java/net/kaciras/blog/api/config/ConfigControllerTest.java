@@ -9,7 +9,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
@@ -24,6 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.lang.annotation.ElementType;
 
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureWebMvc
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ConfigControllerTest.NestedConfig.class)
-public class ConfigControllerTest {
+final class ConfigControllerTest {
 
 	@EnableAspectJAutoProxy
 	@Import({KxWebUtilsAutoConfiguration.class})
@@ -63,7 +64,7 @@ public class ConfigControllerTest {
 
 	@Test
 	void testGet() throws Exception {
-		Mockito.when(configService.get("test.config")).thenReturn(new TestBindingConfig());
+		when(configService.get("test.config")).thenReturn(new TestBindingConfig());
 
 		webClient.perform(get("/config/test.config"))
 				.andExpect(status().is(200))
@@ -73,20 +74,20 @@ public class ConfigControllerTest {
 
 	@Test
 	void testGetNonExistent() throws Exception {
-		Mockito.when(configService.get("non.existent")).thenReturn(null);
+		when(configService.get("non.existent")).thenReturn(null);
 		webClient.perform(get("/config/non.existent")).andExpect(status().is(404));
 	}
 
 	@Test
 	void testPatch() throws Exception {
-		Mockito.when(configService.get("test.config")).thenReturn(new TestBindingConfig());
+		when(configService.get("test.config")).thenReturn(new TestBindingConfig());
 
 		var content = "{ \"enumValue\": \"METHOD\" }";
 		webClient.perform(patch("/config/test.config").content(content))
-				.andExpect(status().is(204));
+				.andExpect(status().is(200));
 
 		var captor = ArgumentCaptor.forClass(TestBindingConfig.class);
-		Mockito.verify(configService).set(eq("test.config"), captor.capture());
+		verify(configService).set(eq("test.config"), captor.capture());
 		var newConfig = captor.getValue();
 
 		Assertions.assertThat(newConfig.getEnumValue()).isEqualTo(ElementType.METHOD);
@@ -95,7 +96,7 @@ public class ConfigControllerTest {
 
 	@Test
 	void testPatchNonExistent() throws Exception {
-		Mockito.when(configService.get("non.existent")).thenReturn(null);
+		when(configService.get("non.existent")).thenReturn(null);
 		webClient.perform(patch("/config/non.existent")).andExpect(status().is(404));
 	}
 

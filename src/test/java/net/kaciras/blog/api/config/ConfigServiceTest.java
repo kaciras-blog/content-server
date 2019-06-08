@@ -17,7 +17,7 @@ import javax.validation.Validator;
 @Import({JacksonAutoConfiguration.class, ValidationAutoConfiguration.class})
 @SpringBootTest
 @SpringBootConfiguration
-public class ConfigServiceTest {
+final class ConfigServiceTest {
 
 	@Autowired
 	private Validator validator;
@@ -42,7 +42,7 @@ public class ConfigServiceTest {
 	}
 
 	@Test
-	void testBindUpdate() {
+	void bindUpdate() {
 		var newConfig = new TestBindingConfig();
 		newConfig.setIntValue(-123);
 		configService.set("test", newConfig);
@@ -51,7 +51,7 @@ public class ConfigServiceTest {
 	}
 
 	@Test
-	void testBindInvalidType() {
+	void bindInvalidType() {
 		Assertions.assertThatThrownBy(() -> configService.set("test", null))
 				.isInstanceOf(NullPointerException.class);
 
@@ -60,18 +60,18 @@ public class ConfigServiceTest {
 	}
 
 	@Test
-	void testGetWithoutBind() {
+	void getWithoutBind() {
 		Assertions.assertThat(configService.<Object>get("not.bind")).isNull();
 	}
 
 	/** ConfigService.get 会创建一个新对象 */
 	@Test
-	void testIsolation() {
+	void isolation() {
 		Assertions.assertThat(configService.<TestBindingConfig>get("test")).isNotSameAs(config);
 	}
 
 	@Test
-	void testJsr303Validate() {
+	void jsr303Validate() {
 		var newConfig = new TestBindingConfig();
 		newConfig.setSubConfig(null);
 
@@ -80,7 +80,7 @@ public class ConfigServiceTest {
 	}
 
 	@Test
-	void testCustomValidate() {
+	void customValidation() {
 		var newConfig = new TestBindingConfig();
 		newConfig.setSmaller(newConfig.getBigger() + 666);
 

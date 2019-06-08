@@ -1,6 +1,7 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.article;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import net.kaciras.blog.api.AbstractSpringTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
@@ -11,12 +12,27 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ArticleApiTest extends AbstractSpringTest {
+public class ArticleControllerTest extends AbstractSpringTest {
 
 	private JsonNode queryArticle(int id) throws Exception {
 		return objectMapper.readTree(mockMvc.perform(get("/articles/" + id))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString());
+	}
+
+	private void matchArticleMetadataList(MvcResult result) throws IOException {
+		objectMapper.readTree(result.getResponse().getContentAsByteArray())
+				.elements()
+				.forEachRemaining(this::checkMetadata);
+	}
+
+	private void matchArticleMetadata(MvcResult result) throws IOException {
+		checkMetadata(objectMapper.readTree(result.getResponse().getContentAsByteArray()));
+	}
+
+	private void checkMetadata(JsonNode node) {
+		node.get("id").asInt();
+		node.get("title").asText();
 	}
 
 	@Test
@@ -58,20 +74,5 @@ public class ArticleApiTest extends AbstractSpringTest {
 				.andExpect(status().isNoContent());
 
 		Assertions.assertThat(queryArticle(1).get("deleted").asBoolean()).isTrue();
-	}
-
-	private void matchArticleMetadataList(MvcResult result) throws IOException {
-		objectMapper.readTree(result.getResponse().getContentAsByteArray())
-				.elements()
-				.forEachRemaining(this::checkMetadata);
-	}
-
-	private void matchArticleMetadata(MvcResult result) throws IOException {
-		checkMetadata(objectMapper.readTree(result.getResponse().getContentAsByteArray()));
-	}
-
-	private void checkMetadata(JsonNode node) {
-		node.get("id").asInt();
-		node.get("title").asText();
 	}
 }
