@@ -1,6 +1,7 @@
 package net.kaciras.blog.api;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.infrastructure.ratelimit.RedisTokenBucket;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +33,7 @@ public class RateLimiterAutoConfiguration {
 
 	@Bean
 	RateLimitFilter rateLimiterFilter(Clock clock, RedisTemplate<String, Object> template) {
-		var limiter = new RedisRateLimiter(clock, template);
+		var limiter = new RedisTokenBucket(clock, template);
 		limiter.setRate(properties.getGeneric().getRate());
 		limiter.setBucketSize(properties.getGeneric().getBucketSize());
 		return new RateLimitFilter(limiter);
@@ -44,7 +45,7 @@ public class RateLimiterAutoConfiguration {
 			RedisTemplate<String, Object> oTemplate,
 			RedisTemplate<String, byte[]> bTemplate) {
 
-		var limiter = new RedisRateLimiter(clock, oTemplate);
+		var limiter = new RedisTokenBucket(clock, oTemplate);
 		limiter.setRate(properties.getEffective().getRate());
 		limiter.setBucketSize(properties.getEffective().getBucketSize());
 		return new EffectRateLimitFilter(limiter, bTemplate);

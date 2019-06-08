@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("kaciras.cors")
+@ConfigurationProperties("kaciras.rate-limit")
 @Getter
 @Setter
 public final class RateLimiterProperties {
@@ -22,7 +22,8 @@ public final class RateLimiterProperties {
 
 	@NoArgsConstructor
 	@AllArgsConstructor
-	@Getter @Setter
+	@Getter
+	@Setter
 	public static final class TokenBucket {
 
 		/** 允许的速率（令牌/秒），必须大于0 */

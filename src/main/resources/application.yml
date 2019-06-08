@@ -58,15 +58,18 @@ spring:
     date-format: yyyy-MM-dd HH:mm # 这个只用于java.util.Date这些老API
 
 mybatis:
+
   mapper-locations: classpath:mybatis/*
   configuration:
     default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
     cache-enabled: false
 
 kaciras:
+
   authorization:
     security-context: true
+
   cors:
     allowed-methods: "*"
-    allowed-headers: [X-CSRF-Token, X-Requested-With, Content-Type, X-RateLimit-Wait]
-    exposed-headers: Location
+    allowed-headers: [X-CSRF-Token, X-Requested-With, Content-Type]
+    exposed-headers: [Location, X-RateLimit-Wait]

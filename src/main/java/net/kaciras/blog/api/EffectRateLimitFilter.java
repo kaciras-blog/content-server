@@ -2,6 +2,7 @@ package net.kaciras.blog.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.kaciras.blog.infrastructure.ratelimit.RateLimiter;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -25,7 +26,7 @@ public class EffectRateLimitFilter extends HttpFilter {
 	private static final byte[] rejectMsg = "请求频率太快，你的IP被封禁1小时".getBytes(StandardCharsets.UTF_8);
 	private static final byte[] empty = new byte[]{0};
 
-	private final RedisRateLimiter rateLimiter;
+	private final RateLimiter rateLimiter;
 	private final RedisTemplate<String, byte[]> redisTemplate;
 
 	private final Duration banTime = Duration.ofHours(1);

@@ -2,6 +2,7 @@ package net.kaciras.blog.api;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.kaciras.blog.infrastructure.ratelimit.RateLimiter;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 
@@ -31,7 +32,7 @@ public final class RateLimitFilter extends HttpFilter {
 	/** 当达到限制时返回一个响应头告诉客户端相关信息 */
 	private static final String RATE_LIMIT_HEADER = "X-RateLimit-Wait";
 
-	private final RedisRateLimiter rateLimiter;
+	private final RateLimiter rateLimiter;
 
 	@Override
 	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
