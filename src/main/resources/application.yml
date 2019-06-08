@@ -67,7 +67,6 @@ kaciras:
   authorization:
     security-context: true
   cors:
-    methods: "*"
-    allow-headers: [X-CSRF-Token, X-Requested-With, Content-Type]
+    allowed-methods: "*"
+    allowed-headers: [X-CSRF-Token, X-Requested-With, Content-Type, X-RateLimit-Wait]
     exposed-headers: Location
-    max-age: 864000

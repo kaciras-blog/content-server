@@ -34,7 +34,7 @@ kaciras:
     admin-principal: false
 
   cors:
-    origins: "*"
+    allowed-origins: "*"
 
   oauth:
     www-host: localhost
