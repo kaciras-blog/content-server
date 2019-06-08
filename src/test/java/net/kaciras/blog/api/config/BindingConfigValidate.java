@@ -3,7 +3,7 @@ package net.kaciras.blog.api.config;
 import javax.validation.ValidationException;
 import javax.validation.constraints.NotEmpty;
 
-public class BindingConfigValidate implements ValidatedConfig {
+final class BindingConfigValidate implements ValidatedConfig {
 
 	@NotEmpty
 	private String text = "123";

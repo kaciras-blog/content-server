@@ -32,11 +32,11 @@ public class RateLimiterAutoConfiguration {
 	}
 
 	@Bean
-	RateLimitFilter rateLimiterFilter(Clock clock, RedisTemplate<String, Object> template) {
+	GenericRateLimitFilter rateLimiterFilter(Clock clock, RedisTemplate<String, Object> template) {
 		var limiter = new RedisTokenBucket(clock, template);
 		limiter.setRate(properties.getGeneric().getRate());
 		limiter.setBucketSize(properties.getGeneric().getBucketSize());
-		return new RateLimitFilter(limiter);
+		return new GenericRateLimitFilter(limiter);
 	}
 
 	@Bean
