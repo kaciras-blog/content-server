@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.concurrent.Executor;
 
 /**
  * Effect 指有副作用的请求，如提交评论等
@@ -27,9 +28,16 @@ public class EffectRateLimitFilter extends AbstractRateLimitFilter {
 
 	private final RateLimiter rateLimiter;
 	private final RedisTemplate<String, byte[]> redisTemplate;
+	private final Executor threadPool;
 
 	private final Duration banTime = Duration.ofHours(1);
 
+	/**
+	 * 异步统计请求频率：如果没有被封禁就请求成功，同时在另一个线程中获取限流器的令牌，如果达到限制则封禁，
+	 * 本次的请求仍然是成功的，封禁从下一个请求开始才生效。
+	 *
+	 * 这样做把对限流器的访问异步化，可以减少对请求的阻塞时间（一次Redis访问）而提高性能。（应该能提高一些吧我也没测）
+	 */
 	@Override
 	protected boolean check(InetAddress ip, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (Misc.isSafeRequest(request)) {
@@ -39,14 +47,18 @@ public class EffectRateLimitFilter extends AbstractRateLimitFilter {
 
 		if (Utils.nullableBool(redisTemplate.hasKey(blockKey))) {
 			reject(response);
-		} else if (rateLimiter.acquire(RedisKeys.EffectRate.of(ip), 1) > 0) {
-			reject(response);
-			logger.warn("{} 请求过快，被封禁1小时", ip);
-			redisTemplate.opsForValue().set(blockKey, EMPTY, banTime);
-		} else {
-			return true;
+			return false;
 		}
-		return false;
+
+		threadPool.execute(() -> {
+			var waitTime = rateLimiter.acquire(RedisKeys.EffectRate.of(ip), 1);
+			if (waitTime > 0) {
+				logger.warn("{} 请求过快，被封禁1小时", ip);
+				redisTemplate.opsForValue().set(blockKey, EMPTY, banTime);
+			}
+		});
+
+		return true;
 	}
 
 	private void reject(HttpServletResponse response) throws IOException {

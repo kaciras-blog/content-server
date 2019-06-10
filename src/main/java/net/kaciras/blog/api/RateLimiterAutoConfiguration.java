@@ -12,6 +12,7 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
 import java.time.Clock;
+import java.util.concurrent.Executor;
 
 @EnableConfigurationProperties(RateLimiterProperties.class)
 @Configuration
@@ -42,12 +43,13 @@ public class RateLimiterAutoConfiguration {
 	@Bean
 	EffectRateLimitFilter effectRateLimitFilter(
 			Clock clock,
+			Executor threadPool,
 			RedisTemplate<String, Object> oTemplate,
 			RedisTemplate<String, byte[]> bTemplate) {
 
 		var limiter = new RedisTokenBucket(clock, oTemplate);
 		limiter.setRate(properties.getEffective().getRate());
 		limiter.setBucketSize(properties.getEffective().getBucketSize());
-		return new EffectRateLimitFilter(limiter, bTemplate);
+		return new EffectRateLimitFilter(limiter, bTemplate, threadPool);
 	}
 }
