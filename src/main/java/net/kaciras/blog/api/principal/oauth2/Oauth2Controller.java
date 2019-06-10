@@ -13,7 +13,6 @@ import net.kaciras.blog.api.principal.oauth2.Oauth2Client.UserInfo;
 import net.kaciras.blog.api.user.UserManager;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
-import net.kaciras.blog.infrastructure.func.Lambdas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -54,7 +53,7 @@ public class Oauth2Controller {
 	@Autowired
 	private void initClientMap(Collection<Oauth2Client> beans) {
 		clientMap = beans.stream()
-				.collect(Collectors.toMap(b -> b.authType().name().toLowerCase(), Lambdas.keepIntact()));
+				.collect(Collectors.toMap(b -> b.authType().name().toLowerCase(), b -> b));
 	}
 
 	/**
