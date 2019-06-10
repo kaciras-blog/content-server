@@ -13,12 +13,11 @@ public final class RateLimiterProperties {
 
 	/**
 	 * 全部请求限流，感觉跟DOS防御有重合。
-	 * 目前单页最大4个请求，保守起见 *4 倍，每秒 2 个也比较高了。
 	 */
-	private TokenBucket generic = new TokenBucket(2, 16);
+	private TokenBucket generic;
 
 	/** 针对有副作用的请求（POST,PUT等）的限流，防刷评论 */
-	private TokenBucket effective = new TokenBucket(0.5,4);
+	private TokenBucket effective;
 
 	@NoArgsConstructor
 	@AllArgsConstructor

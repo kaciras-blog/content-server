@@ -27,6 +27,16 @@
 			"name": "kaciras.http-client-proxy",
 			"type": "java.lang.String",
 			"description": "本地HTTP客户端（用于OAuth2等）使用的代理地址."
+		},
+		{
+			"name": "kaciras.rate-limit.generic.rate",
+			"type": "java.lang.Double",
+			"description": "允许的速率（令牌/秒），必须大于0."
+		},
+		{
+			"name": "kaciras.rate-limit.generic.bucket-size",
+			"type": "java.lang.Integer",
+			"description": "令牌桶容量，同时也是单位时间能获取的上限（令牌），必须大于0."
 		}
 	]
 }
