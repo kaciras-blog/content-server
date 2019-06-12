@@ -4,9 +4,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
-CREATE DATABASE IF NOT EXISTS `blog` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
-USE `blog`;
-
 CREATE TABLE IF NOT EXISTS `access_log` (
   `ip` binary(16) NOT NULL,
   `path` text NOT NULL,
@@ -39,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `article` (
   `content` mediumtext NOT NULL,
   PRIMARY KEY (`id`),
   KEY `category` (`category`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `category` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
@@ -50,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `category` (
   `theme` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `category_tree` (
   `ancestor` smallint(5) unsigned NOT NULL,
@@ -75,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `discussion` (
   KEY `user_id` (`user_id`),
   KEY `parent` (`parent`),
   KEY `object_id_type` (`object_id`,`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `discussion_vote` (
   `id` int(10) unsigned NOT NULL,
@@ -90,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `draft` (
   `time` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `draft_history` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -102,7 +99,7 @@ CREATE TABLE IF NOT EXISTS `draft_history` (
   `content` mediumtext NOT NULL DEFAULT '',
   `time` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`,`save_count`)
-) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 PAGE_CHECKSUM=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 PAGE_CHECKSUM=1;
 
 CREATE TABLE IF NOT EXISTS `keyword` (
   `id` int(10) unsigned NOT NULL,
@@ -126,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `reg_time` datetime NOT NULL DEFAULT current_timestamp(),
   `reg_ip` binary(16) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=Aria AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 PAGE_CHECKSUM=1;
+) ENGINE=Aria DEFAULT CHARSET=utf8mb4 PAGE_CHECKSUM=1;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;

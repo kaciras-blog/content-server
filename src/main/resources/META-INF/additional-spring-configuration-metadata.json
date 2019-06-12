@@ -1,9 +1,9 @@
 {
 	"properties": [
 		{
-			"name": "draft.delete-after-publish",
-			"type": "java.lang.String",
-			"defaultValue": true,
+			"name": "blog.draft.delete-after-publish",
+			"type": "java.lang.Boolean",
+			"defaultValue": false,
 			"description": "发表文章后是否删除草稿."
 		},
 		{

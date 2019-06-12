@@ -25,7 +25,7 @@ class ArticleController {
 
 	private final DraftRepository draftRepository;
 
-	@Value("${draft.delete-after-publish}")
+	@Value("${blog.draft.delete-after-publish}")
 	private boolean deleteAfterSubmit;
 
 	@GetMapping

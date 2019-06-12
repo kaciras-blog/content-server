@@ -1,6 +1,6 @@
 server:
+
   connection-timeout: 10s
-  port: 2375
 
   http2:
     enabled: true
@@ -57,9 +57,13 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm # 这个只用于java.util.Date这些老API
 
+  datasource:
+    initialization-mode: always
+
 mybatis:
 
   mapper-locations: classpath:mybatis/*
+
   configuration:
     default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
     cache-enabled: false

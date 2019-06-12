@@ -27,3 +27,7 @@
 ### Custom ###
 *.pid
 /start.bat
+
+### Sensitive data ###
+/application*.yml
+!application-EXAMPLE.yml

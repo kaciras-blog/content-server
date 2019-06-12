@@ -1,35 +1,14 @@
 # 测试配置，其中web部分与线上一致、数据库与开发环境一致
-server:
-
-  ssl:
-    enabled: true
-    key-store: D:\\Coding\\Utils\\dev.pfx
-    key-store-type: PKCS12
-    key-store-password: 666666
-
 spring:
 
-  # 这个必须设置一下，SpringBoot默认不允许覆盖
   main:
     allow-bean-definition-overriding: true
 
-  datasource:
-    url: jdbc:mariadb://192.168.0.11:3316/blog?allowMultiQueries=true
-    username: root
-    password: IY*J<0+T.[Skcoxd
-    driver-class-name: org.mariadb.jdbc.Driver
-
-  redis:
-    host: 192.168.0.11
-    port: 33671
-    password: ZuDNpaB7]vv_iBynJG6ZwPexPPewP]kf
-
-draft:
-  delete-after-publish: false
-
 kaciras:
+
   session:
     cookie:
-      domain: kaciras.net
+      domain: test.example.com
+
   cors:
-    origins: https://blog.kaciras.net
+    allowed-origins: https://test.example.com

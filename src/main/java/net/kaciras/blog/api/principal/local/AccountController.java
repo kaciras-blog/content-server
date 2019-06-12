@@ -84,8 +84,8 @@ class AccountController {
 	// 原来叫 /session/user，后来嫌麻烦改成 /accounts/login
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginVo,
-									  HttpServletRequest request,
-									  HttpServletResponse response) {
+								   HttpServletRequest request,
+								   HttpServletResponse response) {
 		var account = repository.findByName(loginVo.getName());
 
 		if (account == null || !account.checkLogin(loginVo.getPassword())) {
