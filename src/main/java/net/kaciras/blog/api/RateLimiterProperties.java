@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
+
 @ConfigurationProperties("kaciras.rate-limit")
 @Getter
 @Setter
@@ -17,7 +19,7 @@ public final class RateLimiterProperties {
 	private TokenBucket generic;
 
 	/** 针对有副作用的请求（POST,PUT等）的限流，防刷评论 */
-	private TokenBucket effective;
+	private List<TokenBucket> effective;
 
 	@NoArgsConstructor
 	@AllArgsConstructor

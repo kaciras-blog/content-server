@@ -23,7 +23,7 @@ import java.util.concurrent.Executor;
 @RequiredArgsConstructor
 @Slf4j
 @Order(Integer.MIN_VALUE + 20) // 比CORS过滤器低一点，比其他的高
-public class EffectRateLimitFilter extends AbstractRateLimitFilter {
+public final class EffectRateLimitFilter extends AbstractRateLimitFilter {
 
 	private static final byte[] REJECT_MSG = "{\"message\":\"请求频率太快，IP被封禁\"}".getBytes(StandardCharsets.UTF_8);
 	private static final byte[] EMPTY = new byte[]{0};
