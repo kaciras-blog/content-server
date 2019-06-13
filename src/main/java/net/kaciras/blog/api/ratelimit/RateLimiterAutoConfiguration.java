@@ -35,8 +35,8 @@ public class RateLimiterAutoConfiguration {
 	@Bean
 	GenericRateLimitFilter genericRateLimiterFilter(Clock clock, RedisTemplate<String, Object> template) {
 		var limiter = new RedisTokenBucket(clock, template);
-		var bucket = properties.getGeneric();
-		limiter.addBucket(bucket.getBucketSize(), bucket.getRate());
+		var bucket = properties.generic;
+		limiter.addBucket(bucket.size, bucket.rate);
 		return new GenericRateLimitFilter(limiter);
 	}
 
@@ -48,9 +48,15 @@ public class RateLimiterAutoConfiguration {
 			RedisTemplate<String, byte[]> bTemplate) {
 
 		var limiter = new RedisTokenBucket(clock, oTemplate);
-		for (var bucket : properties.getEffective()) {
-			limiter.addBucket(bucket.getBucketSize(), bucket.getRate());
+		var filter = new EffectRateLimitFilter(limiter, bTemplate, threadPool);
+		var config = properties.effective;
+
+		filter.setBanTime(config.blockTime);
+		filter.setRefreshOnReject(config.refreshOnReject);
+
+		for (var limit : config.limits) {
+			limiter.addBucket(limit.permits, limit.permits / (double)limit.time.toSeconds());
 		}
-		return new EffectRateLimitFilter(limiter, bTemplate, threadPool);
+		return filter;
 	}
 }
