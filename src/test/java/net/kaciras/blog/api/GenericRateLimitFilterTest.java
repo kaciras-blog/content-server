@@ -1,5 +1,6 @@
 package net.kaciras.blog.api;
 
+import net.kaciras.blog.api.ratelimit.GenericRateLimitFilter;
 import net.kaciras.blog.infrastructure.ratelimit.RateLimiter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

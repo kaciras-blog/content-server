@@ -1,4 +1,4 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.ratelimit;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,6 +1,7 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.ratelimit;
 
 import lombok.extern.slf4j.Slf4j;
+import net.kaciras.blog.api.Utils;
 import org.springframework.lang.Nullable;
 
 import javax.servlet.FilterChain;

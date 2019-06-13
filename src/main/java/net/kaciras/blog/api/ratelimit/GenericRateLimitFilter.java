@@ -1,6 +1,7 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.ratelimit;
 
 import lombok.RequiredArgsConstructor;
+import net.kaciras.blog.api.RedisKeys;
 import net.kaciras.blog.infrastructure.ratelimit.RateLimiter;
 import org.springframework.core.annotation.Order;
 

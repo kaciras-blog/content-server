@@ -17,7 +17,7 @@ import javax.validation.Validator;
 @Import({JacksonAutoConfiguration.class, ValidationAutoConfiguration.class})
 @SpringBootTest
 @SpringBootConfiguration
-final class ConfigServiceTest {
+class ConfigServiceTest {
 
 	@Autowired
 	private Validator validator;

@@ -1,4 +1,4 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.ratelimit;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.ratelimit.RedisTokenBucket;
@@ -33,7 +33,7 @@ public class RateLimiterAutoConfiguration {
 	}
 
 	@Bean
-	GenericRateLimitFilter rateLimiterFilter(Clock clock, RedisTemplate<String, Object> template) {
+	GenericRateLimitFilter genericRateLimiterFilter(Clock clock, RedisTemplate<String, Object> template) {
 		var limiter = new RedisTokenBucket(clock, template);
 		var bucket = properties.getGeneric();
 		limiter.addBucket(bucket.getBucketSize(), bucket.getRate());
