@@ -1,11 +1,3 @@
-server:
-
-  ssl:
-    enabled: true
-    key-store: /path/to/key-store.pfx
-    key-store-type: PKCS12
-    key-store-password: foobar123456
-
 spring:
 
   # 你需要先创建数据库，SpringBoot能够使用 resources/schema.sql 自动建表
@@ -22,7 +14,12 @@ spring:
 
 kaciras:
 
+  # OAuth2 可以通过代理访问第三方服务，特别是在墙内访问Google账户时有用
 #  http-client-proxy: "localhost:1080"
+
+  session:
+    cookie:
+      domain: localhost
 
   development:
     admin-principal: false

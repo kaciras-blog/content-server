@@ -49,6 +49,10 @@ import java.time.Clock;
 @SpringBootApplication
 public class ServiceApplication {
 
+	/**
+	 * EnableLoadTimeWeaving 中注册的 LoadTimeWeaver 可能在其他的 Bean 之后创建，这导致了
+	 * 在其创建之前加载的类无法织入，所以将其加入构造方法以保证其创建时间先于 ComponentScan 扫描到的类
+	 */
 	@SuppressWarnings("unused")
 	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
 

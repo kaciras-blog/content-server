@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = "id")
 @Data
 @Configurable
-public class User {
+public final class User {
 
 	/** 数据库里也有适配 */
 	public static final User GUEST = new User(0, "(游客)", ImageReference.parse("akalin.jpg"));

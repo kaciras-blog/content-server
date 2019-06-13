@@ -20,7 +20,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 @ConditionalOnProperty("kaciras.oauth2.github.client-secret")
 @Component
 @RequiredArgsConstructor
-public class GithubOauth2Client implements Oauth2Client {
+public final class GithubOauth2Client implements Oauth2Client {
 
 	private final ObjectMapper objectMapper;
 	private final HttpClient httpClient;

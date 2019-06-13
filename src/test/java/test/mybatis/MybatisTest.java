@@ -1,7 +1,7 @@
 /*
  * 对 Mybatis 一些特性的验证
  */
-package another.pkg;
+package test.mybatis;
 
 import net.kaciras.blog.infrastructure.autoconfig.KxCodecAutoConfiguration;
 import org.apache.ibatis.binding.BindingException;
@@ -18,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 // DataSourceAutoConfiguration 内置的扫描器值扫描标记为 AutoConfigurationPackages(@EnableAutoConfiguration) 的包，
 // 如果待扫描的Mapper不在这些包里就需要手动添加 @MapperScan("xxx") 来扫描
-@MapperScan("another.pkg")
+@MapperScan("test.mybatis")
 @ImportAutoConfiguration({
 		DataSourceAutoConfiguration.class,
 		MybatisAutoConfiguration.class,
