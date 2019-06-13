@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.principal.AuthType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -16,17 +17,18 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
 
-@RequiredArgsConstructor
+@ConditionalOnProperty("kaciras.oauth2.github.client-secret")
 @Component
+@RequiredArgsConstructor
 public class GithubOauth2Client implements Oauth2Client {
 
 	private final ObjectMapper objectMapper;
 	private final HttpClient httpClient;
 
-	@Value("${kaciras.oauth.github.client-id}")
+	@Value("${kaciras.oauth2.github.client-id}")
 	private String clientId;
 
-	@Value("${kaciras.oauth.github.client-secret}")
+	@Value("${kaciras.oauth2.github.client-secret}")
 	private String clientSecret;
 
 	@Override

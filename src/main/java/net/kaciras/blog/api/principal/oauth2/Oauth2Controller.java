@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 public class Oauth2Controller {
 
 	private final SessionService sessionService;
-	private final OauthDAO oauthDAO;
+	private final OAuth2DAO oAuth2DAO;
 	private final UserManager userManager;
 
 	private final RedisTemplate<String, byte[]> redisTemplate;
@@ -47,7 +47,7 @@ public class Oauth2Controller {
 
 	private Map<String, Oauth2Client> clientMap;
 
-	@Value("${kaciras.oauth.www-host}")
+	@Value("${kaciras.oauth2.www-host}")
 	private String wwwHost;
 
 	@Autowired
@@ -57,8 +57,7 @@ public class Oauth2Controller {
 	}
 
 	/**
-	 * OAuth 认证第一步，开始登录会话，获取带有state字段的跳转链接。
-	 * 用户将被重定向到第三方授权页面。
+	 * OAuth 认证第一步，开始登录会话，生成跳转链接，将用户重定向到第三方授权页面。
 	 *
 	 * @param type    第三方名称
 	 * @param request 请求对象
@@ -121,10 +120,12 @@ public class Oauth2Controller {
 		// 获取会话，并检查state字段
 		var oauthSession = retrieveOAuthSession(request);
 
+		// 从第三方服务读取用户信息
 		var code = request.getParameter("code");
 		var context = new OAuth2Context(code, request.getRequestURL().toString(), oauthSession.state);
-
 		var info = client.getUserInfo(context);
+
+		// 查询出在本系统里对应的用户，并设置会话属性（登录）
 		var localId = getLocalId(info, request, client.authType());
 		sessionService.putUser(request, response, localId, true);
 
@@ -133,7 +134,7 @@ public class Oauth2Controller {
 			return ResponseEntity.ok().build();
 		}
 
-		// 强制域名和协议，以防跳转到其他网站
+		// 固定域名和协议，以防跳转到其他网站
 		var redirect = UriComponentsBuilder
 				.fromUriString(oauthSession.returnUri)
 				.scheme("https")
@@ -179,14 +180,14 @@ public class Oauth2Controller {
 	 */
 	@Transactional
 	protected int getLocalId(UserInfo profile, HttpServletRequest request, AuthType authType) {
-		var localId = oauthDAO.select(profile.id(), authType);
+		var localId = oAuth2DAO.select(profile.id(), authType);
 
 		if (localId != null) {
 			return localId;
 		}
 		var regIP = Utils.AddressFromRequest(request);
 		var newId = userManager.createNew(profile.name(), authType, regIP);
-		oauthDAO.insert(profile.id(), authType, newId);
+		oAuth2DAO.insert(profile.id(), authType, newId);
 
 		return newId;
 	}

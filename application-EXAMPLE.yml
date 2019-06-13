@@ -32,29 +32,30 @@ kaciras:
 
   rate-limit:
 
+    # 目前单页最大4个请求，保守起见 *4 倍，每秒 2 个也比较高了。
     generic:
-      rate: 5
-      bucket-size: 20
+      rate: 2
+      bucket-size: 16
 
+    # 对非幂等请求的限速：30秒6个，半小时54个，一天约220个
     effective:
       - bucket-size: 6
         rate: 0.2
-      - bucket-size: 60
+      - bucket-size: 54
         rate: 0.03
-      - bucket-size: 400
-        rate: 0.005
+      - bucket-size: 220
+        rate: 0.0025
 
-  oauth:
-
-    www-host: localhost
-
-    google:
-      client-id: <your client-id>
-      client-secret: <your client-secret>
-
-    github:
-      client-id: <your client-id>
-      client-secret: <your client-secret>
+  # 本系统支持 OAuth2 登录，取消下面的注释并填写 client-id 和 client-secret 即可启用
+#  oauth2:
+    # 前端页面的域名
+#    www-host: localhost
+#    google:
+#      client-id: <your client-id>
+#      client-secret: <your client-secret>
+#    github:
+#      client-id: <your client-id>
+#      client-secret: <your client-secret>
 
 blog:
 

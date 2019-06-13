@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 @Mapper
-interface OauthDAO {
+interface OAuth2DAO {
 
 	@Insert("INSERT INTO oauth(oauth_id, type, local_id) VALUES (#{oauthId}, #{type}, #{localId})")
 	void insert(String oauthId, AuthType type, int localId);

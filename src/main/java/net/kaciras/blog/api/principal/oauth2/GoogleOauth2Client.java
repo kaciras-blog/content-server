@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.principal.AuthType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -17,17 +18,18 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 
-@RequiredArgsConstructor
+@ConditionalOnProperty("kaciras.oauth2.google.client-secret")
 @Component
+@RequiredArgsConstructor
 public class GoogleOauth2Client implements Oauth2Client {
 
 	private final ObjectMapper objectMapper;
 	private final HttpClient httpClient;
 
-	@Value("${kaciras.oauth.google.client-id}")
+	@Value("${kaciras.oauth2.google.client-id}")
 	private String clientId;
 
-	@Value("${kaciras.oauth.google.client-secret}")
+	@Value("${kaciras.oauth2.google.client-secret}")
 	private String clientSecret;
 
 	@Override
