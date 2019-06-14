@@ -144,8 +144,8 @@ interface CategoryDAO {
 	 * @param id     节点id
 	 * @param parent 父节点id
 	 */
-	@Insert("INSERT INTO category_tree(ancestor,descendant,distance) " +
-			"(SELECT ancestor,#{id},distance+1 FROM category_tree WHERE descendant=#{parent})")
+	@Insert("INSERT INTO category_tree(ancestor, descendant, distance) " +
+			"(SELECT ancestor, #{id}, distance+1 FROM category_tree WHERE descendant=#{parent})")
 	void insertPath(int id, int parent);
 
 	/**

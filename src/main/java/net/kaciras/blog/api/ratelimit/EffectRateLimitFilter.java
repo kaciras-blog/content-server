@@ -17,6 +17,7 @@ import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.concurrent.Executor;
+import java.util.regex.Pattern;
 
 /**
  * Effect 指有副作用的请求，如提交评论等
@@ -34,6 +35,7 @@ public final class EffectRateLimitFilter extends AbstractRateLimitFilter {
 	private final RedisTemplate<String, byte[]> redisTemplate;
 	private final Executor threadPool;
 
+	private Pattern whiteList;
 	private Duration banTime = Duration.ofHours(1);
 	private boolean refreshOnReject;
 
@@ -46,6 +48,9 @@ public final class EffectRateLimitFilter extends AbstractRateLimitFilter {
 	@Override
 	protected boolean check(InetAddress ip, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (Misc.isSafeRequest(request)) {
+			return true;
+		}
+		if (whiteList != null && whiteList.matcher(request.getPathInfo()).find()) {
 			return true;
 		}
 		var blockKey = RedisKeys.EffectBlocking.of(ip);
