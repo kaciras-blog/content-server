@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.principal.local;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.DBUtils;
+import net.kaciras.blog.api.Utils;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +21,7 @@ public class AccountRepository {
 
 	@NonNull
 	public Account findById(int id) {
-		return DBUtils.checkNotNullResource(accountDAO.select(id));
+		return Utils.checkNotNullResource(accountDAO.select(id));
 	}
 
 	public Account findByName(String name) {

@@ -3,7 +3,6 @@ package net.kaciras.blog.api.category;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.Utils;
-import net.kaciras.blog.infrastructure.DBUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
@@ -23,7 +22,7 @@ public class CategoryRepository {
 	private final CategoryDAO dao;
 
 	public Category get(int id) {
-		return DBUtils.checkNotNullResource(dao.selectAttributes(id));
+		return Utils.checkNotNullResource(dao.selectAttributes(id));
 	}
 
 	public int size() {
@@ -56,7 +55,7 @@ public class CategoryRepository {
 		if (category.getId() == 0) {
 			dao.updateRoot(category);
 		} else {
-			DBUtils.checkEffective(dao.update(category));
+			Utils.checkEffective(dao.update(category));
 		}
 	}
 

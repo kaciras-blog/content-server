@@ -2,7 +2,7 @@ package net.kaciras.blog.api.article;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.DBUtils;
+import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
 import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -45,7 +45,7 @@ public class ArticleRepository {
 	@Transactional
 	public void update(@NonNull Article article) {
 		try {
-			DBUtils.checkEffective(articleDAO.update(article));
+			Utils.checkEffective(articleDAO.update(article));
 			keywordDAO.clear(article.getId());
 			insertKeywords(article.getId(), article.getKeywords());
 		} catch (DataIntegrityViolationException ex) {

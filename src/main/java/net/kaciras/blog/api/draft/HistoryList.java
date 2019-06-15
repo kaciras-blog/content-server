@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.kaciras.blog.infrastructure.DBUtils;
+import net.kaciras.blog.api.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -70,6 +70,6 @@ public final class HistoryList {
 
 	public void update(DraftContent content) {
 		var last = historyDAO.selectLastSaveCount(id);
-		DBUtils.checkEffective(historyDAO.update(id, last, content));
+		Utils.checkEffective(historyDAO.update(id, last, content));
 	}
 }

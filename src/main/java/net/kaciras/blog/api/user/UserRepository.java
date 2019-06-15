@@ -2,7 +2,7 @@ package net.kaciras.blog.api.user;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.DBUtils;
+import net.kaciras.blog.api.Utils;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +25,6 @@ public class UserRepository {
 	}
 
 	public void update(User user) {
-		DBUtils.checkEffective(userDAO.updateProfile(user));
+		Utils.checkEffective(userDAO.updateProfile(user));
 	}
 }
