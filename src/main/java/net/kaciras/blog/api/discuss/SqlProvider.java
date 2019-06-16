@@ -44,9 +44,14 @@ public final class SqlProvider {
 			sql.WHERE("parent = #{parent}");
 		}
 		if (query.getObjectId() != null) {
-			sql.WHERE("object_id = #{objectId} AND type=#{type}");
+			if (query.getType() == null) {
+				throw new RequestArgumentException("查询参数中有objectId的情况下必须指定type");
+			}
+			sql.WHERE("object_id = #{objectId}");
 		}
-		// assert query.state != null
-		sql.WHERE("state = #{state}");
+		if (query.getType() != null) {
+			sql.WHERE("type = #{type}");
+		}
+		sql.WHERE("state = #{state}"); // assert query.state != null
 	}
 }
