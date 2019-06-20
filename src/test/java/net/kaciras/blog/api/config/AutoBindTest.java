@@ -1,5 +1,6 @@
 package net.kaciras.blog.api.config;
 
+import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,17 +19,20 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("unused")
 class AutoBindTest {
 
+	@RequiredArgsConstructor
 	@Configuration
 	static class BindTestConfig {
 
+		private final GenericApplicationContext context;
+
 		@Bean
-		public ConfigService configService() {
-			return mock(ConfigService.class);
+		public ConfigBindingManager configService() {
+			return mock(ConfigBindingManager.class);
 		}
 
 		@Bean
-		public ConfigBindingPostProcessor processor(ConfigService configService) {
-			return new ConfigBindingPostProcessor(configService);
+		public ConfigBindingPostProcessor processor(ConfigBindingManager bindingManager) {
+			return new ConfigBindingPostProcessor(context, bindingManager);
 		}
 
 		@Bean
@@ -52,21 +56,20 @@ class AutoBindTest {
 	@Test
 	void bind() {
 		var app = new AnnotationConfigApplicationContext(BindTestConfig.class);
-		Mockito.verify(app.getBean(ConfigService.class))
+		Mockito.verify(app.getBean(ConfigBindingManager.class))
 				.bind(eq("net.kaciras.config"), eq(TestBindingConfig.class), any());
 	}
 
 	@Test
 	void failOnFinalField() {
-		var service = mock(ConfigService.class);
+		var service = mock(ConfigBindingManager.class);
 
 		var definition = mock(BeanDefinition.class);
 		when(definition.getScope()).thenReturn(BeanDefinition.SCOPE_SINGLETON);
 		var context = mock(GenericApplicationContext.class);
 		when(context.getBeanDefinition("beanName")).thenReturn(definition);
 
-		var processor = new ConfigBindingPostProcessor(service);
-		processor.setApplicationContext(context);
+		var processor = new ConfigBindingPostProcessor(context, service);
 
 		var bean = new FinalFieldBean();
 		Assertions.assertThatThrownBy(() -> processor.postProcessBeforeInitialization(bean, "beanName"))

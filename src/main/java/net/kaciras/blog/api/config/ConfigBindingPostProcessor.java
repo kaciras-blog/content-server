@@ -6,29 +6,19 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Modifier;
 
 /**
- * 在Spring容器启动时扫描所有bean，将标记了{@link BindConfig} 的字段绑定到{@link ConfigService}
+ * 在Spring容器启动时扫描所有bean，将标记了{@link BindConfig} 的字段绑定到{@link ConfigBindingManager}
  * @see BindConfig
- * @see ConfigService
+ * @see ConfigBindingManager
  */
 @RequiredArgsConstructor
-@Component
-public final class ConfigBindingPostProcessor implements BeanPostProcessor, ApplicationContextAware {
+public final class ConfigBindingPostProcessor implements BeanPostProcessor {
 
-	private final ConfigService configService;
-
-	private BeanDefinitionRegistry beanRegistry;
-
-	@Override
-	public void setApplicationContext(ApplicationContext context) {
-		beanRegistry = (BeanDefinitionRegistry) context;
-	}
+	private final BeanDefinitionRegistry beanRegistry;
+	private final ConfigBindingManager configBindingManager;
 
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) {
@@ -59,7 +49,7 @@ public final class ConfigBindingPostProcessor implements BeanPostProcessor, Appl
 				throw new BeanInitializationException(beanName + " - 绑定的字段不能为final：" + field.getName());
 			}
 			field.setAccessible(true);
-			configService.bind(bind.value(), field.getType(), value -> field.set(bean, value));
+			configBindingManager.bind(bind.value(), field.getType(), value -> field.set(bean, value));
 		}
 
 		return bean;

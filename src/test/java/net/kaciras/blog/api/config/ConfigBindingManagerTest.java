@@ -17,7 +17,7 @@ import javax.validation.Validator;
 @Import({JacksonAutoConfiguration.class, ValidationAutoConfiguration.class})
 @SpringBootTest
 @SpringBootConfiguration
-class ConfigServiceTest {
+class ConfigBindingManagerTest {
 
 	@Autowired
 	private Validator validator;
@@ -26,14 +26,14 @@ class ConfigServiceTest {
 	private ConfigRepository repository;
 
 	// 每个测试都重新创建，避免bind方法污染
-	private ConfigService configService;
+	private ConfigBindingManager configBindingManager;
 
 	private TestBindingConfig config;
 
 	@BeforeEach
 	void setUp() {
-		configService = new ConfigService(validator, repository);
-		configService.bind("test", TestBindingConfig.class, v -> config = v);
+		configBindingManager = new ConfigBindingManager(repository, validator);
+		configBindingManager.bind("test", TestBindingConfig.class, v -> config = v);
 	}
 
 	@Test
@@ -45,29 +45,29 @@ class ConfigServiceTest {
 	void bindUpdate() {
 		var newConfig = new TestBindingConfig();
 		newConfig.setIntValue(-123);
-		configService.set("test", newConfig);
+		configBindingManager.set("test", newConfig);
 
 		Assertions.assertThat(config.getIntValue()).isEqualTo(-123);
 	}
 
 	@Test
 	void bindInvalidType() {
-		Assertions.assertThatThrownBy(() -> configService.set("test", null))
+		Assertions.assertThatThrownBy(() -> configBindingManager.set("test", null))
 				.isInstanceOf(NullPointerException.class);
 
-		Assertions.assertThatThrownBy(() -> configService.set("test", Boolean.FALSE))
+		Assertions.assertThatThrownBy(() -> configBindingManager.set("test", Boolean.FALSE))
 				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
 	void getWithoutBind() {
-		Assertions.assertThat(configService.<Object>get("not.bind")).isNull();
+		Assertions.assertThat(configBindingManager.<Object>get("not.bind")).isNull();
 	}
 
-	/** ConfigService.get 会创建一个新对象 */
+	/** ConfigBindingManager.get 会创建一个新对象 */
 	@Test
 	void isolation() {
-		Assertions.assertThat(configService.<TestBindingConfig>get("test")).isNotSameAs(config);
+		Assertions.assertThat(configBindingManager.<TestBindingConfig>get("test")).isNotSameAs(config);
 	}
 
 	@Test
@@ -75,7 +75,7 @@ class ConfigServiceTest {
 		var newConfig = new TestBindingConfig();
 		newConfig.setSubConfig(null);
 
-		Assertions.assertThatThrownBy(() -> configService.set("test", newConfig))
+		Assertions.assertThatThrownBy(() -> configBindingManager.set("test", newConfig))
 				.isInstanceOf(ValidationException.class);
 	}
 
@@ -84,7 +84,7 @@ class ConfigServiceTest {
 		var newConfig = new TestBindingConfig();
 		newConfig.setSmaller(newConfig.getBigger() + 666);
 
-		Assertions.assertThatThrownBy(() -> configService.set("test", newConfig))
+		Assertions.assertThatThrownBy(() -> configBindingManager.set("test", newConfig))
 				.isInstanceOf(ValidationException.class);
 	}
 }

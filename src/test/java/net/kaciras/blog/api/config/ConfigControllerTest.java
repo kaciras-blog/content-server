@@ -46,8 +46,8 @@ final class ConfigControllerTest {
 		}
 
 		@Bean
-		public ConfigController controller(ConfigService configService, ObjectMapper objectMapper) {
-			return new ConfigController(configService, objectMapper);
+		public ConfigController controller(ConfigBindingManager configBindingManager, ObjectMapper objectMapper) {
+			return new ConfigController(configBindingManager, objectMapper);
 		}
 	}
 
@@ -55,7 +55,7 @@ final class ConfigControllerTest {
 	private MockMvc webClient;
 
 	@MockBean
-	private ConfigService configService;
+	private ConfigBindingManager configBindingManager;
 
 	@BeforeEach
 	void setUp() {
@@ -64,7 +64,7 @@ final class ConfigControllerTest {
 
 	@Test
 	void testGet() throws Exception {
-		when(configService.get("test.config")).thenReturn(new TestBindingConfig());
+		when(configBindingManager.get("test.config")).thenReturn(new TestBindingConfig());
 
 		webClient.perform(get("/config/test.config"))
 				.andExpect(status().is(200))
@@ -74,20 +74,20 @@ final class ConfigControllerTest {
 
 	@Test
 	void testGetNonExistent() throws Exception {
-		when(configService.get("non.existent")).thenReturn(null);
+		when(configBindingManager.get("non.existent")).thenReturn(null);
 		webClient.perform(get("/config/non.existent")).andExpect(status().is(404));
 	}
 
 	@Test
 	void testPatch() throws Exception {
-		when(configService.get("test.config")).thenReturn(new TestBindingConfig());
+		when(configBindingManager.get("test.config")).thenReturn(new TestBindingConfig());
 
 		var content = "{ \"enumValue\": \"METHOD\" }";
 		webClient.perform(patch("/config/test.config").content(content))
 				.andExpect(status().is(200));
 
 		var captor = ArgumentCaptor.forClass(TestBindingConfig.class);
-		verify(configService).set(eq("test.config"), captor.capture());
+		verify(configBindingManager).set(eq("test.config"), captor.capture());
 		var newConfig = captor.getValue();
 
 		Assertions.assertThat(newConfig.getEnumValue()).isEqualTo(ElementType.METHOD);
@@ -96,7 +96,7 @@ final class ConfigControllerTest {
 
 	@Test
 	void testPatchNonExistent() throws Exception {
-		when(configService.get("non.existent")).thenReturn(null);
+		when(configBindingManager.get("non.existent")).thenReturn(null);
 		webClient.perform(patch("/config/non.existent")).andExpect(status().is(404));
 	}
 

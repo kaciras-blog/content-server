@@ -14,12 +14,12 @@ import java.io.Reader;
 @RestController
 class ConfigController {
 
-	private final ConfigService configService;
+	private final ConfigBindingManager configBindingManager;
 	private final ObjectMapper objectMapper;
 
 	@GetMapping
 	public ResponseEntity<?> getProperties(@PathVariable String name) {
-		var config = configService.get(name);
+		var config = configBindingManager.get(name);
 		if (config == null) {
 			return ResponseEntity.notFound().build();
 		}
@@ -29,12 +29,12 @@ class ConfigController {
 	@RequireAuthorize
 	@PatchMapping
 	public ResponseEntity<Object> setProperties(@PathVariable String name, Reader body) throws IOException {
-		var config = configService.get(name);
+		var config = configBindingManager.get(name);
 		if (config == null) {
 			return ResponseEntity.notFound().build();
 		}
 		objectMapper.readerForUpdating(config).readValue(body);
-		configService.set(name, config);
+		configBindingManager.set(name, config);
 		return ResponseEntity.ok(config);
 	}
 }
