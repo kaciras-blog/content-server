@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/recommendation/cards")
-class SlideController {
+class CardsController {
 
 	/**
 	 * 轮播需要保证次序，并且支持删除、插入到任意位置，Redis内置的数据类型
