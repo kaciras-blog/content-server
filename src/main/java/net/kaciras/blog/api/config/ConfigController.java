@@ -26,6 +26,7 @@ class ConfigController {
 		return ResponseEntity.ok(config);
 	}
 
+	// 验证出错的异常由 KxWebUtilsAutoConfiguration.ExceptionResolver 处理
 	@RequireAuthorize
 	@PatchMapping
 	public ResponseEntity<Object> setProperties(@PathVariable String name, Reader body) throws IOException {

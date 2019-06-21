@@ -52,10 +52,13 @@ kaciras:
 #
     # 前端页面的域名
 #    www-host: localhost
-#
+
+    # 申请页面 https://console.developers.google.com/apis/credentials
 #    google:
 #      client-id: <your client-id>
 #      client-secret: <your client-secret>
+
+    # 申请页面 https://github.com/settings/applications/new
 #    github:
 #      client-id: <your client-id>
 #      client-secret: <your client-secret>

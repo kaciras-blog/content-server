@@ -17,6 +17,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
 
+/**
+ * https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/
+ */
 @ConditionalOnProperty("kaciras.oauth2.github.client-secret")
 @Component
 @RequiredArgsConstructor

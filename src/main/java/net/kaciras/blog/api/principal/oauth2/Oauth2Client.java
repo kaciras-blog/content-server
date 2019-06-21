@@ -14,7 +14,7 @@ public interface Oauth2Client {
 
 	interface UserInfo {
 
-		/** 不能用整数，因为并是所有提供者都用整数作ID */
+		/** 不能用整数，因为并非所有提供者都用整数作ID */
 		String id();
 
 		/** 第三方系统中的用户名 */

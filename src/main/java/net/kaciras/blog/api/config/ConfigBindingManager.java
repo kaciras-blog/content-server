@@ -11,12 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * 目前还没彻底跟Spring分离
- * 【注意】懒得再把参数复制一份了，所以该方法不具有隔离性。
- */
 @RequiredArgsConstructor
-public class ConfigBindingManager {
+public final class ConfigBindingManager {
 
 	// 目前仅在启动时添加，不存在线程安全问题
 	private final Map<String, ChangeListener> bindings = new HashMap<>();

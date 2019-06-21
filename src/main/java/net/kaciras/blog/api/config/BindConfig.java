@@ -4,8 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * 标记字段或方法需要绑定到配置项，用法：
- * {@code @BindConfig("abc") }
- * {@code private SomeConfig config; }
+ * {@code @BindConfig("abc") private SomeConfig config; }
  * 表示将字段 config 绑定，相当于调用了 configService.bind("abc", SomeConfig.class, newConfig -> config = newConfig);
  */
 @Documented

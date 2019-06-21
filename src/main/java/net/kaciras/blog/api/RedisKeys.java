@@ -18,7 +18,9 @@ public enum RedisKeys {
 	EffectRate("er:"),
 
 	/** 触发非安全请求封禁的记录前缀 */
-	EffectBlocking("eb:");
+	EffectBlocking("eb:"),
+
+	; // <-- 分号是必须要有滴
 
 	private final String prefix;
 

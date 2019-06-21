@@ -18,10 +18,9 @@ import java.util.Arrays;
 @Configurable
 public final class Account {
 
-	/**
-	 * 使用512位的Sha3算法对密码加密
-	 */
+	/** 使用512位的Sha3算法对密码加密 */
 	private static final int HASH_SIZE = 512;
+
 	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
 	@Autowired
@@ -58,7 +57,7 @@ public final class Account {
 	 * 检查给定的密码能否登陆该账号。
 	 *
 	 * @param passText 密码
-	 * @return 如果密码正确返回true
+	 * @return 如果密码正确返回true，否则false
 	 */
 	public boolean checkLogin(String passText) {
 		return Arrays.equals(password, encryptPassword(passText, salt));

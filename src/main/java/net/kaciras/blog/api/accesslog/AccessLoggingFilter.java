@@ -47,7 +47,7 @@ public final class AccessLoggingFilter extends HttpFilter {
 	private void log(HttpServletRequest request, HttpServletResponse response, Instant startInstant) {
 		var record = new AccessRecord();
 		record.setStartTime(LocalDateTime.ofInstant(startInstant, clock.getZone()));
-		record.setIp(Utils.AddressFromRequest(request));
+		record.setIp(Utils.addressFromRequest(request));
 		record.setPath(request.getRequestURI());
 		record.setStatusCode(response.getStatus());
 

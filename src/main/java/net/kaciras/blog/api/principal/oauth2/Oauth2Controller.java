@@ -185,7 +185,7 @@ public class Oauth2Controller {
 		if (localId != null) {
 			return localId;
 		}
-		var regIP = Utils.AddressFromRequest(request);
+		var regIP = Utils.addressFromRequest(request);
 		var newId = userManager.createNew(profile.name(), authType, regIP);
 		oAuth2DAO.insert(profile.id(), authType, newId);
 

@@ -18,6 +18,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 
+/**
+ * https://developers.google.com/identity/protocols/OpenIDConnect
+ */
 @ConditionalOnProperty("kaciras.oauth2.google.client-secret")
 @Component
 @RequiredArgsConstructor

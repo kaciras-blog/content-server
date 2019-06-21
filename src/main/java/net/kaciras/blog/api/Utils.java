@@ -28,7 +28,7 @@ public class Utils {
 	 * @return IP地址，不会为null
 	 */
 	@NonNull
-	public InetAddress AddressFromRequest(HttpServletRequest request) {
+	public InetAddress addressFromRequest(HttpServletRequest request) {
 		var addr = request.getRemoteAddr();
 
 		// 没有地址说明是Mock来的请求

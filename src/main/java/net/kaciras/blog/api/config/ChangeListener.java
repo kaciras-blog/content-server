@@ -16,6 +16,12 @@ final class ChangeListener {
 	@Getter
 	private final Class<?> type;
 
+	/**
+	 * 把配置对象应用到每个绑定点上。
+	 *【注意】懒得为每个接受者复制一份了，所以该方法不具有隔离性。
+	 *
+	 * @param value 配置对象
+	 */
 	public void fire(Object value) {
 		listeners.forEach(lis -> lis.accept(value));
 	}

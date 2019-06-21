@@ -43,7 +43,7 @@ class AccountController {
 									 HttpServletResponse response) {
 		checkCaptcha(request.getSession(true), dto.getCaptcha());
 
-		var id = createUser(dto, Utils.AddressFromRequest(request));
+		var id = createUser(dto, Utils.addressFromRequest(request));
 		sessionService.putUser(request, response, id, true);
 		return ResponseEntity.created(URI.create("/accounts/" + id)).build();
 	}
@@ -62,7 +62,7 @@ class AccountController {
 
 	/**
 	 * 检查用户输入的验证码是否正确且在有效期内。
-	 * [注意] 会话中的验证码是一次性的，在该方法里会被移除。
+	 * 【注意】会话中的验证码是一次性的，在该方法里会被移除。
 	 *
 	 * @param session 会话
 	 * @param value   用户输入的验证码
@@ -81,7 +81,6 @@ class AccountController {
 		}
 	}
 
-	// 原来叫 /session/user，后来嫌麻烦改成 /accounts/login
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginVo,
 								   HttpServletRequest request,

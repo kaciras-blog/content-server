@@ -62,12 +62,12 @@ class DiscussionController {
 		if (query.getParent() != 0) {
 			return new ListQueryView<>(size, mapper.toReplyView(result));
 		}
-		return new ListQueryView<>(size, mapper.toAggregatedView(result, Utils.AddressFromRequest(request)));
+		return new ListQueryView<>(size, mapper.toAggregatedView(result, Utils.addressFromRequest(request)));
 	}
 
 	@PostMapping
 	public ResponseEntity post(HttpServletRequest request, @RequestBody AddRequest message) {
-		var addr = Utils.AddressFromRequest(request);
+		var addr = Utils.addressFromRequest(request);
 		var id = discussionService.add(message, addr);
 		return ResponseEntity.created(URI.create("/discussions/" + id)).build();
 	}
@@ -86,13 +86,13 @@ class DiscussionController {
 	 */
 	@PostMapping("/{id}/votes")
 	public ResponseEntity<Void> postVote(@PathVariable int id, HttpServletRequest request) {
-		discussionService.voteUp(id, Utils.AddressFromRequest(request));
+		discussionService.voteUp(id, Utils.addressFromRequest(request));
 		return ResponseEntity.created(URI.create("discussions/" + id + "/votes")).build();
 	}
 
 	@DeleteMapping("/{id}/votes")
 	public ResponseEntity<Void> revokeVote(@PathVariable int id, HttpServletRequest request) {
-		discussionService.revokeVote(id, Utils.AddressFromRequest(request));
+		discussionService.revokeVote(id, Utils.addressFromRequest(request));
 		return ResponseEntity.noContent().build();
 	}
 }
