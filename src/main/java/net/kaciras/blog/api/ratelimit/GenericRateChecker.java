@@ -1,7 +1,6 @@
 package net.kaciras.blog.api.ratelimit;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.RedisKeys;
 import net.kaciras.blog.infrastructure.ratelimit.RateLimiter;
 import org.springframework.core.annotation.Order;
 
@@ -22,17 +21,15 @@ import java.net.InetAddress;
  */
 @RequiredArgsConstructor
 @Order(Integer.MIN_VALUE + 21)
-public final class GenericRateLimitFilter extends AbstractRateLimitFilter {
+public final class GenericRateChecker implements RateLimiterChecker {
 
 	/** 当达到限制时返回一个响应头告诉客户端相关信息 */
 	private static final String RATE_LIMIT_HEADER = "X-RateLimit-Wait";
 
 	private final RateLimiter rateLimiter;
 
-	protected boolean check(InetAddress address, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		var key = RedisKeys.RateLimit.of(address.toString());
-		var waitTime = rateLimiter.acquire(key, 1);
-
+	public boolean check(InetAddress address, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		var waitTime = rateLimiter.acquire(address.toString(), 1);
 		if (waitTime == 0) {
 			return true;
 		} else if (waitTime < 0) {

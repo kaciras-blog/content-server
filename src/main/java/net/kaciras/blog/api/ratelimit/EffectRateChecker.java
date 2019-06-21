@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 @Slf4j
 @Order(Integer.MIN_VALUE + 20) // 比CORS过滤器低一点，比其他的高
-public final class EffectRateLimitFilter extends AbstractRateLimitFilter {
+public final class EffectRateChecker implements RateLimiterChecker {
 
 	private static final byte[] REJECT_MSG = "{\"message\":\"请求频率太快，IP被封禁\"}".getBytes(StandardCharsets.UTF_8);
 
@@ -30,7 +30,7 @@ public final class EffectRateLimitFilter extends AbstractRateLimitFilter {
 	private Pattern whiteList;
 
 	@Override
-	protected boolean check(InetAddress ip, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public boolean check(InetAddress ip, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (Misc.isSafeRequest(request)) {
 			return true;
 		}

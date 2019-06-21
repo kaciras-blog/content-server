@@ -1,5 +1,6 @@
 package net.kaciras.blog.api.ratelimit;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.kaciras.blog.api.Utils;
 import org.springframework.lang.Nullable;
@@ -12,20 +13,27 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 
+@RequiredArgsConstructor
 @Slf4j
-public abstract class AbstractRateLimitFilter extends HttpFilter {
+public final class RateLimitFilter extends HttpFilter {
+
+	private final List<RateLimiterChecker> checkers;
 
 	@Override
 	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 		var ip = getClientAddress(request);
-		if (ip == null || check(ip, request, response)) {
-			chain.doFilter(request, response);
+		if (ip != null) {
+			for (var checker : checkers) {
+				if (!checker.check(ip, request, response)) return;
+			}
 		}
+		chain.doFilter(request, response);
 	}
 
 	@Nullable
-	private static InetAddress getClientAddress(HttpServletRequest request) {
+	private InetAddress getClientAddress(HttpServletRequest request) {
 		var address = Utils.AddressFromRequest(request);
 
 		// 服务端渲染或反向代理，需要拿到真实IP
@@ -43,7 +51,4 @@ public abstract class AbstractRateLimitFilter extends HttpFilter {
 		}
 		return address;
 	}
-
-	protected abstract boolean check(InetAddress address, HttpServletRequest request,
-									 HttpServletResponse response) throws IOException;
 }

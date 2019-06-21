@@ -1,6 +1,5 @@
-package net.kaciras.blog.api;
+package net.kaciras.blog.api.ratelimit;
 
-import net.kaciras.blog.api.ratelimit.GenericRateLimitFilter;
 import net.kaciras.blog.infrastructure.ratelimit.RateLimiter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,15 +8,16 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.Filter;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-final class GenericRateLimitFilterTest {
+final class GenericRateCheckerTest {
 
 	private final RateLimiter limiter = mock(RateLimiter.class);
-	private final Filter filter = new GenericRateLimitFilter(limiter);
+	private final Filter filter = new RateLimitFilter(List.of(new GenericRateChecker(limiter)));
 
 	private MockFilterChain chain = new MockFilterChain();
 

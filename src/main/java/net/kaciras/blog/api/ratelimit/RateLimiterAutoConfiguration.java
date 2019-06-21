@@ -14,6 +14,7 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
 import java.time.Clock;
+import java.util.ArrayList;
 
 @EnableConfigurationProperties(RateLimiterProperties.class)
 @Configuration
@@ -21,6 +22,7 @@ import java.time.Clock;
 public class RateLimiterAutoConfiguration {
 
 	private final RateLimiterProperties properties;
+	private final Clock clock;
 
 	@ConditionalOnMissingBean
 	@Bean
@@ -34,23 +36,36 @@ public class RateLimiterAutoConfiguration {
 	}
 
 	@Bean
-	GenericRateLimitFilter genericRateLimiterFilter(RedisTemplate<String, Object> template, Clock clock) {
-		var limiter = new RedisTokenBucket(RedisKeys.RateLimit.value(), template, clock);
-		var bucket = properties.generic;
-		limiter.addBucket(bucket.size, bucket.rate);
-		return new GenericRateLimitFilter(limiter);
+	RateLimitFilter rateLimitFilter(RedisTemplate<String, Object> redis) {
+		var checkers = new ArrayList<RateLimiterChecker>(2);
+		if (properties.generic != null) {
+			checkers.add(createGenericChecker(redis));
+		}
+		if (properties.effective != null) {
+			checkers.add(createEffectChecker(redis));
+		}
+		return new RateLimitFilter(checkers);
 	}
 
-	@Bean
-	EffectRateLimitFilter effectRateLimitFilter(RedisTemplate<String, Object> template, Clock clock) {
-		var inner = new RedisTokenBucket(RedisKeys.EffectRate.value(), template, clock);
+	private GenericRateChecker createGenericChecker(RedisTemplate<String, Object> redis) {
+		var limiter = new RedisTokenBucket(RedisKeys.RateLimit.value(), redis, clock);
+		var bucket = properties.generic;
+		limiter.addBucket(bucket.size, bucket.rate);
+		return new GenericRateChecker(limiter);
+	}
+
+	private EffectRateChecker createEffectChecker(RedisTemplate<String, Object> redis) {
 		var config = properties.effective;
 
+		var inner = new RedisTokenBucket(RedisKeys.EffectRate.value(), redis, clock);
 		for (var limit : config.limits) {
 			inner.addBucket(limit.permits, limit.permits / (double) limit.time.toSeconds());
 		}
 
-		var limiter = new RedisBlockingLimiter(RedisKeys.EffectBlocking.value(), inner, template);
-		return new EffectRateLimitFilter(limiter);
+		var limiter = new RedisBlockingLimiter(RedisKeys.EffectBlocking.value(), inner, redis);
+		limiter.setBanTime(config.blockTime);
+		limiter.setRefreshOnReject(config.refreshOnReject);
+
+		return new EffectRateChecker(limiter);
 	}
 }
