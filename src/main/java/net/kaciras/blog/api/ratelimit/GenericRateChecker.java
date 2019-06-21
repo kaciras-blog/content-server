@@ -2,7 +2,6 @@ package net.kaciras.blog.api.ratelimit;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.infrastructure.ratelimit.RateLimiter;
-import org.springframework.core.annotation.Order;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +19,6 @@ import java.net.InetAddress;
  * @see org.springframework.web.filter.CorsFilter#doFilterInternal
  */
 @RequiredArgsConstructor
-@Order(Integer.MIN_VALUE + 21)
 public final class GenericRateChecker implements RateLimiterChecker {
 
 	/** 当达到限制时返回一个响应头告诉客户端相关信息 */

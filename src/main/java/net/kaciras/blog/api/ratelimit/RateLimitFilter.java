@@ -3,6 +3,7 @@ package net.kaciras.blog.api.ratelimit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.kaciras.blog.api.Utils;
+import org.springframework.core.annotation.Order;
 import org.springframework.lang.Nullable;
 
 import javax.servlet.FilterChain;
@@ -15,8 +16,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
-@RequiredArgsConstructor
+@Order(Integer.MIN_VALUE + 20)
 @Slf4j
+@RequiredArgsConstructor
 public final class RateLimitFilter extends HttpFilter {
 
 	private final List<RateLimiterChecker> checkers;
@@ -34,7 +36,7 @@ public final class RateLimitFilter extends HttpFilter {
 
 	@Nullable
 	private InetAddress getClientAddress(HttpServletRequest request) {
-		var address = Utils.AddressFromRequest(request);
+		var address = Utils.addressFromRequest(request);
 
 		// 服务端渲染或反向代理，需要拿到真实IP
 		if (address.isLoopbackAddress() || address.isSiteLocalAddress()) {

@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.kaciras.blog.infrastructure.Misc;
 import net.kaciras.blog.infrastructure.ratelimit.RateLimiter;
-import org.springframework.core.annotation.Order;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +19,6 @@ import java.util.regex.Pattern;
 @Setter
 @RequiredArgsConstructor
 @Slf4j
-@Order(Integer.MIN_VALUE + 20) // 比CORS过滤器低一点，比其他的高
 public final class EffectRateChecker implements RateLimiterChecker {
 
 	private static final byte[] REJECT_MSG = "{\"message\":\"请求频率太快，IP被封禁\"}".getBytes(StandardCharsets.UTF_8);

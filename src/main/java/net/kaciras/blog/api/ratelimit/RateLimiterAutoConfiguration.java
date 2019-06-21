@@ -35,6 +35,7 @@ public class RateLimiterAutoConfiguration {
 		return redisTemplate;
 	}
 
+	// 在这里决定Checker的顺序
 	@Bean
 	RateLimitFilter rateLimitFilter(RedisTemplate<String, Object> redis) {
 		var checkers = new ArrayList<RateLimiterChecker>(2);
