@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.kaciras.blog.infrastructure.autoconfig.KxWebUtilsAutoConfiguration;
+import net.kaciras.blog.infrastructure.autoconfigure.KxWebUtilsAutoConfiguration;
 import net.kaciras.blog.infrastructure.principal.AuthorizeAspect;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import net.kaciras.blog.infrastructure.principal.WebPrincipal;

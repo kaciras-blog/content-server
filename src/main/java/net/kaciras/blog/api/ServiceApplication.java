@@ -5,7 +5,7 @@ import io.lettuce.core.resource.DefaultClientResources;
 import io.lettuce.core.resource.DefaultEventLoopGroupProvider;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import net.kaciras.blog.infrastructure.Misc;
-import net.kaciras.blog.infrastructure.autoconfig.*;
+import net.kaciras.blog.infrastructure.autoconfigure.*;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
