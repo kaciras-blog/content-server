@@ -23,9 +23,9 @@ public final class ArticleListQuery {
 	 * 资源的删除状态过滤，对于无删除状态的资源，此字段将被忽略
 	 */
 	@NotNull
-	private DeletedState deletion = DeletedState.FALSE;
+	private DeletedState deletion = DeletedState.ALIVE;
 
 	public static ArticleListQuery ofCategory(int id, boolean recursive) {
-		return new ArticleListQuery(null, 0, id, recursive, DeletedState.FALSE);
+		return new ArticleListQuery(null, 0, id, recursive, DeletedState.ALIVE);
 	}
 }

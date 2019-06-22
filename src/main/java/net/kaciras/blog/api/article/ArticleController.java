@@ -31,7 +31,7 @@ class ArticleController {
 	@GetMapping
 	public ListQueryView<PreviewVo> getList(ArticleListQuery query, Pageable pageable) {
 		query.setPageable(pageable);
-		if (query.getDeletion() != DeletedState.FALSE) {
+		if (query.getDeletion() != DeletedState.ALIVE) {
 			SecurityContext.require("SHOW_DELETED");
 		}
 		var items = mapper.toPreview(repository.findAll(query), query);

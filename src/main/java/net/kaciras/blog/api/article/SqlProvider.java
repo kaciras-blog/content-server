@@ -13,11 +13,11 @@ public final class SqlProvider {
 
 	private void applyFilters(SQL sql, ArticleListQuery query) {
 		switch (query.getDeletion()) {
-			case TRUE:
-				sql.WHERE("deleted = 1");
-				break;
-			case FALSE:
+			case ALIVE:
 				sql.WHERE("deleted = 0");
+				break;
+			case DELETED:
+				sql.WHERE("deleted = 1");
 				break;
 		}
 
