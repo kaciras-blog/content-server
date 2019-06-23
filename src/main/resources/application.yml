@@ -1,3 +1,6 @@
+# 配置一些属性的默认值，如果不改动代码只是运行的话不需要修改此文件。
+# 运行所需的环境配置在根目录的 application-EXAMPLE.yml 里
+
 server:
 
   connection-timeout: 10s

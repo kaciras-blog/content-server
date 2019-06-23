@@ -32,7 +32,7 @@ import java.net.http.HttpClient;
 import java.time.Clock;
 
 /**
- * 在配置文件里排除了一些配置，添加新功能时记得看下有没有需要的依赖被排除了。
+ * 【注意】在配置文件里排除了一些配置，添加新功能时记得看下有没有需要的依赖被排除了。
  */
 @EnableScheduling
 @EnableTransactionManagement(proxyTargetClass = true)
@@ -102,7 +102,7 @@ public class ServiceApplication {
 	@Bean
 	ThreadPoolTaskScheduler taskScheduler(ObjectProvider<TaskSchedulerCustomizer> customizers) {
 		var taskScheduler = new ThreadPoolTaskScheduler();
-		taskScheduler.setPoolSize(1);
+		taskScheduler.setPoolSize(2);
 		taskScheduler.setThreadNamePrefix("SharedThreadPool-");
 		customizers.forEach(customizer -> customizer.customize(taskScheduler));
 

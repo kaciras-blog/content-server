@@ -1,6 +1,8 @@
+# 想运行该程序必须先配置此文件，并去掉此文件的 -EXAMPLE 后缀或是用 Spring 的 profiles 指定配置文件。
+
 spring:
 
-  # 你需要先创建数据库，SpringBoot能够使用 resources/schema.sql 自动建表
+  # 你需要先创建数据库，SpringBoot　能够使用 resources/schema.sql 自动建表
   datasource:
     url: jdbc:mariadb://localhost:3306/blog?allowMultiQueries=true
     username: root
