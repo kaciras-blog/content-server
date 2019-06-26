@@ -44,8 +44,8 @@ public final class RateLimiterProperties {
 
 		public boolean refreshOnReject;
 
-		public Duration blockTime;
+		public List<Duration> blockTimes;
 
-		public List<RateLimit> limits;
+		public List<RateLimit> buckets;
 	}
 }

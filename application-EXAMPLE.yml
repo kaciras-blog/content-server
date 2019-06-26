@@ -36,12 +36,14 @@ kaciras:
     # 对非幂等请求的限速，主要是限制评论速率
     effective:
 
-      # 达到限制封禁IP一小时，封禁期访问则重置封禁时间
-      block-time: 1h
+      # 达到限制封禁IP，连续封禁时间依次递增
+      block-times: [1h, 5h, 1d]
+
+      # 封禁期访问则重置封禁时间
       refresh-on-reject: true
 
       # 60秒10个，半小时60个，一天300个
-      limits:
+      buckets:
         - permits: 6
           time: 60
         - permits: 60

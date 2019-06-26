@@ -21,12 +21,14 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class RateLimiterAutoConfiguration {
 
-	private final RateLimiterProperties properties;
+	private final RedisConnectionFactory factory;
 	private final Clock clock;
+
+	private final RateLimiterProperties properties;
 
 	@ConditionalOnMissingBean
 	@Bean
-	RedisTemplate<String, Object> genericToStringRedisTemplate(RedisConnectionFactory factory) {
+	RedisTemplate<String, Object> genericToStringRedisTemplate() {
 		var redisTemplate = new RedisTemplate<String, Object>();
 		redisTemplate.setConnectionFactory(factory);
 		redisTemplate.setEnableDefaultSerializer(false);
@@ -59,14 +61,14 @@ public class RateLimiterAutoConfiguration {
 		var config = properties.effective;
 
 		var inner = new RedisTokenBucket(RedisKeys.EffectRate.value(), redis, clock);
-		for (var limit : config.limits) {
+		for (var limit : config.buckets) {
 			inner.addBucket(limit.permits, limit.permits / (double) limit.time.toSeconds());
 		}
 
-		var limiter = new RedisBlockingLimiter(RedisKeys.EffectBlocking.value(), inner, redis);
-		limiter.setBanTime(config.blockTime);
-		limiter.setRefreshOnReject(config.refreshOnReject);
+		var wrapper = new RedisBlockingLimiter(RedisKeys.EffectBlocking.value(), inner, factory, clock);
+		wrapper.setBlockTimes(config.blockTimes);
+		wrapper.setRefreshOnReject(config.refreshOnReject);
 
-		return new EffectRateChecker(limiter);
+		return new EffectRateChecker(wrapper);
 	}
 }
