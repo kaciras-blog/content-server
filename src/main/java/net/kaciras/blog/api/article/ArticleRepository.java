@@ -49,7 +49,7 @@ public class ArticleRepository {
 			keywordDAO.clear(article.getId());
 			insertKeywords(article.getId(), article.getKeywords());
 		} catch (DataIntegrityViolationException ex) {
-			throw new RequestArgumentException(ex);
+			throw new RequestArgumentException();
 		}
 	}
 
