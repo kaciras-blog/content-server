@@ -20,6 +20,9 @@ public enum RedisKeys {
 	/** 触发非安全请求封禁的记录前缀 */
 	EffectBlocking("eb:"),
 
+	/** 动态配置信息的前缀 */
+	ConfigStore("cfg:"),
+
 	; // <-- 分号是必须要有滴
 
 	private final String prefix;
