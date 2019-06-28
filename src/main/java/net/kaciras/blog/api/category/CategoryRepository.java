@@ -30,7 +30,7 @@ public class CategoryRepository {
 	}
 
 	@Transactional
-	public int add(@NonNull Category category, int parent) {
+	public void add(@NonNull Category category, int parent) {
 		Utils.checkNotNegative(parent, "parent");
 		if (parent > 0) {
 			requireContains(parent);
@@ -42,7 +42,6 @@ public class CategoryRepository {
 		}
 		dao.insertPath(category.getId(), parent);
 		dao.insertNode(category.getId());
-		return category.getId();
 	}
 
 	/**

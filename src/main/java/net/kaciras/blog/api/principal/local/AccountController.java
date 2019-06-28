@@ -43,18 +43,18 @@ class AccountController {
 									 HttpServletResponse response) {
 		checkCaptcha(request.getSession(true), dto.getCaptcha());
 
-		var id = createUser(dto, Utils.addressFromRequest(request));
-		sessionService.putUser(request, response, id, true);
-		return ResponseEntity.created(URI.create("/accounts/" + id)).build();
+		var account = createAccount(dto, Utils.addressFromRequest(request));
+		sessionService.putUser(request, response, account.getId(), true);
+		return ResponseEntity.created(URI.create("/accounts/" + account.getId())).build();
 	}
 
 	@Transactional
-	protected int createUser(RegisterRequest request, InetAddress ip) {
+	protected Account createAccount(RegisterRequest request, InetAddress ip) {
 		try {
 			var id = userManager.createNew(request.getName(), AuthType.Local, ip);
 			var account = Account.create(id, request.getName(), request.getPassword());
 			repository.add(account);
-			return account.getId();
+			return account;
 		} catch (SQLException e) {
 			throw new RequestArgumentException("用户名已被使用");
 		}

@@ -30,15 +30,18 @@ class CategoryController {
 
 	@RequireAuthorize
 	@PostMapping
-	public ResponseEntity<Void> create(@RequestBody CategoryAttributes category, @RequestParam int parent) {
-		var id = repository.add(mapper.toCategory(category), parent);
-		return ResponseEntity.created(URI.create("/categories/" + id)).build();
+	public ResponseEntity<CategoryVo> create(@RequestBody CategoryAttributes attrs, @RequestParam int parent) {
+		var category = mapper.toCategory(attrs);
+		repository.add(category, parent);
+		return ResponseEntity
+				.created(URI.create("/categories/" + category.getId()))
+				.body(mapper.categoryView(category));
 	}
 
-	@Transactional
 	@RequireAuthorize
+	@Transactional
 	@PostMapping("/transfer")
-	public void move(@RequestParam int id, @RequestParam int parent, @RequestParam boolean treeMode) {
+	public ResponseEntity<Void> move(@RequestParam int id, @RequestParam int parent, @RequestParam boolean treeMode) {
 		var category = repository.get(id);
 		var newParent = repository.get(parent);
 
@@ -47,18 +50,19 @@ class CategoryController {
 		} else {
 			category.moveTo(newParent);
 		}
+		return ResponseEntity.noContent().build();
 	}
 
 	@RequireAuthorize
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody CategoryAttributes attributes) {
+	public CategoryVo update(@PathVariable int id, @RequestBody CategoryAttributes attributes) {
 		var category = repository.get(id);
 		mapper.update(category, attributes);
 		repository.update(category);
-		return ResponseEntity.noContent().build();
+		return mapper.categoryView(category);
 	}
 
-// 暂不支持删除，删除后文章的迁移问题
+// TODO:暂不支持删除，删除后文章的迁移有问题
 //	@RequireAuthorize
 //	@DeleteMapping("/{id}")
 //	public ResponseEntity<Void> delete(@PathVariable int id, @RequestParam boolean tree) {

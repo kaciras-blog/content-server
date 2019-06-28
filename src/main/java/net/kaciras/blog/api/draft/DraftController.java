@@ -5,7 +5,6 @@ import net.kaciras.blog.api.ListQueryView;
 import net.kaciras.blog.api.article.model.ArticleManager;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +46,7 @@ class DraftController {
 	 */
 	@Transactional
 	@PostMapping
-	public ResponseEntity<Void> createDraft(@RequestParam(required = false) Integer article) {
+	public ResponseEntity<DraftVo> createDraft(@RequestParam(required = false) Integer article) {
 		var content = article != null
 				? mapper.fromArticle(articleManager.getLiveArticle(article))
 				: DraftContent.initial();
@@ -59,13 +58,15 @@ class DraftController {
 		repository.add(draft);
 		draft.getHistoryList().add(content);
 
-		return ResponseEntity.created(URI.create("/drafts/" + draft.getId())).build();
+		return ResponseEntity
+				.created(URI.create("/drafts/" + draft.getId()))
+				.body(mapper.toDraftVo(draft));
 	}
 
 	@DeleteMapping
 	public ResponseEntity<Void> clearForUser(@RequestParam int userId) {
 		repository.clear(userId);
-		return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
+		return ResponseEntity.noContent().build();
 	}
 
 	@DeleteMapping("/{id}")

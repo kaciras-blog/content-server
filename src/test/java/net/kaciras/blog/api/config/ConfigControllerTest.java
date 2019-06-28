@@ -5,7 +5,6 @@ import net.kaciras.blog.infrastructure.autoconfigure.KxWebUtilsAutoConfiguration
 import net.kaciras.blog.infrastructure.principal.AuthorizeAspect;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import net.kaciras.blog.infrastructure.principal.WebPrincipal;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -22,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.lang.annotation.ElementType;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,11 +51,14 @@ final class ConfigControllerTest {
 		}
 	}
 
-	@Autowired
-	private MockMvc webClient;
-
 	@MockBean
 	private ConfigBindingManager configBindingManager;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	@Autowired
+	private MockMvc webClient;
 
 	@BeforeEach
 	void setUp() {
@@ -83,15 +86,20 @@ final class ConfigControllerTest {
 		when(configBindingManager.get("test.config")).thenReturn(new TestBindingConfig());
 
 		var content = "{ \"enumValue\": \"METHOD\" }";
-		webClient.perform(patch("/config/test.config").content(content))
-				.andExpect(status().is(200));
+		var body = webClient.perform(patch("/config/test.config").content(content))
+				.andExpect(status().is(200))
+				.andReturn().getResponse().getContentAsString();
 
+		// 这里非得用 eq() 不可
 		var captor = ArgumentCaptor.forClass(TestBindingConfig.class);
 		verify(configBindingManager).set(eq("test.config"), captor.capture());
 		var newConfig = captor.getValue();
 
-		Assertions.assertThat(newConfig.getEnumValue()).isEqualTo(ElementType.METHOD);
-		Assertions.assertThat(newConfig.getIntValue()).isEqualTo(33);
+		assertThat(newConfig.getEnumValue()).isEqualTo(ElementType.METHOD);
+		assertThat(newConfig.getIntValue()).isEqualTo(33);
+
+		var updated = objectMapper.readValue(body, TestBindingConfig.class);
+		assertThat(updated.getEnumValue()).isEqualTo(ElementType.METHOD);
 	}
 
 	@Test

@@ -29,13 +29,13 @@ class ConfigController {
 	// 验证出错的异常由 KxWebUtilsAutoConfiguration.ExceptionResolver 处理
 	@RequireAuthorize
 	@PatchMapping
-	public ResponseEntity<Object> setProperties(@PathVariable String name, Reader body) throws IOException {
+	public Object setProperties(@PathVariable String name, Reader body) throws IOException {
 		var config = configBindingManager.get(name);
 		if (config == null) {
 			return ResponseEntity.notFound().build();
 		}
 		objectMapper.readerForUpdating(config).readValue(body);
 		configBindingManager.set(name, config);
-		return ResponseEntity.ok(config);
+		return config;
 	}
 }

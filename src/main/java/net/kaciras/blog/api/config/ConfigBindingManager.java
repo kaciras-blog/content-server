@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @RequiredArgsConstructor
-public final class ConfigBindingManager {
+public class ConfigBindingManager {
 
 	// 目前仅在启动时添加，不存在线程安全问题
 	private final Map<String, ChangeListener> bindings = new HashMap<>();

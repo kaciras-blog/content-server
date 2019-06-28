@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.Collections;
 
 @RequiredArgsConstructor
 @RestController
@@ -66,10 +67,17 @@ class DiscussionController {
 	}
 
 	@PostMapping
-	public ResponseEntity post(HttpServletRequest request, @RequestBody AddRequest message) {
+	public ResponseEntity<DiscussionVo> post(HttpServletRequest request, @RequestBody AddRequest message) {
 		var addr = Utils.addressFromRequest(request);
-		var id = discussionService.add(message, addr);
-		return ResponseEntity.created(URI.create("/discussions/" + id)).build();
+		var discussion = discussionService.add(message, addr);
+
+		// HACK: 越来越觉得要尽快迁移GraphQL了
+		var vo = mapper.toReplyView(discussion);
+		if (discussion.getParent() == 0) {
+			vo.setReplies(Collections.emptyList());
+		}
+
+		return ResponseEntity.created(URI.create("/discussions/" + discussion.getId())).body(vo);
 	}
 
 	@RequireAuthorize // 当前仅支持管理者更新评论

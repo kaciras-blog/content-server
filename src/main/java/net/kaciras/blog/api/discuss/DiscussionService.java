@@ -44,7 +44,7 @@ public class DiscussionService {
 		return repository.size(query);
 	}
 
-	public long add(AddRequest request, InetAddress address) {
+	public Discussion add(AddRequest request, InetAddress address) {
 		checkDiscussable();
 		var user = SecurityContext.getUserId();
 		Discussion discussion;
@@ -63,7 +63,7 @@ public class DiscussionService {
 		discussion.setState(options.isModeration() ? DiscussionState.Moderation : DiscussionState.Visible);
 
 		repository.add(discussion);
-		return discussion.getId();
+		return discussion;
 	}
 
 	public void voteUp(int id, InetAddress address) {
