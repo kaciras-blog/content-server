@@ -4,7 +4,8 @@ server:
   port: 80
 
   # 如果使用了TLS，又同时要支持HTTP连接，则启用这个选项
-#  extra-http-port: 80
+#  additional-connector:
+#    port: 80
 
 spring:
 
