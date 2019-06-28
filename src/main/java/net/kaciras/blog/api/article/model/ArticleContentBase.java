@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.article;
+package net.kaciras.blog.api.article.model;
 
 import lombok.Data;
 import lombok.ToString;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @ToString(of = "title")
 @Data
-abstract class ArticleContentBase {
+public abstract class ArticleContentBase {
 
 	private String title;
 

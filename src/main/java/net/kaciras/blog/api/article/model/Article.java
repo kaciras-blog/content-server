@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.article;
+package net.kaciras.blog.api.article.model;
 
 import lombok.*;
 import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @ToString(of = "id")
 @Data
 @Configurable
-public final class Article extends ArticleContentBase {
+public class Article extends ArticleContentBase {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -34,9 +34,9 @@ public final class Article extends ArticleContentBase {
 	/**
 	 * 显示在URL中的标题，有利于SEO，不要出现与URL中的特殊字符。
 	 * 为什么要单独定义此字段而不是使用原始标题：
-	 *     1.原始标题中如果存在URL关键字，如 `?`,`/` 等，需要转换或删除。
-	 *     2.原始标题能够被修改，而URL经常更改不利于SEO。
-	 *     3.部分搜索引擎对非ASCII字符不友好，可能需要将标题转换成其它形式，比如英语。
+	 * 1.原始标题中如果存在URL关键字，如 `?`,`/` 等，需要转换或删除。
+	 * 2.原始标题能够被修改，而URL经常更改不利于SEO。
+	 * 3.部分搜索引擎对非ASCII字符不友好，可能需要将标题转换成其它形式，比如英语。
 	 */
 	private String urlTitle;
 
@@ -61,14 +61,17 @@ public final class Article extends ArticleContentBase {
 			}
 			throw new ResourceStateException("文章还没有被删除呢");
 		}
+		this.deleted = value;
 		articleDAO.updateDeleted(id, value);
 	}
 
 	public void updateUrlTitle(@NonNull String urlTitle) {
+		this.urlTitle = urlTitle;
 		articleDAO.updateUrlTitle(id, urlTitle);
 	}
 
 	public void updateCategory(int category) {
+		this.category = category;
 		classifyDAO.updateByArticle(id, category);
 	}
 

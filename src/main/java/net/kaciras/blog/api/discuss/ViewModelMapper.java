@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.discuss;
 
 import net.kaciras.blog.api.MapStructConfig;
-import net.kaciras.blog.api.article.ArticleManager;
+import net.kaciras.blog.api.article.model.ArticleManager;
 import net.kaciras.blog.api.user.UserManager;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;

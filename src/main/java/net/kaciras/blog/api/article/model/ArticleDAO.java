@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.article;
+package net.kaciras.blog.api.article.model;
 
 import org.apache.ibatis.annotations.*;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
 interface ArticleDAO {
 
 	@Select("SELECT * FROM article WHERE id=#{id}")
-	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleMap")
+	@ResultMap("net.kaciras.blog.api.article.model.ArticleDAO.ArticleMap")
 	Optional<Article> selectById(int id);
 
 	@Select("SELECT COUNT(*) FROM article")
@@ -25,7 +25,7 @@ interface ArticleDAO {
 	 * @return 文章预览信息列表
 	 */
 	@SelectProvider(type = SqlProvider.class, method = "selectPreview")
-	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleMap")
+	@ResultMap("net.kaciras.blog.api.article.model.ArticleDAO.ArticleMap")
 	List<Article> selectPreview(ArticleListQuery query);
 
 	@Insert("INSERT INTO article(category, title, url_title, cover, summary, content) " +
@@ -54,10 +54,10 @@ interface ArticleDAO {
 
 	// 与 getNeighbor 相比，没有 deleted=0 这个条件
 	@Select("SELECT id, title, url_title FROM article WHERE id=#{id} LIMIT 1")
-	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleLinkMap")
+	@ResultMap("net.kaciras.blog.api.article.model.ArticleDAO.ArticleLinkMap")
 	ArticleLink getLink(int id);
 
 	@Select("SELECT id, title, url_title FROM article WHERE id ${comparator} #{id} AND deleted=0 LIMIT 1")
-	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleLinkMap")
+	@ResultMap("net.kaciras.blog.api.article.model.ArticleDAO.ArticleLinkMap")
 	ArticleLink getNeighbor(int id, String comparator);
 }

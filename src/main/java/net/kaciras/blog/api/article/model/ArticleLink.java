@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.article;
+package net.kaciras.blog.api.article.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -2,7 +2,7 @@ package net.kaciras.blog.api.draft;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.ListQueryView;
-import net.kaciras.blog.api.article.ArticleManager;
+import net.kaciras.blog.api.article.model.ArticleManager;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.http.HttpStatus;

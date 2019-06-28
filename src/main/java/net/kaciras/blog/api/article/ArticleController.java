@@ -3,6 +3,9 @@ package net.kaciras.blog.api.article;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.api.ListQueryView;
+import net.kaciras.blog.api.article.model.ArticleListQuery;
+import net.kaciras.blog.api.article.model.ArticleManager;
+import net.kaciras.blog.api.article.model.ArticleRepository;
 import net.kaciras.blog.api.draft.DraftRepository;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -49,20 +53,22 @@ class ArticleController {
 
 	@RequireAuthorize
 	@PostMapping
-	public ResponseEntity<Void> post(@RequestBody @Valid PublishRequest request) {
+	public ResponseEntity<ArticleVo> post(@RequestBody @Valid PublishRequest request) {
 		var article = mapper.createArticle(request);
 		repository.add(article);
 
 		if (deleteAfterSubmit) {
 			draftRepository.remove(request.getDraftId());
 		}
-		return ResponseEntity.created(URI.create("/articles/" + article.getId())).build();
+		return ResponseEntity
+				.created(URI.create("/articles/" + article.getId()))
+				.body(mapper.toViewObject(article));
 	}
 
 	// 不更改 urlTitle，category，这些属性使用PATCH修改
 	@RequireAuthorize
 	@PutMapping("/{id}")
-	public ResponseEntity<Void> update(@PathVariable int id, @RequestBody PublishRequest request) {
+	public ArticleVo update(@PathVariable int id, @RequestBody PublishRequest request) {
 		var article = repository.get(id);
 
 		mapper.update(article, request);
@@ -71,23 +77,16 @@ class ArticleController {
 		if (deleteAfterSubmit) {
 			draftRepository.remove(request.getDraftId());
 		}
-		return ResponseEntity.noContent().build();
+		return mapper.toViewObject(article);
 	}
 
 	@RequireAuthorize
 	@PatchMapping("/{id}")
-	public ResponseEntity<Void> patch(@PathVariable int id, @RequestBody PatchMap patchMap) {
+	public ArticleVo patch(@PathVariable int id, @RequestBody PatchMap patchMap) {
 		var article = repository.get(id);
-
-		if (patchMap.getCategory() != null) {
-			article.updateCategory(patchMap.getCategory());
-		}
-		if (patchMap.getDeletion() != null) {
-			article.updateDeleted(patchMap.getDeletion());
-		}
-		if (patchMap.getUrlTitle() != null) {
-			article.updateUrlTitle(patchMap.getUrlTitle());
-		}
-		return ResponseEntity.noContent().build();
+		Optional.ofNullable(patchMap.getCategory()).ifPresent(article::updateCategory);
+		Optional.ofNullable(patchMap.getDeletion()).ifPresent(article::updateDeleted);
+		Optional.ofNullable(patchMap.getUrlTitle()).ifPresent(article::updateUrlTitle);
+		return mapper.toViewObject(article);
 	}
 }

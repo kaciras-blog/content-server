@@ -1,6 +1,9 @@
 package net.kaciras.blog.api.article;
 
 import net.kaciras.blog.api.MapStructConfig;
+import net.kaciras.blog.api.article.model.Article;
+import net.kaciras.blog.api.article.model.ArticleContentBase;
+import net.kaciras.blog.api.article.model.ArticleListQuery;
 import net.kaciras.blog.api.category.Category;
 import net.kaciras.blog.api.category.CategoryManager;
 import net.kaciras.blog.api.category.CategoryRepository;

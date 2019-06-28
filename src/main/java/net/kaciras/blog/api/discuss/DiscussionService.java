@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.api.article.ArticleRepository;
+import net.kaciras.blog.api.article.model.ArticleRepository;
 import net.kaciras.blog.api.config.BindConfig;
 import net.kaciras.blog.infrastructure.exception.PermissionException;
 import net.kaciras.blog.infrastructure.exception.RequestArgumentException;

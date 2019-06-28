@@ -2,6 +2,7 @@ package net.kaciras.blog.api.article;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.kaciras.blog.api.article.model.ArticleContentBase;
 
 import javax.validation.constraints.NotEmpty;
 

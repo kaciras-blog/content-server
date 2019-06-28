@@ -1,78 +1,54 @@
 package net.kaciras.blog.api.article;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import net.kaciras.blog.api.AbstractSpringTest;
-import org.assertj.core.api.Assertions;
+import net.kaciras.blog.api.article.model.Article;
+import net.kaciras.blog.api.article.model.ArticleManager;
+import net.kaciras.blog.api.article.model.ArticleRepository;
+import net.kaciras.blog.api.draft.DraftRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.web.servlet.MvcResult;
+import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
-import java.io.IOException;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class ArticleControllerTest extends AbstractSpringTest {
+final class ArticleControllerTest extends AbstractSpringTest {
 
-	private JsonNode queryArticle(int id) throws Exception {
-		return objectMapper.readTree(mockMvc.perform(get("/articles/" + id))
-				.andExpect(status().isOk())
-				.andReturn().getResponse().getContentAsString());
-	}
+	@MockBean
+	private ArticleRepository repository;
 
-	private void matchArticleMetadataList(MvcResult result) throws IOException {
-		objectMapper.readTree(result.getResponse().getContentAsByteArray())
-				.elements()
-				.forEachRemaining(this::checkMetadata);
-	}
+	@MockBean
+	private DraftRepository draftRepository;
 
-	private void matchArticleMetadata(MvcResult result) throws IOException {
-		checkMetadata(objectMapper.readTree(result.getResponse().getContentAsByteArray()));
-	}
+	@MockBean
+	private ArticleMapper articleMapper;
 
-	private void checkMetadata(JsonNode node) {
-		node.get("id").asInt();
-		node.get("title").asText();
-	}
+	@MockBean
+	private ArticleManager articleManager;
 
-	@Test
-	void testGetList() throws Exception {
-		mockMvc.perform(get("/articles"))
-				.andExpect(status().isOk())
-				.andExpect(this::matchArticleMetadataList);
+	private Article article = spy(new Article());
+
+	@BeforeEach
+	void setUp() {
+		article.setId(5);
+		when(repository.get(5)).thenReturn(article);
 	}
 
 	@Test
-	void testChangeCategory() throws Exception {
-		Assertions.assertThat(queryArticle(1).get("category").asInt()).isEqualTo(6);
+	void handlePatch() throws Exception {
+		Mockito.doNothing().when(article).updateCategory(2);
 
-		var content = objectMapper.createObjectNode().put("category", 17).toString();
+		mockMvc.perform(patch("/articles/5")
+				.principal(ADMIN)
+				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.content("{ \"category\": 2 }"))
+				.andExpect(status().is(200));
 
-		// 测试权限
-		mockMvc.perform(patch("/articles/1").content(content))
-				.andExpect(status().isForbidden());
-
-		mockMvc.perform(patch("/articles/1").content(content).principal(ADMIN))
-				.andExpect(status().isNoContent());
-
-		Assertions.assertThat(queryArticle(1).get("category").asInt()).isEqualTo(17);
-	}
-
-	@Test
-	void testChangeDeletion() throws Exception {
-		Assertions.assertThat(queryArticle(1).get("deleted").asBoolean()).isFalse();
-
-		var content = objectMapper.createObjectNode().put("deletion", false).toString();
-		mockMvc.perform(patch("/articles/1").content(content))
-				.andExpect(status().isForbidden());
-		mockMvc.perform(patch("/articles/1").content(content).principal(ADMIN))
-				.andExpect(status().isConflict());
-
-		// 将文章设为删除
-		content = objectMapper.createObjectNode().put("deletion", true).toString();
-		mockMvc.perform(patch("/articles/1").content(content).principal(ADMIN))
-				.andExpect(status().isNoContent());
-
-		Assertions.assertThat(queryArticle(1).get("deleted").asBoolean()).isTrue();
+		verify(article).updateCategory(2);
+		verify(article, times(0)).updateDeleted(anyBoolean());
+		verify(article, times(0)).updateUrlTitle(anyString());
 	}
 }

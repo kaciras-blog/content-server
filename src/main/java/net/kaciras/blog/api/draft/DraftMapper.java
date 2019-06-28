@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.draft;
 
 import net.kaciras.blog.api.MapStructConfig;
-import net.kaciras.blog.api.article.Article;
+import net.kaciras.blog.api.article.model.Article;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
