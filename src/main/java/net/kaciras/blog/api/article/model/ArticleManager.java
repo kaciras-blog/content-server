@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 public class ArticleManager {
 
 	private final ArticleRepository repository;
-	private final ArticleDAO dao;
 
 	/**
 	 * 获取一个文章，但会检查文章的删除状态以及用户是否具有查看删除文章的权限。
@@ -28,6 +27,7 @@ public class ArticleManager {
 	}
 
 	public ArticleLink getLink(int id) {
-		return dao.getLink(id);
+		var article = repository.get(id);
+		return new ArticleLink(article.getId(), article.getUrlTitle(), article.getTitle());
 	}
 }

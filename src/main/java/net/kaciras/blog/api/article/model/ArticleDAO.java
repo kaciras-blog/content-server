@@ -52,11 +52,6 @@ interface ArticleDAO {
 	@Update("UPDATE article SET view_count=view_count+1 WHERE id=#{id}")
 	void increaseViewCount(int id);
 
-	// 与 getNeighbor 相比，没有 deleted=0 这个条件
-	@Select("SELECT id, title, url_title FROM article WHERE id=#{id} LIMIT 1")
-	@ResultMap("net.kaciras.blog.api.article.model.ArticleDAO.ArticleLinkMap")
-	ArticleLink getLink(int id);
-
 	@Select("SELECT id, title, url_title FROM article WHERE id ${comparator} #{id} AND deleted=0 LIMIT 1")
 	@ResultMap("net.kaciras.blog.api.article.model.ArticleDAO.ArticleLinkMap")
 	ArticleLink getNeighbor(int id, String comparator);
