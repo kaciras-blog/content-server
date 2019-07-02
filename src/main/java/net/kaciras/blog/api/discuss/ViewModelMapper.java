@@ -1,7 +1,8 @@
 package net.kaciras.blog.api.discuss;
 
 import net.kaciras.blog.api.MapStructConfig;
-import net.kaciras.blog.api.article.model.ArticleManager;
+import net.kaciras.blog.api.article.ArticleLink;
+import net.kaciras.blog.api.article.model.ArticleRepository;
 import net.kaciras.blog.api.user.UserManager;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 abstract class ViewModelMapper {
 
 	@Autowired
-	private ArticleManager articleManager;
+	private ArticleRepository articleRepository;
 
 	@Autowired
 	private UserManager userManager;
@@ -60,7 +61,8 @@ abstract class ViewModelMapper {
 		if (viewObject.getType() == 1) {
 			viewObject.setTarget("（关于页）关于博主");
 		} else {
-			viewObject.setTarget(articleManager.getLink(viewObject.getObjectId()));
+			var article = articleRepository.get(viewObject.getObjectId());
+			viewObject.setTarget(ArticleLink.of(article));
 		}
 	}
 

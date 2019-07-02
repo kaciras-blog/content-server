@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.kaciras.blog.api.article.model.ArticleLink;
 import net.kaciras.blog.api.category.Banner;
 
 import java.time.LocalDateTime;

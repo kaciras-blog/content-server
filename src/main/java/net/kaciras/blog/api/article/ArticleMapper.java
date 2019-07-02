@@ -4,6 +4,7 @@ import net.kaciras.blog.api.MapStructConfig;
 import net.kaciras.blog.api.article.model.Article;
 import net.kaciras.blog.api.article.model.ArticleContentBase;
 import net.kaciras.blog.api.article.model.ArticleListQuery;
+import net.kaciras.blog.api.article.model.ArticleRepository;
 import net.kaciras.blog.api.category.Category;
 import net.kaciras.blog.api.category.CategoryManager;
 import net.kaciras.blog.api.category.CategoryRepository;
@@ -24,6 +25,9 @@ import java.util.stream.Collectors;
 abstract class ArticleMapper {
 
 	@Autowired
+	private ArticleRepository articleRepository;
+
+	@Autowired
 	private DiscussionService discussionService;
 
 	@Autowired
@@ -36,8 +40,8 @@ abstract class ArticleMapper {
 
 	public ArticleVo toViewObject(Article article) {
 		var vo = createVoFrom(article);
-		vo.setNext(article.getNextLink());
-		vo.setPrev(article.getPreviousLink());
+		article.getPrevious().map(ArticleLink::of).ifPresent(vo::setPrev);
+		article.getNext().map(ArticleLink::of).ifPresent(vo::setNext);
 		vo.setBanner(categoryManager.getBanner(article.getCategory()));
 		return vo;
 	}
@@ -73,7 +77,7 @@ abstract class ArticleMapper {
 	 * @param request 发表请求
 	 * @return 文章对象
 	 */
-	public Article createArticle(PublishRequest request) {
+	public Article createArticle(PublishInput request) {
 		var article = new Article();
 		update(article, request);
 

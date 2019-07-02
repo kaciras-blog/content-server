@@ -6,9 +6,9 @@ import net.kaciras.blog.infrastructure.exception.ResourceStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @EqualsAndHashCode(of = "id", callSuper = false)
 @ToString(of = "id")
@@ -75,13 +75,11 @@ public class Article extends ArticleContentBase {
 		classifyDAO.updateByArticle(id, category);
 	}
 
-	@Nullable
-	public ArticleLink getPreviousLink() {
+	public Optional<Article> getPrevious() {
 		return articleDAO.getNeighbor(id, "<");
 	}
 
-	@Nullable
-	public ArticleLink getNextLink() {
+	public Optional<Article> getNext() {
 		return articleDAO.getNeighbor(id, ">");
 	}
 }

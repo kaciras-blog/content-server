@@ -67,7 +67,7 @@ public class ArticleRepository {
 		return articleDAO.selectCount();
 	}
 
-	public int countByCategory(@NonNull ArticleListQuery query) {
+	public int count(ArticleListQuery query) {
 		if (query.getCategory() == 0 && query.isRecursive()) {
 			return size();
 		}

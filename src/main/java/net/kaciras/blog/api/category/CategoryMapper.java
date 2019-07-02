@@ -45,7 +45,7 @@ abstract class CategoryMapper {
 		copyPropsInternal(vo, category);
 
 		var query = ArticleListQuery.ofCategory(category.getId(), true);
-		vo.setArticleCount(articleRepository.countByCategory(query));
+		vo.setArticleCount(articleRepository.count(query));
 
 		vo.setBanner(categoryManager.getBanner(category));
 	}

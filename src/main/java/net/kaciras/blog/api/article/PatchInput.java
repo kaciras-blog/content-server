@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor(onConstructor_ = @JsonCreator)
 @Getter
-final class PatchMap {
+final class PatchInput {
 
 	private final Integer category;
 	private final Boolean deletion;

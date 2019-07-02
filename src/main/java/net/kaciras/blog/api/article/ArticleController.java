@@ -35,7 +35,7 @@ class ArticleController {
 			SecurityContext.require("SHOW_DELETED");
 		}
 		var items = mapper.toPreview(repository.findAll(query), query);
-		var total = repository.countByCategory(query);
+		var total = repository.count(query);
 
 		return new ListQueryView<>(total, items);
 	}
@@ -78,11 +78,11 @@ class ArticleController {
 
 	@RequireAuthorize
 	@PatchMapping("/{id}")
-	public ArticleVo patch(@PathVariable int id, @RequestBody PatchMap patchMap) {
+	public ArticleVo patch(@PathVariable int id, @RequestBody PatchInput patchInput) {
 		var article = repository.get(id);
-		Optional.ofNullable(patchMap.getCategory()).ifPresent(article::updateCategory);
-		Optional.ofNullable(patchMap.getDeletion()).ifPresent(article::updateDeleted);
-		Optional.ofNullable(patchMap.getUrlTitle()).ifPresent(article::updateUrlTitle);
+		Optional.ofNullable(patchInput.getCategory()).ifPresent(article::updateCategory);
+		Optional.ofNullable(patchInput.getDeletion()).ifPresent(article::updateDeleted);
+		Optional.ofNullable(patchInput.getUrlTitle()).ifPresent(article::updateUrlTitle);
 		return mapper.toViewObject(article);
 	}
 }

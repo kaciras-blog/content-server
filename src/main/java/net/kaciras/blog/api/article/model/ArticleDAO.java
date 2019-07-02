@@ -15,6 +15,11 @@ interface ArticleDAO {
 	@ResultMap("net.kaciras.blog.api.article.model.ArticleDAO.ArticleMap")
 	Optional<Article> selectById(int id);
 
+	// 小心注入，comparator 参数必须限制在比较符号。
+	@Select("SELECT * FROM article WHERE id ${comparator} #{id} AND deleted=0 LIMIT 1")
+	@ResultMap("net.kaciras.blog.api.article.model.ArticleDAO.ArticleMap")
+	Optional<Article> getNeighbor(int id, String comparator);
+
 	@Select("SELECT COUNT(*) FROM article")
 	int selectCount();
 
@@ -51,8 +56,4 @@ interface ArticleDAO {
 
 	@Update("UPDATE article SET view_count=view_count+1 WHERE id=#{id}")
 	void increaseViewCount(int id);
-
-	@Select("SELECT id, title, url_title FROM article WHERE id ${comparator} #{id} AND deleted=0 LIMIT 1")
-	@ResultMap("net.kaciras.blog.api.article.model.ArticleDAO.ArticleLinkMap")
-	ArticleLink getNeighbor(int id, String comparator);
 }
