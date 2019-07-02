@@ -9,7 +9,6 @@ import net.kaciras.blog.api.article.model.ArticleRepository;
 import net.kaciras.blog.api.draft.DraftRepository;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +27,6 @@ class ArticleController {
 	private final ArticleMapper mapper;
 
 	private final DraftRepository draftRepository;
-
-	@Value("${blog.draft.delete-after-publish}")
-	private boolean deleteAfterSubmit;
 
 	@GetMapping
 	public ListQueryView<PreviewVo> getList(ArticleListQuery query, Pageable pageable) {
@@ -53,11 +49,11 @@ class ArticleController {
 
 	@RequireAuthorize
 	@PostMapping
-	public ResponseEntity<ArticleVo> post(@RequestBody @Valid PublishRequest request) {
+	public ResponseEntity<ArticleVo> post(@RequestBody @Valid PublishInput request) {
 		var article = mapper.createArticle(request);
 		repository.add(article);
 
-		if (deleteAfterSubmit) {
+		if (request.isDestroy()) {
 			draftRepository.remove(request.getDraftId());
 		}
 		return ResponseEntity
@@ -68,13 +64,13 @@ class ArticleController {
 	// 不更改 urlTitle，category，这些属性使用PATCH修改
 	@RequireAuthorize
 	@PutMapping("/{id}")
-	public ArticleVo update(@PathVariable int id, @RequestBody PublishRequest request) {
+	public ArticleVo update(@PathVariable int id, @RequestBody PublishInput request) {
 		var article = repository.get(id);
 
 		mapper.update(article, request);
 		repository.update(article);
 
-		if (deleteAfterSubmit) {
+		if (request.isDestroy()) {
 			draftRepository.remove(request.getDraftId());
 		}
 		return mapper.toViewObject(article);
