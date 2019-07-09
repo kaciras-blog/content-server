@@ -67,6 +67,7 @@ abstract class ArticleMapper {
 	@Mapping(target = "vcnt", source = "viewCount")
 	abstract PreviewVo createPreviewFrom(Article article);
 
+	@Mapping(target = "next", ignore = true)
 	abstract ArticleVo createVoFrom(Article article);
 
 	abstract List<SimpleCategoryVo> mapCategoryPath(List<Category> categories);

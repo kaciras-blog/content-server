@@ -22,10 +22,10 @@ interface DiscussionDAO {
 
 	@Select("SELECT * FROM discussion WHERE id=#{id}")
 	@ResultMap("net.kaciras.blog.api.discuss.DiscussionDAO.DiscussionMap")
-	Optional<Discussion> selectById(long id);
+	Optional<Discussion> selectById(int id);
 
 	@Update("UPDATE discussion SET state=#{state} WHERE id=#{id}")
-	int updateState(long id, DiscussionState state);
+	void updateState(int id, DiscussionState state);
 
 	/**
 	 * 查询指定对象的评论数量，不包含评论的回复（楼中楼）。
