@@ -32,7 +32,9 @@ public final class Discussion {
 	private int parent;
 	private String content;
 
+	private String nickname;
 	private LocalDateTime time;
+
 	private InetAddress address;
 	private int floor;
 
@@ -60,10 +62,10 @@ public final class Discussion {
 	 * 创建一个顶层评论，该方法会检查评论内容是否合法。
 	 *
 	 * @param objectId 评论对象ID
-	 * @param type 评论对象类型
-	 * @param userId  评论者ID
-	 * @param content 评论内容
-	 * @return 评论对象
+	 * @param type     评论对象类型
+	 * @param userId   评论者ID
+	 * @param content  评论内容
+	 * @return 新创建的评论对象
 	 */
 	public static Discussion create(int objectId, int type, int userId, String content) {
 		return create(objectId, type, userId, 0, content);

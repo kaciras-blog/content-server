@@ -6,11 +6,12 @@ import lombok.Getter;
 
 @AllArgsConstructor(onConstructor_ = @JsonCreator)
 @Getter
-final class AddRequest {
+final class PublishInput {
 
 	private final int objectId;
 	private final int type;
 	private final int parent;
 
+	private String nickname;
 	private final String content;
 }

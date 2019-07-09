@@ -67,9 +67,9 @@ class DiscussionController {
 	}
 
 	@PostMapping
-	public ResponseEntity<DiscussionVo> post(HttpServletRequest request, @RequestBody AddRequest message) {
+	public ResponseEntity<DiscussionVo> post(HttpServletRequest request, @RequestBody PublishInput input) {
 		var addr = Utils.addressFromRequest(request);
-		var discussion = discussionService.add(message, addr);
+		var discussion = discussionService.add(input, addr);
 
 		// HACK: 越来越觉得要尽快迁移GraphQL了
 		var vo = mapper.toReplyView(discussion);
@@ -82,8 +82,8 @@ class DiscussionController {
 
 	@RequireAuthorize // 当前仅支持管理者更新评论
 	@PatchMapping
-	public ResponseEntity<Void> patch(@RequestBody PatchMap patchMap) {
-		discussionService.batchUpdate(patchMap);
+	public ResponseEntity<Void> patch(@RequestBody PatchInput input) {
+		discussionService.batchUpdate(input);
 		return ResponseEntity.noContent().build();
 	}
 

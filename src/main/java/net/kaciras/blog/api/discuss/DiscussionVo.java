@@ -19,6 +19,7 @@ public final class DiscussionVo {
 	private int floor;
 
 	private UserVo user;
+	private String nickname;
 	private String content;
 
 	private boolean deleted;

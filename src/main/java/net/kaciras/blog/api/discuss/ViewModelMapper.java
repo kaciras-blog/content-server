@@ -32,7 +32,7 @@ abstract class ViewModelMapper {
 	private UserManager userManager;
 
 	@Autowired
-	private DiscussRepository repository;
+	private DiscussionRepository repository;
 
 	// 4
 	public final List<DiscussionVo> toLinkedView(List<Discussion> model) {
@@ -86,7 +86,7 @@ abstract class ViewModelMapper {
 	private DiscussionVo ConvertWithVoteExt(Discussion model) {
 		var result = mappingProperties(model);
 		result.setUser(userManager.getUser(model.getUserId()));
-		result.setReplyCount(repository.size(new DiscussionQuery().setParent(model.getId())));
+		result.setReplyCount(repository.count(new DiscussionQuery().setParent(model.getId())));
 		return result;
 	}
 

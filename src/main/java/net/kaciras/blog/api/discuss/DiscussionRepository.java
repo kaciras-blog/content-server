@@ -12,7 +12,7 @@ import java.util.List;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
-class DiscussRepository {
+class DiscussionRepository {
 
 	private final DiscussionDAO dao;
 
@@ -32,7 +32,7 @@ class DiscussRepository {
 	}
 
 	@NonNull
-	public Discussion get(long id) {
+	public Discussion get(int id) {
 		return dao.selectById(id).orElseThrow(ResourceNotFoundException::new);
 	}
 
@@ -40,7 +40,7 @@ class DiscussRepository {
 		return dao.selectList(query);
 	}
 
-	public int size(@NonNull DiscussionQuery query) {
+	public int count(@NonNull DiscussionQuery query) {
 		return dao.selectCount(query);
 	}
 }
