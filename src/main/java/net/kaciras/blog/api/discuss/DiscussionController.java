@@ -66,6 +66,7 @@ class DiscussionController {
 		return new ListQueryView<>(size, mapper.toAggregatedView(result, Utils.addressFromRequest(request)));
 	}
 
+	// 无论是否审核都返回视图，前端可以通过 state 判断
 	@PostMapping
 	public ResponseEntity<DiscussionVo> post(HttpServletRequest request, @RequestBody PublishInput input) {
 		var addr = Utils.addressFromRequest(request);

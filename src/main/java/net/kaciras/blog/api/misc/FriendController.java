@@ -11,10 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
+
+import static net.kaciras.blog.infrastructure.func.FunctionUtils.unchecked;
 
 /**
  * TODO: 考虑做自动申请友链
@@ -32,14 +33,13 @@ class FriendController {
 		this.objectMapper = objectMapper;
 	}
 
+	// lambda 显示写出参数类型才能让编译器推导返回类型？
 	@GetMapping
-	public Collection<FriendLink> getFriends() throws IOException {
-		var values = redisHash.entries().values();
-		var list = new ArrayList<FriendLink>(values.size());
-		for (var value : values) {
-			list.add(objectMapper.readValue(value, FriendLink.class));
-		}
-		return list;
+	public Collection<FriendLink> getFriends() {
+		return redisHash.entries().values()
+				.stream()
+				.map(unchecked((byte[] value) -> objectMapper.readValue(value, FriendLink.class)))
+				.collect(Collectors.toList());
 	}
 
 	@RequireAuthorize

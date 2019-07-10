@@ -2,11 +2,14 @@ package net.kaciras.blog.api;
 
 public enum RedisKeys {
 
-	/** Oauth2登陆会话前缀 */
-	OauthSession("oa:"),
+	/** 友情链接 */
+	Friends("friends"),
 
 	/** 推荐卡片列表 */
 	CardList("cards"),
+
+	/** Oauth2登陆会话前缀 */
+	OauthSession("oa:"),
 
 	/** 一个账户所有会话的集合前缀 */
 	AccountSessions("ac:"),
@@ -22,8 +25,6 @@ public enum RedisKeys {
 
 	/** 动态配置信息的前缀 */
 	ConfigStore("cfg:"),
-
-	Friends("friends"),
 
 	; // <-- 分号是必须要有滴
 
