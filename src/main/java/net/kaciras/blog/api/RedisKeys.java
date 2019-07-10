@@ -23,6 +23,8 @@ public enum RedisKeys {
 	/** 动态配置信息的前缀 */
 	ConfigStore("cfg:"),
 
+	Friends("friends"),
+
 	; // <-- 分号是必须要有滴
 
 	private final String prefix;

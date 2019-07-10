@@ -1,0 +1,61 @@
+package net.kaciras.blog.api.misc;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.kaciras.blog.api.RedisKeys;
+import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
+import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+
+/**
+ * TODO: 考虑做自动申请友链
+ */
+@SuppressWarnings("ConstantConditions")
+@RestController
+@RequestMapping("/friends")
+class FriendController {
+
+	private final BoundHashOperations<String, String, byte[]> redisHash;
+	private final ObjectMapper objectMapper;
+
+	FriendController(RedisTemplate<String, byte[]> redis, ObjectMapper objectMapper) {
+		this.redisHash = redis.boundHashOps(RedisKeys.Friends.value());
+		this.objectMapper = objectMapper;
+	}
+
+	@GetMapping
+	public Collection<FriendLink> getFriends() throws IOException {
+		var values = redisHash.entries().values();
+		var list = new ArrayList<FriendLink>(values.size());
+		for (var value : values) {
+			list.add(objectMapper.readValue(value, FriendLink.class));
+		}
+		return list;
+	}
+
+	@RequireAuthorize
+	@PostMapping
+	public ResponseEntity<FriendLink> makeFriends(@RequestBody @Valid FriendLink input) throws JsonProcessingException {
+		var host = URI.create(input.getUrl()).getHost();
+		if (host == null) {
+			throw new RequestArgumentException("友链的域名为空");
+		}
+		redisHash.put(host, objectMapper.writeValueAsBytes(input));
+		return ResponseEntity.created(URI.create("/friends/" + host)).body(input);
+	}
+
+	@RequireAuthorize
+	@DeleteMapping("/{host}")
+	public ResponseEntity<Void> rupture(@PathVariable String host) {
+		return redisHash.delete(host) > 0 ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+	}
+}

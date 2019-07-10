@@ -62,6 +62,7 @@ public class ServiceApplication {
 		template.setEnableDefaultSerializer(false);
 		template.setConnectionFactory(factory);
 		template.setKeySerializer(RedisSerializer.string());
+		template.setHashKeySerializer(RedisSerializer.string());
 		return template;
 	}
 
