@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS `discussion` (
   `floor` int(10) unsigned NOT NULL,
   `parent` int(10) unsigned NOT NULL DEFAULT 0,
   `user_id` int(10) unsigned NOT NULL,
+  `nickname` varchar(16) DEFAULT NULL,
   `content` text NOT NULL,
   `time` datetime NOT NULL DEFAULT current_timestamp(),
   `state` tinyint(3) unsigned NOT NULL DEFAULT 0 COMMENT '0-正常 1-删除 2-待审',
