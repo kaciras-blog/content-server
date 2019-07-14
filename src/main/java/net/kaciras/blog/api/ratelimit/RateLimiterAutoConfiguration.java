@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.RedisKeys;
 import net.kaciras.blog.infrastructure.ratelimit.RedisBlockingLimiter;
 import net.kaciras.blog.infrastructure.ratelimit.RedisTokenBucket;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +26,9 @@ public class RateLimiterAutoConfiguration {
 
 	private final RateLimiterProperties properties;
 
-	private RedisTemplate<String, Object> genericToStringRedisTemplate() {
+	@ConditionalOnMissingBean
+	@Bean
+	RedisTemplate<String, Object> genericToStringRedisTemplate() {
 		var redisTemplate = new RedisTemplate<String, Object>();
 		redisTemplate.setConnectionFactory(factory);
 		redisTemplate.setEnableDefaultSerializer(false);
@@ -35,9 +38,8 @@ public class RateLimiterAutoConfiguration {
 	}
 
 	@Bean
-	RateLimitFilter rateLimitFilter() {
+	RateLimitFilter rateLimitFilter(RedisTemplate<String, Object> redis) {
 		var checkers = new ArrayList<RateLimiterChecker>(2);
-		var redis = genericToStringRedisTemplate();
 
 		// 这里决定Checker的顺序，先通用后特殊
 		if (properties.generic != null) {
