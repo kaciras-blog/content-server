@@ -21,31 +21,6 @@
 			"name": "kaciras.http-client-proxy",
 			"type": "java.lang.String",
 			"description": "本地HTTP客户端（用于OAuth2等）使用的代理地址."
-		},
-		{
-			"name": "kaciras.rate-limit.generic.rate",
-			"type": "java.lang.Double",
-			"description": "允许的速率（令牌/秒），必须大于0."
-		},
-		{
-			"name": "kaciras.rate-limit.generic.size",
-			"type": "java.lang.Integer",
-			"description": "令牌桶容量，同时也是单位时间能获取的上限（令牌），必须大于0."
-		},
-		{
-			"name": "kaciras.rate-limit.effective.block-times",
-			"type": "java.util.List<java.time.Duration>",
-			"description": "针对副作用请求，在限流的基础上进一步增加封禁措施，封禁时间根据该列表依次递增."
-		},
-		{
-			"name": "kaciras.rate-limit.effective.refresh-on-reject",
-			"type": "java.lang.Boolean",
-			"description": "针对副作用请求，在封禁期内再次访问则重新倒计时封禁时间."
-		},
-		{
-			"name": "kaciras.rate-limit.effective.buckets",
-			"type": "java.util.List<net.kaciras.blog.api.ratelimit.RateLimiterProperties.RateLimit>",
-			"description": "针对副作用请求的多级限流的令牌桶列表."
 		}
 	]
 }

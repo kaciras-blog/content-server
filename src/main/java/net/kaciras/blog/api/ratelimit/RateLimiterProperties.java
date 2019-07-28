@@ -1,13 +1,16 @@
 package net.kaciras.blog.api.ratelimit;
 
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.Duration;
 import java.util.List;
 
+// 【注意】为了 Configuration Processor 自动生成文档，必须要有 Getter
 @ConfigurationProperties("kaciras.rate-limit")
 @Setter
+@Getter
 public final class RateLimiterProperties {
 
 	/** 全部请求限流，感觉跟DOS防御有重合 */
@@ -17,13 +20,14 @@ public final class RateLimiterProperties {
 	public EffectiveLimiterConfig effective;
 
 	@Setter
+	@Getter
 	public static final class TokenBucket {
+
+		/** 令牌桶容量，必须大于0 */
+		public int size;
 
 		/** 允许的速率（令牌/秒），必须大于0 */
 		public double rate;
-
-		/** 令牌桶容量，同时也是单位时间能获取的上限（令牌），必须大于0 */
-		public int size;
 	}
 
 	/**
@@ -34,18 +38,23 @@ public final class RateLimiterProperties {
 	 *   TokenBucket.bucketSize = RateLimit.permits
 	 */
 	@Setter
+	@Getter
 	public static final class RateLimit {
 		public int permits;
 		public Duration time;
 	}
 
 	@Setter
+	@Getter
 	public static final class EffectiveLimiterConfig {
 
+		/** 针对副作用请求，在封禁期内再次访问则重新倒计时封禁时间 */
 		public boolean refreshOnReject;
 
+		/** 针对副作用请求，在限流的基础上进一步增加封禁措施，封禁时间根据该列表依次递增 */
 		public List<Duration> blockTimes;
 
+		/** 针对副作用请求的多级限流的令牌桶列表 */
 		public List<RateLimit> buckets;
 	}
 }
