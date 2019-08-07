@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.6.RELEASE</version>
+		<version>2.1.7.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>net.kaciras.blog</groupId>
 			<artifactId>Infrastructure</artifactId>
-			<version>1.12</version>
+			<version>1.13</version>
 		</dependency>
 
 		<!-- 编译期依赖，以及开发时才需要的库 -->
@@ -83,7 +83,7 @@
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
-			<version>2.0.1</version>
+			<version>2.1.0</version>
 		</dependency>
 
 		<!-- 没有 Boot 的 Spring 库 -->
@@ -106,7 +106,7 @@
 			<artifactId>mariadb-java-client</artifactId>
 		</dependency>
 
-		<!-- JUnit5单元测试，以及Spring单元测试支持 -->
+		<!-- Spring单元测试依赖，强制使用 JUnit5 单元测试（默认是JUnit4） -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>

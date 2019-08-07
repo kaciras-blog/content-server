@@ -16,7 +16,7 @@ public class ConfigBindingAutoConfiguration {
 
 	@Bean
 	public ConfigBindingManager configService(ConfigRepository configRepository,
-									   @Autowired(required = false) Validator validator) {
+											  @Autowired(required = false) Validator validator) {
 		return new ConfigBindingManager(configRepository, validator);
 	}
 
