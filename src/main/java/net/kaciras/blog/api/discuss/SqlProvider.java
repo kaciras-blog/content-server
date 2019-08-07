@@ -21,12 +21,12 @@ public final class SqlProvider {
 			var column = order.getProperty();
 
 			if (!column.equals("id") && !column.equals("vote")) {
-				throw new RequestArgumentException("排序字段仅支持id和vote");
+				throw new RequestArgumentException("排序字段仅支持 id 和 vote");
 			}
 			sql.ORDER_BY(column + " " + order.getDirection());
 		}
 
-		return sql.toString() + String.format(" LIMIT %d,%d", pageable.getPageNumber(), pageable.getPageSize());
+		return sql.OFFSET(pageable.getPageNumber()).LIMIT(pageable.getPageSize()).toString();
 	}
 
 	public String selectCount(DiscussionQuery query) {

@@ -54,8 +54,8 @@ public final class SqlProvider {
 		applyFilters(sql, query);
 		applySorts(sql, pageable.getSort());
 
-		return sql.toString() + String.format(" LIMIT %d,%d",
-				pageable.getPageNumber(), Math.min(pageable.getPageSize(), 20));
+		// Mariadb 的 OFFSET-LIMIT 语句必须是 LIMIT 在前，另外也能用 LIMIT x,x 的形式
+		return sql.OFFSET(pageable.getPageNumber()).LIMIT(Math.min(pageable.getPageSize(), 20)).toString();
 	}
 
 	public String selectCount(ArticleListQuery query) {
