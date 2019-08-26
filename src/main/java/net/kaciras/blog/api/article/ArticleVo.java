@@ -1,6 +1,5 @@
 package net.kaciras.blog.api.article;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,16 +23,13 @@ public final class ArticleVo {
 	private String summary;
 	private String content;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime create;
-
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime update;
 
 	private int viewCount;
 	private int discussionCount;
 
+	private Banner banner;
 	private ArticleLink prev;
 	private ArticleLink next;
-	private Banner banner;
 }

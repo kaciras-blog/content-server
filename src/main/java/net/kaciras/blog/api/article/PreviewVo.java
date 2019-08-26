@@ -1,6 +1,5 @@
 package net.kaciras.blog.api.article;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,10 +26,7 @@ public final class PreviewVo {
 
 	private List<SimpleCategoryVo> cpath;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime create;
-
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime update;
 
 	private int vcnt;

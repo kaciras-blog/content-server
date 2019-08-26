@@ -1,6 +1,5 @@
 package net.kaciras.blog.api.discuss;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import net.kaciras.blog.api.user.UserVo;
@@ -25,7 +24,6 @@ public final class DiscussionVo {
 	private boolean deleted;
 	private int voteCount;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime time;
 
 	// 下面是非共有字段

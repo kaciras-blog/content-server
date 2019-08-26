@@ -1,6 +1,5 @@
 package net.kaciras.blog.api.draft;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -17,6 +16,5 @@ public final class History extends DraftContent {
 	private int wordCount;
 
 	/** 保存时间 */
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	private LocalDateTime time;
 }
