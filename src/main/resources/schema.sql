@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `access_log` (
   `path` text NOT NULL,
   `status` smallint(5) unsigned NOT NULL,
   `user_agent` tinytext DEFAULT NULL,
-  `start` datetime NOT NULL,
+  `start` datetime(6) NOT NULL,
   `delay` smallint(5) unsigned NOT NULL
 ) ENGINE=Aria DEFAULT CHARSET=utf8mb4 PAGE_CHECKSUM=1;
 
@@ -30,8 +30,8 @@ CREATE TABLE IF NOT EXISTS `article` (
   `cover` binary(33) NOT NULL,
   `summary` tinytext NOT NULL DEFAULT '',
   `deleted` bit(1) NOT NULL DEFAULT b'0',
-  `update_time` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `create_time` datetime NOT NULL DEFAULT current_timestamp(),
+  `update_time` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6),
+  `create_time` datetime(6) NOT NULL DEFAULT current_timestamp(6),
   `view_count` int(10) unsigned NOT NULL DEFAULT 0,
   `content` mediumtext NOT NULL,
   PRIMARY KEY (`id`),
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `discussion` (
   `user_id` int(10) unsigned NOT NULL,
   `nickname` varchar(16) DEFAULT NULL,
   `content` text NOT NULL,
-  `time` datetime NOT NULL DEFAULT current_timestamp(),
+  `time` datetime(6) NOT NULL DEFAULT current_timestamp(6),
   `state` tinyint(3) unsigned NOT NULL DEFAULT 0 COMMENT '0-正常 1-删除 2-待审',
   `vote` int(10) NOT NULL DEFAULT 0 COMMENT '冗余，排序用',
   `address` binary(16) NOT NULL,
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `draft` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `article_id` int(11) unsigned DEFAULT NULL,
-  `time` datetime NOT NULL DEFAULT current_timestamp(),
+  `time` datetime(6) NOT NULL DEFAULT current_timestamp(6),
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -98,9 +98,9 @@ CREATE TABLE IF NOT EXISTS `draft_history` (
   `cover` binary(33) DEFAULT NULL,
   `keywords` tinytext NOT NULL DEFAULT '',
   `content` mediumtext NOT NULL DEFAULT '',
-  `time` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `time` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6),
   PRIMARY KEY (`id`,`save_count`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 PAGE_CHECKSUM=1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `keyword` (
   `id` int(10) unsigned NOT NULL,
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `head` binary(33) NOT NULL,
   `deleted` bit(1) NOT NULL DEFAULT b'0',
   `auth` tinyint(3) unsigned NOT NULL,
-  `reg_time` datetime NOT NULL DEFAULT current_timestamp(),
+  `reg_time` datetime(6) NOT NULL DEFAULT current_timestamp(6),
   `reg_ip` binary(16) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=Aria DEFAULT CHARSET=utf8mb4 PAGE_CHECKSUM=1;
