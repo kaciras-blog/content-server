@@ -44,6 +44,11 @@ public class Utils {
 		}
 	}
 
+	public boolean isFromLocalNetwork(HttpServletRequest request) {
+		var address = addressFromRequest(request);
+		return address.isLoopbackAddress() || address.isSiteLocalAddress();
+	}
+
 	/**
 	 * 检查Update，Delete等SQL语句是否产生了影响（影响的行数 > 0），没产生影响视为未找到
 	 *

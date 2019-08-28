@@ -3,6 +3,7 @@ package net.kaciras.blog.api.article;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.api.ListQueryView;
+import net.kaciras.blog.api.Utils;
 import net.kaciras.blog.api.article.model.ArticleListQuery;
 import net.kaciras.blog.api.article.model.ArticleManager;
 import net.kaciras.blog.api.article.model.ArticleRepository;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
@@ -29,14 +31,18 @@ class ArticleController {
 	private final DraftRepository draftRepository;
 
 	@GetMapping
-	public ListQueryView<PreviewVo> getList(ArticleListQuery query, Pageable pageable) {
+	public ListQueryView<PreviewVo> getList(HttpServletRequest request, ArticleListQuery query, Pageable pageable) {
 		query.setPageable(pageable);
+
+		if (query.isContent() && !Utils.isFromLocalNetwork(request)) {
+			query.setContent(false);
+		}
 		if (query.getDeletion() != DeletedState.ALIVE) {
 			SecurityContext.require("SHOW_DELETED");
 		}
+
 		var items = mapper.toPreview(repository.findAll(query), query);
 		var total = repository.count(query);
-
 		return new ListQueryView<>(total, items);
 	}
 

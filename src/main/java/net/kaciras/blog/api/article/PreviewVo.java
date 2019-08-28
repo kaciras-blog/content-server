@@ -8,9 +8,7 @@ import net.kaciras.blog.infrastructure.codec.ImageReference;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * 与ArticleVo相比，去掉了content属性
- */
+// TODO: 跟ArticleVo越来越像了
 @ToString(of = {"id", "title"})
 @Getter
 @Setter
@@ -32,4 +30,6 @@ public final class PreviewVo {
 	private int vcnt;
 	private int dcnt;
 	private boolean deleted;
+
+	private String content;
 }

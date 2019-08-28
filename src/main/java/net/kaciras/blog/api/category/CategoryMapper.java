@@ -44,7 +44,9 @@ abstract class CategoryMapper {
 	private void copyProps(CategoryVo vo, Category category) {
 		copyPropsInternal(vo, category);
 
-		var query = ArticleListQuery.ofCategory(category.getId(), true);
+		var query = new ArticleListQuery();
+		query.setCategory(category.getId());
+		query.setRecursive(true);
 		vo.setArticleCount(articleRepository.count(query));
 
 		vo.setBanner(categoryManager.getBanner(category));

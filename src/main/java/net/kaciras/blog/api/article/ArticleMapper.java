@@ -4,7 +4,6 @@ import net.kaciras.blog.api.MapStructConfig;
 import net.kaciras.blog.api.article.model.Article;
 import net.kaciras.blog.api.article.model.ArticleContentBase;
 import net.kaciras.blog.api.article.model.ArticleListQuery;
-import net.kaciras.blog.api.article.model.ArticleRepository;
 import net.kaciras.blog.api.category.Category;
 import net.kaciras.blog.api.category.CategoryManager;
 import net.kaciras.blog.api.category.CategoryRepository;
@@ -23,9 +22,6 @@ import java.util.stream.Collectors;
 
 @Mapper(config = MapStructConfig.class)
 abstract class ArticleMapper {
-
-	@Autowired
-	private ArticleRepository articleRepository;
 
 	@Autowired
 	private DiscussionService discussionService;
@@ -58,13 +54,18 @@ abstract class ArticleMapper {
 	 */
 	PreviewVo toPreview(Article article, ArticleListQuery request) {
 		var vo = createPreviewFrom(article);
+		if (request.isContent()) {
+			vo.setContent(article.getContent());
+		}
+		var categoryPath = categoryRepository.get(article.getCategory()).getPathTo(request.getCategory());
+		vo.setCpath(mapCategoryPath(categoryPath));
 		vo.setDcnt(discussionService.count(new DiscussionQuery().setObjectId(article.getId()).setType(0)));
-		vo.setCpath(mapCategoryPath(categoryRepository
-				.get(article.getCategory()).getPathTo(request.getCategory())));
 		return vo;
 	}
 
+	// 排除内容属性，由外层的方法决定是否复制
 	@Mapping(target = "vcnt", source = "viewCount")
+	@Mapping(target = "content", ignore = true)
 	abstract PreviewVo createPreviewFrom(Article article);
 
 	@Mapping(target = "next", ignore = true)
