@@ -2,6 +2,7 @@ package net.kaciras.blog.api.article.model;
 
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,4 +57,7 @@ interface ArticleDAO {
 
 	@Update("UPDATE article SET view_count=view_count+1 WHERE id=#{id}")
 	void increaseViewCount(int id);
+
+	@Select("SELECT MAX(update_time) FROM article")
+	LocalDateTime selectLastUpdateTime();
 }

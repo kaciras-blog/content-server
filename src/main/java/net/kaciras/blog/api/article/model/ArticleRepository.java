@@ -10,6 +10,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -65,6 +66,16 @@ public class ArticleRepository {
 
 	public int size() {
 		return articleDAO.selectCount();
+	}
+
+	/**
+	 * 获取所有的文章最后更新的时间，可以认为在此时间之后没有
+	 * 任何文章做过改动，也没有新发表文章。
+	 *
+	 * @return 最后更新的时间
+	 */
+	public LocalDateTime lastUpdate() {
+		return articleDAO.selectLastUpdateTime();
 	}
 
 	public int count(ArticleListQuery query) {

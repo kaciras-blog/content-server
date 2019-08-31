@@ -44,8 +44,7 @@ public class Utils {
 		}
 	}
 
-	public boolean isFromLocalNetwork(HttpServletRequest request) {
-		var address = addressFromRequest(request);
+	public boolean isLocalNetwork(InetAddress address) {
 		return address.isLoopbackAddress() || address.isSiteLocalAddress();
 	}
 

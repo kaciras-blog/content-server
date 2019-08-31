@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.article;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.api.ListQueryView;
 import net.kaciras.blog.api.Utils;
@@ -11,14 +12,18 @@ import net.kaciras.blog.api.draft.DraftRepository;
 import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
 import net.kaciras.blog.infrastructure.principal.SecurityContext;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.ZoneOffset;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/articles")
@@ -31,12 +36,32 @@ class ArticleController {
 	private final DraftRepository draftRepository;
 
 	@GetMapping
-	public ListQueryView<PreviewVo> getList(HttpServletRequest request, ArticleListQuery query, Pageable pageable) {
+	public Object getList(ServletWebRequest request, ArticleListQuery query, Pageable pageable) {
 		query.setPageable(pageable);
 
-		if (query.isContent() && !Utils.isFromLocalNetwork(request)) {
-			query.setContent(false);
+		/*
+		 * 专门给RSS使用的缓存机制，另外如果非内部客户端请求带了content参数则发出警告。
+		 *
+		 * 这个API是聚合请求，除了文章外还返回了分类信息，因此不能仅以文章的更新时间来判断
+		 * 是否缓存。但RSS不使用分类信息，目前也就仅对其做一个缓存。
+		 */
+		if (query.isContent()) {
+			var nativeRequest = request.getNativeRequest(HttpServletRequest.class);
+
+			@SuppressWarnings("ConstantConditions")
+			var remote = Utils.addressFromRequest(nativeRequest);
+
+			if (Utils.isLocalNetwork(remote)) {
+				var lastModified = repository.lastUpdate().toInstant(ZoneOffset.UTC).toEpochMilli();
+				if (request.checkNotModified(lastModified)) {
+					return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+				}
+			} else {
+				query.setContent(false);
+				logger.warn("来自非内部网络的请求使用了RSS专用的API，{}", remote);
+			}
 		}
+
 		if (query.getDeletion() != DeletedState.ALIVE) {
 			SecurityContext.require("SHOW_DELETED");
 		}
