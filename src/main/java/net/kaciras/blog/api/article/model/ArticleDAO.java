@@ -52,7 +52,7 @@ interface ArticleDAO {
 	void updateUrlTitle(int id, String urlTitle);
 
 	@Update("UPDATE article SET title=#{title},cover=#{cover},summary=#{summary}," +
-			"content=#{content} WHERE id=#{id}")
+			"content=#{content},update_time=NOW() WHERE id=#{id}")
 	int update(Article article);
 
 	@Update("UPDATE article SET view_count=view_count+1 WHERE id=#{id}")

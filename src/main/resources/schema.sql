@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `article` (
   `cover` binary(33) NOT NULL,
   `summary` tinytext NOT NULL DEFAULT '',
   `deleted` bit(1) NOT NULL DEFAULT b'0',
-  `update_time` datetime(6) NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6),
+  `update_time` datetime(6) NOT NULL DEFAULT current_timestamp(6),
   `create_time` datetime(6) NOT NULL DEFAULT current_timestamp(6),
   `view_count` int(10) unsigned NOT NULL DEFAULT 0,
   `content` mediumtext NOT NULL,
