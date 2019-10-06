@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.http.HttpClient;
-import java.sql.ResultSet;
 import java.time.Clock;
 
 /**
@@ -123,7 +122,7 @@ public class ServiceApplication {
 				.eventExecutorGroup(DefaultEventLoopGroupProvider.createEventLoopGroup(DefaultEventExecutorGroup.class, 2))
 				.eventLoopGroupProvider(new DefaultEventLoopGroupProvider(1)).build();
 	}
-ResultSet
+
 	/**
 	 * 使用 JAVA8 的新 API 代替 System.currentTimeMillis()，Clock 具有更好的语义并且便于Mock测试。
 	 */
