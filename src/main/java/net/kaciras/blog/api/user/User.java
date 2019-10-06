@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import java.net.InetAddress;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -31,7 +31,7 @@ public final class User {
 	private boolean deleted;
 
 	private AuthType authType;
-	private LocalDateTime registerTime;
+	private Instant registerTime;
 	private InetAddress registerIP;
 
 	private User(int id, String name, ImageReference head) {

@@ -20,7 +20,6 @@ import org.springframework.web.context.request.ServletWebRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
-import java.time.ZoneOffset;
 import java.util.Optional;
 
 @Slf4j
@@ -52,7 +51,7 @@ class ArticleController {
 			var remote = Utils.addressFromRequest(nativeRequest);
 
 			if (Utils.isLocalNetwork(remote)) {
-				var lastModified = repository.lastUpdate().toInstant(ZoneOffset.UTC).toEpochMilli();
+				var lastModified = repository.lastUpdate().toEpochMilli();
 				if (request.checkNotModified(lastModified)) {
 					return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
 				}

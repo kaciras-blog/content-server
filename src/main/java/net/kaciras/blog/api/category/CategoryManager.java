@@ -40,7 +40,7 @@ public class CategoryManager {
 				return new Banner(root.getBackground(), root.getTheme());
 			}
 		} catch (ResourceNotFoundException e) {
-			logger.warn("Category[id={}] not found when get banner");
+			logger.warn("Category[id={}] not found when get banner", category.getId());
 		}
 		return null;
 	}

@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Order(-10)
@@ -34,7 +33,9 @@ public final class AccessLoggingFilter extends HttpFilter {
 	private final AccessLoggingDAO accessLoggingDAO;
 
 	@Override
-	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+	protected void doFilter(HttpServletRequest request,
+							HttpServletResponse response,
+							FilterChain chain) throws IOException, ServletException {
 		var instant = clock.instant();
 		try {
 			chain.doFilter(request, response);
@@ -44,7 +45,7 @@ public final class AccessLoggingFilter extends HttpFilter {
 	}
 
 	// 垃圾@Async对内部调用不代理，即使设置了 proxyTargetClass 也没用
-	private void log(HttpServletRequest request, HttpServletResponse response, Instant startInstant) {
+	private void log(HttpServletRequest request, HttpServletResponse response, Instant start) {
 		var path = request.getRequestURI();
 		if (path == null) return; // 忽略一些奇葩情况
 
@@ -52,14 +53,14 @@ public final class AccessLoggingFilter extends HttpFilter {
 		record.setIp(Utils.addressFromRequest(request));
 		record.setPath(path);
 		record.setStatusCode(response.getStatus());
-		record.setStartTime(LocalDateTime.ofInstant(startInstant, clock.getZone()));
+		record.setStartTime(start);
 
 		// 正常的 User-Agent 不会太长，过长的一般也没什么意义，这里直接截断到255字符以内
 		Optional.ofNullable(request.getHeader("User-Agent"))
 				.map(userAgent -> userAgent.substring(0, Math.min(userAgent.length(), UA_MAX_LENGTH)))
 				.ifPresent(record::setUserAgent);
 
-		var delay = Duration.between(startInstant, clock.instant()).toMillis();
+		var delay = Duration.between(start, clock.instant()).toMillis();
 		record.setDelay(Math.min(delay, MAX_DELAY)); // 响应超时，再大的数也没有意义，限制到65535。
 
 		accessLoggingDAO.insert(record);

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.lang.NonNull;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Optional;
 
 @EqualsAndHashCode(of = "id", callSuper = false)
@@ -40,8 +40,8 @@ public class Article extends ArticleContentBase {
 	 */
 	private String urlTitle;
 
-	private LocalDateTime create;
-	private LocalDateTime update;
+	private Instant create;
+	private Instant update;
 	private int viewCount;
 	private boolean deleted;
 

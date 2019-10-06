@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import java.net.InetAddress;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -33,7 +33,7 @@ public final class Discussion {
 	private String content;
 
 	private String nickname;
-	private LocalDateTime time;
+	private Instant time;
 
 	private InetAddress address;
 	private int floor;

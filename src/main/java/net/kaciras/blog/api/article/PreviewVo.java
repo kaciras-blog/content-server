@@ -5,7 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import net.kaciras.blog.infrastructure.codec.ImageReference;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 // TODO: 跟ArticleVo越来越像了
@@ -24,8 +24,8 @@ public final class PreviewVo {
 
 	private List<SimpleCategoryVo> cpath;
 
-	private LocalDateTime create;
-	private LocalDateTime update;
+	private Instant create;
+	private Instant update;
 
 	private int vcnt;
 	private int dcnt;

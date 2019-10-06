@@ -3,7 +3,7 @@ package net.kaciras.blog.api.draft;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -16,6 +16,6 @@ public final class DraftVo {
 	private String title;
 	private int lastSaveCount;
 
-	private LocalDateTime createTime;
-	private LocalDateTime updateTime;
+	private Instant createTime;
+	private Instant updateTime;
 }

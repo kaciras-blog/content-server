@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.springframework.lang.Nullable;
 
 import java.net.InetAddress;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -19,6 +19,6 @@ public final class AccessRecord {
 	@Nullable
 	private String userAgent;
 
-	private LocalDateTime startTime;
+	private Instant startTime;
 	private long delay;
 }

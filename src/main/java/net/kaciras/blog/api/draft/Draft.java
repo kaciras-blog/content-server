@@ -4,7 +4,7 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * 草稿对象，该对象本身不包含草稿的内容，只有一些元数据。
@@ -29,7 +29,7 @@ public final class Draft {
 	private Integer articleId;
 
 	/** 创建时间 */
-	private LocalDateTime time;
+	private Instant time;
 
 	public HistoryList getHistoryList() {
 		return new HistoryList(id);

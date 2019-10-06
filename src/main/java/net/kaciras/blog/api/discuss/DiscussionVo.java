@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kaciras.blog.api.user.UserVo;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Getter
@@ -24,7 +24,7 @@ public final class DiscussionVo {
 	private boolean deleted;
 	private int voteCount;
 
-	private LocalDateTime time;
+	private Instant time;
 
 	// 下面是非共有字段
 

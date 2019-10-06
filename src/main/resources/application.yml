@@ -58,7 +58,11 @@ spring:
       namespace: kx
 
   jackson:
-    date-format: yyyy-MM-dd HH:mm # 这个只用于java.util.Date这些老API
+    serialization:
+      write-date-timestamps-as-nanoseconds: false
+      write-dates-as-timestamps: true
+    deserialization:
+      read-date-timestamps-as-nanoseconds: false
 
   datasource:
     initialization-mode: always

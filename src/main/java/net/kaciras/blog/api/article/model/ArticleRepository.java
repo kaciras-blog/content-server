@@ -10,7 +10,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -74,7 +74,7 @@ public class ArticleRepository {
 	 *
 	 * @return 最后更新的时间
 	 */
-	public LocalDateTime lastUpdate() {
+	public Instant lastUpdate() {
 		return articleDAO.selectLastUpdateTime();
 	}
 

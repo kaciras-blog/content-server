@@ -5,7 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import net.kaciras.blog.api.category.Banner;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @ToString(of = {"id", "title"})
@@ -23,8 +23,8 @@ public final class ArticleVo {
 	private String summary;
 	private String content;
 
-	private LocalDateTime create;
-	private LocalDateTime update;
+	private Instant create;
+	private Instant update;
 
 	private int viewCount;
 	private int discussionCount;

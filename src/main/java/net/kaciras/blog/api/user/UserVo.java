@@ -5,7 +5,7 @@ import lombok.Setter;
 import net.kaciras.blog.api.principal.AuthType;
 import net.kaciras.blog.infrastructure.codec.ImageReference;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -17,5 +17,5 @@ public final class UserVo {
 	private String name;
 	private ImageReference head;
 
-	private LocalDateTime registerTime;
+	private Instant registerTime;
 }

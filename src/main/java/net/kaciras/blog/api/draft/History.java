@@ -3,7 +3,7 @@ package net.kaciras.blog.api.draft;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * 某次保存的草稿记录。
@@ -16,5 +16,5 @@ public final class History extends DraftContent {
 	private int wordCount;
 
 	/** 保存时间 */
-	private LocalDateTime time;
+	private Instant time;
 }
