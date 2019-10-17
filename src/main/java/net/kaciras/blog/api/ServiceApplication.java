@@ -46,7 +46,14 @@ import java.time.Clock;
 		KxPrincipalAutoConfiguration.class,
 		DevelopmentAutoConfiguration.class
 })
-@SpringBootApplication
+/*
+ * proxyBeanMethods 的作用是代理配置类中标记了@Bean的方法，使其在内部调用时也能
+ * 返回同一个单例（如果是单例bean），而不是在执行真正的方法创建一个。
+ *
+ * 由于我以前试的时候出了点问题，所以从来不在内部调用@Bean方法，依赖都通过参数获取，刚好避开这种用法。
+ * 所以就可以把 proxyBeanMethods 设为 false 省掉代理的消耗。
+ */
+@SpringBootApplication(proxyBeanMethods = false)
 public class ServiceApplication {
 
 	/**
@@ -97,7 +104,7 @@ public class ServiceApplication {
 	 * 配置的话，需要将 application.yml 中 spring.autoconfigure.exclude 相关项去掉
 	 *
 	 * @see org.springframework.scheduling.config.ScheduledTaskRegistrar
-	 * @see RedisHttpSessionConfiguration#configureTasks
+	 * @see RedisHttpSessionConfiguration.SessionCleanupConfiguration#configureTasks
 	 * @see org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration
 	 */
 	@Bean

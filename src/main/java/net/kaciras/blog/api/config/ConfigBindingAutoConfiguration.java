@@ -8,8 +8,8 @@ import org.springframework.context.support.GenericApplicationContext;
 
 import javax.validation.Validator;
 
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
-@Configuration
 public class ConfigBindingAutoConfiguration {
 
 	private final GenericApplicationContext context;

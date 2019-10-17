@@ -17,8 +17,8 @@ import java.time.Clock;
 import java.util.ArrayList;
 
 // TODO: SpringBoot 2.2 可以扫描 ConfigurationProperties，但IDE还会报错
+@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(RateLimiterProperties.class)
-@Configuration
 @RequiredArgsConstructor
 public class RateLimiterAutoConfiguration {
 

@@ -37,7 +37,7 @@ final class ConfigControllerTest {
 
 	@EnableAspectJAutoProxy
 	@Import({KxWebUtilsAutoConfiguration.class})
-	@Configuration
+	@Configuration(proxyBeanMethods = false)
 	static class NestedConfig {
 
 		@Bean
