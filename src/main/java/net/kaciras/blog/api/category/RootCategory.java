@@ -1,6 +1,7 @@
 package net.kaciras.blog.api.category;
 
 import net.kaciras.blog.infrastructure.exception.ResourceStateException;
+import org.springframework.lang.NonNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +21,7 @@ final class RootCategory extends Category {
 		return 0;
 	}
 
+	@NonNull
 	@Override
 	public List<Category> getPathTo(int ancestor) {
 		return Collections.emptyList();

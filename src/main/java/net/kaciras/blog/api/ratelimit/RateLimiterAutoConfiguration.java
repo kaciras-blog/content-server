@@ -16,6 +16,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import java.time.Clock;
 import java.util.ArrayList;
 
+// TODO: SpringBoot 2.2 可以扫描 ConfigurationProperties，但IDE还会报错
 @EnableConfigurationProperties(RateLimiterProperties.class)
 @Configuration
 @RequiredArgsConstructor

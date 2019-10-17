@@ -7,6 +7,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.time.Duration;
 import java.util.List;
 
+// TODO: SpringBoot 2.2 支持 Properties 的构造方法注入了
+
 // 【注意】为了 Configuration Processor 自动生成文档，必须要有 Getter
 @ConfigurationProperties("kaciras.rate-limit")
 @Setter

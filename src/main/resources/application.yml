@@ -3,8 +3,6 @@
 
 server:
 
-  connection-timeout: 10s
-
   http2:
     enabled: true
 
@@ -12,6 +10,7 @@ server:
     enabled: true
 
   tomcat:
+    connection-timeout: 10s
     max-threads: 2
 
 spring:
@@ -31,19 +30,10 @@ spring:
       - org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration
 
   main:
+
+    # LTW 自动注入不支持延迟初始化
+    lazy-initialization: false
     banner-mode: "off"
-
-  mvc:
-    favicon:
-      enabled: false
-
-    # 全站AJAX，不存在表单提交PUT、DELETE等问题
-    hiddenmethod:
-      filter:
-        enabled: false
-
-  jmx:
-    enabled: false
 
   data:
     web:
