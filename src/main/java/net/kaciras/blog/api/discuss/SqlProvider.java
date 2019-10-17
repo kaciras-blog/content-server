@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.discuss;
 
-import net.kaciras.blog.infrastructure.Misc;
-import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
+import net.kaciras.blog.infra.Misc;
+import net.kaciras.blog.infra.exception.RequestArgumentException;
 import org.apache.ibatis.jdbc.SQL;
 
 @SuppressWarnings("unused")

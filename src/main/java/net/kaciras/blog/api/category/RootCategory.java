@@ -1,6 +1,6 @@
 package net.kaciras.blog.api.category;
 
-import net.kaciras.blog.infrastructure.exception.ResourceStateException;
+import net.kaciras.blog.infra.exception.ResourceStateException;
 import org.springframework.lang.NonNull;
 
 import java.util.Collections;

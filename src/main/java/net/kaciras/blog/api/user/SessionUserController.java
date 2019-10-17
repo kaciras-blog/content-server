@@ -2,7 +2,7 @@ package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.SessionAttributes;
-import net.kaciras.blog.infrastructure.principal.SecurityContext;
+import net.kaciras.blog.infra.principal.SecurityContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

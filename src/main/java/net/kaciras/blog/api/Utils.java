@@ -1,8 +1,8 @@
 package net.kaciras.blog.api;
 
 import lombok.experimental.UtilityClass;
-import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
+import net.kaciras.blog.infra.exception.RequestArgumentException;
+import net.kaciras.blog.infra.exception.ResourceNotFoundException;
 import org.springframework.lang.NonNull;
 
 import javax.servlet.http.HttpServletRequest;

@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.ratelimit;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.ratelimit.RateLimiter;
+import net.kaciras.blog.infra.ratelimit.RateLimiter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

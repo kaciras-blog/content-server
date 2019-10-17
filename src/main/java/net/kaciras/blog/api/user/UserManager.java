@@ -2,8 +2,8 @@ package net.kaciras.blog.api.user;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.principal.AuthType;
-import net.kaciras.blog.infrastructure.codec.ImageReference;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
+import net.kaciras.blog.infra.codec.ImageReference;
+import net.kaciras.blog.infra.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;

@@ -1,7 +1,7 @@
 package spring;
 
 import net.kaciras.blog.api.article.model.ArticleRepository;
-import net.kaciras.blog.infrastructure.Misc;
+import net.kaciras.blog.infra.Misc;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

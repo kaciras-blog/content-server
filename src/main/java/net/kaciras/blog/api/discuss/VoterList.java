@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kaciras.blog.api.Utils;
-import net.kaciras.blog.infrastructure.exception.ResourceStateException;
+import net.kaciras.blog.infra.exception.ResourceStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.dao.DataIntegrityViolationException;

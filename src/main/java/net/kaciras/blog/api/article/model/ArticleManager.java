@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.article.model;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.exception.ResourceDeletedException;
+import net.kaciras.blog.infra.exception.ResourceDeletedException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor

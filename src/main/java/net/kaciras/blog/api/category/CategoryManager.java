@@ -2,7 +2,7 @@ package net.kaciras.blog.api.category;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
+import net.kaciras.blog.infra.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**

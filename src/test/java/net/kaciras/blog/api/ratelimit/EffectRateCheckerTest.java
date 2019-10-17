@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.ratelimit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.kaciras.blog.infrastructure.ratelimit.RateLimiter;
+import net.kaciras.blog.infra.ratelimit.RateLimiter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

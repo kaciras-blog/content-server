@@ -1,10 +1,10 @@
 package net.kaciras.blog.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.kaciras.blog.infrastructure.autoconfigure.KxWebUtilsAutoConfiguration;
-import net.kaciras.blog.infrastructure.principal.AuthorizeAspect;
-import net.kaciras.blog.infrastructure.principal.SecurityContext;
-import net.kaciras.blog.infrastructure.principal.WebPrincipal;
+import net.kaciras.blog.infra.autoconfigure.KxWebUtilsAutoConfiguration;
+import net.kaciras.blog.infra.principal.AuthorizeAspect;
+import net.kaciras.blog.infra.principal.SecurityContext;
+import net.kaciras.blog.infra.principal.WebPrincipal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

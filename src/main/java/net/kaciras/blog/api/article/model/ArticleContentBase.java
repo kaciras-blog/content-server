@@ -2,7 +2,7 @@ package net.kaciras.blog.api.article.model;
 
 import lombok.Data;
 import lombok.ToString;
-import net.kaciras.blog.infrastructure.codec.ImageReference;
+import net.kaciras.blog.infra.codec.ImageReference;
 
 import java.util.List;
 

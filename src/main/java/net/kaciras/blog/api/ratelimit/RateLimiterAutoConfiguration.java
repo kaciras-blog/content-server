@@ -2,8 +2,8 @@ package net.kaciras.blog.api.ratelimit;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.RedisKeys;
-import net.kaciras.blog.infrastructure.ratelimit.RedisBlockingLimiter;
-import net.kaciras.blog.infrastructure.ratelimit.RedisTokenBucket;
+import net.kaciras.blog.infra.ratelimit.RedisBlockingLimiter;
+import net.kaciras.blog.infra.ratelimit.RedisTokenBucket;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

@@ -2,7 +2,7 @@ package net.kaciras.blog.api.principal;
 
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.SessionAttributes;
-import net.kaciras.blog.infrastructure.autoconfigure.SessionCookieProperties;
+import net.kaciras.blog.infra.autoconfigure.SessionCookieProperties;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;

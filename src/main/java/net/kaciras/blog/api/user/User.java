@@ -2,7 +2,7 @@ package net.kaciras.blog.api.user;
 
 import lombok.*;
 import net.kaciras.blog.api.principal.AuthType;
-import net.kaciras.blog.infrastructure.codec.ImageReference;
+import net.kaciras.blog.infra.codec.ImageReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

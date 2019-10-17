@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.config;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.func.UncheckedConsumer;
+import net.kaciras.blog.infra.func.UncheckedConsumer;
 import org.springframework.lang.NonNull;
 
 import javax.validation.ConstraintViolationException;

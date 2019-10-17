@@ -1,8 +1,8 @@
 package net.kaciras.blog.api.discuss;
 
 import lombok.*;
-import net.kaciras.blog.infrastructure.exception.DataTooBigException;
-import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
+import net.kaciras.blog.infra.exception.DataTooBigException;
+import net.kaciras.blog.infra.exception.RequestArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

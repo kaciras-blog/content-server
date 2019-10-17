@@ -2,7 +2,7 @@ package net.kaciras.blog.api.misc;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kaciras.blog.infrastructure.codec.ImageReference;
+import net.kaciras.blog.infra.codec.ImageReference;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotEmpty;

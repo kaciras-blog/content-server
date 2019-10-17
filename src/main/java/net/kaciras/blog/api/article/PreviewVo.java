@@ -3,7 +3,7 @@ package net.kaciras.blog.api.article;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.kaciras.blog.infrastructure.codec.ImageReference;
+import net.kaciras.blog.infra.codec.ImageReference;
 
 import java.time.Instant;
 import java.util.List;

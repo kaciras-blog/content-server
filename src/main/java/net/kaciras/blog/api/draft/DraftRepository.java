@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kaciras.blog.api.Utils;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
+import net.kaciras.blog.infra.exception.ResourceNotFoundException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

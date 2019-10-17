@@ -3,9 +3,9 @@ package net.kaciras.blog.api.discuss;
 import lombok.RequiredArgsConstructor;
 import net.kaciras.blog.api.article.model.ArticleRepository;
 import net.kaciras.blog.api.config.BindConfig;
-import net.kaciras.blog.infrastructure.exception.PermissionException;
-import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
-import net.kaciras.blog.infrastructure.principal.SecurityContext;
+import net.kaciras.blog.infra.exception.PermissionException;
+import net.kaciras.blog.infra.exception.RequestArgumentException;
+import net.kaciras.blog.infra.principal.SecurityContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

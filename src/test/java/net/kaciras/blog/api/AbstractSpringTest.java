@@ -1,8 +1,8 @@
 package net.kaciras.blog.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.kaciras.blog.infrastructure.principal.ServletSecurityContextFilter;
-import net.kaciras.blog.infrastructure.principal.WebPrincipal;
+import net.kaciras.blog.infra.principal.ServletSecurityContextFilter;
+import net.kaciras.blog.infra.principal.WebPrincipal;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,7 +1,7 @@
 package net.kaciras.blog.api.category;
 
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
+import net.kaciras.blog.infra.principal.RequireAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;

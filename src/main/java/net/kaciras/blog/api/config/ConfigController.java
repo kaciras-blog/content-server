@@ -2,7 +2,7 @@ package net.kaciras.blog.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
+import net.kaciras.blog.infra.principal.RequireAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

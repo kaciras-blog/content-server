@@ -3,8 +3,8 @@ package net.kaciras.blog.api.ratelimit;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.kaciras.blog.infrastructure.Misc;
-import net.kaciras.blog.infrastructure.ratelimit.RateLimiter;
+import net.kaciras.blog.infra.Misc;
+import net.kaciras.blog.infra.ratelimit.RateLimiter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

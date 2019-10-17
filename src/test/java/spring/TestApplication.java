@@ -1,6 +1,6 @@
 package spring;
 
-import net.kaciras.blog.infrastructure.autoconfigure.KxCodecAutoConfiguration;
+import net.kaciras.blog.infra.autoconfigure.KxCodecAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 

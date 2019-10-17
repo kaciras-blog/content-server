@@ -2,7 +2,7 @@ package net.kaciras.blog.api.discuss;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import net.kaciras.blog.infrastructure.exception.ResourceNotFoundException;
+import net.kaciras.blog.infra.exception.ResourceNotFoundException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;

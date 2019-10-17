@@ -2,7 +2,7 @@ package net.kaciras.blog.api.category;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.kaciras.blog.infrastructure.codec.ImageReference;
+import net.kaciras.blog.infra.codec.ImageReference;
 
 /**
  * 包含一个分类自身相关的属性，不包括id，parent等用于

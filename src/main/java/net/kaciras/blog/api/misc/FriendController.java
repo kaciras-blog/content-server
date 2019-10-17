@@ -3,8 +3,8 @@ package net.kaciras.blog.api.misc;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.kaciras.blog.api.RedisKeys;
-import net.kaciras.blog.infrastructure.exception.RequestArgumentException;
-import net.kaciras.blog.infrastructure.principal.RequireAuthorize;
+import net.kaciras.blog.infra.exception.RequestArgumentException;
+import net.kaciras.blog.infra.principal.RequireAuthorize;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import static net.kaciras.blog.infrastructure.func.FunctionUtils.unchecked;
+import static net.kaciras.blog.infra.func.FunctionUtils.unchecked;
 
 /**
  * TODO: 考虑做自动申请友链
