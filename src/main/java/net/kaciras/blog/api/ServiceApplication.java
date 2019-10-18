@@ -113,7 +113,6 @@ public class ServiceApplication {
 		taskScheduler.setPoolSize(2);
 		taskScheduler.setThreadNamePrefix("SharedThreadPool-");
 		customizers.forEach(customizer -> customizer.customize(taskScheduler));
-
 		return taskScheduler;
 	}
 
