@@ -11,7 +11,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
-public class SubModuleTests {
+public final class SubModuleTests {
 
 	/**
 	 * 跟正常启动一样，先关闭两个无聊的东西。

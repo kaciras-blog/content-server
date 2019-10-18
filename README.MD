@@ -2,6 +2,8 @@
 
 Kaciras博客的内容服务器，管理用户、文章、评论、分类等数据。
 
+现阶段不打算再加新功能，单元测试也懒得写了。
+
 有问题请联系作者 [@Kaciras](https://github.com/Kaciras) <[Kaciras@outlook.com](mailto:Kaciras@outlook.com)>
 
 # 下一版计划

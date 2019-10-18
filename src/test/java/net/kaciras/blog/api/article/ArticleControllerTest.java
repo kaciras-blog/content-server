@@ -40,7 +40,7 @@ final class ArticleControllerTest extends AbstractSpringTest {
 
 		mockMvc.perform(patch("/articles/5")
 				.principal(ADMIN)
-				.contentType(MediaType.APPLICATION_JSON_UTF8)
+				.contentType(MediaType.APPLICATION_JSON)
 				.content("{ \"category\": 2 }"))
 				.andExpect(status().is(200));
 

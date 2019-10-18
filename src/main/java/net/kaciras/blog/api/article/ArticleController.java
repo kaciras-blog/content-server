@@ -19,10 +19,10 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
 
-@Slf4j
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/articles")
+@Slf4j
+@RequiredArgsConstructor
 class ArticleController {
 
 	private final ArticleRepository repository;
@@ -40,6 +40,10 @@ class ArticleController {
 		 *
 		 * 这个API是聚合请求，除了文章外还返回了分类信息，因此不能仅以文章的更新时间来判断
 		 * 是否缓存。但RSS不使用分类信息，目前也就仅对其做一个缓存。
+		 *
+		 * 虽然RSS请求有个分类参数，但全部文章最后更新时间一定不小于某个分类里的，所以也没错，
+		 * 只是会降低缓存命中率。
+		 * 但我懒得再改了，性能目前也不是什么大问题。
 		 */
 		if (query.isContent()) {
 			var nativeRequest = request.getNativeRequest(HttpServletRequest.class);
