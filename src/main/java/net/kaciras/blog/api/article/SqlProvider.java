@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.article.model;
+package net.kaciras.blog.api.article;
 
 import net.kaciras.blog.infra.Misc;
 import org.apache.ibatis.jdbc.SQL;

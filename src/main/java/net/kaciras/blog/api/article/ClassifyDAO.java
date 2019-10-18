@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.article.model;
+package net.kaciras.blog.api.article;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.SelectProvider;

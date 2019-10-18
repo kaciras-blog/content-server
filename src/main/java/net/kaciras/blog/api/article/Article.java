@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.article.model;
+package net.kaciras.blog.api.article;
 
 import lombok.*;
 import net.kaciras.blog.infra.exception.ResourceDeletedException;

@@ -1,8 +1,8 @@
 package net.kaciras.blog.api.category;
 
 import net.kaciras.blog.api.MapStructConfig;
-import net.kaciras.blog.api.article.model.ArticleListQuery;
-import net.kaciras.blog.api.article.model.ArticleRepository;
+import net.kaciras.blog.api.article.ArticleListQuery;
+import net.kaciras.blog.api.article.ArticleRepository;
 import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

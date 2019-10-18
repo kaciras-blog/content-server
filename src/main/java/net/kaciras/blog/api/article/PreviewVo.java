@@ -22,14 +22,14 @@ public final class PreviewVo {
 	private List<String> keywords;
 	private String summary;
 
-	private List<SimpleCategoryVo> cpath;
+	private String content;
 
 	private Instant create;
 	private Instant update;
 
-	private int vcnt;
-	private int dcnt;
+	private int viewCount;
+	private int discussionCount;
 	private boolean deleted;
 
-	private String content;
+	private List<SimpleCategoryVo> categories;
 }

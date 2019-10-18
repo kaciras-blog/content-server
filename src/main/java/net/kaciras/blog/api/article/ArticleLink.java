@@ -2,7 +2,6 @@ package net.kaciras.blog.api.article;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.kaciras.blog.api.article.model.Article;
 
 @AllArgsConstructor
 @Getter

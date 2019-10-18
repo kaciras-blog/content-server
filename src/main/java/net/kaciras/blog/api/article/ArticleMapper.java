@@ -1,9 +1,6 @@
 package net.kaciras.blog.api.article;
 
 import net.kaciras.blog.api.MapStructConfig;
-import net.kaciras.blog.api.article.model.Article;
-import net.kaciras.blog.api.article.model.ArticleContentBase;
-import net.kaciras.blog.api.article.model.ArticleListQuery;
 import net.kaciras.blog.api.category.Category;
 import net.kaciras.blog.api.category.CategoryManager;
 import net.kaciras.blog.api.category.CategoryRepository;
@@ -36,7 +33,7 @@ abstract class ArticleMapper {
 
 	public ArticleVo toViewObject(Article article) {
 		var vo = createVoFrom(article);
-		article.getPrevious().map(ArticleLink::of).ifPresent(vo::setPrev);
+		article.getPrevious().map(ArticleLink::of).ifPresent(vo::setPrevious);
 		article.getNext().map(ArticleLink::of).ifPresent(vo::setNext);
 		vo.setBanner(categoryManager.getBanner(article.getCategory()));
 		return vo;
@@ -58,16 +55,16 @@ abstract class ArticleMapper {
 			vo.setContent(article.getContent());
 		}
 		var categoryPath = categoryRepository.get(article.getCategory()).getPathTo(request.getCategory());
-		vo.setCpath(mapCategoryPath(categoryPath));
-		vo.setDcnt(discussionService.count(new DiscussionQuery().setObjectId(article.getId()).setType(0)));
+		vo.setCategories(mapCategoryPath(categoryPath));
+		vo.setDiscussionCount(discussionService.count(new DiscussionQuery().setObjectId(article.getId()).setType(0)));
 		return vo;
 	}
 
 	// 排除内容属性，由外层的方法决定是否复制
-	@Mapping(target = "vcnt", source = "viewCount")
 	@Mapping(target = "content", ignore = true)
 	abstract PreviewVo createPreviewFrom(Article article);
 
+	@Mapping(target = "previous", ignore = true)
 	@Mapping(target = "next", ignore = true)
 	abstract ArticleVo createVoFrom(Article article);
 

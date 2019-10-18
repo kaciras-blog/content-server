@@ -1,9 +1,6 @@
 package net.kaciras.blog.api.article;
 
 import net.kaciras.blog.api.AbstractSpringTest;
-import net.kaciras.blog.api.article.model.Article;
-import net.kaciras.blog.api.article.model.ArticleManager;
-import net.kaciras.blog.api.article.model.ArticleRepository;
 import net.kaciras.blog.api.draft.DraftRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

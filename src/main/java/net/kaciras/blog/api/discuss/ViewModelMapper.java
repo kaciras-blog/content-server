@@ -2,7 +2,7 @@ package net.kaciras.blog.api.discuss;
 
 import net.kaciras.blog.api.MapStructConfig;
 import net.kaciras.blog.api.article.ArticleLink;
-import net.kaciras.blog.api.article.model.ArticleRepository;
+import net.kaciras.blog.api.article.ArticleRepository;
 import net.kaciras.blog.api.user.UserManager;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;

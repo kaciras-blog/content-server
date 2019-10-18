@@ -1,4 +1,4 @@
-package net.kaciras.blog.api.article.model;
+package net.kaciras.blog.api.article;
 
 import org.apache.ibatis.annotations.*;
 
@@ -13,12 +13,12 @@ import java.util.Optional;
 interface ArticleDAO {
 
 	@Select("SELECT * FROM article WHERE id=#{id}")
-	@ResultMap("net.kaciras.blog.api.article.model.ArticleDAO.ArticleMap")
+	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleMap")
 	Optional<Article> selectById(int id);
 
 	// 小心注入，comparator 参数必须限制在比较符号。
 	@Select("SELECT * FROM article WHERE id ${comparator} #{id} AND deleted=0 LIMIT 1")
-	@ResultMap("net.kaciras.blog.api.article.model.ArticleDAO.ArticleMap")
+	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleMap")
 	Optional<Article> getNeighbor(int id, String comparator);
 
 	@Select("SELECT COUNT(*) FROM article")
@@ -31,7 +31,7 @@ interface ArticleDAO {
 	 * @return 文章预览信息列表
 	 */
 	@SelectProvider(type = SqlProvider.class, method = "selectPreview")
-	@ResultMap("net.kaciras.blog.api.article.model.ArticleDAO.ArticleMap")
+	@ResultMap("net.kaciras.blog.api.article.ArticleDAO.ArticleMap")
 	List<Article> selectPreview(ArticleListQuery query);
 
 	@Insert("INSERT INTO article(category, title, url_title, cover, summary, content) " +

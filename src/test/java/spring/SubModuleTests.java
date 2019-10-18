@@ -1,6 +1,6 @@
 package spring;
 
-import net.kaciras.blog.api.article.model.ArticleRepository;
+import net.kaciras.blog.api.article.ArticleRepository;
 import net.kaciras.blog.infra.Misc;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
