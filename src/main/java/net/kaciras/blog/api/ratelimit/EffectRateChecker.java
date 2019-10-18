@@ -32,7 +32,7 @@ public final class EffectRateChecker implements RateLimiterChecker {
 		if (Misc.isSafeRequest(request)) {
 			return true;
 		}
-		if (whiteList != null && whiteList.matcher(request.getPathInfo()).find()) {
+		if (whiteList != null && whiteList.matcher(request.getRequestURI()).find()) {
 			return true;
 		}
 		if (rateLimiter.acquire(ip.toString(), 1) == 0) {
