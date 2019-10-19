@@ -152,8 +152,6 @@ public class ServiceApplication {
 
 	public static void main(String... args) {
 		Misc.disableIllegalAccessWarning();
-		Misc.disableSpringDevToolOnJarStartup();
-
 		new SpringApplicationBuilder(ServiceApplication.class).listeners(new ApplicationPidFileWriter()).run(args);
 	}
 }

@@ -75,7 +75,8 @@ public class Article extends ArticleContentBase {
 		classifyDAO.updateByArticle(id, category);
 	}
 
-	public Optional<Article> getPrevious() {
+	// prev 是个常用的简写可以使用
+	public Optional<Article> getPrev() {
 		return articleDAO.getNeighbor(id, "<");
 	}
 

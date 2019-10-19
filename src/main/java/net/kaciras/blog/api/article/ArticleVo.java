@@ -30,6 +30,6 @@ public final class ArticleVo {
 	private int discussionCount;
 
 	private Banner banner;
-	private ArticleLink previous;
+	private ArticleLink prev;
 	private ArticleLink next;
 }

@@ -33,7 +33,7 @@ abstract class ArticleMapper {
 
 	public ArticleVo toViewObject(Article article) {
 		var vo = createVoFrom(article);
-		article.getPrevious().map(ArticleLink::of).ifPresent(vo::setPrevious);
+		article.getPrev().map(ArticleLink::of).ifPresent(vo::setPrev);
 		article.getNext().map(ArticleLink::of).ifPresent(vo::setNext);
 		vo.setBanner(categoryManager.getBanner(article.getCategory()));
 		return vo;
@@ -64,7 +64,7 @@ abstract class ArticleMapper {
 	@Mapping(target = "content", ignore = true)
 	abstract PreviewVo createPreviewFrom(Article article);
 
-	@Mapping(target = "previous", ignore = true)
+	@Mapping(target = "prev", ignore = true)
 	@Mapping(target = "next", ignore = true)
 	abstract ArticleVo createVoFrom(Article article);
 
