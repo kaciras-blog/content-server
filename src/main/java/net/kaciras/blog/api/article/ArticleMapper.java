@@ -80,6 +80,7 @@ abstract class ArticleMapper {
 		var article = new Article();
 		update(article, request);
 
+		article.setCategory(request.getCategory());
 		article.setUrlTitle(StringUtils.trimTrailingCharacter(urlKeywords
 				.matcher(request.getUrlTitle()).replaceAll("-"), '-'));
 		return article;
