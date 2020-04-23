@@ -71,6 +71,8 @@ kaciras:
 
   authorization:
     security-context: true
+    csrf:
+      skip-safe: false
 
   cors:
     allowed-methods: "*"
