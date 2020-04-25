@@ -13,13 +13,13 @@ spring:
   datasource:
     url: jdbc:mariadb://localhost:3306/blog?allowMultiQueries=true
     username: root
-    password: foobar123456
+    password: <your password>
     driver-class-name: org.mariadb.jdbc.Driver
 
   redis:
     host: localhost
     port: 6375
-    password: foobar123456
+    password: <your password>
 
 kaciras:
 

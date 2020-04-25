@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>Kaciras blog data server</name>
-	<description>Data server for Kaciras blog</description>
+	<name>Kaciras Blog content server</name>
+	<description>Content server for Kaciras blog</description>
 
 	<groupId>net.kaciras.blog</groupId>
 	<artifactId>content-service</artifactId>
@@ -159,6 +159,13 @@
 			<!--	<artifactId>spring-boot-maven-plugin</artifactId>-->
 			<!--	<configuration>-->
 			<!--		<agents>${ltw.agent}</agents>-->
+			<!--		<jvmArguments>-->
+			<!--			-Xmx200M-->
+			<!--			-Xms200M-->
+			<!--			-XX:+HeapDumpOnOutOfMemoryError-->
+			<!--			-noverify-->
+			<!--			-Djava.awt.headless=true-->
+			<!--		</jvmArguments>-->
 			<!--	</configuration>-->
 			<!--</plugin>-->
 		</plugins>

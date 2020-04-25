@@ -29,7 +29,13 @@ public final class TextImageCaptchaGenerator {
 
 	private final Font font;
 
-	// 使用独立的字体文件，统一不同系统上的字体
+	/*
+	 * 使用独立的字体文件，统一不同系统上的字体。
+	 *
+	 * 【错误处理】
+	 * 一些没安装字体功能的Linux系统会报错：IOException: Problem reading font data.
+	 * 此时可以尝试安装 fontconfig 包：`apt install fontconfig`
+	 */
 	public TextImageCaptchaGenerator() throws IOException, FontFormatException {
 		var fontFile = TextImageCaptchaGenerator.class.getClassLoader().getResource("CENTURY.TTF");
 		if (fontFile == null) {
