@@ -86,7 +86,12 @@ class ArticleController {
 
 		if (request.isDestroy()) {
 			draftRepository.remove(request.getDraftId());
+		} else {
+			var draft = draftRepository.findById(request.getDraftId());
+			draft.setArticleId(article.getId());
+			draftRepository.update(draft);
 		}
+
 		return ResponseEntity
 				.created(URI.create("/articles/" + article.getId()))
 				.body(mapper.toViewObject(article));

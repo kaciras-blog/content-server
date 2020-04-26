@@ -23,8 +23,11 @@ interface DraftDAO {
 	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Draft draft);
 
+	@Update("UPDATE draft SET article_id=#{articleId} WHERE id=#{id}")
+	int update(Draft draft);
+
 	@Select("SELECT COUNT(*) FROM draft WHERE user_id=#{uid}")
-	int selectCountByUser(int uid);
+	int countByUser(int uid);
 
 	/**
 	 * 删除指定id的草稿，包括其所有的历史记录

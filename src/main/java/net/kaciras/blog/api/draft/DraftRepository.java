@@ -41,7 +41,7 @@ public class DraftRepository {
 	 */
 	public void add(@NonNull Draft draft) {
 		Utils.checkPositive(draft.getUserId(), "userId");
-		var count = draftDAO.selectCountByUser(draft.getUserId());
+		var count = draftDAO.countByUser(draft.getUserId());
 		if (count > userLimit) {
 			throw new IllegalStateException("用户的草稿数量已达上限");
 		}
@@ -63,5 +63,9 @@ public class DraftRepository {
 	public void remove(int id) {
 		Utils.checkPositive(id, "id");
 		Utils.checkEffective(draftDAO.deleteById(id));
+	}
+
+	public void update(Draft draft) {
+		Utils.checkEffective(draftDAO.update(draft));
 	}
 }
