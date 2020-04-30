@@ -25,4 +25,5 @@ public final class DiscussionQuery {
 	private boolean linked;
 
 	private Pageable pageable;
+	private int replySize;
 }

@@ -57,13 +57,18 @@ class DiscussionController {
 		var size = discussionService.count(query);
 		var result = discussionService.getList(query);
 
+		// 控制台里查询的，需要加上一个链接字段
 		if (query.isLinked()) {
 			return new ListQueryView<>(size, mapper.toLinkedView(result));
 		}
+
+		// 查询的是回复（楼中楼）
 		if (query.getParent() != 0) {
 			return new ListQueryView<>(size, mapper.toReplyView(result));
 		}
-		return new ListQueryView<>(size, mapper.toAggregatedView(result, Utils.addressFromRequest(request)));
+
+		var items = mapper.toAggregatedView(result, Utils.addressFromRequest(request), query.getReplySize());
+		return new ListQueryView<>(size, items);
 	}
 
 	// 无论是否审核都返回视图，前端可以通过 state 判断

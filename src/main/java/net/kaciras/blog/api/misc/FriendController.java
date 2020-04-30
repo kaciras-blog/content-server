@@ -47,7 +47,7 @@ class FriendController {
 	public ResponseEntity<FriendLink> makeFriends(@RequestBody @Valid FriendLink input) throws JsonProcessingException {
 		var host = URI.create(input.getUrl()).getHost();
 		if (host == null) {
-			throw new RequestArgumentException("友链的域名为空");
+			throw new RequestArgumentException("友链的URL格式错误");
 		}
 		redisHash.put(host, objectMapper.writeValueAsBytes(input));
 		return ResponseEntity.created(URI.create("/friends/" + host)).body(input);

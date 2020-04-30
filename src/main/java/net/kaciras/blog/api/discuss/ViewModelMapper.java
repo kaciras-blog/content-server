@@ -42,8 +42,8 @@ abstract class ViewModelMapper {
 				.collect(Collectors.toList());
 	}
 
-	public final List<DiscussionVo> toAggregatedView(List<Discussion> model, InetAddress address) {
-		return model.stream().map(m -> toAggregatedView(m, address)).collect(Collectors.toList());
+	public final List<DiscussionVo> toAggregatedView(List<Discussion> model, InetAddress address, int replySize) {
+		return model.stream().map(m -> toAggregatedView(m, address, replySize)).collect(Collectors.toList());
 	}
 
 	public final List<DiscussionVo> toReplyView(List<Discussion> model) {
@@ -67,12 +67,12 @@ abstract class ViewModelMapper {
 	}
 
 	// 3
-	public final DiscussionVo toAggregatedView(Discussion model, InetAddress address) {
+	public final DiscussionVo toAggregatedView(Discussion model, InetAddress address, int replySize) {
 		var result = ConvertWithVoteExt(model);
 
 		var replies = repository.findAll(new DiscussionQuery()
 				.setParent(model.getId())
-				.setPageable(PageRequest.of(0, 5)));
+				.setPageable(PageRequest.of(0, replySize)));
 
 		result.setReplies(replies.stream()
 				.map(this::toReplyView)
