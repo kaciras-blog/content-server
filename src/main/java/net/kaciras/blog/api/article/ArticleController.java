@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.kaciras.blog.api.DeletedState;
 import net.kaciras.blog.api.ListQueryView;
 import net.kaciras.blog.api.Utils;
+import net.kaciras.blog.api.draft.DraftContent;
 import net.kaciras.blog.api.draft.DraftRepository;
 import net.kaciras.blog.infra.principal.RequireAuthorize;
 import net.kaciras.blog.infra.principal.SecurityContext;
@@ -83,14 +84,7 @@ class ArticleController {
 	public ResponseEntity<ArticleVo> post(@RequestBody @Valid PublishInput request) {
 		var article = mapper.createArticle(request);
 		repository.add(article);
-
-		if (request.isDestroy()) {
-			draftRepository.remove(request.getDraftId());
-		} else {
-			var draft = draftRepository.findById(request.getDraftId());
-			draft.setArticleId(article.getId());
-			draftRepository.update(draft);
-		}
+		updateDraft(article, request);
 
 		return ResponseEntity
 				.created(URI.create("/articles/" + article.getId()))
@@ -105,11 +99,27 @@ class ArticleController {
 
 		mapper.update(article, request);
 		repository.update(article);
+		updateDraft(article, request);
 
+		return mapper.toViewObject(article);
+	}
+
+	private void updateDraft(Article article, PublishInput request) {
 		if (request.isDestroy()) {
 			draftRepository.remove(request.getDraftId());
+		} else {
+			var draft = draftRepository.findById(request.getDraftId());
+			draft.setArticleId(article.getId());
+			draftRepository.update(draft);
+
+			var history = new DraftContent();
+			history.setTitle(request.getTitle());
+			history.setKeywords(String.join(" ", request.getKeywords()));
+			history.setCover(request.getCover());
+			history.setSummary(request.getSummary());
+			history.setContent(request.getContent());
+			draft.getHistoryList().add(history);
 		}
-		return mapper.toViewObject(article);
 	}
 
 	@RequireAuthorize
