@@ -8,8 +8,8 @@ import java.util.Optional;
 @Mapper
 interface DiscussionDAO {
 
-	@Insert("INSERT INTO discussion(object_id, type, floor, parent, user_id, nickname, content, state, address) " +
-			"VALUES (#{objectId}, #{type}, #{floor}, #{parent}, #{userId}, #{nickname}, #{content}, #{state}, #{address})")
+	@Insert("INSERT INTO discussion(object_id, type, floor, parent, user_id, nickname, content, time, state, address) " +
+			"VALUES (#{objectId}, #{type}, #{floor}, #{parent}, #{userId}, #{nickname}, #{content}, #{time}, #{state}, #{address})")
 	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Discussion discussion);
 

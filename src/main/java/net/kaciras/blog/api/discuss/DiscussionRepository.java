@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.util.List;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -15,6 +16,7 @@ import java.util.List;
 class DiscussionRepository {
 
 	private final DiscussionDAO dao;
+	private final Clock clock;
 
 	/**
 	 * 添加一条评论，此方法会在评论对象中设置自动生成的 id 以及 floor。
@@ -28,6 +30,7 @@ class DiscussionRepository {
 	public void add(@NonNull Discussion discussion) {
 		var count = dao.selectTopLevelCount(discussion.getObjectId(), discussion.getType());
 		discussion.setFloor(count);
+		discussion.setTime(clock.instant());
 		dao.insert(discussion);
 	}
 
