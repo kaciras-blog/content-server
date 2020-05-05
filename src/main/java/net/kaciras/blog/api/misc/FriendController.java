@@ -36,7 +36,7 @@ class FriendController {
 	// lambda 显示写出参数类型才能让编译器推导返回类型？
 	@GetMapping
 	public Collection<FriendLink> getFriends() {
-		return redisHash.entries().values()
+		return redisHash.values()
 				.stream()
 				.map(unchecked((byte[] value) -> objectMapper.readValue(value, FriendLink.class)))
 				.collect(Collectors.toList());
