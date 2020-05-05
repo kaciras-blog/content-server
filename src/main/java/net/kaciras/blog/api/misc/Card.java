@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @ToString(of = {"name", "link"})
 @Getter
 @Setter
-public final class SlideCard {
+public final class Card {
 
 	@Length(max = 20)
 	private String name;

@@ -16,8 +16,8 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/recommendation/cards")
-class CardsController {
+@RequestMapping("/cards")
+class CardController {
 
 	/**
 	 * 卡片需要保证次序，并且支持删除、插入到任意位置，Redis内置的数据类型
@@ -27,13 +27,13 @@ class CardsController {
 	private final ObjectMapper objectMapper;
 
 	@GetMapping
-	public List<SlideCard> getPages() throws IOException {
+	public List<Card> getPages() throws IOException {
 		var encode = redisTemplate.opsForValue().get(RedisKeys.CardList.value());
 		if (encode == null) {
 			return Collections.emptyList();
 		}
 		return objectMapper.readValue(encode, objectMapper.getTypeFactory()
-				.constructCollectionType(List.class, SlideCard.class));
+				.constructCollectionType(List.class, Card.class));
 	}
 
 	/**
@@ -44,7 +44,7 @@ class CardsController {
 	 */
 	@RequireAuthorize
 	@PutMapping
-	public ResponseEntity<Void> update(@RequestBody @Valid List<SlideCard> cards) throws Exception {
+	public ResponseEntity<Void> update(@RequestBody @Valid List<Card> cards) throws Exception {
 		redisTemplate.opsForValue().set(RedisKeys.CardList.value(), objectMapper.writeValueAsBytes(cards));
 		return ResponseEntity.noContent().build();
 	}
