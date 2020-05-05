@@ -19,7 +19,7 @@ final class GenericRateCheckerTest {
 	private final RateLimiter limiter = mock(RateLimiter.class);
 	private final Filter filter = new RateLimitFilter(List.of(new GenericRateChecker(limiter)));
 
-	private MockFilterChain chain = new MockFilterChain();
+	private final MockFilterChain chain = new MockFilterChain();
 
 	@Test
 	void validRequest() throws Exception {

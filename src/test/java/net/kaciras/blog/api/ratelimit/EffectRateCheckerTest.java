@@ -26,9 +26,9 @@ final class EffectRateCheckerTest {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
-	private MockHttpServletRequest request = new MockHttpServletRequest();
-	private MockHttpServletResponse response = new MockHttpServletResponse();
-	private MockFilterChain chain = new MockFilterChain();
+	private final MockHttpServletRequest request = new MockHttpServletRequest();
+	private final MockHttpServletResponse response = new MockHttpServletResponse();
+	private final MockFilterChain chain = new MockFilterChain();
 
 	// 默认跳过本地的请求，需要设置一下请求的地址
 	@BeforeEach

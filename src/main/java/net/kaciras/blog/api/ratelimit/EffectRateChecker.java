@@ -2,15 +2,11 @@ package net.kaciras.blog.api.ratelimit;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import net.kaciras.blog.infra.Misc;
 import net.kaciras.blog.infra.ratelimit.RateLimiter;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.net.InetAddress;
-import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 /**
@@ -18,30 +14,20 @@ import java.util.regex.Pattern;
  */
 @Setter
 @RequiredArgsConstructor
-@Slf4j
 public final class EffectRateChecker implements RateLimiterChecker {
-
-	private static final byte[] REJECT_MSG = "{\"message\":\"请求频率太快，IP被封禁\"}".getBytes(StandardCharsets.UTF_8);
 
 	private final RateLimiter rateLimiter;
 
 	private Pattern whiteList;
 
 	@Override
-	public boolean check(InetAddress ip, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public long check(InetAddress ip, HttpServletRequest request) {
 		if (Misc.isSafeRequest(request)) {
-			return true;
+			return 0;
 		}
 		if (whiteList != null && whiteList.matcher(request.getRequestURI()).find()) {
-			return true;
+			return 0;
 		}
-		if (rateLimiter.acquire(ip.toString(), 1) == 0) {
-			return true;
-		}
-		response.setStatus(429);
-		response.setContentType("application/json;charset=UTF-8");
-		response.setContentLength(REJECT_MSG.length);
-		response.getOutputStream().write(REJECT_MSG);
-		return false;
+		return rateLimiter.acquire(ip.toString(), 1);
 	}
 }
