@@ -41,15 +41,16 @@ class CategoryController {
 	@RequireAuthorize
 	@Transactional
 	@PostMapping("/transfer")
-	public ResponseEntity<Void> move(@RequestParam int id, @RequestParam int parent, @RequestParam boolean treeMode) {
-		var category = repository.get(id);
-		var newParent = repository.get(parent);
+	public ResponseEntity<Void> move(@RequestBody MoveInput input) {
+		var category = repository.get(input.getId());
+		var newParent = repository.get(input.getParent());
 
-		if (treeMode) {
+		if (input.isTreeMode()) {
 			category.moveTreeTo(newParent);
 		} else {
 			category.moveTo(newParent);
 		}
+
 		return ResponseEntity.noContent().build();
 	}
 
