@@ -2,7 +2,7 @@
 <configuration>
 	<include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-	<logger name="net.kaciras.blog" level="INFO"/>
+	<logger name="com.kaciras.blog" level="INFO"/>
 
 	<!-- ExceptionResolver 默认会记录一个警告，给他去掉 -->
 	<logger name="org.springframework.web.servlet.mvc.method" level="ERROR"/>

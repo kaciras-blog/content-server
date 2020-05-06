@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="net.kaciras.blog.api.draft.HistoryDAO">
+<mapper namespace="HistoryDAO">
 
 	<insert id="insert">
 		INSERT INTO draft_history (id, save_count, title, cover, summary, keywords, content)
@@ -18,7 +18,7 @@
 			   FROM (SELECT MIN(save_count) AS save_count FROM draft WHERE id = #{id}) AS Self)
 	</delete>
 
-	<resultMap type="net.kaciras.blog.api.draft.History" id="DraftHistoryMap">
+	<resultMap type="com.kaciras.blog.api.draft.History" id="DraftHistoryMap">
 		<result column="save_count" property="saveCount"/>
 	</resultMap>
 </mapper>

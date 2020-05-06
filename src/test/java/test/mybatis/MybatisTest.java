@@ -3,7 +3,7 @@
  */
 package test.mybatis;
 
-import net.kaciras.blog.infra.autoconfigure.KxCodecAutoConfiguration;
+import com.kaciras.blog.infra.autoconfigure.KxCodecAutoConfiguration;
 import org.apache.ibatis.binding.BindingException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

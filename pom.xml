@@ -5,8 +5,8 @@
 	<name>Kaciras Blog content server</name>
 	<description>Content server for Kaciras blog</description>
 
-	<groupId>net.kaciras.blog</groupId>
-	<artifactId>content-service</artifactId>
+	<groupId>com.kaciras.blog</groupId>
+	<artifactId>content-server</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
@@ -29,7 +29,7 @@
 
 		<!-- 自己的其它项目 -->
 		<dependency>
-			<groupId>net.kaciras.blog</groupId>
+			<groupId>com.kaciras.blog</groupId>
 			<artifactId>infra</artifactId>
 			<version>1.0</version>
 		</dependency>
@@ -126,7 +126,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>net.kaciras.blog.api.ServiceApplication</mainClass>
+							<mainClass>com.kaciras.blog.api.ServiceApplication</mainClass>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
 						</manifest>
