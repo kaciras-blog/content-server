@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="ArticleDAO">
+<mapper namespace="com.kaciras.blog.api.article.ArticleDAO">
 
-	<resultMap type="com.kaciras.blog.api.article.Article" id="ArticleMap">
+	<resultMap id="articleMap" type="com.kaciras.blog.api.article.Article">
 		<id property="id" column="id"/>
 		<result property="urlTitle" column="url_title"/>
 		<result property="viewCount" column="view_count"/>
 		<result property="create" column="create_time"/>
 		<result property="update" column="update_time"/>
-		<collection property="keywords" column="id" select="KeywordDAO.select"/>
+		<collection property="keywords" column="id" select="com.kaciras.blog.api.article.KeywordDAO.select"/>
 	</resultMap>
 </mapper>

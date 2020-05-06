@@ -11,7 +11,7 @@ interface UserDAO {
 	void insert(User user);
 
 	@Select("SELECT * FROM `user` WHERE id=#{id}")
-	@ResultMap("com.kaciras.blog.api.user.UserMap")
+	@ResultMap("com.kaciras.blog.api.user.UserDAO.userMap")
 	User select(int id);
 
 	@Delete("UPDATE `user` SET deleted=1 WHERE id=#{id}")

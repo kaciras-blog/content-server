@@ -12,11 +12,11 @@ import java.util.Optional;
 interface DraftDAO {
 
 	@Select("SELECT * FROM draft WHERE id=#{id}")
-	@ResultMap("com.kaciras.blog.api.draft.DraftDAO.DraftMap")
+	@ResultMap("com.kaciras.blog.api.draft.DraftDAO.draftMap")
 	Optional<Draft> selectById(int id);
 
 	@Select("SELECT * FROM draft WHERE user_id=#{uid}")
-	@ResultMap("com.kaciras.blog.api.draft.DraftDAO.DraftMap")
+	@ResultMap("com.kaciras.blog.api.draft.DraftDAO.draftMap")
 	List<Draft> selectByUser(int uid);
 
 	@Insert("INSERT INTO draft(user_id, article_id) VALUES (#{userId}, #{articleId})")

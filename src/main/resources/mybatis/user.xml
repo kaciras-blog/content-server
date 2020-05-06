@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.kaciras.blog.api.user">
+<mapper namespace="com.kaciras.blog.api.user.UserDAO">
 
-	<resultMap type="com.kaciras.blog.api.user.User" id="UserMap">
+	<resultMap id="userMap" type="com.kaciras.blog.api.user.User">
 		<result property="authType" column="auth"/>
 		<result property="registerIP" column="regist_ip"/>
 		<result property="registerTime" column="regist_time"/>
