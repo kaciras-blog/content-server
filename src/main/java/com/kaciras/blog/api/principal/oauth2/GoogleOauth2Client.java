@@ -70,6 +70,7 @@ public final class GoogleOauth2Client implements Oauth2Client {
 		if (res.statusCode() != 200) {
 			throw new Error("Oauth Error" + res.body());
 		}
+
 		var tokenEntity = objectMapper.readValue(res.body(), AccessTokenEntity.class);
 		return getUserProfile(tokenEntity.access_token);
 	}

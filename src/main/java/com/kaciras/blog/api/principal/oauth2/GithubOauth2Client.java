@@ -66,6 +66,7 @@ public final class GithubOauth2Client implements Oauth2Client {
 		if (res.statusCode() != 200) {
 			throw new IOException("Oauth获取AccessToken失败，返回码：" + res.statusCode());
 		}
+
 		var token = objectMapper.readValue(res.body(), AccessTokenEntity.class);
 		return getUserProfile(token.access_token);
 	}
@@ -76,11 +77,12 @@ public final class GithubOauth2Client implements Oauth2Client {
 				.header("Accept", "application/json")
 				.header("Authorization", "token " + accessToken)
 				.build();
-		var res = httpClient.send(request, BodyHandlers.ofString());
 
+		var res = httpClient.send(request, BodyHandlers.ofString());
 		if (res.statusCode() != 200) {
 			throw new IOException("获取用户信息失败，返回码：" + res.statusCode());
 		}
+
 		return objectMapper.readValue(res.body(), UserProfile.class);
 	}
 
