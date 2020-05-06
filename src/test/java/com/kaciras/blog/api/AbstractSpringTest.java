@@ -39,7 +39,7 @@ public abstract class AbstractSpringTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac)
 				.addFilter(new ServletSecurityContextFilter())
 				.defaultRequest(get("/")
-						.contentType(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON)
 						.principal(ANONYMOUS))
 				.build();
 	}

@@ -12,6 +12,6 @@ final class PublishInput {
 	private final int type;
 	private final int parent;
 
-	private String nickname;
+	private final String nickname;
 	private final String content;
 }

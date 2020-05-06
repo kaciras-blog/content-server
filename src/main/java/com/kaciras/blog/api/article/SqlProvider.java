@@ -9,24 +9,22 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public final class SqlProvider {
 
-	private Set<String> allowFields = Set.of("create_time", "update_time", "view_count");
+	private final Set<String> allowFields = Set.of("id", "create_time", "update_time", "view_count");
 
+	/*
+	 * 【关于SQL涉及category表】
+	 * 这是可以的，并不算增加了耦合程度。首先对于领域层来说，存储的实现是抽象的，根本就不关心SQL的问题。
+	 * 而对于下层，我又不搞什么分布式放一起查询完全没问题，真要分离的话就做缓存解决。
+	 */
 	private void applyFilters(SQL sql, ArticleListQuery query) {
 		switch (query.getDeletion()) {
-			case ALIVE:
-				sql.WHERE("deleted = 0");
-				break;
-			case DELETED:
-				sql.WHERE("deleted = 1");
-				break;
+			case ALIVE -> sql.WHERE("deleted = 0");
+			case DELETED -> sql.WHERE("deleted = 1");
 		}
 
-		var category = query.getCategory();
-		if (category > 0) {
+		if (query.getCategory() > 0) {
 			if (query.isRecursive()) {
-				//TODO: coupling 耦合
-				sql.JOIN("category_tree AS B ON A.category=B.descendant")
-						.WHERE("B.ancestor=#{category}");
+				sql.JOIN("category_tree AS B ON A.category=B.descendant").WHERE("B.ancestor=#{category}");
 			} else {
 				sql.WHERE("A.category = #{category}");
 			}
@@ -41,7 +39,7 @@ public final class SqlProvider {
 			var p = order.getProperty();
 
 			if (!allowFields.contains(p)) {
-				throw new IllegalArgumentException("错误的过滤字段:" + p);
+				throw new IllegalArgumentException("错误的过滤字段: " + p);
 			}
 			sql.ORDER_BY(p + " " + order.getDirection());
 		}

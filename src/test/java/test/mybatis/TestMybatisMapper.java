@@ -8,6 +8,7 @@ import java.util.OptionalInt;
 @Mapper
 interface TestMybatisMapper {
 
+	@SuppressWarnings("UnusedReturnValue")
 	@Select("SELECT 1 FROM article WHERE id=-1")
 	boolean selectNullableBool();
 

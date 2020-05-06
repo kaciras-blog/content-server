@@ -6,6 +6,7 @@ import lombok.Value;
 @Value
 public final class Banner {
 
-	private ImageReference image;
-	private int theme;
+	private final ImageReference image;
+
+	private final int theme;
 }
