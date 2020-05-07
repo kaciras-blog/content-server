@@ -1,7 +1,8 @@
-package com.kaciras.blog.api.accesslog;
+package com.kaciras.blog.api.delaylog;
 
 import com.kaciras.blog.api.Utils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
@@ -15,14 +16,18 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Optional;
 
+/**
+ * 记录访问用时的过滤器，可以用来检测用时过长的请求。
+ *
+ * TODO: 话说为什么要记到数据库，用日志不好么……
+ */
 @Order(-10)
 @RequiredArgsConstructor
 @Component
-public final class AccessLoggingFilter extends HttpFilter {
+public final class DelayLoggingFilter extends HttpFilter {
 
-	private static final int UA_MAX_LENGTH = 255;
+	/** 65秒可以视为响应超时 */
 	private static final int MAX_DELAY = 65535;
 
 	private final Clock clock;
@@ -30,7 +35,10 @@ public final class AccessLoggingFilter extends HttpFilter {
 	// 跟定时任务共用一个线程池，就不再额外开线程了
 	private final ThreadPoolTaskScheduler threadPool;
 
-	private final AccessLoggingDAO accessLoggingDAO;
+	private final DelayLoggingDAO delayLoggingDAO;
+
+	@Value("${kaciras.delay-log.threshold}")
+	private Duration threshold;
 
 	@Override
 	protected void doFilter(HttpServletRequest request,
@@ -49,20 +57,18 @@ public final class AccessLoggingFilter extends HttpFilter {
 		var path = request.getRequestURI();
 		if (path == null) return; // 忽略一些奇葩情况
 
-		var record = new AccessRecord();
+		var delay = Duration.between(start, clock.instant());
+		if (delay.compareTo(threshold) < 0) return;
+
+		var record = new DelayRecord();
 		record.setIp(Utils.addressFromRequest(request));
 		record.setPath(path);
+		record.setParams(request.getQueryString());
 		record.setStatusCode(response.getStatus());
-		record.setStartTime(start);
+		record.setTime(start);
+		record.setLength(request.getContentLength());
+		record.setDelay(Math.min(delay.toMillis(), MAX_DELAY));
 
-		// 正常的 User-Agent 不会太长，过长的一般也没什么意义，这里直接截断到255字符以内
-		Optional.ofNullable(request.getHeader("User-Agent"))
-				.map(userAgent -> userAgent.substring(0, Math.min(userAgent.length(), UA_MAX_LENGTH)))
-				.ifPresent(record::setUserAgent);
-
-		var delay = Duration.between(start, clock.instant()).toMillis();
-		record.setDelay(Math.min(delay, MAX_DELAY)); // 响应超时，再大的数也没有意义，限制到65535。
-
-		accessLoggingDAO.insert(record);
+		delayLoggingDAO.insert(record);
 	}
 }

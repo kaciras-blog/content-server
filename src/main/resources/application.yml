@@ -69,6 +69,9 @@ mybatis:
 
 kaciras:
 
+  delay-log:
+    threshold: 100ms
+
   authorization:
     security-context: true
     csrf:
