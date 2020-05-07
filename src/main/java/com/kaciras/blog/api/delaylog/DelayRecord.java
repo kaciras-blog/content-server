@@ -13,8 +13,8 @@ public final class DelayRecord {
 	private InetAddress ip;
 	private String path;
 	private String params;
-	private int statusCode;
-	private int length;
+	private int status;
+	private Integer length;
 	private long delay;
 	private Instant time;
 }

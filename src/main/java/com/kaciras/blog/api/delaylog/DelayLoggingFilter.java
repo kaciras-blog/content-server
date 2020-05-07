@@ -19,7 +19,7 @@ import java.time.Instant;
 
 /**
  * 记录访问用时的过滤器，可以用来检测用时过长的请求。
- *
+ * <p>
  * TODO: 话说为什么要记到数据库，用日志不好么……
  */
 @Order(-10)
@@ -64,10 +64,13 @@ public final class DelayLoggingFilter extends HttpFilter {
 		record.setIp(Utils.addressFromRequest(request));
 		record.setPath(path);
 		record.setParams(request.getQueryString());
-		record.setStatusCode(response.getStatus());
+		record.setStatus(response.getStatus());
 		record.setTime(start);
-		record.setLength(request.getContentLength());
 		record.setDelay(Math.min(delay.toMillis(), MAX_DELAY));
+
+		if (request.getContentLength() > -1) {
+			record.setLength(request.getContentLength());
+		}
 
 		delayLoggingDAO.insert(record);
 	}

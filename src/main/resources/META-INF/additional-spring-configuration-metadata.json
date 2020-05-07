@@ -25,6 +25,7 @@
 		{
 			"name": "kaciras.delay-log.threshold",
 			"type": "java.time.Duration",
+			"defaultValue": "0s",
 			"description": "响应时间超过多少需要记录."
 		}
 	]

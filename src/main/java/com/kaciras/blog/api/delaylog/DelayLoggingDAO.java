@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 interface DelayLoggingDAO {
 
-	@Insert("INSERT INTO delay_log(ip, path, status, `length`, user_agent, `time`, delay)" +
-			"VALUES(#{ip}, #{path}, #{statusCode}, #{length}, #{userAgent}, #{time}, #{delay})")
+	@Insert("INSERT INTO delay_log(ip, path, params, status, `length`, `time`, delay)" +
+			"VALUES(#{ip}, #{path}, #{params}, #{status}, #{length}, #{time}, #{delay})")
 	void insert(DelayRecord record);
 }
