@@ -1,8 +1,7 @@
-package com.kaciras.blog.api.delaylog;
+package com.kaciras.blog.api.accesslog;
 
 import com.kaciras.blog.api.Utils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
@@ -16,18 +15,14 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
 
-/**
- * 记录访问用时的过滤器，可以用来检测用时过长的请求。
- * <p>
- * TODO: 话说为什么要记到数据库，用日志不好么……
- */
 @Order(-10)
 @RequiredArgsConstructor
 @Component
-public final class DelayLoggingFilter extends HttpFilter {
+public final class AccessLoggingFilter extends HttpFilter {
 
-	/** 65秒可以视为响应超时 */
+	private static final int UA_MAX_LENGTH = 255;
 	private static final int MAX_DELAY = 65535;
 
 	private final Clock clock;
@@ -35,10 +30,7 @@ public final class DelayLoggingFilter extends HttpFilter {
 	// 跟定时任务共用一个线程池，就不再额外开线程了
 	private final ThreadPoolTaskScheduler threadPool;
 
-	private final DelayLoggingDAO delayLoggingDAO;
-
-	@Value("${kaciras.delay-log.threshold}")
-	private Duration threshold;
+	private final AccessLoggingDAO accessLoggingDAO;
 
 	@Override
 	protected void doFilter(HttpServletRequest request,
@@ -48,30 +40,37 @@ public final class DelayLoggingFilter extends HttpFilter {
 		try {
 			chain.doFilter(request, response);
 		} finally {
-			threadPool.execute(() -> log(request, response, instant));
+			var end = clock.instant();
+			threadPool.execute(() -> log(request, response, instant, end));
 		}
 	}
 
 	// 垃圾@Async对内部调用不代理，即使设置了 proxyTargetClass 也没用
-	private void log(HttpServletRequest request, HttpServletResponse response, Instant start) {
+	private void log(HttpServletRequest request, HttpServletResponse response, Instant start, Instant end) {
 		var path = request.getRequestURI();
 		if (path == null) return; // 忽略一些奇葩情况
 
-		var delay = Duration.between(start, clock.instant());
-		if (delay.compareTo(threshold) < 0) return;
-
-		var record = new DelayRecord();
+		var record = new AccessRecord();
 		record.setIp(Utils.addressFromRequest(request));
+		record.setMethod(request.getMethod());
 		record.setPath(path);
-		record.setParams(request.getQueryString());
-		record.setStatus(response.getStatus());
+		record.setStatusCode(response.getStatus());
 		record.setTime(start);
-		record.setDelay(Math.min(delay.toMillis(), MAX_DELAY));
+		record.setParams(request.getQueryString());
+
+		// 响应超时，再大的数也没有意义，限制到65535。
+		var delay = Duration.between(start, end).toMillis();
+		record.setDelay(Math.min(delay, MAX_DELAY));
 
 		if (request.getContentLength() > -1) {
 			record.setLength(request.getContentLength());
 		}
 
-		delayLoggingDAO.insert(record);
+		// 正常的 User-Agent 不会太长，过长的一般也没什么意义，这里直接截断到255字符以内
+		Optional.ofNullable(request.getHeader("User-Agent"))
+				.map(ua -> ua.substring(0, Math.min(ua.length(), UA_MAX_LENGTH)))
+				.ifPresent(record::setUserAgent);
+
+		accessLoggingDAO.insert(record);
 	}
 }
