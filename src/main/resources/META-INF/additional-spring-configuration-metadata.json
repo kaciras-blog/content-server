@@ -1,18 +1,6 @@
 {
 	"properties": [
 		{
-			"name": "discuss.disable",
-			"type": "java.lang.Boolean",
-			"defaultValue": false,
-			"description": "是否关闭评论功能."
-		},
-		{
-			"name": "discuss.anonymous",
-			"type": "java.lang.Boolean",
-			"defaultValue": true,
-			"description": "是否允许匿名评论."
-		},
-		{
 			"name": "kaciras.oauth2.www-host",
 			"type": "java.lang.String",
 			"description": "前端页面的host，用于验证登陆跳转."
