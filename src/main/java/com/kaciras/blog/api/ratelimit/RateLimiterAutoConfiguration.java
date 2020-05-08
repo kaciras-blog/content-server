@@ -55,6 +55,14 @@ public class RateLimiterAutoConfiguration {
 	private GenericRateChecker createGenericChecker(RedisTemplate<String, Object> redis) {
 		var limiter = new RedisTokenBucket(RedisKeys.RateLimit.value(), redis, clock);
 		var bucket = properties.generic;
+
+		if (bucket.size == 0) {
+			throw new IllegalArgumentException("全局限流器容量不能为0");
+		}
+		if (bucket.rate == 0) {
+			throw new IllegalArgumentException("全局限流器添加速率不能为0");
+		}
+
 		limiter.addBucket(bucket.size, bucket.rate);
 		return new GenericRateChecker(limiter);
 	}
