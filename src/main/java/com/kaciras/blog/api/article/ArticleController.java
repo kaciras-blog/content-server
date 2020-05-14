@@ -5,6 +5,7 @@ import com.kaciras.blog.api.ListQueryView;
 import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.api.draft.DraftContent;
 import com.kaciras.blog.api.draft.DraftRepository;
+import com.kaciras.blog.infra.exception.ResourceDeletedException;
 import com.kaciras.blog.infra.principal.RequireAuthorize;
 import com.kaciras.blog.infra.principal.SecurityContext;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,6 @@ import java.util.Optional;
 class ArticleController {
 
 	private final ArticleRepository repository;
-	private final ArticleManager articleManager;
 	private final ArticleMapper mapper;
 
 	private final DraftRepository draftRepository;
@@ -74,7 +74,10 @@ class ArticleController {
 
 	@GetMapping("/{id}")
 	public ArticleVo get(@PathVariable int id) {
-		var article = articleManager.getLiveArticle(id);
+		var article = repository.findById(id);
+		if (article.isDeleted()) {
+			throw new ResourceDeletedException();
+		}
 		article.increaseViewCount();
 		return mapper.toViewObject(article);
 	}
@@ -95,7 +98,7 @@ class ArticleController {
 	@RequireAuthorize
 	@PutMapping("/{id}")
 	public ArticleVo update(@PathVariable int id, @RequestBody PublishInput request) {
-		var article = repository.get(id);
+		var article = repository.findById(id);
 
 		mapper.update(article, request);
 		repository.update(article);
@@ -125,7 +128,7 @@ class ArticleController {
 	@RequireAuthorize
 	@PatchMapping("/{id}")
 	public ArticleVo patch(@PathVariable int id, @RequestBody PatchInput patchInput) {
-		var article = repository.get(id);
+		var article = repository.findById(id);
 		Optional.ofNullable(patchInput.getCategory()).ifPresent(article::updateCategory);
 		Optional.ofNullable(patchInput.getDeletion()).ifPresent(article::updateDeleted);
 		Optional.ofNullable(patchInput.getUrlTitle()).ifPresent(article::updateUrlTitle);

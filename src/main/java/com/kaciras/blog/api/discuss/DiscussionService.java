@@ -53,7 +53,7 @@ public class DiscussionService {
 		if (input.getParent() == 0) {
 			// 检查文章是否存在。目前仅有两个类型而且区别逻辑较少，所以暂时没有做抽象
 			if (input.getType() == 0) {
-				articleRepository.get(input.getObjectId());
+				articleRepository.findById(input.getObjectId());
 			}
 			discussion = Discussion.create(input.getObjectId(), input.getType(), user, input.getContent());
 		} else {

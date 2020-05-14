@@ -23,15 +23,12 @@ final class ArticleControllerTest extends AbstractSpringTest {
 	@MockBean
 	private ArticleMapper articleMapper;
 
-	@MockBean
-	private ArticleManager articleManager;
-
 	private Article article = Mockito.spy(new Article());
 
 	@BeforeEach
 	void setUp() {
 		article.setId(5);
-		when(repository.get(5)).thenReturn(article);
+		when(repository.findById(5)).thenReturn(article);
 	}
 
 	@Test

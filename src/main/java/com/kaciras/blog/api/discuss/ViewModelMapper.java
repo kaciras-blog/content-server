@@ -61,7 +61,7 @@ abstract class ViewModelMapper {
 		if (viewObject.getType() == 1) {
 			viewObject.setTarget("（关于页）关于博主");
 		} else {
-			var article = articleRepository.get(viewObject.getObjectId());
+			var article = articleRepository.findById(viewObject.getObjectId());
 			viewObject.setTarget(ArticleLink.of(article));
 		}
 	}

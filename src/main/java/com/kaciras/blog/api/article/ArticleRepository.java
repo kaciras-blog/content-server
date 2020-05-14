@@ -29,8 +29,12 @@ public class ArticleRepository {
 	 * @throws ResourceNotFoundException 如果指定ID的文章不存在
 	 */
 	@NonNull
-	public Article get(int id) {
+	public Article findById(int id) {
 		return articleDAO.selectById(id).orElseThrow(ResourceNotFoundException::new);
+	}
+
+	public List<Article> findAll(@NonNull ArticleListQuery query) {
+		return articleDAO.selectPreview(query);
 	}
 
 	@Transactional
@@ -58,10 +62,6 @@ public class ArticleRepository {
 		keywords.stream().map(String::trim)
 				.filter(kw -> !kw.isEmpty())
 				.forEach(kw -> keywordDAO.insert(articleId, kw));
-	}
-
-	public List<Article> findAll(@NonNull ArticleListQuery query) {
-		return articleDAO.selectPreview(query);
 	}
 
 	public int size() {

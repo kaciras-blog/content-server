@@ -1,7 +1,7 @@
 package com.kaciras.blog.api.draft;
 
 import com.kaciras.blog.api.ListQueryView;
-import com.kaciras.blog.api.article.ArticleManager;
+import com.kaciras.blog.api.article.ArticleRepository;
 import com.kaciras.blog.infra.principal.RequireAuthorize;
 import com.kaciras.blog.infra.principal.SecurityContext;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ class DraftController {
 
 	private final DraftRepository repository;
 	private final DraftMapper mapper;
-	private final ArticleManager articleManager;
+	private final ArticleRepository articleRepository;
 
 	@GetMapping
 	public ListQueryView<DraftVo> getList() {
@@ -48,7 +48,7 @@ class DraftController {
 	@PostMapping
 	public ResponseEntity<DraftVo> createDraft(@RequestParam(required = false) Integer article) {
 		var content = article != null
-				? mapper.fromArticle(articleManager.getLiveArticle(article))
+				? mapper.fromArticle(articleRepository.findById(article))
 				: DraftContent.initial();
 
 		var draft = new Draft();
