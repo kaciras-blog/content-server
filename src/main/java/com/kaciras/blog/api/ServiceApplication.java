@@ -141,7 +141,7 @@ public class ServiceApplication {
 	HttpClient httpClient(ThreadPoolTaskScheduler threadPool, Environment env) {
 		var builder = HttpClient.newBuilder().executor(threadPool);
 
-		var proxy = env.getProperty("kaciras.http-client-proxy");
+		var proxy = env.getProperty("app.http-client-proxy");
 		if (proxy != null) {
 			var pair = proxy.split(":", 2);
 			builder.proxy(ProxySelector.of(new InetSocketAddress(pair[0], Integer.parseInt(pair[1]))));

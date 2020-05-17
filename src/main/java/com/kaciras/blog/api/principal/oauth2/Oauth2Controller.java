@@ -46,7 +46,7 @@ public class Oauth2Controller {
 
 	private Map<String, Oauth2Client> clientMap;
 
-	@Value("${kaciras.oauth2.www-host}")
+	@Value("${app.oauth2.www-host}")
 	private String wwwHost;
 
 	@Autowired

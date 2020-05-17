@@ -3,7 +3,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
-kaciras:
+app:
 
   session:
     cookie:

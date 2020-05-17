@@ -21,7 +21,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 /**
  * https://developers.google.com/identity/protocols/OpenIDConnect
  */
-@ConditionalOnProperty("kaciras.oauth2.google.client-secret")
+@ConditionalOnProperty("app.oauth2.google.client-secret")
 @Component
 @RequiredArgsConstructor
 public final class GoogleOauth2Client implements Oauth2Client {
@@ -29,10 +29,10 @@ public final class GoogleOauth2Client implements Oauth2Client {
 	private final ObjectMapper objectMapper;
 	private final HttpClient httpClient;
 
-	@Value("${kaciras.oauth2.google.client-id}")
+	@Value("${app.oauth2.google.client-id}")
 	private String clientId;
 
-	@Value("${kaciras.oauth2.google.client-secret}")
+	@Value("${app.oauth2.google.client-secret}")
 	private String clientSecret;
 
 	@Override

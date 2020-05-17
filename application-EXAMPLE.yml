@@ -21,7 +21,7 @@ spring:
     port: 6375
     password: <your password>
 
-kaciras:
+app:
 
   session:
     cookie:

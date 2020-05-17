@@ -20,7 +20,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 /**
  * https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/
  */
-@ConditionalOnProperty("kaciras.oauth2.github.client-secret")
+@ConditionalOnProperty("app.oauth2.github.client-secret")
 @Component
 @RequiredArgsConstructor
 public final class GithubOauth2Client implements Oauth2Client {
@@ -28,10 +28,10 @@ public final class GithubOauth2Client implements Oauth2Client {
 	private final ObjectMapper objectMapper;
 	private final HttpClient httpClient;
 
-	@Value("${kaciras.oauth2.github.client-id}")
+	@Value("${app.oauth2.github.client-id}")
 	private String clientId;
 
-	@Value("${kaciras.oauth2.github.client-secret}")
+	@Value("${app.oauth2.github.client-secret}")
 	private String clientSecret;
 
 	@Override

@@ -72,7 +72,7 @@ mybatis:
     default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
     cache-enabled: false
 
-kaciras:
+app:
 
   authorization:
     security-context: true

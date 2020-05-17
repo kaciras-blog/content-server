@@ -10,7 +10,7 @@ import java.util.List;
 // TODO: SpringBoot 2.2 支持 Properties 的构造方法注入了
 
 // 【注意】为了 Configuration Processor 自动生成文档，必须要有 Getter
-@ConfigurationProperties("kaciras.rate-limit")
+@ConfigurationProperties("app.rate-limit")
 @Setter
 @Getter
 public final class RateLimiterProperties {
