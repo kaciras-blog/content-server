@@ -35,7 +35,9 @@ public final class Discussion {
 	private String nickname;
 	private Instant time;
 
+	/** 发送评论的IP，用于批量查找垃圾评论 */
 	private InetAddress address;
+
 	private int floor;
 
 	// 可变字段

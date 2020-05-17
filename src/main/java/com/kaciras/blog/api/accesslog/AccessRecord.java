@@ -13,17 +13,28 @@ public final class AccessRecord {
 
 	private InetAddress ip;
 
+	/** 怎么还有Method为null的 */
+	@Nullable
 	private String method;
+
 	private String path;
+
 	private int statusCode;
+
+	@Nullable
 	private String params;
 
-	/** UA可以自定义，可能有些奇葩无法解析，只能直接保存，然后在分析时解析 */
+	/** UA可以自定义，可能有些无法解析，只能直接保存，然后在分析时解析 */
 	@Nullable
 	private String userAgent;
 
+	/** 请求体的长度（Content-Length），没有请求体则为null */
+	@Nullable
 	private Integer length;
 
-	private long delay;
+	/** 收到请求的时刻 */
 	private Instant time;
+
+	/** 处理该请求的用时（毫秒） */
+	private long delay;
 }
