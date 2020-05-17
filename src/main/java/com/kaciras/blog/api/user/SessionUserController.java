@@ -35,7 +35,7 @@ class SessionUserController {
 		var user = repository.get(SecurityContext.getUserId());
 
 		user.setName(patchMap.getName());
-		user.setHead(patchMap.getHead());
+		user.setAvatar(patchMap.getAvatar());
 		repository.update(user);
 
 		return ResponseEntity.noContent().build();

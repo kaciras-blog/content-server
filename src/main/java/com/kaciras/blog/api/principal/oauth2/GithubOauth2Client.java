@@ -117,7 +117,7 @@ public final class GithubOauth2Client implements Oauth2Client {
 		}
 
 		@Override
-		public String head() {
+		public String avatar() {
 			return avatar_url;
 		}
 	}

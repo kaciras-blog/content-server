@@ -22,6 +22,6 @@ public interface Oauth2Client {
 
 		/** 第三方系统中用户的头像，可能不存在 */
 		@Nullable
-		String head();
+		String avatar();
 	}
 }

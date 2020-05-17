@@ -26,7 +26,7 @@ public final class User {
 	private int id;
 
 	private String name;
-	private ImageReference head;
+	private ImageReference avatar;
 
 	private boolean deleted;
 
@@ -34,9 +34,9 @@ public final class User {
 	private Instant registerTime;
 	private InetAddress registerIP;
 
-	private User(int id, String name, ImageReference head) {
+	private User(int id, String name, ImageReference avatar) {
 		this.id = id;
 		this.name = name;
-		this.head = head;
+		this.avatar = avatar;
 	}
 }

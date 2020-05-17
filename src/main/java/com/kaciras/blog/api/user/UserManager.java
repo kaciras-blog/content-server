@@ -35,7 +35,7 @@ public class UserManager {
 	public int createNew(String name, AuthType authType, InetAddress ip) {
 		var user = new User();
 		user.setName(name);
-		user.setHead(ImageReference.parse("akalin.jpg"));
+		user.setAvatar(ImageReference.parse("akalin.jpg"));
 		user.setAuthType(authType);
 		user.setRegisterIP(ip);
 

@@ -111,7 +111,7 @@ public final class GoogleOauth2Client implements Oauth2Client {
 		}
 
 		@Override
-		public String head() {
+		public String avatar() {
 			return picture;
 		}
 

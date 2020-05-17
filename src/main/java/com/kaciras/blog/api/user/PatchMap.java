@@ -16,5 +16,5 @@ final class PatchMap {
 	private final String name;
 
 	@NotNull
-	private final ImageReference head;
+	private final ImageReference avatar;
 }

@@ -15,7 +15,7 @@ public final class UserVo {
 	private AuthType authType;
 
 	private String name;
-	private ImageReference head;
+	private ImageReference avatar;
 
 	private Instant registerTime;
 }
