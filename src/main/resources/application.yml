@@ -11,7 +11,12 @@ server:
 
   tomcat:
     connection-timeout: 10s
-    max-threads: 2
+
+    threads:
+      max: 2
+
+  servlet:
+    register-default-servlet: false
 
 spring:
 
@@ -68,9 +73,6 @@ mybatis:
     cache-enabled: false
 
 kaciras:
-
-  delay-log:
-    threshold: 100ms
 
   authorization:
     security-context: true

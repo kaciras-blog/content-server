@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
-import com.kaciras.blog.infra.func.FunctionUtils;
 import com.kaciras.blog.infra.principal.RequireAuthorize;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,6 +14,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collection;
 import java.util.stream.Collectors;
+
+import static com.kaciras.blog.infra.func.FunctionUtils.uncheckedFn;
 
 /**
  * TODO: 考虑做自动申请友链
@@ -37,7 +38,7 @@ class FriendController {
 	public Collection<FriendLink> getFriends() {
 		return redisHash.values()
 				.stream()
-				.map(FunctionUtils.unchecked((byte[] value) -> objectMapper.readValue(value, FriendLink.class)))
+				.map(uncheckedFn(value -> objectMapper.readValue(value, FriendLink.class)))
 				.collect(Collectors.toList());
 	}
 
