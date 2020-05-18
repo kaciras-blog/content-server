@@ -19,5 +19,8 @@ public final class FriendLink {
 	private String url;
 
 	@NotNull
+	private ImageReference background;
+
+	@NotNull
 	private ImageReference favicon;
 }
