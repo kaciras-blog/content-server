@@ -30,6 +30,7 @@ spring:
       - org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration
       - org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration
       - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration
 
       # 暂时用不到 Multipart 和 WebSocket
       - org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration
@@ -40,6 +41,9 @@ spring:
     # LTW 自动注入不支持延迟初始化
     lazy-initialization: false
     banner-mode: "off"
+
+  jmx:
+    enabled: false
 
   data:
     web:
