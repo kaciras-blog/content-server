@@ -71,8 +71,9 @@ public class RateLimiterAutoConfiguration {
 		var config = properties.effective;
 
 		var inner = new RedisTokenBucket(RedisKeys.EffectRate.value(), redis, clock);
-		for (var limit : config.buckets) {
-			inner.addBucket(limit.permits, limit.permits / (double) limit.time.toSeconds());
+		for (var limit : config.limits) {
+			var bucket = limit.toTokenBucket();
+			inner.addBucket(bucket.size, bucket.rate);
 		}
 
 		var wrapper = new RedisBlockingLimiter(RedisKeys.EffectBlocking.value(), inner, factory, clock);

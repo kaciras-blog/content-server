@@ -51,7 +51,7 @@ app:
       refresh-on-reject: true
 
       # 60秒10个，半小时60个，一天300个
-      buckets:
+      limits:
         - permits: 6
           time: 60
         - permits: 60
