@@ -33,7 +33,6 @@ class FriendController {
 		this.objectMapper = objectMapper;
 	}
 
-	// lambda 显示写出参数类型才能让编译器推导返回类型？
 	@GetMapping
 	public Collection<FriendLink> getFriends() {
 		return redisHash.values()
