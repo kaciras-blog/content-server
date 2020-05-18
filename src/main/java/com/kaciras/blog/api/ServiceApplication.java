@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
-import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -26,9 +25,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.net.InetSocketAddress;
-import java.net.ProxySelector;
-import java.net.http.HttpClient;
 import java.time.Clock;
 
 /**
@@ -111,7 +107,7 @@ public class ServiceApplication {
 	ThreadPoolTaskScheduler taskScheduler(ObjectProvider<TaskSchedulerCustomizer> customizers) {
 		var taskScheduler = new ThreadPoolTaskScheduler();
 		taskScheduler.setPoolSize(2);
-		taskScheduler.setThreadNamePrefix("SharedThreadPool-");
+		taskScheduler.setThreadNamePrefix("SharedPool-");
 		customizers.forEach(customizer -> customizer.customize(taskScheduler));
 		return taskScheduler;
 	}
@@ -123,7 +119,7 @@ public class ServiceApplication {
 	 * @see org.springframework.boot.autoconfigure.data.redis.LettuceConnectionConfiguration#lettuceClientResources()
 	 */
 	@Bean(destroyMethod = "shutdown")
-	public DefaultClientResources lettuceClientResources() {
+	DefaultClientResources lettuceClientResources() {
 		return DefaultClientResources.builder()
 				.eventExecutorGroup(DefaultEventLoopGroupProvider.createEventLoopGroup(DefaultEventExecutorGroup.class, 2))
 				.eventLoopGroupProvider(new DefaultEventLoopGroupProvider(1)).build();
@@ -135,19 +131,6 @@ public class ServiceApplication {
 	@Bean
 	Clock clock() {
 		return Clock.systemUTC();
-	}
-
-	@Bean
-	HttpClient httpClient(ThreadPoolTaskScheduler threadPool, Environment env) {
-		var builder = HttpClient.newBuilder().executor(threadPool);
-
-		var proxy = env.getProperty("app.http-client-proxy");
-		if (proxy != null) {
-			var pair = proxy.split(":", 2);
-			builder.proxy(ProxySelector.of(new InetSocketAddress(pair[0], Integer.parseInt(pair[1]))));
-		}
-
-		return builder.build();
 	}
 
 	public static void main(String... args) {
