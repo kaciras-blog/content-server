@@ -87,3 +87,6 @@ app:
     allowed-methods: "*"
     allowed-headers: [X-CSRF-Token, X-Requested-With, Content-Type]
     exposed-headers: [Location, X-RateLimit-Wait]
+
+  http-client:
+    executor: taskScheduler

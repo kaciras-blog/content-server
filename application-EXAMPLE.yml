@@ -76,4 +76,5 @@ app:
 #      client-secret: <your client-secret>
 
   # OAuth2 可以通过代理访问第三方服务，服务器在在墙内时可能需要
-#  http-client-proxy: "localhost:1080"
+#  http-client:
+#   proxy: "localhost:1080"

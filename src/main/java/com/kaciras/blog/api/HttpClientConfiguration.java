@@ -1,30 +1,40 @@
 package com.kaciras.blog.api;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.http.HttpClient;
+import java.util.concurrent.Executor;
 
 /**
  * 虽然Spring的RestTemplate也不错，但我还是喜欢原生的HttpClient啦
  */
 @Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(HttpClientProperties.class)
+@RequiredArgsConstructor
 public class HttpClientConfiguration {
 
-	@Bean
-	HttpClient httpClient(ThreadPoolTaskScheduler threadPool, Environment env) {
-		var builder = HttpClient.newBuilder().executor(threadPool);
+	private final HttpClientProperties properties;
 
-		var proxy = env.getProperty("app.http-client-proxy");
-		if (proxy != null) {
-			var pair = proxy.split(":", 2);
-			builder.proxy(ProxySelector.of(new InetSocketAddress(pair[0], Integer.parseInt(pair[1]))));
+	@Bean
+	HttpClient httpClient(ApplicationContext context) {
+		var builder = HttpClient.newBuilder();
+
+		if (properties.executor != null) {
+			builder.executor(context.getBean(properties.executor, Executor.class));
 		}
 
-		return builder.build();
+		if (properties.proxy != null) {
+			var hostPort = properties.proxy.split(":", 2);
+			var address = new InetSocketAddress(hostPort[0], Integer.parseInt(hostPort[1]));
+			builder.proxy(ProxySelector.of(address));
+		}
+
+		return builder.followRedirects(HttpClient.Redirect.NORMAL).build();
 	}
 }
