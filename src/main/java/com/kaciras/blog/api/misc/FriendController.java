@@ -43,7 +43,7 @@ class FriendController {
 
 	@RequireAuthorize
 	@PostMapping
-	public ResponseEntity<FriendLink> makeFriends(@RequestBody @Valid FriendLink input) throws JsonProcessingException {
+	public ResponseEntity<FriendLink> makeFriend(@RequestBody @Valid FriendLink input) throws JsonProcessingException {
 		var host = URI.create(input.getUrl()).getHost();
 		if (host == null) {
 			throw new RequestArgumentException("友链的URL格式错误");
