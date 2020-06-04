@@ -40,7 +40,8 @@ import java.time.Clock;
 		KxSpringSessionAutoConfiguration.class,
 		KxCodecAutoConfiguration.class,
 		KxPrincipalAutoConfiguration.class,
-		DevelopmentAutoConfiguration.class
+		DevelopmentAutoConfiguration.class,
+		HttpClientAutoConfiguration.class,
 })
 /*
  * proxyBeanMethods 的作用是代理配置类中标记了@Bean的方法，使其在内部调用时也能
