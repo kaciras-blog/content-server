@@ -29,16 +29,16 @@ class HistoryController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> saveNew(@RequestBody SaveRequest request) {
-		var saveCount = repository.findById(request.getId()).getHistoryList().add(request);
-		var location = "/drafts/" + request.getId() + "/histories/" + saveCount;
+	public ResponseEntity<Void> saveNew(@PathVariable int id, @RequestBody DraftContent request) {
+		var saveCount = repository.findById(id).getHistoryList().add(request);
+		var location = "/drafts/" + id + "/histories/" + saveCount;
 		return ResponseEntity.created(URI.create(location)).build();
 	}
 
 	// saveCount 没用着，目前只更新最后一次历史
 	@PutMapping("/{saveCount}")
-	public ResponseEntity<Void> save(@RequestBody SaveRequest request) {
-		repository.findById(request.getId()).getHistoryList().update(request);
+	public ResponseEntity<Void> save(@PathVariable int id, @RequestBody DraftContent request) {
+		repository.findById(id).getHistoryList().update(request);
 		return ResponseEntity.noContent().build();
 	}
 }
