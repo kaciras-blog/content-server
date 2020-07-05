@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -69,6 +70,7 @@ class ArticleController {
 
 		var items = mapper.toPreview(repository.findAll(query), query);
 		var total = repository.count(query);
+
 		return new ListQueryView<>(total, items);
 	}
 
@@ -82,6 +84,7 @@ class ArticleController {
 		return mapper.toViewObject(article);
 	}
 
+	@Transactional
 	@RequireAuthorize
 	@PostMapping
 	public ResponseEntity<ArticleVo> post(@RequestBody @Valid PublishInput request) {
@@ -95,6 +98,7 @@ class ArticleController {
 	}
 
 	// 不更改 urlTitle，category，这些属性使用PATCH修改
+	@Transactional
 	@RequireAuthorize
 	@PutMapping("/{id}")
 	public ArticleVo update(@PathVariable int id, @RequestBody PublishInput request) {
@@ -107,6 +111,7 @@ class ArticleController {
 		return mapper.toViewObject(article);
 	}
 
+	// 这个涉及到草稿表，调用方需要加事物
 	private void updateDraft(Article article, PublishInput request) {
 		if (request.isDestroy()) {
 			draftRepository.remove(request.getDraftId());
