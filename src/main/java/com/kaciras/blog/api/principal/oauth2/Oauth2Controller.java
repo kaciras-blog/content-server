@@ -62,7 +62,10 @@ public class Oauth2Controller {
 	 * @param request 请求对象
 	 */
 	@GetMapping
-	public ResponseEntity<Void> redirect(@PathVariable String type, HttpServletRequest request) throws JsonProcessingException {
+	public ResponseEntity<Void> redirect(
+			@PathVariable String type,
+			HttpServletRequest request) throws JsonProcessingException {
+
 		var client = clientMap.get(type);
 		if (client == null) {
 			return ResponseEntity.notFound().build();
@@ -81,6 +84,7 @@ public class Oauth2Controller {
 		 *     一人的。
 		 */
 		var authSession = new OauthSession(UUID.randomUUID().toString(), request.getParameter("ret"));
+
 		var key = RedisKeys.OauthSession.of(request.getSession(true).getId());
 		redisTemplate.opsForValue()
 				.set(key, objectMapper.writeValueAsBytes(authSession), Duration.ofMinutes(10));

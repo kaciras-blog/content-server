@@ -4,6 +4,12 @@ import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
+/**
+ * 基于ClosureTable无限级分类实现，详解见：
+ * https://blog.kaciras.com/article/6/store-tree-in-database
+ *
+ * @author Kaciras
+ */
 @Mapper
 interface CategoryDAO {
 

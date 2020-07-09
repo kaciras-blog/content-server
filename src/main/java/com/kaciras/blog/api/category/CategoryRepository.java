@@ -10,11 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 
-/**
- * 基于ClosureTable的的数据库存储分类树实现。
- *
- * @author Kaciras
- */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
 public class CategoryRepository {
