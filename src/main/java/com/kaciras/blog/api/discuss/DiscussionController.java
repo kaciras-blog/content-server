@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collections;
 
@@ -73,11 +74,14 @@ class DiscussionController {
 
 	// 无论是否审核都返回视图，前端可以通过 state 判断
 	@PostMapping
-	public ResponseEntity<DiscussionVo> post(HttpServletRequest request, @RequestBody PublishInput input) {
+	public ResponseEntity<DiscussionVo> post(
+			HttpServletRequest request,
+			@Valid @RequestBody PublishInput input) {
+
 		var addr = Utils.addressFromRequest(request);
 		var discussion = discussionService.add(input, addr);
 
-		// HACK: 越来越觉得要尽快迁移GraphQL了
+		// TODO: 越来越觉得要尽快迁移GraphQL了
 		var vo = mapper.toReplyView(discussion);
 		if (discussion.getParent() == 0) {
 			vo.setReplies(Collections.emptyList());
