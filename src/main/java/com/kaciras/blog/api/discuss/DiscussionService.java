@@ -8,6 +8,7 @@ import com.kaciras.blog.infra.principal.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.net.InetAddress;
 import java.util.List;
@@ -60,7 +61,10 @@ public class DiscussionService {
 			discussion = repository.get(input.getParent()).createReply(user, input.getContent());
 		}
 
-		discussion.setNickname(input.getNickname());
+		if (StringUtils.hasText(input.getNickname())) {
+			discussion.setNickname(input.getNickname());
+		}
+
 		discussion.setAddress(address);
 		discussion.setState(options.isModeration() ? DiscussionState.Moderation : DiscussionState.Visible);
 

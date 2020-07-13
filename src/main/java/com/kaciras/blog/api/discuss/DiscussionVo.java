@@ -12,13 +12,17 @@ import java.util.List;
 public final class DiscussionVo {
 
 	private int id;
+
 	private int objectId;
 	private int type;
+
 	private int parent;
+
 	private int floor;
 
 	private UserVo user;
 	private String nickname;
+
 	private String content;
 
 	private boolean deleted;

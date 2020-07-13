@@ -44,7 +44,7 @@ class DiscussionController {
 	}
 
 	/*
-	 * 【知识点】Pageable.sort 的自动绑定：
+	 * 【Pageable.sort 的自动绑定】
 	 * 请求中包含 sort=f0,f1,DESC 会解析为两个 Order，对应 f0, f1 两个字段，它们都是DESC降序。
 	 * 如果需要混合升降顺序，则得使用多个 sort 参数：sort=f0,ASC&sort=f1,DESC
 	 * Qualifier, SortDefault, SortDefaults 可以改变一些默认的行为，SpringBoot 也提供了对参数名的配置。
