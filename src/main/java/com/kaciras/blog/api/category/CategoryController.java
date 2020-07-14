@@ -33,6 +33,7 @@ class CategoryController {
 	public ResponseEntity<CategoryVo> create(@RequestBody CategoryAttributes attrs, @RequestParam int parent) {
 		var category = mapper.toCategory(attrs);
 		repository.add(category, parent);
+
 		return ResponseEntity
 				.created(URI.create("/categories/" + category.getId()))
 				.body(mapper.categoryView(category));

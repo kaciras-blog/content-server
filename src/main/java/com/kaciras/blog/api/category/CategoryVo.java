@@ -8,7 +8,7 @@ import lombok.Setter;
 public class CategoryVo extends CategoryAttributes {
 
 	private int id;
-	private int level;
+	private int parent;
 
 	private int articleCount;
 

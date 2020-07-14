@@ -21,7 +21,7 @@ interface CategoryDAO {
 	 */
 	@Select("SELECT * FROM category WHERE id=#{id}")
 	@TypeDiscriminator(column = "id", javaType = int.class, cases = @Case(value = "0", type = RootCategory.class))
-	Category selectAttributes(int id);
+	Category select(int id);
 
 	@Select("SELECT A.* FROM category AS A " +
 			"JOIN category_tree AS B ON A.id=B.ancestor " +
@@ -29,7 +29,7 @@ interface CategoryDAO {
 	Category selectParentAttributes(int id);
 
 	@Select("SELECT COUNT(*) FROM category")
-	int selectCount();
+	int count();
 
 	@Update("UPDATE category SET " +
 			"name=#{name}," +
@@ -63,7 +63,7 @@ interface CategoryDAO {
 	 * @return 节点数量
 	 */
 	@Select("SELECT COUNT(*) FROM category_tree WHERE ancestor=1 AND distance=#{level}")
-	int selectCountByLayer(int level);
+	int countByLayer(int level);
 
 	/**
 	 * 查询某个节点的子树中所有的节点的id，不包括参数所指定的节点

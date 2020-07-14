@@ -12,8 +12,8 @@ import java.util.List;
 final class RootCategory extends Category {
 
 	@Override
-	public Category getParent() {
-		return null;
+	public int getParent() {
+		return -1;
 	}
 
 	@Override

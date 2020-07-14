@@ -26,7 +26,6 @@ abstract class CategoryMapper {
 		}
 		var vo = new AggregationVo();
 		copyProps(vo, category);
-		vo.setParent(categoryView(category.getParent()));
 		vo.setChildren(categoryView(category.getChildren()));
 		return vo;
 	}

@@ -17,11 +17,11 @@ public class CategoryRepository {
 	private final CategoryDAO dao;
 
 	public Category get(int id) {
-		return Utils.checkNotNullResource(dao.selectAttributes(id));
+		return Utils.checkNotNullResource(dao.select(id));
 	}
 
 	public int size() {
-		return dao.selectCount();
+		return dao.count();
 	}
 
 	@Transactional
