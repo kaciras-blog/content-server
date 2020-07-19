@@ -7,9 +7,11 @@ server:
 #  additional-connector:
 #    port: 80
 
+# TODO: 下面两个数据库连接需要修改
 spring:
 
-  # 你需要先创建数据库，SpringBoot　能够使用 resources/schema.sql 自动建表
+  # 你需要先创建数据库，SpringBoot 能自动建表。
+  # 建表脚本是 src/main/resources 目录下的 schema.sql 和 data.sql
   datasource:
     url: jdbc:mariadb://localhost:3306/blog?allowMultiQueries=true
     username: root

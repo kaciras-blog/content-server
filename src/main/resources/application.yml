@@ -67,6 +67,7 @@ spring:
 
   datasource:
     initialization-mode: always
+    continue-on-error: true
 
 mybatis:
 
