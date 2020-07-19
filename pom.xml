@@ -126,19 +126,10 @@
 					<useSystemClassLoader>true</useSystemClassLoader>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>com.kaciras.blog.api.ServiceApplication</mainClass>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
+
+			<!--
+				把LTW的依赖复制到构建目录，如果想用 java 启动的话记得加上 -javaagent:target/spring-instrument-xxx.jar
+			 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -150,29 +141,29 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-							<includeScope>runtime</includeScope>
+							<outputDirectory>${project.build.directory}</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
+							<includeArtifactIds>spring-instrument</includeArtifactIds>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-			<!--<plugin>-->
-			<!--	<groupId>org.springframework.boot</groupId>-->
-			<!--	<artifactId>spring-boot-maven-plugin</artifactId>-->
-			<!--	<configuration>-->
-			<!--		<agents>${ltw.agent}</agents>-->
-			<!--		<jvmArguments>-->
-			<!--			-Xmx200M-->
-			<!--			-Xms200M-->
-			<!--			-XX:+HeapDumpOnOutOfMemoryError-->
-			<!--			-noverify-->
-			<!--			-Djava.awt.headless=true-->
-			<!--		</jvmArguments>-->
-			<!--	</configuration>-->
-			<!--</plugin>-->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<agents>${ltw.agent}</agents>
+					<jvmArguments>
+						-Xmx256M
+						-Xms256M
+						-XX:+HeapDumpOnOutOfMemoryError
+						-noverify
+						-Djava.awt.headless=true
+					</jvmArguments>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
