@@ -3,7 +3,7 @@ package com.kaciras.blog.api;
 public enum RedisKeys {
 
 	/** 友情链接 */
-	Friends("friends"),
+	Friends("friends:"),
 
 	/** 推荐卡片列表 */
 	CardList("cards"),
