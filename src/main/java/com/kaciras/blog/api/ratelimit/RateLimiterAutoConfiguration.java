@@ -3,8 +3,6 @@ package com.kaciras.blog.api.ratelimit;
 import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.infra.ratelimit.RedisBlockingLimiter;
 import com.kaciras.blog.infra.ratelimit.RedisTokenBucket;
-import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,43 +14,45 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import java.time.Clock;
 import java.util.ArrayList;
 
-// TODO: SpringBoot 2.2 可以扫描 ConfigurationProperties，但IDE还会报错
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(RateLimiterProperties.class)
-@RequiredArgsConstructor
 public class RateLimiterAutoConfiguration {
+
+	private final RateLimiterProperties properties;
 
 	private final RedisConnectionFactory factory;
 	private final Clock clock;
 
-	private final RateLimiterProperties properties;
+	private final RedisTemplate<String, Object> redis;
 
-	@ConditionalOnMissingBean
-	@Bean
-	RedisTemplate<String, Object> genericToStringRedisTemplate() {
-		var redisTemplate = new RedisTemplate<String, Object>();
-		redisTemplate.setConnectionFactory(factory);
-		redisTemplate.setEnableDefaultSerializer(false);
-		redisTemplate.setKeySerializer(RedisSerializer.string());
-		redisTemplate.setValueSerializer(new GenericToStringSerializer<>(Object.class));
-		return redisTemplate;
+	public RateLimiterAutoConfiguration(RateLimiterProperties properties, RedisConnectionFactory factory, Clock clock) {
+		this.properties = properties;
+		this.factory = factory;
+		this.clock = clock;
+
+		redis = new RedisTemplate<>();
+		redis.setConnectionFactory(factory);
+		redis.setEnableDefaultSerializer(false);
+		redis.setKeySerializer(RedisSerializer.string());
+		redis.setValueSerializer(new GenericToStringSerializer<>(Object.class));
+		redis.afterPropertiesSet();
 	}
 
 	@Bean
-	RateLimitFilter rateLimitFilter(RedisTemplate<String, Object> redis) {
+	RateLimitFilter rateLimitFilter() {
 		var checkers = new ArrayList<RateLimiterChecker>(2);
 
 		// 这里决定Checker的顺序，先通用后特殊
 		if (properties.generic != null) {
-			checkers.add(createGenericChecker(redis));
+			checkers.add(createGenericChecker());
 		}
 		if (properties.effective != null) {
-			checkers.add(createEffectChecker(redis));
+			checkers.add(createEffectChecker());
 		}
 		return new RateLimitFilter(checkers);
 	}
 
-	private GenericRateChecker createGenericChecker(RedisTemplate<String, Object> redis) {
+	private GenericRateChecker createGenericChecker() {
 		var limiter = new RedisTokenBucket(RedisKeys.RateLimit.value(), redis, clock);
 		var bucket = properties.generic;
 
@@ -67,7 +67,7 @@ public class RateLimiterAutoConfiguration {
 		return new GenericRateChecker(limiter);
 	}
 
-	private EffectRateChecker createEffectChecker(RedisTemplate<String, Object> redis) {
+	private EffectRateChecker createEffectChecker() {
 		var config = properties.effective;
 
 		var inner = new RedisTokenBucket(RedisKeys.EffectRate.value(), redis, clock);

@@ -61,10 +61,10 @@ public class ServiceApplication {
 	ServiceApplication(LoadTimeWeaver loadTimeWeaver) {}
 
 	@Bean
-	RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory factory) {
-		var template = new RedisTemplate<String, byte[]>();
-		template.setEnableDefaultSerializer(false);
+	RedisTemplate<String, Object> jsonRedisTemplate(RedisConnectionFactory factory) {
+		var template = new RedisTemplate<String, Object>();
 		template.setConnectionFactory(factory);
+		template.setDefaultSerializer(RedisSerializer.json());
 		template.setKeySerializer(RedisSerializer.string());
 		template.setHashKeySerializer(RedisSerializer.string());
 		return template;
@@ -91,7 +91,7 @@ public class ServiceApplication {
 	 * TaskSchedulingAutoConfiguration.taskScheduler 因为 RedisHttpSessionConfiguration 实现了
 	 * SchedulingConfigurer 来加入一个清理过期会话的任务而不被启用。
 	 * <p>
-	 * 这是因为（我猜的）SchedulingConfigurer 功能过大可以修改 ScheduledTaskRegistrar 的调度器，
+	 * 我猜是因为 SchedulingConfigurer 功能过大可以修改 ScheduledTaskRegistrar 的调度器，
 	 * 保守起见禁止了默认的调度器Bean。
 	 * <p>
 	 * 虽然本应用中的 RedisHttpSessionConfiguration 并不会修改调度器，但 TaskSchedulingAutoConfiguration
@@ -127,7 +127,7 @@ public class ServiceApplication {
 	}
 
 	/**
-	 * 使用 JAVA8 的新 API 代替 System.currentTimeMillis()，Clock 具有更好的语义并且便于Mock测试。
+	 * 使用 JAVA8 的新 API 代替 System.currentTimeMillis()，Clock 具有更好的语义并且便于 Mock 测试。
 	 */
 	@Bean
 	Clock clock() {

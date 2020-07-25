@@ -1,17 +1,14 @@
 package com.kaciras.blog.api.friend;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.api.notification.FriendAccident;
 import com.kaciras.blog.api.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.support.collections.RedisMap;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -29,10 +26,9 @@ final class FriendValidateService {
 
 	private final NotificationService notificationService;
 
-	private final ObjectMapper objectMapper;
+	private final RedisMap<String, ValidateRecord> validateRecords;
 	private final Clock clock;
 	private final HttpClient httpClient;
-	private final RedisTemplate<String, byte[]> redis;
 
 	private final String myOrigin = "https://blog.kaciras.com";
 
@@ -43,18 +39,18 @@ final class FriendValidateService {
 	 * 发送请求可能暴露服务器的地址，这种情况下可以通过 app.http-client.proxy 设置代理。
 	 */
 	@Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
-	void queueValidateTask() throws IOException {
+	void queueValidateTask() {
 		var queue = new LinkedList<ValidateRecord>();
-		var map = redis.<String, byte[]>opsForHash().entries(RedisKeys.Friends.of("vR"));
 
-		for (var e : map.entrySet()) {
-			var record = objectMapper.readValue(e.getValue(), ValidateRecord.class);
+		for (var e : validateRecords.entrySet()) {
+			var record = e.getValue();
 
 			var p = record.failed > 0 ? Duration.ofDays(7) : Duration.ofDays(30);
 
 			var checkDate = record.validate.plus(p);
-			if (checkDate.isAfter(clock.instant())) queue.add(record);
-
+			if (checkDate.isAfter(clock.instant())) {
+				queue.add(record);
+			}
 		}
 
 		validateFriends(queue);
@@ -116,9 +112,8 @@ final class FriendValidateService {
 
 	private void updateRecord(ValidateRecord record) {
 		var host = URI.create(record.url).getHost();
-		var exists = redis.opsForHash().hasKey(RedisKeys.Friends.of("vR"), host);
-		if (exists) {
-			redis.opsForHash().put(RedisKeys.Friends.of("vR"), host, record);
+		if (validateRecords.containsKey(host)) {
+			validateRecords.put(host, record);
 		}
 	}
 }

@@ -1,12 +1,11 @@
 package com.kaciras.blog.api.friend;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.lang.Nullable;
 
 import java.time.Instant;
 
-@AllArgsConstructor(onConstructor_ = @JsonCreator)
+@NoArgsConstructor
 final class ValidateRecord {
 
 	public String url;
@@ -19,4 +18,10 @@ final class ValidateRecord {
 
 	/** 验证失败次数 */
 	public int failed;
+
+	public ValidateRecord(String url, @Nullable String friendPage, Instant validate) {
+		this.url = url;
+		this.friendPage = friendPage;
+		this.validate = validate;
+	}
 }
