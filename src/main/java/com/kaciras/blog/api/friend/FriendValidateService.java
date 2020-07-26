@@ -41,26 +41,21 @@ final class FriendValidateService {
 	@Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
 	void queueValidateTask() {
 		var queue = new LinkedList<ValidateRecord>();
-
-		for (var e : validateRecords.entrySet()) {
-			var record = e.getValue();
-
-			var p = record.failed > 0 ? Duration.ofDays(7) : Duration.ofDays(30);
-
-			var checkDate = record.validate.plus(p);
-			if (checkDate.isAfter(clock.instant())) {
-				queue.add(record);
-			}
-		}
-
-		validateFriends(queue);
+		validateRecords.values().stream().filter(this::shouldValidate).forEach(queue::addFirst);
+		validateFriendsAsync(queue);
 	}
 
-	private void validateFriends(Queue<ValidateRecord> queue) {
+	private boolean shouldValidate(ValidateRecord record) {
+		var p = record.failed > 0 ? Duration.ofDays(7) : Duration.ofDays(30);
+		return record.validate.plus(p).isAfter(clock.instant());
+	}
+
+	private void validateFriendsAsync(Queue<ValidateRecord> queue) {
 		if (queue.isEmpty()) {
 			return;
 		}
 		var record = queue.remove();
+
 		var userAgent = String.format("KacirasBlog Friend Validator (+%s/about/blogger#bot", myOrigin);
 		var checkUrl = record.friendPage != null ? record.friendPage : record.url;
 
@@ -72,7 +67,7 @@ final class FriendValidateService {
 		httpClient
 				.sendAsync(request.build(), BodyHandlers.ofString())
 				.thenAccept(res -> this.handleAliveResponse(record, res))
-				.thenRunAsync(() -> validateFriends(queue));
+				.thenRunAsync(() -> validateFriendsAsync(queue));
 	}
 
 	private void handleAliveResponse(ValidateRecord record, HttpResponse<String> response) {
@@ -85,17 +80,23 @@ final class FriendValidateService {
 				record.failed = 0;
 				notificationService.reportFriend(record.url, FriendAccident.Type.Inaccessible);
 			}
-			updateRecord(record);
+			updateRecordEntry(record);
 
 		} else if (record.friendPage != null) {
 			if (!checkMyLink(response.body())) {
 				notificationService.reportFriend(record.url, FriendAccident.Type.AbandonedMe);
 			}
 			record.failed = 0;
-			updateRecord(record);
+			updateRecordEntry(record);
 		}
 	}
 
+	/**
+	 * 检查指定的HTML页面里是否存在本站的链接。
+	 *
+	 * @param html HTML页面
+	 * @return 如果存在返回true
+	 */
 	private boolean checkMyLink(String html) {
 
 		Predicate<Element> isLinkToMySite = el -> {
@@ -110,7 +111,8 @@ final class FriendValidateService {
 				.anyMatch(isLinkToMySite);
 	}
 
-	private void updateRecord(ValidateRecord record) {
+	// 这俩操作时间都很短，而且对友链的修改并不频繁，应该不会出什么一致性问题
+	private void updateRecordEntry(ValidateRecord record) {
 		var host = URI.create(record.url).getHost();
 		if (validateRecords.containsKey(host)) {
 			validateRecords.put(host, record);

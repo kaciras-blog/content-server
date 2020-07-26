@@ -2,7 +2,6 @@ package com.kaciras.blog.api.friend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.RedisKeys;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -14,39 +13,35 @@ import org.springframework.data.redis.support.collections.DefaultRedisMap;
 import org.springframework.data.redis.support.collections.RedisList;
 import org.springframework.data.redis.support.collections.RedisMap;
 
-@Configuration(proxyBeanMethods = false)
-@RequiredArgsConstructor
-public class FriendConfiguration {
+@Configuration
+class FriendConfiguration {
 
-	private final RedisConnectionFactory redisFactory;
-	private final ObjectMapper objectMapper;
+	private final RedisTemplate<String, String> template;
 
-	@Bean
-	RedisTemplate<String, FriendLink> localRedisTemplate() {
-		var template = new RedisTemplate<String, FriendLink>();
+	public FriendConfiguration(RedisConnectionFactory redisFactory, ObjectMapper objectMapper) {
+		this.template = new RedisTemplate<>();
 		template.setConnectionFactory(redisFactory);
-//		template.setEnableTransactionSupport(true);
+		template.setEnableTransactionSupport(true);
+		template.setDefaultSerializer(RedisSerializer.string());
 
-		template.setKeySerializer(RedisSerializer.string());
-
-		var fs = new Jackson2JsonRedisSerializer<>(FriendLink.class);
-		fs.setObjectMapper(objectMapper);
-		template.setDefaultSerializer(fs);
-
-		var vrs = new Jackson2JsonRedisSerializer<>(ValidateRecord.class);
-		vrs.setObjectMapper(objectMapper);
-		template.setHashValueSerializer(vrs);
-
-		return template;
+		var hvs = new Jackson2JsonRedisSerializer<>(ValidateRecord.class);
+		hvs.setObjectMapper(objectMapper);
+		template.setHashValueSerializer(hvs);
+		template.afterPropertiesSet();
 	}
 
 	@Bean
-	RedisList<FriendLink> friendList(RedisTemplate<String, FriendLink> redis) {
-		return new DefaultRedisList<>(RedisKeys.Friends.of("list"), redis);
+	RedisList<String> hostList() {
+		return new DefaultRedisList<>(RedisKeys.Friends.of("list"), template);
 	}
 
 	@Bean
-	RedisMap<String, ValidateRecord> validateRecords(RedisTemplate<String, FriendLink> redis) {
-		return new DefaultRedisMap<>(RedisKeys.Friends.of("vr"), redis);
+	RedisMap<String, FriendLink> friendMap() {
+		return new DefaultRedisMap<>(RedisKeys.Friends.of("map"), template);
+	}
+
+	@Bean
+	RedisMap<String, ValidateRecord> validateRecords() {
+		return new DefaultRedisMap<>(RedisKeys.Friends.of("validate"), template);
 	}
 }
