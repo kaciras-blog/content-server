@@ -2,13 +2,13 @@ package com.kaciras.blog.api.friend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.AbstractControllerTest;
-import com.kaciras.blog.infra.codec.ImageReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
+import static com.kaciras.blog.api.friend.TestHelper.createFriend;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -26,12 +26,6 @@ final class FriendControllerTest extends AbstractControllerTest {
 
 	@Autowired
 	private ObjectMapper objectMapper;
-
-	private FriendLink createFriend(String name) {
-		var url = "https://" + name;
-		var image = ImageReference.parse("test.png");
-		return new FriendLink(url, name, image, image, null, null);
-	}
 
 	@Test
 	void getFriends() throws Exception {
@@ -65,7 +59,7 @@ final class FriendControllerTest extends AbstractControllerTest {
 
 	@Test
 	void add() throws Exception {
-		when(repository.addFriend(any())).thenReturn("example.com");
+		when(repository.addFriend(any())).thenReturn(true);
 
 		mockMvc.perform(post("/friends")
 				.principal(ADMIN)
@@ -74,7 +68,7 @@ final class FriendControllerTest extends AbstractControllerTest {
 				.andExpect(header().string("Location", "/friends/example.com"));
 
 		verify(repository).addFriend(any());
-		verify(validateService).addForValidate(eq("example.com"), any());
+		verify(validateService).addForValidate(any());
 	}
 
 	@Test

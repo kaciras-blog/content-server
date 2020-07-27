@@ -1,6 +1,5 @@
 package com.kaciras.blog.api.friend;
 
-import com.kaciras.blog.infra.codec.ImageReference;
 import com.kaciras.blog.infra.exception.ResourceStateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 
+import static com.kaciras.blog.api.friend.TestHelper.createFriend;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -25,12 +25,6 @@ final class FriendRepositoryTest {
 		redis.getConnection().flushDb();
 	}
 
-	private FriendLink createFriend(String name) {
-		var url = "https://" + name;
-		var image = ImageReference.parse("test.png");
-		return new FriendLink(url, name, image, image, null, null);
-	}
-
 	@Test
 	void addRepeat() {
 		repository.addFriend(createFriend("example.com"));
@@ -42,7 +36,14 @@ final class FriendRepositoryTest {
 	void add() {
 		var friend = createFriend("example.com");
 		repository.addFriend(friend);
-		assertThat(repository.getFriends()[0]).isEqualToComparingFieldByField(friend);
+
+		var rv = repository.getFriends()[0];
+
+		// 忽略Json序列化精度问题
+		rv.createTime = friend.createTime;
+
+		assertThat(friend.createTime).isNotNull();
+		assertThat(rv).isEqualToComparingFieldByField(friend);
 	}
 
 	@Test
