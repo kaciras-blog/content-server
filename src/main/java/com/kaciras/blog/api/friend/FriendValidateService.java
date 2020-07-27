@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 
 @RequiredArgsConstructor
 @Service
-final class FriendValidateService {
+public class FriendValidateService {
 
 	private final NotificationService notificationService;
 
@@ -33,6 +33,14 @@ final class FriendValidateService {
 	private final HttpClient httpClient;
 
 	private final String myOrigin = "https://blog.kaciras.com";
+
+	public void addForValidate(String host, FriendLink friend) {
+		validateMap.put(host, new ValidateRecord(friend.url, friend.friendPage, friend.createTime));
+	}
+
+	public void removeFromValidate(String host) {
+		validateMap.remove(host);
+	}
 
 	/**
 	 * 定时扫描对方的网站，检查是否嗝屁（默哀），以及单方面删除本站（为什么不跟人家做朋友了）。
@@ -113,15 +121,17 @@ final class FriendValidateService {
 				.anyMatch(isLinkToMySite);
 	}
 
-	// 这俩操作时间都很短，而且对友链的修改并不频繁，应该不会出什么一致性问题
+	// SpringDataRedis是真的垃圾……，写个事务都这么丑？
 	private void updateRecordEntry(ValidateRecord record) {
 		validateMap.getOperations().execute(new SessionCallback<>() {
 			public Object execute(RedisOperations operations) {
 				var host = URI.create(record.url).getHost();
 
 				operations.watch(validateMap.getKey());
-				if (validateMap.containsKey(host)) {
-					operations.multi();
+				var exists = validateMap.containsKey(host);
+
+				operations.multi();
+				if (exists) {
 					validateMap.put(host, record);
 				}
 				return operations.exec();
