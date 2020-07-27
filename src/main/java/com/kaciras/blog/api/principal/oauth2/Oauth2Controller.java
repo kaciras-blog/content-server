@@ -26,6 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URI;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
@@ -46,8 +47,8 @@ public class Oauth2Controller {
 
 	private Map<String, Oauth2Client> clientMap;
 
-	@Value("${app.oauth2.www-host}")
-	private String wwwHost;
+	@Value("${app.origin}")
+	private String origin;
 
 	@Autowired
 	private void initClientMap(Collection<Oauth2Client> beans) {
@@ -140,8 +141,7 @@ public class Oauth2Controller {
 		// 固定域名和协议，以防跳转到其他网站
 		var redirect = UriComponentsBuilder
 				.fromUriString(oauthSession.returnUri)
-				.scheme("https")
-				.host(wwwHost)
+				.uri(URI.create(origin))
 				.build().toUri();
 
 		return ResponseEntity.status(302).location(redirect).build();

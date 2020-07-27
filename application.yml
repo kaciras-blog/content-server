@@ -25,6 +25,11 @@ spring:
 
 app:
 
+  # 网站的协议和域名
+  origin: http://localhost
+
+  validate-friend: false
+
   session:
     cookie:
       domain: localhost
@@ -34,7 +39,7 @@ app:
 
   # 可以使用通配符 "*"
   cors:
-    allowed-origins: https://localhost
+    allowed-origins: http://localhost
 
   rate-limit:
 
@@ -61,22 +66,19 @@ app:
         - permits: 300
           time: 86400
 
-  # 本系统支持 OAuth2 登录，取消下面的注释并填写 client-id 和 client-secret 即可启用
-#  oauth2:
-#
-    # 前端页面的域名
-#    www-host: localhost
+    # 本系统支持 OAuth2 登录，取消下面的注释并填写 client-id 和 client-secret 即可启用
+  #  oauth2:
 
-    # 申请页面 https://console.developers.google.com/apis/credentials
-#    google:
-#      client-id: <your client-id>
-#      client-secret: <your client-secret>
+  #     申请页面 https://console.developers.google.com/apis/credentials
+  #    google:
+  #      client-id: <your client-id>
+  #      client-secret: <your client-secret>
 
-    # 申请页面 https://github.com/settings/applications/new
-#    github:
-#      client-id: <your client-id>
-#      client-secret: <your client-secret>
+  #     申请页面 https://github.com/settings/applications/new
+  #    github:
+  #      client-id: <your client-id>
+  #      client-secret: <your client-secret>
 
-  # OAuth2 可以通过代理访问第三方服务，服务器在在墙内时可能需要
+  # 代理 HTTP Client 请求，服务器在在墙内，以及需要隐藏服务器地址时需要
 #  http-client:
-#   proxy: "localhost:1080"
+#    proxy: "localhost:1080"
