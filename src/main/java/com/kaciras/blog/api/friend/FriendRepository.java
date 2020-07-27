@@ -6,9 +6,9 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
-import java.net.URI;
 import java.time.Clock;
 import java.util.List;
 import java.util.Map;
@@ -79,13 +79,24 @@ public class FriendRepository {
 	}
 
 	/**
+	 * 获取指定域名的友链。
+	 *
+	 * @param host 域名
+	 * @return 友链对象，如果不存在则为null
+	 */
+	@Nullable
+	public FriendLink get(String host) {
+		return friendMap.get(host);
+	}
+
+	/**
 	 * 添加一个友链，新的友链将处于末位。
 	 *
 	 * @param friend 友链
 	 * @return 如果重复添加则为false，成功为true
 	 */
 	public boolean addFriend(FriendLink friend) {
-		var host = URI.create(friend.url).getHost();
+		var host = friend.url.getHost();
 		friend.createTime = clock.instant();
 
 		if (friendMap.putIfAbsent(host, friend)) {

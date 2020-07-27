@@ -11,7 +11,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.support.collections.DefaultRedisMap;
 import org.springframework.data.redis.support.collections.RedisMap;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class FriendConfiguration {
 
 	private final RedisTemplate<String, ValidateRecord> validate;

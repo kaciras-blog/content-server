@@ -1,19 +1,19 @@
 package com.kaciras.blog.api.friend;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.kaciras.blog.infra.codec.ImageReference;
 import lombok.AllArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.URL;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.time.Instant;
 
-@AllArgsConstructor(onConstructor_ = @JsonCreator)
+@AllArgsConstructor
 public final class FriendLink {
 
-	@URL
-	public String url;
+	@NotNull
+	public URI url;
 
 	@Length(min = 1, max = 16)
 	public String name;
@@ -24,9 +24,9 @@ public final class FriendLink {
 	@NotNull
 	public ImageReference background;
 
-	/** 用于验证对方是否加本站为友链的页面，是完整的URL，为null则不验证  */
-	@URL
-	public String friendPage;
+	/** 用于验证对方是否加本站为友链的页面，是完整的URL，为null则不验证 */
+	@Nullable
+	public URI friendPage;
 
 	/** 成为朋友的时间，在Controller里设置 */
 	public Instant createTime;

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.net.URI;
 import java.util.List;
 
 import static com.kaciras.blog.api.friend.TestHelper.createFriend;
@@ -51,7 +52,7 @@ final class FriendControllerTest extends AbstractControllerTest {
 
 	@Test
 	void invalidFriendLink() throws Exception {
-		var friend = new FriendLink("/test", "test", null, null, null, null);
+		var friend = new FriendLink(URI.create("https://test"), "test", null, null, null, null);
 		mockMvc
 				.perform(post("/friends").content(objectMapper.writeValueAsBytes(friend)))
 				.andExpect(status().is(400));
@@ -60,10 +61,11 @@ final class FriendControllerTest extends AbstractControllerTest {
 	@Test
 	void add() throws Exception {
 		when(repository.addFriend(any())).thenReturn(true);
+		var body = objectMapper.writeValueAsString(createFriend("example.com"));
 
 		mockMvc.perform(post("/friends")
 				.principal(ADMIN)
-				.content(objectMapper.writeValueAsBytes(createFriend("example.com"))))
+				.content(body))
 				.andExpect(status().is(201))
 				.andExpect(header().string("Location", "/friends/example.com"));
 

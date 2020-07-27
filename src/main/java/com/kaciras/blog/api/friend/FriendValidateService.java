@@ -5,12 +5,14 @@ import com.kaciras.blog.api.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.support.collections.RedisMap;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -22,6 +24,12 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.function.Predicate;
 
+/**
+ * 定时扫描对方的网站，检查是否嗝屁（默哀），以及单方面删除本站（为什么不跟人家做朋友了）。
+ * <p>
+ * 【安全性】
+ * 发送请求可能暴露服务器的地址，这种情况下可以通过 app.http-client.proxy 设置代理。
+ */
 @RequiredArgsConstructor
 @Service
 public class FriendValidateService {
@@ -32,24 +40,31 @@ public class FriendValidateService {
 	private final Clock clock;
 	private final HttpClient httpClient;
 
-	private final String myOrigin = "https://blog.kaciras.com";
+	private final TaskScheduler taskScheduler;
 
-	public void addForValidate(String host, FriendLink friend) {
-		validateMap.put(host, new ValidateRecord(friend.url, friend.friendPage, friend.createTime));
+	@Value("${app.validate-friend}")
+	private boolean enable;
+
+	@Value("${app.origin}")
+	private String myOrigin;
+
+	@PostConstruct
+	private void init() {
+		if (enable) {
+			taskScheduler.scheduleAtFixedRate(this::queueValidateTask, Duration.ofDays(1));
+		}
+	}
+
+	public void addForValidate(FriendLink friend) {
+		var url = friend.url;
+		validateMap.put(url.getHost(), new ValidateRecord(url, friend.friendPage, friend.createTime, 0));
 	}
 
 	public void removeFromValidate(String host) {
 		validateMap.remove(host);
 	}
 
-	/**
-	 * 定时扫描对方的网站，检查是否嗝屁（默哀），以及单方面删除本站（为什么不跟人家做朋友了）。
-	 * <p>
-	 * 【安全性】
-	 * 发送请求可能暴露服务器的地址，这种情况下可以通过 app.http-client.proxy 设置代理。
-	 */
-	@Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
-	void queueValidateTask() {
+	private void queueValidateTask() {
 		var queue = new LinkedList<ValidateRecord>();
 		validateMap.values().stream().filter(this::shouldValidate).forEach(queue::addFirst);
 		validateFriendsAsync(queue);
@@ -69,8 +84,7 @@ public class FriendValidateService {
 		var userAgent = String.format("KacirasBlog Friend Validator (+%s/about/blogger#bot", myOrigin);
 		var checkUrl = record.friendPage != null ? record.friendPage : record.url;
 
-		var request = HttpRequest
-				.newBuilder(URI.create(checkUrl))
+		var request = HttpRequest.newBuilder(checkUrl)
 				.header("User-Agent", userAgent)
 				.timeout(Duration.ofSeconds(10));
 
@@ -125,7 +139,7 @@ public class FriendValidateService {
 	private void updateRecordEntry(ValidateRecord record) {
 		validateMap.getOperations().execute(new SessionCallback<>() {
 			public Object execute(RedisOperations operations) {
-				var host = URI.create(record.url).getHost();
+				var host = record.url.getHost();
 
 				operations.watch(validateMap.getKey());
 				var exists = validateMap.containsKey(host);

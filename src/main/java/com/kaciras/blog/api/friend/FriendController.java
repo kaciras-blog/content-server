@@ -1,6 +1,7 @@
 package com.kaciras.blog.api.friend;
 
 import com.kaciras.blog.infra.exception.ResourceNotFoundException;
+import com.kaciras.blog.infra.exception.ResourceStateException;
 import com.kaciras.blog.infra.principal.RequireAuthorize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +31,11 @@ class FriendController {
 	@RequireAuthorize
 	@PostMapping
 	public ResponseEntity<FriendLink> makeFriend(@RequestBody @Valid FriendLink friend) {
-		var host = repository.addFriend(friend);
-		validateService.addForValidate(host, friend);
-		return ResponseEntity.created(URI.create("/friends/" + host)).body(friend);
+		if (!repository.addFriend(friend)) {
+			throw new ResourceStateException("指定站点的友链已存在");
+		}
+		validateService.addForValidate(friend);
+		return ResponseEntity.created(URI.create("/friends/" + friend.url.getHost())).body(friend);
 	}
 
 	@RequireAuthorize

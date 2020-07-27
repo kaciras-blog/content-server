@@ -1,27 +1,22 @@
 package com.kaciras.blog.api.friend;
 
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.lang.Nullable;
 
+import java.net.URI;
 import java.time.Instant;
 
-@NoArgsConstructor
+@AllArgsConstructor
 final class ValidateRecord {
 
-	public String url;
+	public URI url;
 
 	@Nullable
-	public String friendPage;
+	public URI friendPage;
 
 	/** 验证时间 */
 	public Instant validate;
 
 	/** 验证失败次数 */
 	public int failed;
-
-	public ValidateRecord(String url, @Nullable String friendPage, Instant validate) {
-		this.url = url;
-		this.friendPage = friendPage;
-		this.validate = validate;
-	}
 }
