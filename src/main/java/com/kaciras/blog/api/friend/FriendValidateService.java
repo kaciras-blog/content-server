@@ -5,6 +5,8 @@ import com.kaciras.blog.api.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.support.collections.RedisMap;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,7 @@ final class FriendValidateService {
 
 	private final NotificationService notificationService;
 
-	private final RedisMap<String, ValidateRecord> validateRecords;
+	private final RedisMap<String, ValidateRecord> validateMap;
 	private final Clock clock;
 	private final HttpClient httpClient;
 
@@ -41,7 +43,7 @@ final class FriendValidateService {
 	@Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
 	void queueValidateTask() {
 		var queue = new LinkedList<ValidateRecord>();
-		validateRecords.values().stream().filter(this::shouldValidate).forEach(queue::addFirst);
+		validateMap.values().stream().filter(this::shouldValidate).forEach(queue::addFirst);
 		validateFriendsAsync(queue);
 	}
 
@@ -113,9 +115,17 @@ final class FriendValidateService {
 
 	// 这俩操作时间都很短，而且对友链的修改并不频繁，应该不会出什么一致性问题
 	private void updateRecordEntry(ValidateRecord record) {
-		var host = URI.create(record.url).getHost();
-		if (validateRecords.containsKey(host)) {
-			validateRecords.put(host, record);
-		}
+		validateMap.getOperations().execute(new SessionCallback<>() {
+			public Object execute(RedisOperations operations) {
+				var host = URI.create(record.url).getHost();
+
+				operations.watch(validateMap.getKey());
+				if (validateMap.containsKey(host)) {
+					operations.multi();
+					validateMap.put(host, record);
+				}
+				return operations.exec();
+			}
+		});
 	}
 }

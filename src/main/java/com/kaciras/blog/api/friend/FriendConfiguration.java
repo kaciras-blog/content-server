@@ -16,32 +16,41 @@ import org.springframework.data.redis.support.collections.RedisMap;
 @Configuration
 class FriendConfiguration {
 
-	private final RedisTemplate<String, String> template;
+	private final RedisTemplate<String, String> listAndMap;
+	private final RedisTemplate<String, ValidateRecord> validate;
 
 	public FriendConfiguration(RedisConnectionFactory redisFactory, ObjectMapper objectMapper) {
-		this.template = new RedisTemplate<>();
-		template.setConnectionFactory(redisFactory);
-		template.setEnableTransactionSupport(true);
-		template.setDefaultSerializer(RedisSerializer.string());
+		var hfs = new Jackson2JsonRedisSerializer<>(FriendLink.class);
+		hfs.setObjectMapper(objectMapper);
+
+		listAndMap = new RedisTemplate<>();
+		listAndMap.setConnectionFactory(redisFactory);
+		listAndMap.setDefaultSerializer(RedisSerializer.string());
+		listAndMap.setHashValueSerializer(hfs);
+		listAndMap.afterPropertiesSet();
 
 		var hvs = new Jackson2JsonRedisSerializer<>(ValidateRecord.class);
 		hvs.setObjectMapper(objectMapper);
-		template.setHashValueSerializer(hvs);
-		template.afterPropertiesSet();
+
+		validate = new RedisTemplate<>();
+		validate.setConnectionFactory(redisFactory);
+		validate.setDefaultSerializer(RedisSerializer.string());
+		validate.setHashValueSerializer(hvs);
+		validate.afterPropertiesSet();
 	}
 
 	@Bean
 	RedisList<String> hostList() {
-		return new DefaultRedisList<>(RedisKeys.Friends.of("list"), template);
+		return new DefaultRedisList<>(RedisKeys.Friends.of("list"), listAndMap);
 	}
 
 	@Bean
 	RedisMap<String, FriendLink> friendMap() {
-		return new DefaultRedisMap<>(RedisKeys.Friends.of("map"), template);
+		return new DefaultRedisMap<>(RedisKeys.Friends.of("map"), listAndMap);
 	}
 
 	@Bean
 	RedisMap<String, ValidateRecord> validateRecords() {
-		return new DefaultRedisMap<>(RedisKeys.Friends.of("validate"), template);
+		return new DefaultRedisMap<>(RedisKeys.Friends.of("validate"), validate);
 	}
 }
