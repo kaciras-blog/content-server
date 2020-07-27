@@ -1,11 +1,11 @@
-# 运行该程序前需要配置此文件，并去掉此文件的 -EXAMPLE 后缀或是用 Spring 的 profiles 指定配置文件。
+# 运行该程序前需要配置此文件
 server:
 
-  port: 80
+  port: 2375
 
   # 如果使用了TLS，又同时要支持HTTP连接，则启用这个选项
 #  additional-connector:
-#    port: 80
+#    port: 2400
 
 # TODO: 下面两个数据库连接需要修改
 spring:
@@ -32,9 +32,9 @@ app:
   authorization:
     admin-principal: false
 
-  # 测试时可以改成通配符 "*"
+  # 可以使用通配符 "*"
   cors:
-    allowed-origins: https://api.example.com
+    allowed-origins: https://localhost
 
   rate-limit:
 

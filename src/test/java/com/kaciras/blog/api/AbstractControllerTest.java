@@ -11,17 +11,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 // LTW 简直毒瘤啊，各种毛病烦死人
 @EnableLoadTimeWeaving
-@Transactional
-@ActiveProfiles("test") // 这个放在测试的Application类上无效
+@ActiveProfiles({"dev", "test"}) // 这个放在测试的Application类上无效
 @SpringBootTest
-public abstract class AbstractSpringTest {
+public abstract class AbstractControllerTest {
 
 	public static final WebPrincipal ADMIN = new WebPrincipal(WebPrincipal.ADMIN_ID);
 	public static final WebPrincipal ANONYMOUS = new WebPrincipal(WebPrincipal.ANONYMOUS_ID);

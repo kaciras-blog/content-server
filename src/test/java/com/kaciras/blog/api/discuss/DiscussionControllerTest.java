@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.discuss;
 
-import com.kaciras.blog.api.AbstractSpringTest;
+import com.kaciras.blog.api.AbstractControllerTest;
 import com.kaciras.blog.api.article.ArticleRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-final class DiscussionControllerTest extends AbstractSpringTest {
+final class DiscussionControllerTest extends AbstractControllerTest {
 
 	@MockBean
 	private ArticleRepository repository;

@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 final class GenericRateCheckerTest {
 
 	private final RateLimiter limiter = mock(RateLimiter.class);
+
 	private final Filter filter = new RateLimitFilter(List.of(new GenericRateChecker(limiter)));
 
 	private final MockFilterChain chain = new MockFilterChain();

@@ -3,6 +3,9 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
+  redis:
+    database: 1
+
 app:
 
   session:

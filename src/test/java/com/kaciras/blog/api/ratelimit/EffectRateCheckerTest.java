@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 final class EffectRateCheckerTest {
 
 	private final RateLimiter limiter = mock(RateLimiter.class);
+
 	private final EffectRateChecker checker = new EffectRateChecker(limiter);
 	private final Filter filter = new RateLimitFilter(List.of(checker));
 

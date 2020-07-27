@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.article;
 
-import com.kaciras.blog.api.AbstractSpringTest;
+import com.kaciras.blog.api.AbstractControllerTest;
 import com.kaciras.blog.api.draft.DraftRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-final class ArticleControllerTest extends AbstractSpringTest {
+final class ArticleControllerTest extends AbstractControllerTest {
 
 	@MockBean
 	private ArticleRepository repository;
