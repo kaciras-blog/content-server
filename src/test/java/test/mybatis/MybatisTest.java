@@ -23,7 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 		DataSourceAutoConfiguration.class,
 		MybatisAutoConfiguration.class,
 		KxCodecAutoConfiguration.class})
-@ActiveProfiles("test")
+@ActiveProfiles({"dev", "test"})
 @SpringBootTest
 @SpringBootConfiguration
 class MybatisTest {

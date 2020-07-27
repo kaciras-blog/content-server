@@ -1,6 +1,5 @@
 package com.kaciras.blog.api.friend;
 
-import com.kaciras.blog.infra.exception.ResourceStateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 
 import static com.kaciras.blog.api.friend.TestHelper.createFriend;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 final class FriendRepositoryTest {
@@ -27,9 +25,9 @@ final class FriendRepositoryTest {
 
 	@Test
 	void addRepeat() {
-		repository.addFriend(createFriend("example.com"));
-		assertThatThrownBy(() -> repository.addFriend(createFriend("example.com")))
-				.isInstanceOf(ResourceStateException.class);
+		var friend = createFriend("example.com");
+		assertThat(repository.addFriend(friend)).isTrue();
+		assertThat(repository.addFriend(friend)).isFalse();
 	}
 
 	@Test
