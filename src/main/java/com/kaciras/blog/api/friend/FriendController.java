@@ -1,5 +1,6 @@
 package com.kaciras.blog.api.friend;
 
+import com.kaciras.blog.infra.exception.ResourceNotFoundException;
 import com.kaciras.blog.infra.principal.RequireAuthorize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,9 @@ class FriendController {
 	@RequireAuthorize
 	@DeleteMapping("/{host}")
 	public void rupture(@PathVariable String host) {
-		repository.remove(host);
+		if (!repository.remove(host)) {
+			throw new ResourceNotFoundException();
+		}
 		validateService.removeFromValidate(host);
 	}
 
