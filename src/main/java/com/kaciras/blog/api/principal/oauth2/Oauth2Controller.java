@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -45,12 +46,13 @@ public class Oauth2Controller {
 	private final RedisTemplate<String, byte[]> redisTemplate;
 	private final ObjectMapper objectMapper;
 
-	private Map<String, Oauth2Client> clientMap;
+	private Map<String, Oauth2Client> clientMap = Collections.emptyMap();
 
 	@Value("${app.origin}")
 	private String origin;
 
-	@Autowired
+	// 没有 bean 时注入 null 而不是空集合？
+	@Autowired(required = false)
 	private void initClientMap(Collection<Oauth2Client> beans) {
 		clientMap = beans.stream()
 				.collect(Collectors.toMap(b -> b.authType().name().toLowerCase(), b -> b));
