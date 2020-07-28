@@ -9,11 +9,13 @@ import org.springframework.boot.autoconfigure.validation.ValidationAutoConfigura
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.validation.ValidationException;
 import javax.validation.Validator;
 
 @Import({JacksonAutoConfiguration.class, ValidationAutoConfiguration.class})
+@ActiveProfiles("test")
 @SpringBootTest
 class ConfigBindingManagerTest {
 
