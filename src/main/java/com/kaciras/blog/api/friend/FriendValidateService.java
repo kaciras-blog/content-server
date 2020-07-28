@@ -35,6 +35,7 @@ import java.util.function.Predicate;
 public class FriendValidateService {
 
 	private final NotificationService notificationService;
+	private final FriendRepository repository;
 
 	private final RedisMap<String, ValidateRecord> validateMap;
 	private final Clock clock;
@@ -51,25 +52,46 @@ public class FriendValidateService {
 	@PostConstruct
 	private void init() {
 		if (enable) {
-			taskScheduler.scheduleAtFixedRate(this::queueValidateTask, Duration.ofDays(1));
+			taskScheduler.scheduleAtFixedRate(this::startValidation, Duration.ofDays(1));
 		}
 	}
 
+	/**
+	 * 将一个友链加入验证列表中。请确保友链的域名没有与已存在的重复。
+	 *
+	 * @param friend 友链
+	 */
 	public void addForValidate(FriendLink friend) {
 		var url = friend.url;
 		validateMap.put(url.getHost(), new ValidateRecord(url, friend.friendPage, friend.createTime, 0));
 	}
 
+	/**
+	 * 重验证列表中移除指定域名的友链。
+	 *
+	 * @param host 域名
+	 */
 	public void removeFromValidate(String host) {
 		validateMap.remove(host);
 	}
 
-	private void queueValidateTask() {
+	/**
+	 * 触发检测，将从所有的记录中筛选出待检查的友链进行检查。
+	 *
+	 * 可以搞个定时任务来调用此方法。
+	 */
+	public void startValidation() {
 		var queue = new LinkedList<ValidateRecord>();
 		validateMap.values().stream().filter(this::shouldValidate).forEach(queue::addFirst);
 		validateFriendsAsync(queue);
 	}
 
+	/**
+	 * 判断友链是否需要检测，如果之前一直都正常则30天检查一次，否则7天后再次检查。
+	 *
+	 * @param record 检测记录
+	 * @return 如果需要检测则为true
+	 */
 	private boolean shouldValidate(ValidateRecord record) {
 		var p = record.failed > 0 ? Duration.ofDays(7) : Duration.ofDays(30);
 		return record.validate.plus(p).isAfter(clock.instant());
@@ -102,13 +124,13 @@ public class FriendValidateService {
 
 			if (record.failed > 3) {
 				record.failed = 0;
-				notificationService.reportFriend(record.url, FriendAccident.Type.Inaccessible);
+				report(record, FriendAccident.Type.Inaccessible);
 			}
 			updateRecordEntry(record);
 
 		} else if (record.friendPage != null) {
 			if (!checkMyLink(response.body())) {
-				notificationService.reportFriend(record.url, FriendAccident.Type.AbandonedMe);
+				report(record, FriendAccident.Type.AbandonedMe);
 			}
 			record.failed = 0;
 			updateRecordEntry(record);
@@ -135,7 +157,19 @@ public class FriendValidateService {
 				.anyMatch(isLinkToMySite);
 	}
 
-	// SpringDataRedis是真的垃圾……，写个事务都这么丑？
+	private void report(ValidateRecord record, FriendAccident.Type type) {
+		var friend = repository.get(record.url.getHost());
+		notificationService.reportFriend(friend, type);
+	}
+
+	/**
+	 * 保存检查记录。用了事务来实现 putIfExists 确保不会添加已删除的记录。
+	 *
+	 * 【不爽】
+	 * SpringDataRedis是真的垃圾……写个事务都这么丑？
+	 *
+	 * @param record 新的记录
+	 */
 	private void updateRecordEntry(ValidateRecord record) {
 		validateMap.getOperations().execute(new SessionCallback<>() {
 			public Object execute(RedisOperations operations) {

@@ -24,7 +24,7 @@ public final class FriendLink {
 	@NotNull
 	public ImageReference background;
 
-	/** 用于验证对方是否加本站为友链的页面，是完整的URL，为null则不验证 */
+	/** 用于验证对方是否加本站为友链的页面，为null则不验证 */
 	@Nullable
 	public URI friendPage;
 

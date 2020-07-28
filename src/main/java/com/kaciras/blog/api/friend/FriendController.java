@@ -10,10 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 
-/**
- * 【一致性的讨论】
- * 假定博主不会在同一时间做多个修改操作，这样就只考虑检测任务的并发。
- */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/friends")

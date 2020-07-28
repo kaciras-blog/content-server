@@ -28,7 +28,7 @@ class FriendConfiguration {
 	}
 
 	@Bean
-	RedisMap<String, ValidateRecord> validateRecords() {
+	RedisMap<String, ValidateRecord> validateMap() {
 		return new DefaultRedisMap<>(RedisKeys.Friends.of("validate"), validate);
 	}
 }
