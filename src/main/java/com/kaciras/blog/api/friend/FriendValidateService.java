@@ -1,12 +1,20 @@
 package com.kaciras.blog.api.friend;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.api.notification.FriendAccident;
-import com.kaciras.blog.api.notification.NotificationService;
+import com.kaciras.blog.api.notification.NotificationRepository;
 import com.kaciras.blog.infra.RedisExtensions;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.support.collections.DefaultRedisMap;
 import org.springframework.data.redis.support.collections.RedisMap;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
@@ -33,20 +41,35 @@ import java.util.function.Predicate;
 @Service
 public class FriendValidateService {
 
-	private final NotificationService notificationService;
+	private final NotificationRepository notificationRepository;
 	private final FriendRepository repository;
 
-	private final RedisMap<String, ValidateRecord> validateMap;
 	private final Clock clock;
 	private final HttpClient httpClient;
 
 	private final TaskScheduler taskScheduler;
+
+	private RedisMap<String, ValidateRecord> validateMap;
 
 	@Value("${app.validate-friend}")
 	private boolean enable;
 
 	@Value("${app.origin}")
 	private String myOrigin;
+
+	@Autowired
+	private void setRedis(RedisConnectionFactory redisFactory, ObjectMapper objectMapper) {
+		var hvs = new Jackson2JsonRedisSerializer<>(ValidateRecord.class);
+		hvs.setObjectMapper(objectMapper);
+
+		var validate = new RedisTemplate<String, Object>();
+		validate.setConnectionFactory(redisFactory);
+		validate.setDefaultSerializer(RedisSerializer.string());
+		validate.setHashValueSerializer(hvs);
+		validate.afterPropertiesSet();
+
+		validateMap = new DefaultRedisMap<>(RedisKeys.Friends.of("validate"), validate);
+	}
 
 	@PostConstruct
 	private void init() {
@@ -57,7 +80,7 @@ public class FriendValidateService {
 
 	/**
 	 * 将一个友链加入验证列表中。
-	 *
+	 * <p>
 	 * 【初次验证时间】
 	 * 友链的最后有效时间以调用此方法的时间为准，不使用友链创建时间，避免友链域名更新后立即检查。
 	 *
@@ -161,7 +184,7 @@ public class FriendValidateService {
 
 	private void report(ValidateRecord record, FriendAccident.Type type) {
 		var friend = repository.get(record.url.getHost());
-		notificationService.reportFriend(friend, type);
+		notificationRepository.reportFriend(friend, type);
 	}
 
 	/**
