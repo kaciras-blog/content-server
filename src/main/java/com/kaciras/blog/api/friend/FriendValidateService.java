@@ -2,12 +2,11 @@ package com.kaciras.blog.api.friend;
 
 import com.kaciras.blog.api.notification.FriendAccident;
 import com.kaciras.blog.api.notification.NotificationService;
+import com.kaciras.blog.infra.RedisExtensions;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisOperations;
-import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.support.collections.RedisMap;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
@@ -57,17 +56,20 @@ public class FriendValidateService {
 	}
 
 	/**
-	 * 将一个友链加入验证列表中。请确保友链的域名没有与已存在的重复。
+	 * 将一个友链加入验证列表中。
+	 *
+	 * 【初次验证时间】
+	 * 友链的最后有效时间以调用此方法的时间为准，不使用友链创建时间，避免友链域名更新后立即检查。
 	 *
 	 * @param friend 友链
 	 */
 	public void addForValidate(FriendLink friend) {
 		var url = friend.url;
-		validateMap.put(url.getHost(), new ValidateRecord(url, friend.friendPage, friend.createTime, 0));
+		validateMap.put(url.getHost(), new ValidateRecord(url, friend.friendPage, clock.instant(), 0));
 	}
 
 	/**
-	 * 重验证列表中移除指定域名的友链。
+	 * 从验证列表中移除指定域名的友链。
 	 *
 	 * @param host 域名
 	 */
@@ -77,7 +79,7 @@ public class FriendValidateService {
 
 	/**
 	 * 触发检测，将从所有的记录中筛选出待检查的友链进行检查。
-	 *
+	 * <p>
 	 * 可以搞个定时任务来调用此方法。
 	 */
 	public void startValidation() {
@@ -112,11 +114,11 @@ public class FriendValidateService {
 
 		httpClient
 				.sendAsync(request.build(), BodyHandlers.ofString())
-				.thenAccept(res -> this.handleAliveResponse(record, res))
-				.thenRunAsync(() -> validateFriendsAsync(queue));
+				.thenAccept(res -> this.handleResponse(record, res))
+				.thenRun(() -> validateFriendsAsync(queue));
 	}
 
-	private void handleAliveResponse(ValidateRecord record, HttpResponse<String> response) {
+	private void handleResponse(ValidateRecord record, HttpResponse<String> response) {
 		record.validate = clock.instant();
 
 		if (response.statusCode() / 100 != 2) {
@@ -165,25 +167,10 @@ public class FriendValidateService {
 	/**
 	 * 保存检查记录。用了事务来实现 putIfExists 确保不会添加已删除的记录。
 	 *
-	 * 【不爽】
-	 * SpringDataRedis是真的垃圾……写个事务都这么丑？
-	 *
 	 * @param record 新的记录
 	 */
 	private void updateRecordEntry(ValidateRecord record) {
-		validateMap.getOperations().execute(new SessionCallback<>() {
-			public Object execute(RedisOperations operations) {
-				var host = record.url.getHost();
-
-				operations.watch(validateMap.getKey());
-				var exists = validateMap.containsKey(host);
-
-				operations.multi();
-				if (exists) {
-					validateMap.put(host, record);
-				}
-				return operations.exec();
-			}
-		});
+		var host = record.url.getHost();
+		RedisExtensions.hsetx(validateMap.getOperations(), validateMap.getKey(), host, record);
 	}
 }
