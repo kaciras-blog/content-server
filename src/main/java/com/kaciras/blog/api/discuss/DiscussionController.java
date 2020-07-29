@@ -3,7 +3,7 @@ package com.kaciras.blog.api.discuss;
 import com.kaciras.blog.api.ListQueryView;
 import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
-import com.kaciras.blog.infra.principal.RequireAuthorize;
+import com.kaciras.blog.infra.principal.RequirePermission;
 import com.kaciras.blog.infra.principal.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -90,7 +90,7 @@ class DiscussionController {
 		return ResponseEntity.created(URI.create("/discussions/" + discussion.getId())).body(vo);
 	}
 
-	@RequireAuthorize // 当前仅支持管理者更新评论
+	@RequirePermission // 当前仅支持管理者更新评论
 	@PatchMapping
 	public ResponseEntity<Void> patch(@RequestBody PatchInput input) {
 		discussionService.batchUpdate(input);

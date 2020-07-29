@@ -6,7 +6,7 @@ import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.api.draft.DraftContent;
 import com.kaciras.blog.api.draft.DraftRepository;
 import com.kaciras.blog.infra.exception.ResourceDeletedException;
-import com.kaciras.blog.infra.principal.RequireAuthorize;
+import com.kaciras.blog.infra.principal.RequirePermission;
 import com.kaciras.blog.infra.principal.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,7 +85,7 @@ class ArticleController {
 	}
 
 	@Transactional
-	@RequireAuthorize
+	@RequirePermission
 	@PostMapping
 	public ResponseEntity<ArticleVo> post(@RequestBody @Valid PublishInput request) {
 		var article = mapper.createArticle(request);
@@ -99,7 +99,7 @@ class ArticleController {
 
 	// 不更改 urlTitle，category，这些属性使用PATCH修改
 	@Transactional
-	@RequireAuthorize
+	@RequirePermission
 	@PutMapping("/{id}")
 	public ArticleVo update(@PathVariable int id, @RequestBody PublishInput request) {
 		var article = repository.findById(id);
@@ -130,7 +130,7 @@ class ArticleController {
 		}
 	}
 
-	@RequireAuthorize
+	@RequirePermission
 	@PatchMapping("/{id}")
 	public ArticleVo patch(@PathVariable int id, @RequestBody PatchInput patchInput) {
 		var article = repository.findById(id);

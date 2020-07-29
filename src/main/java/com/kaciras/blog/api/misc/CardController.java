@@ -3,7 +3,7 @@ package com.kaciras.blog.api.misc;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.RedisKeys;
-import com.kaciras.blog.infra.principal.RequireAuthorize;
+import com.kaciras.blog.infra.principal.RequirePermission;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +42,7 @@ class CardController {
 	 * @param cards 卡片列表
 	 * @throws JsonProcessingException 如果出这异常，说明代码有BUG
 	 */
-	@RequireAuthorize
+	@RequirePermission
 	@PutMapping
 	public ResponseEntity<Void> update(@RequestBody @Valid List<Card> cards) throws Exception {
 		redisTemplate.opsForValue().set(RedisKeys.CardList.value(), objectMapper.writeValueAsBytes(cards));

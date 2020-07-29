@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.category;
 
-import com.kaciras.blog.infra.principal.RequireAuthorize;
+import com.kaciras.blog.infra.principal.RequirePermission;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +28,7 @@ class CategoryController {
 		return mapper.categoryView(repository.get(id).getChildren());
 	}
 
-	@RequireAuthorize
+	@RequirePermission
 	@PostMapping
 	public ResponseEntity<CategoryVo> create(@RequestBody CategoryAttributes attrs, @RequestParam int parent) {
 		var category = mapper.toCategory(attrs);
@@ -39,7 +39,7 @@ class CategoryController {
 				.body(mapper.categoryView(category));
 	}
 
-	@RequireAuthorize
+	@RequirePermission
 	@Transactional
 	@PostMapping("/transfer")
 	public ResponseEntity<Void> move(@RequestBody MoveInput input) {
@@ -55,7 +55,7 @@ class CategoryController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@RequireAuthorize
+	@RequirePermission
 	@PutMapping("/{id}")
 	public CategoryVo update(@PathVariable int id, @RequestBody CategoryAttributes attributes) {
 		var category = repository.get(id);
@@ -65,7 +65,7 @@ class CategoryController {
 	}
 
 // TODO:暂不支持删除，删除后文章的迁移有问题
-//	@RequireAuthorize
+//	@RequirePermission
 //	@DeleteMapping("/{id}")
 //	public ResponseEntity<Void> delete(@PathVariable int id, @RequestParam boolean tree) {
 //		if (tree) {

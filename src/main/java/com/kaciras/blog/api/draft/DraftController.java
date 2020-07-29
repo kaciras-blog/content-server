@@ -2,7 +2,7 @@ package com.kaciras.blog.api.draft;
 
 import com.kaciras.blog.api.ListQueryView;
 import com.kaciras.blog.api.article.ArticleRepository;
-import com.kaciras.blog.infra.principal.RequireAuthorize;
+import com.kaciras.blog.infra.principal.RequirePermission;
 import com.kaciras.blog.infra.principal.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import java.net.URI;
  * id：草稿id
  * saveCount: 草稿的保存序号
  */
-@RequireAuthorize
+@RequirePermission
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/drafts")

@@ -2,7 +2,7 @@ package com.kaciras.blog.api.friend;
 
 import com.kaciras.blog.infra.exception.ResourceNotFoundException;
 import com.kaciras.blog.infra.exception.ResourceStateException;
-import com.kaciras.blog.infra.principal.RequireAuthorize;
+import com.kaciras.blog.infra.principal.RequirePermission;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +37,7 @@ class FriendController {
 	 *
 	 * @param friend 是新的浮莲子哦
 	 */
-	@RequireAuthorize
+	@RequirePermission
 	@PostMapping
 	public ResponseEntity<FriendLink> makeFriend(@RequestBody @Valid FriendLink friend) {
 		if (!repository.addFriend(friend)) {
@@ -52,7 +52,7 @@ class FriendController {
 	 *
 	 * @param host 友链的域名
 	 */
-	@RequireAuthorize
+	@RequirePermission
 	@DeleteMapping("/{host}")
 	public void rupture(@PathVariable String host) {
 		if (!repository.remove(host)) {
@@ -67,7 +67,7 @@ class FriendController {
 	 * @param host 旧域名
 	 * @param friend 新的样子~
 	 */
-	@RequireAuthorize
+	@RequirePermission
 	@PutMapping("/{host}")
 	public void updateFriend(@PathVariable String host, @RequestBody @Valid FriendLink friend) {
 		if(!repository.updateFriend(host, friend)) {
@@ -84,7 +84,7 @@ class FriendController {
 	 *
 	 * @param hostList 新的顺序
 	 */
-	@RequireAuthorize
+	@RequirePermission
 	@PutMapping
 	public void updateSort(@RequestBody String[] hostList) {
 		repository.updateSort(hostList);

@@ -1,7 +1,7 @@
 package com.kaciras.blog.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kaciras.blog.infra.principal.RequireAuthorize;
+import com.kaciras.blog.infra.principal.RequirePermission;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +27,7 @@ class ConfigController {
 	}
 
 	// 验证出错的异常由 KxWebUtilsAutoConfiguration.ExceptionResolver 处理
-	@RequireAuthorize
+	@RequirePermission
 	@PatchMapping
 	public Object setProperties(@PathVariable String name, Reader body) throws IOException {
 		var config = configBindingManager.get(name);
