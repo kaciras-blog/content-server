@@ -122,4 +122,16 @@ final class FriendRepositoryTest {
 		assertThat(friends[1].name).isEqualTo("A");
 		assertThat(friends[2].name).isEqualTo("B");
 	}
+
+	/** 更新两遍，确认幂等性（BoundKeyOperations.rename 的坑） */
+	@Test
+	void sortIdempotence() {
+		repository.addFriend(createFriend("A"));
+		repository.addFriend(createFriend("B"));
+
+		repository.updateSort(new String[]{"B", "A"});
+		repository.updateSort(new String[]{"B", "A"});
+
+		assertThat(repository.getFriends()).hasSize(2);
+	}
 }

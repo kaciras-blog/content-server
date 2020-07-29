@@ -149,13 +149,15 @@ public class FriendRepository {
 
 	/**
 	 * 根据给定的域名列表更新友链的排序。
-	 * <p>
 	 * 域名列表里必须包含与原来同样的元素，否则会出现一致性问题。
+	 *
+	 * 【坑】
+	 * BoundKeyOperations.rename() 竟然不是简单地 RENAME，还把绑定的键给改了艹
 	 *
 	 * @param newList 新的域名列表
 	 */
 	public void updateSort(String[] newList) {
 		hostListTemp.rightPushAll(newList);
-		hostListTemp.rename(hostList.getKey());
+		template.rename(hostListTemp.getKey(), hostList.getKey());
 	}
 }
