@@ -1,6 +1,7 @@
 package com.kaciras.blog.api.friend;
 
 import com.kaciras.blog.infra.codec.ImageReference;
+import com.kaciras.blog.infra.validate.HttpURI;
 import lombok.AllArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
