@@ -3,7 +3,6 @@ package com.kaciras.blog.api.friend;
 import com.kaciras.blog.infra.codec.ImageReference;
 import lombok.AllArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -12,9 +11,12 @@ import java.time.Instant;
 @AllArgsConstructor
 public final class FriendLink {
 
+	/** 对方网站的URL，友链以它的域名作为ID */
 	@NotNull
+	@HttpURI
 	public URI url;
 
+	@NotNull
 	@Length(min = 1, max = 16)
 	public String name;
 
@@ -25,9 +27,9 @@ public final class FriendLink {
 	public ImageReference background;
 
 	/** 用于验证对方是否加本站为友链的页面，为null则不验证 */
-	@Nullable
+	@HttpURI
 	public URI friendPage;
 
-	/** 成为朋友的时间，在Controller里设置 */
+	/** 成为朋友的时间，在保存时设置 */
 	public Instant createTime;
 }

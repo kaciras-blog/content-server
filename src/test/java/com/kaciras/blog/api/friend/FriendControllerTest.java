@@ -2,12 +2,17 @@ package com.kaciras.blog.api.friend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.AbstractControllerTest;
+import com.kaciras.blog.infra.codec.ImageReference;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.kaciras.blog.api.friend.TestHelper.createFriend;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,11 +55,26 @@ final class FriendControllerTest extends AbstractControllerTest {
 		assertThat(list.get(2)).isEqualToComparingFieldByField(result[2]);
 	}
 
-	@Test
-	void invalidFriendLink() throws Exception {
-		var friend = new FriendLink(URI.create("https://test"), "test", null, null, null, null);
+	private static Stream<Arguments> invalidFriends() {
+		var url = URI.create("https://example.com");
+		var image = ImageReference.parse("test.png");
+		return Stream.of(
+				Arguments.of(new FriendLink(null, "test", image, image, null, null)),
+				Arguments.of(new FriendLink(URI.create(""), "test", image, image, null, null)),
+				Arguments.of(new FriendLink(URI.create("ftp://test"), "test", image, image, null, null)),
+				Arguments.of(new FriendLink(url, null, image, image, null, null)),
+				Arguments.of(new FriendLink(url, "", image, image, null, null)),
+				Arguments.of(new FriendLink(url, "123456789123456789", image, image, null, null)),
+				Arguments.of(new FriendLink(url, "test", null, image, null, null)),
+				Arguments.of(new FriendLink(url, "test", image, null, null, null))
+		);
+	}
+
+	@MethodSource("invalidFriends")
+	@ParameterizedTest
+	void invalidFriendLink(FriendLink value) throws Exception {
 		mockMvc
-				.perform(post("/friends").content(objectMapper.writeValueAsBytes(friend)))
+				.perform(post("/friends").content(objectMapper.writeValueAsBytes(value)))
 				.andExpect(status().is(400));
 	}
 
