@@ -28,7 +28,7 @@ import java.util.Map;
  * 3）博客系统的不要求实时性，即使查到了旧内容也无关紧要。
  * 这些确保了 getFriends() 不会出现 null 元素。
  * <p>
- * 重排序使用临时列表 + RENAME 的方式保证了原子性，不会出现 LIST 为空的中间情况。
+ * 重排序使用临时列表 + RENAME 的方式（类似CopyOnWrite）保证了原子性，不会出现 LIST 为空的中间情况。
  */
 @SuppressWarnings({"ConstantConditions", "NullableProblems"})
 @Repository
@@ -107,6 +107,33 @@ public class FriendRepository {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * 更新指定域名的友链，原域名的友链必须存在，否则不做任何改动。
+	 *
+	 * @param host 原域名
+	 * @param friend 新友链
+	 * @return false表示指定的原域名不存在，成功更新则为true
+	 */
+	public boolean updateFriend(String host, FriendLink friend) {
+		var old = friendMap.get(host);
+		if (old == null) {
+			return false;
+		}
+
+		var newHost = friend.url.getHost();
+		friend.createTime = old.createTime;
+
+		friendMap.put(newHost, friend);
+
+		if (!host.equals(newHost)) {
+			var oldList = hostList.range(0, -1);
+			hostList.set(oldList.indexOf(host), newHost);
+			friendMap.delete(host);
+		}
+
+		return true;
 	}
 
 	/**

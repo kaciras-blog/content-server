@@ -113,6 +113,31 @@ final class FriendControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
+	void update() throws Exception {
+		when(repository.updateFriend(any(), any())).thenReturn(true);
+
+		var friend = objectMapper.writeValueAsString(createFriend("test"));
+		mockMvc.perform(put("/friends/example.com")
+				.content(friend)
+				.principal(ADMIN))
+				.andExpect(status().is(200));
+	}
+
+	@Test
+	void updateNonExists() throws Exception {
+		when(repository.updateFriend(any(), any())).thenReturn(false);
+
+		var friend = objectMapper.writeValueAsString(createFriend("test"));
+		mockMvc.perform(put("/friends/example.com")
+				.content(friend)
+				.principal(ADMIN))
+				.andExpect(status().is(404));
+
+		verify(validateService, never()).addForValidate(any());
+		verify(validateService, never()).removeFromValidate(any());
+	}
+
+	@Test
 	void sort() throws Exception {
 		mockMvc.perform(put("/friends")
 				.principal(ADMIN)

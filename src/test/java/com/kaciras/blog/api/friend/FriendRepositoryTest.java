@@ -7,6 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.net.URI;
+
 import static com.kaciras.blog.api.friend.TestHelper.createFriend;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,6 +65,47 @@ final class FriendRepositoryTest {
 		assertThat(friends).hasSize(2);
 		assertThat(friends[0].name).isEqualTo("A");
 		assertThat(friends[1].name).isEqualTo("C");
+	}
+
+	@Test
+	void updateNonExists() {
+		var success = repository.updateFriend("no-exists", createFriend("test"));
+		assertThat(success).isFalse();
+	}
+
+	@Test
+	void update() {
+		var old = createFriend("A", "foo", null);
+		repository.addFriend(old);
+		repository.addFriend(createFriend("B"));
+		repository.addFriend(createFriend("C"));
+
+		var success = repository.updateFriend("A", createFriend("A", "bar", null));
+		assertThat(success).isTrue();
+
+		var friends = repository.getFriends();
+		assertThat(friends).hasSize(3);
+		assertThat(friends[0].url).isEqualTo(old.url);
+		assertThat(friends[0].friendPage).isEqualTo(URI.create("bar"));
+	}
+
+	@Test
+	void updateWithHost() {
+		var old = createFriend("A", "foo", null);
+		var new_ = createFriend("xx", "bar", null);
+
+		repository.addFriend(old);
+		repository.addFriend(createFriend("B"));
+		repository.addFriend(createFriend("C"));
+
+		var success = repository.updateFriend("A", new_);
+		assertThat(success).isTrue();
+
+		var friends = repository.getFriends();
+		assertThat(friends).hasSize(3);
+		assertThat(friends[0].url).isEqualTo(new_.url);
+		assertThat(friends[0].name).isEqualTo("xx");
+		assertThat(friends[0].friendPage).isEqualTo(URI.create("bar"));
 	}
 
 	@Test
