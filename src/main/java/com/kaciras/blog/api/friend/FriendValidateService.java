@@ -29,10 +29,12 @@ import java.time.Clock;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.CompletionStage;
 import java.util.function.Predicate;
 
 /**
  * 定时扫描对方的网站，检查是否嗝屁（默哀），以及单方面删除本站（为什么不跟人家做朋友了）。
+ * 要启用检查，请将 app.validate-friend 设置为 true。
  * <p>
  * 【安全性】
  * 发送请求可能暴露服务器的地址，这种情况下可以通过 app.http-client.proxy 设置代理。
@@ -126,8 +128,10 @@ public class FriendValidateService {
 		if (queue.isEmpty()) {
 			return;
 		}
-		var record = queue.remove();
+		validate(queue.remove()).thenRun(() -> validateFriendsAsync(queue));
+	}
 
+	public CompletionStage<Void> validate(ValidateRecord record) {
 		var userAgent = String.format("KacirasBlog Friend Validator (+%s/about/blogger#bot", myOrigin);
 		var checkUrl = record.friendPage != null ? record.friendPage : record.url;
 
@@ -135,10 +139,9 @@ public class FriendValidateService {
 				.header("User-Agent", userAgent)
 				.timeout(Duration.ofSeconds(10));
 
-		httpClient
+		return httpClient
 				.sendAsync(request.build(), BodyHandlers.ofString())
-				.thenAccept(res -> this.handleResponse(record, res))
-				.thenRun(() -> validateFriendsAsync(queue));
+				.thenAccept(res -> this.handleResponse(record, res));
 	}
 
 	private void handleResponse(ValidateRecord record, HttpResponse<String> response) {

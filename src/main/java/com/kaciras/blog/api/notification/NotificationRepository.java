@@ -2,12 +2,16 @@ package com.kaciras.blog.api.notification;
 
 import com.kaciras.blog.api.discuss.Discussion;
 import com.kaciras.blog.api.friend.FriendLink;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
-@Service
-public class NotificationService {
+@Repository
+public class NotificationRepository {
 
-	public void getAll() {
+	public Object getAll() {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public void clear() {
 
 	}
 
