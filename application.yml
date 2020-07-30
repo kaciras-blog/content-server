@@ -28,12 +28,14 @@ app:
   # 网站的协议和域名
   origin: http://localhost
 
+  # 是否启用友链（存活和互友）自动检查
   validate-friend: false
 
   session:
     cookie:
       domain: localhost
 
+  # 是否禁用权限拦截，true表示所有API都不需要管理员权限
   authorization:
     admin-principal: false
 
@@ -41,30 +43,31 @@ app:
   cors:
     allowed-origins: http://localhost
 
-  rate-limit:
+  # 没什么鸟用的限流器配置
+#  rate-limit:
 
     # 目前单页最大4个请求，保守起见 *5 倍，每秒 2 个也比较高了。
-    generic:
-      rate: 2
-      size: 20
+#    generic:
+#      rate: 2
+#      size: 20
 
     # 对非幂等请求的限速，主要是限制评论速率
-    effective:
+#    effective:
 
       # 达到限制封禁IP，连续封禁时间依次递增
-      block-times: [1h, 5h, 1d]
+#      block-times: [1h, 5h, 1d]
 
       # 封禁期访问则重置封禁时间
-      refresh-on-reject: true
+#      refresh-on-reject: true
 
       # 60秒10个，半小时60个，一天300个
-      limits:
-        - permits: 6
-          time: 60
-        - permits: 60
-          time: 1800
-        - permits: 300
-          time: 86400
+#      limits:
+#        - permits: 6
+#          time: 60
+#        - permits: 60
+#          time: 1800
+#        - permits: 300
+#          time: 86400
 
     # 本系统支持 OAuth2 登录，取消下面的注释并填写 client-id 和 client-secret 即可启用
   #  oauth2:
