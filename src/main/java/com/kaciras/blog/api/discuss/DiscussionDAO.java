@@ -8,7 +8,7 @@ import java.util.Optional;
 @Mapper
 interface DiscussionDAO {
 
-	@Insert("INSERT INTO discussion(object_id, type, floor, parent, user_id, nickname, content, time, state, address) " +
+	@Insert("INSERT INTO discussion(object_id, `type`, floor, parent, user_id, nickname, content, `time`, state, address) " +
 			"VALUES (#{objectId}, #{type}, #{floor}, #{parent}, #{userId}, #{nickname}, #{content}, #{time}, #{state}, #{address})")
 	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Discussion discussion);
@@ -18,7 +18,7 @@ interface DiscussionDAO {
 	List<Discussion> selectList(DiscussionQuery query);
 
 	@SelectProvider(type = SqlProvider.class, method = "selectCount")
-	int selectCount(DiscussionQuery query);
+	int count(DiscussionQuery query);
 
 	@Select("SELECT * FROM discussion WHERE id=#{id}")
 	@ResultMap("com.kaciras.blog.api.discuss.DiscussionDAO.discussionMap")
@@ -34,5 +34,9 @@ interface DiscussionDAO {
 	 * @return 评论数，不含楼中楼
 	 */
 	@Select("SELECT COUNT(*) FROM discussion WHERE object_id=#{objectId} AND type=#{type} AND parent=0")
-	int selectTopLevelCount(int objectId, int type);
+	int countTopLevel(int objectId, int type);
+
+	// count(DiscussionQuery query) 多了个 state 条件
+	@Select("SELECT COUNT(*) FROM discussion WHERE parent=#{parent}")
+	int countByParent(int parent);
 }

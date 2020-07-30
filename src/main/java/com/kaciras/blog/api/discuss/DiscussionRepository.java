@@ -21,15 +21,18 @@ class DiscussionRepository {
 	/**
 	 * 添加一条评论，此方法会在评论对象中设置自动生成的 id 以及 floor。
 	 * 因为评论的楼层是连续的，所以新评论的楼层就是已有评论的数量。
-	 *
+	 * <p>
 	 * 使用了串行级别的事务，因为楼层的确定需要获取评论数，存在幻读的可能。
 	 *
 	 * @param discussion 评论对象
 	 */
 	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void add(@NonNull Discussion discussion) {
-		var count = dao.selectTopLevelCount(discussion.getObjectId(), discussion.getType());
-		discussion.setFloor(count);
+		if (discussion.getParent() != 0) {
+			discussion.setFloor(dao.countByParent(discussion.getParent()));
+		} else {
+			discussion.setFloor(dao.countTopLevel(discussion.getObjectId(), discussion.getType()));
+		}
 		discussion.setTime(clock.instant());
 		dao.insert(discussion);
 	}
@@ -44,6 +47,6 @@ class DiscussionRepository {
 	}
 
 	public int count(@NonNull DiscussionQuery query) {
-		return dao.selectCount(query);
+		return dao.count(query);
 	}
 }
