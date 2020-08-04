@@ -187,7 +187,7 @@ public class FriendValidateService {
 
 	private void report(ValidateRecord record, FriendAccident.Type type) {
 		var friend = repository.get(record.url.getHost());
-		notificationRepository.reportFriend(friend, type);
+		notificationRepository.addFriendRecord(friend, record.validate, type);
 	}
 
 	/**

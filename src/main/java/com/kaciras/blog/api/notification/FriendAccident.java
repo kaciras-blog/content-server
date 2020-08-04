@@ -1,5 +1,8 @@
 package com.kaciras.blog.api.notification;
 
+import java.net.URI;
+import java.time.Instant;
+
 public final class FriendAccident {
 
 	public enum Type {
@@ -8,5 +11,7 @@ public final class FriendAccident {
 	}
 
 	public Type type;
-	
+	public String name;
+	public URI url;
+	public Instant time;
 }

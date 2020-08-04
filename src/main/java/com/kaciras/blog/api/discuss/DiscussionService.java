@@ -2,6 +2,7 @@ package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.api.article.ArticleRepository;
 import com.kaciras.blog.api.config.BindConfig;
+import com.kaciras.blog.api.notification.NotificationRepository;
 import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.principal.SecurityContext;
@@ -18,8 +19,10 @@ import java.util.List;
 public class DiscussionService {
 
 	private final DiscussionRepository repository;
-	private final ArticleRepository articleRepository;
 	private final DiscussionDAO dao;
+
+	private final ArticleRepository articleRepository;
+	private final NotificationRepository notificationRepository;
 
 	@BindConfig("discussion")
 	private DiscussionOptions options;
@@ -69,6 +72,11 @@ public class DiscussionService {
 		discussion.setState(options.isModeration() ? DiscussionState.Moderation : DiscussionState.Visible);
 
 		repository.add(discussion);
+
+		if(discussion.getState() == DiscussionState.Visible) {
+			notificationRepository.addDiscussionRecord(discussion);
+		}
+
 		return discussion;
 	}
 
