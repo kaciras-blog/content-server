@@ -20,19 +20,23 @@ class DiscussionRepository {
 
 	/**
 	 * 添加一条评论，此方法会在评论对象中设置自动生成的 id 以及 floor。
-	 * 因为评论的楼层是连续的，所以新评论的楼层就是已有评论的数量。
+	 * 因为评论的楼层是连续的，所以新评论的楼层就是已有评论的数量 + 1。
 	 * <p>
 	 * 使用了串行级别的事务，因为楼层的确定需要获取评论数，存在幻读的可能。
+	 *
+	 * 【楼层号从1开始】
+	 * 虽然咱码农的世界里编号都是从0开始的，但从1开始更通用些。
+	 * 先前是从0开始的，可以使用一句SQL更新：UPDATE discussion SET `floor`=`floor`+1
 	 *
 	 * @param discussion 评论对象
 	 */
 	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void add(@NonNull Discussion discussion) {
-		if (discussion.getParent() != 0) {
-			discussion.setFloor(dao.countByParent(discussion.getParent()));
-		} else {
-			discussion.setFloor(dao.countTopLevel(discussion.getObjectId(), discussion.getType()));
-		}
+		var count = discussion.getParent() == 0
+				? dao.countTopLevel(discussion.getObjectId(), discussion.getType())
+				: dao.countByParent(discussion.getParent());
+
+		discussion.setFloor(count + 1);
 		discussion.setTime(clock.instant());
 		dao.insert(discussion);
 	}
