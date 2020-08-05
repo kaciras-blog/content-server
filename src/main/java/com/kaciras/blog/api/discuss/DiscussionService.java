@@ -1,8 +1,9 @@
 package com.kaciras.blog.api.discuss;
 
+import com.kaciras.blog.api.article.Article;
 import com.kaciras.blog.api.article.ArticleRepository;
 import com.kaciras.blog.api.config.BindConfig;
-import com.kaciras.blog.api.notification.NotificationRepository;
+import com.kaciras.blog.api.notification.NotificationService;
 import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.principal.SecurityContext;
@@ -22,7 +23,7 @@ public class DiscussionService {
 	private final DiscussionDAO dao;
 
 	private final ArticleRepository articleRepository;
-	private final NotificationRepository notificationRepository;
+	private final NotificationService notificationService;
 
 	@BindConfig("discussion")
 	private DiscussionOptions options;
@@ -53,15 +54,19 @@ public class DiscussionService {
 
 		var user = SecurityContext.getUserId();
 		Discussion discussion;
+		Discussion parent = null;
+		Article article = null;
+
+		// 检查文章是否存在。目前仅有两个类型而且区别逻辑较少，所以暂时没有做抽象
+		if (input.getType() == 0) {
+			article = articleRepository.findById(input.getObjectId());
+		}
 
 		if (input.getParent() == 0) {
-			// 检查文章是否存在。目前仅有两个类型而且区别逻辑较少，所以暂时没有做抽象
-			if (input.getType() == 0) {
-				articleRepository.findById(input.getObjectId());
-			}
 			discussion = Discussion.create(input.getObjectId(), input.getType(), user, input.getContent());
 		} else {
-			discussion = repository.get(input.getParent()).createReply(user, input.getContent());
+			parent = repository.get(input.getParent());
+			discussion = parent.createReply(user, input.getContent());
 		}
 
 		if (StringUtils.hasText(input.getNickname())) {
@@ -73,8 +78,8 @@ public class DiscussionService {
 
 		repository.add(discussion);
 
-		if(discussion.getState() == DiscussionState.Visible) {
-			notificationRepository.addDiscussionRecord(discussion);
+		if (discussion.getState() == DiscussionState.Visible) {
+			notificationService.reportDiscussion(discussion, parent, article);
 		}
 
 		return discussion;

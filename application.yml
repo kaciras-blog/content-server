@@ -23,6 +23,20 @@ spring:
     port: 6375
     password: <your password>
 
+  # 邮件服务配置，邮件通知功能需要
+#  mail:
+#    host: smtp.office365.com
+#    port: 587
+#    username: example@outlook.com
+#    password: <password>
+
+    # 如果 SMTP 要求 STARTTLS 必须加上这个属性
+#    properties:
+#      mail:
+#        smtp:
+#          starttls:
+#            enable: true
+
 app:
 
   # 网站的协议和域名
@@ -42,6 +56,10 @@ app:
   # 可以使用通配符 "*"
   cors:
     allowed-origins: http://localhost
+
+#  mail-notify:
+#    from: YourMail@example.com
+#    address: YourMail@example.com
 
   # 没什么鸟用的限流器配置
 #  rate-limit:

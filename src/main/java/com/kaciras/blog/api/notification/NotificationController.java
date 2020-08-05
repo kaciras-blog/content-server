@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/notifications")
 class NotificationController {
 
-	private final NotificationRepository repository;
+	private final NotificationService repository;
 
 	@GetMapping
 	public Notifications getAll() {

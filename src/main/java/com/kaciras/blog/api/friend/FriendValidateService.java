@@ -3,7 +3,7 @@ package com.kaciras.blog.api.friend;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.api.notification.FriendAccident;
-import com.kaciras.blog.api.notification.NotificationRepository;
+import com.kaciras.blog.api.notification.NotificationService;
 import com.kaciras.blog.infra.RedisExtensions;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
@@ -43,7 +43,7 @@ import java.util.function.Predicate;
 @Service
 public class FriendValidateService {
 
-	private final NotificationRepository notificationRepository;
+	private final NotificationService notificationService;
 	private final FriendRepository repository;
 
 	private final Clock clock;
@@ -187,11 +187,11 @@ public class FriendValidateService {
 
 	private void report(ValidateRecord record, FriendAccident.Type type) {
 		var friend = repository.get(record.url.getHost());
-		notificationRepository.addFriendRecord(friend, record.validate, type);
+		notificationService.reportFriend(friend, record.validate, type);
 	}
 
 	/**
-	 * 保存检查记录。用了事务来实现 putIfExists 确保不会添加已删除的记录。
+	 * 保存检查记录。用了 Lua 脚本来实现 putIfExists，确保不会添加已删除的记录。
 	 *
 	 * @param record 新的记录
 	 */
