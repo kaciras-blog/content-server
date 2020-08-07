@@ -5,31 +5,27 @@ import com.kaciras.blog.api.RedisOperationBuilder;
 import com.kaciras.blog.api.article.Article;
 import com.kaciras.blog.api.discuss.Discussion;
 import com.kaciras.blog.api.friend.FriendLink;
-import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Optional;
 
-@Service
 public class NotificationService {
 
 	private final BoundListOperations<String, DiscussionActivity> discussions;
 	private final BoundListOperations<String, FriendAccident> friends;
 
-	private final Optional<MailService> mailService;
+	private final MailService mailService;
 
-	@Value("${app.mail-notify.address}")
-	private String adminAddress;
+	private final String adminAddress;
 
 	public NotificationService(RedisConnectionFactory factory,
 							   ObjectMapper objectMapper,
-							   Optional<MailService> mailService) {
+							   String adminAddress,
+							   MailService mailService) {
 		this.mailService = mailService;
+		this.adminAddress = adminAddress;
 
 		var builder = new RedisOperationBuilder(factory, objectMapper);
 		friends = builder.bindList("notice:fr", FriendAccident.class);
@@ -59,7 +55,6 @@ public class NotificationService {
 		friends.rightPush(entry);
 	}
 
-	@SneakyThrows
 	@Async
 	public void reportDiscussion(Discussion discussion, Discussion parent, Article article) {
 		var entry = new DiscussionActivity();
@@ -84,6 +79,9 @@ public class NotificationService {
 		}
 
 		discussions.rightPush(entry);
-		mailService.ifPresent(mail -> mail.send(adminAddress, "博客有新评论", entry, "discussion.ftl"));
+
+		if (adminAddress != null) {
+			mailService.send(adminAddress, "博客有新评论", entry, "discussion-mail.ftl");
+		}
 	}
 }
