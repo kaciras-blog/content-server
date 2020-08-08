@@ -20,6 +20,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
@@ -31,6 +32,7 @@ import java.time.Clock;
  * 【注意】在配置文件里排除了一些配置，添加新功能时记得看下有没有需要的依赖被排除了。
  */
 @EnableScheduling
+@EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableLoadTimeWeaving
 @EnableSpringConfigured

@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 // LTW 简直毒瘤啊，各种毛病烦死人
 @EnableLoadTimeWeaving
-@ActiveProfiles("test") // 这个放在测试的Application类上无效
+@ActiveProfiles("test")
 @SpringBootTest
 public abstract class AbstractControllerTest {
 

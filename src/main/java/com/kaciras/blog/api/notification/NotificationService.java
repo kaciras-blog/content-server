@@ -17,7 +17,6 @@ public class NotificationService {
 	private final BoundListOperations<String, FriendAccident> friends;
 
 	private final MailService mailService;
-
 	private final String adminAddress;
 
 	public NotificationService(RedisConnectionFactory factory,
