@@ -19,6 +19,9 @@ public class NotificationService {
 	private final MailService mailService;
 	private final String adminAddress;
 
+	@Value("${app.origin}")
+	private String origin;
+
 	public NotificationService(RedisConnectionFactory factory,
 							   ObjectMapper objectMapper,
 							   String adminAddress,
@@ -51,6 +54,10 @@ public class NotificationService {
 
 	@Async
 	public void reportDiscussion(Discussion discussion, Discussion parent, Article article) {
+		if (discussion.getUserId() == 2) {
+			return; // 博主自己的评论就不用提醒了
+		}
+
 		var entry = new DiscussionActivity();
 		entry.setFloor(discussion.getFloor());
 		entry.setTime(discussion.getTime());
