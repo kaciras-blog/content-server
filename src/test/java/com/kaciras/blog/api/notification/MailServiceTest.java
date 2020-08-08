@@ -30,7 +30,7 @@ final class MailServiceTest {
 
 		var entry = new DiscussionActivity();
 		entry.setTitle("Test Article");
-		entry.setPreview("test");
+		entry.setPreview("test content preview");
 		entry.setTime(Instant.now());
 		entry.setUrl("https://example.com");
 		entry.setFloor(7);
@@ -39,6 +39,6 @@ final class MailServiceTest {
 
 		var c = ArgumentCaptor.forClass(MimeMessage.class);
 		Mockito.verify(mockSender).send(c.capture());
-		assertThat(c.getValue().getContent().toString()).contains("<p>该评论位于第7楼</p>");
+		assertThat(c.getValue().getContent().toString()).contains("test content preview");
 	}
 }

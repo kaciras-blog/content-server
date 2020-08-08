@@ -5,6 +5,7 @@ import com.kaciras.blog.api.RedisOperationBuilder;
 import com.kaciras.blog.api.article.Article;
 import com.kaciras.blog.api.discuss.Discussion;
 import com.kaciras.blog.api.friend.FriendLink;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.scheduling.annotation.Async;
@@ -67,7 +68,7 @@ public class NotificationService {
 		}
 
 		var content = discussion.getContent();
-		var preview = content.length() > 50 ? content.substring(0, 50) + "..." : content;
+		var preview = content.length() > 200 ? content.substring(0, 200) + "..." : content;
 		entry.setPreview(preview);
 
 		/*
@@ -78,10 +79,10 @@ public class NotificationService {
 		 */
 		if (discussion.getType() == 1) {
 			entry.setTitle("关于博主");
-			entry.setUrl("/about/blogger");
+			entry.setUrl(origin + "/about/blogger");
 		} else {
 			entry.setTitle(article.getTitle());
-			entry.setUrl(String.format("/article/%d/%s", article.getId(), article.getUrlTitle()));
+			entry.setUrl(String.format("%s/article/%d/%s", origin, article.getId(), article.getUrlTitle()));
 		}
 
 		discussions.rightPush(entry);
