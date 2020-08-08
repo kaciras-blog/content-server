@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -27,7 +28,9 @@ public final class SubModuleTests {
 	/** 验证默认的组件扫描仅扫描被注解类所在的包及其下级包 */
 	@Test
 	void testAutoComponentsScan() {
-		var builder = new SpringApplicationBuilder(TestApplication.class).profiles("test");
+		var builder = new SpringApplicationBuilder(TestApplication.class)
+				.profiles("test")
+				.web(WebApplicationType.NONE);
 
 		try (var app = builder.run()) {
 			Assertions.assertThat(app.getBean(AnTestBean.class)).isNotNull();
