@@ -47,35 +47,35 @@ public class NotificationService {
 	// 加上异步以便不干扰调用方的流程，如果出了异常也属于本模块的。
 	@Async
 	public void reportFriend(FriendLink friend, Instant time, FriendAccident.Type type) {
-		var entry = new FriendAccident();
-		entry.url = friend.url;
-		entry.name = friend.name;
-		entry.type = type;
-		entry.time = time;
-		friends.rightPush(entry);
+		friends.rightPush(new FriendAccident(type, friend.name, friend.url, time));
 	}
 
 	@Async
 	public void reportDiscussion(Discussion discussion, Discussion parent, Article article) {
 		var entry = new DiscussionActivity();
-		entry.floor = discussion.getFloor();
-		entry.time = discussion.getTime();
+		entry.setFloor(discussion.getFloor());
+		entry.setTime(discussion.getTime());
 
 		if (parent != null) {
-			entry.parentFloor = parent.getFloor();
+			entry.setParentFloor(parent.getFloor());
 		}
 
-		if (discussion.getContent().length() > 50) {
-			entry.preview = discussion.getContent().substring(0, 50) + "...";
-		} else {
-			entry.preview = discussion.getContent();
-		}
+		var content = discussion.getContent();
+		var preview = content.length() > 50 ? content.substring(0, 50) + "..." : content;
+		entry.setPreview(preview);
 
-		// 要
+		/*
+		 * 页面的组织是前端的事情，在前后分离的项目中不应该在这里构造URL。
+		 * 通常来说，URL是要提交评论时当参数传过来保存的，但最初设计时未考虑到，所以还是把URL的构建写这了。
+		 *
+		 * TODO：下一版如果使用Node全栈，也许可以复用路由代码来确定URL
+		 */
 		if (discussion.getType() == 1) {
-			entry.url = "/about/blogger";
+			entry.setTitle("关于博主");
+			entry.setUrl("/about/blogger");
 		} else {
-			entry.url = String.format("/article/%d/%s", article.getId(), article.getUrlTitle());
+			entry.setTitle(article.getTitle());
+			entry.setUrl(String.format("/article/%d/%s", article.getId(), article.getUrlTitle()));
 		}
 
 		discussions.rightPush(entry);

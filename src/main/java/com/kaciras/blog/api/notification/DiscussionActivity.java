@@ -1,19 +1,24 @@
 package com.kaciras.blog.api.notification;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.Instant;
 
+@Getter
+@Setter
 public final class DiscussionActivity {
 
 	/** 评论所在的页面地址和标题 */
-	public String url;
-	public String title;
+	private String url;
+	private String title;
 
-	public int floor;
-	public int parentFloor;
+	private int floor;
+	private int parentFloor;
 
 	/** 内容预览 */
-	public String preview;
+	private String preview;
 
 	/** 评论时间 */
-	public Instant time;
+	private Instant time;
 }
