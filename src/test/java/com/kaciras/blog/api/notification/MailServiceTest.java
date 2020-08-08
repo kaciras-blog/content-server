@@ -4,9 +4,10 @@ import freemarker.template.Configuration;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.ui.freemarker.SpringTemplateLoader;
 
 import javax.mail.internet.MimeMessage;
 import java.time.Instant;
@@ -22,7 +23,7 @@ final class MailServiceTest {
 		Mockito.when(mockSender.createMimeMessage()).thenReturn(new JavaMailSenderImpl().createMimeMessage());
 
 		var freeMarker = new Configuration(Configuration.VERSION_2_3_30);
-		freeMarker.setDirectoryForTemplateLoading(new ClassPathResource("templates").getFile());
+		freeMarker.setTemplateLoader(new SpringTemplateLoader(new DefaultResourceLoader(), "classpath:/templates"));
 		freeMarker.setDefaultEncoding("utf-8");
 
 		var service = new MailService(mockSender, freeMarker, "test@example.com");

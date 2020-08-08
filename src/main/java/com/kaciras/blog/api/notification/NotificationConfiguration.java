@@ -7,11 +7,11 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.ui.freemarker.SpringTemplateLoader;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @EnableConfigurationProperties(MailNotifyProperties.class)
@@ -23,19 +23,22 @@ public class NotificationConfiguration {
 
 	@ConditionalOnProperty(prefix = "app.mail-notify", name = "from")
 	@Bean
-	public MailService mailService(JavaMailSender mailSender) throws IOException {
+	public MailService mailService(JavaMailSender mailSender) {
+		var freeMarker = new Configuration(Configuration.VERSION_2_3_30);
 
 		/*
-		 * 邮件内容也属于前端视图，但它由后端发送，所以只能选个后端模板库用了。
-		 * 而且邮件环境不同于浏览器，没法复用前端项目代码。
+		 * 这里不能用 new ClassPathResource(...).getFile()，因为默认的 FileTemplateLoader 不能读取JAr包内的文件，
+		 * 如果用它的话则会报错 FileNotFoundException。
 		 *
-		 * TODO：可否用模板生成 Markdown，然后再渲染成 HTML？这样做好像仍然需要模板引擎。
+		 * 根据 Spring 的代码：
+		 * org.springframework.ui.freemarker.FreeMarkerConfigurationFactory#getTemplateLoaderForPath
+		 *
+		 * 此处可以用 Spring 的 SpringTemplateLoader 来加载JAR包内的模板。
 		 */
-		var freeMaker = new Configuration(Configuration.VERSION_2_3_30);
-		freeMaker.setDirectoryForTemplateLoading(new ClassPathResource("templates").getFile());
-		freeMaker.setDefaultEncoding("utf-8");
+		freeMarker.setTemplateLoader(new SpringTemplateLoader(new DefaultResourceLoader(), "classpath:/templates"));
+		freeMarker.setDefaultEncoding("utf-8");
 
-		return new MailService(mailSender, freeMaker, properties.from);
+		return new MailService(mailSender, freeMarker, properties.from);
 	}
 
 	@Bean

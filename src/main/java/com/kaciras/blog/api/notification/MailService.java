@@ -40,6 +40,12 @@ public class MailService {
 			helper.setFrom(from, "KacirasBlog");
 			helper.setSubject(title);
 
+			/*
+			 * 邮件内容也属于前端视图，但它由后端发送，所以只能选个后端模板库用了。
+			 * 而且邮件环境不同于浏览器，没法复用前端项目代码。
+			 *
+			 * TODO：可否用模板生成 Markdown，然后再渲染成 HTML？这样做好像仍然需要模板引擎。
+			 */
 			freeMarker.getTemplate(template).process(entry, out);
 			helper.setText(out.toString(), true);
 
