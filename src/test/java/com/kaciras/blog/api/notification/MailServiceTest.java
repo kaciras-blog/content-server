@@ -1,13 +1,10 @@
 package com.kaciras.blog.api.notification;
 
-import freemarker.template.Configuration;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.ui.freemarker.SpringTemplateLoader;
 
 import javax.mail.internet.MimeMessage;
 import java.time.Instant;
@@ -22,11 +19,7 @@ final class MailServiceTest {
 	void send() throws Exception {
 		Mockito.when(mockSender.createMimeMessage()).thenReturn(new JavaMailSenderImpl().createMimeMessage());
 
-		var freeMarker = new Configuration(Configuration.VERSION_2_3_30);
-		freeMarker.setTemplateLoader(new SpringTemplateLoader(new DefaultResourceLoader(), "classpath:/templates"));
-		freeMarker.setDefaultEncoding("utf-8");
-
-		var service = new MailService(mockSender, freeMarker, "test@example.com");
+		var service = new MailService(mockSender, "test@example.com");
 
 		var entry = new DiscussionActivity();
 		entry.setTitle("Test Article");
@@ -35,10 +28,10 @@ final class MailServiceTest {
 		entry.setUrl("https://example.com");
 		entry.setFloor(7);
 
-		service.send("test@example.com", "title", entry, "discussion-mail.ftl");
+		service.send("test@example.com", "网吧充钱提醒", "您有新的消息请注意查收");
 
 		var c = ArgumentCaptor.forClass(MimeMessage.class);
 		Mockito.verify(mockSender).send(c.capture());
-		assertThat(c.getValue().getContent().toString()).contains("test content preview");
+		assertThat(c.getValue().getContent().toString()).contains("您有新的消息请注意查收");
 	}
 }

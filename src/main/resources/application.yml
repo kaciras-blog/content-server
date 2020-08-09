@@ -36,9 +36,6 @@ spring:
       - org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration
       - org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration
 
-      # FreeMarker 只用于邮件，就不使用自动配置了
-      - org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration
-
   main:
 
     # LTW 自动注入不支持延迟初始化

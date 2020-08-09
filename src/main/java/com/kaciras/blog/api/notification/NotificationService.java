@@ -85,10 +85,12 @@ public class NotificationService {
 			entry.setUrl(String.format("%s/article/%d/%s", origin, article.getId(), article.getUrlTitle()));
 		}
 
-		discussions.rightPush(entry);
+		var size = discussions.rightPush(entry);
 
-		if (adminAddress != null) {
-			mailService.send(adminAddress, "博客有新评论", entry, "discussion-mail.ftl");
+		// 只有通知为空时才发邮件，因为未读消息发一个邮件提醒去控制台看就行了。
+		if (size == 1 && adminAddress != null) {
+			var html = "<p>详情请前往控制台查看哦</p><p>如果还要接收邮件，请清除全部评论通知</p>";
+			mailService.send(adminAddress, "博客有新评论", html);
 		}
 	}
 }
