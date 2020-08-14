@@ -10,21 +10,30 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * 处理友链验证逻辑的类，支持对网站的存活、迁移、互链做检查。
+ */
 @Component
-class FriendValidator {
+final class FriendValidator {
 
 	private final HttpClient httpClient;
 	private final String myOrigin;
 
+	private final String userAgent;
+
 	public FriendValidator(HttpClient httpClient, @Value("${app.origin}") String myOrigin) {
 		this.httpClient = httpClient;
 		this.myOrigin = myOrigin;
+		userAgent = String.format("KacirasBlog Friend Validator (+%s/about/blogger#friend", myOrigin);
 	}
 
-
+	/**
+	 * 检查一个友链站点。
+	 *
+	 * @param uri 地址
+	 * @return 检查结果
+	 */
 	public CompletableFuture<FriendSitePage> visit(URI uri) {
-		var userAgent = String.format("KacirasBlog Friend Validator (+%s/about/blogger#friend", myOrigin);
-
 		var request = HttpRequest.newBuilder(uri)
 				.header("User-Agent", userAgent)
 				.timeout(Duration.ofSeconds(10));

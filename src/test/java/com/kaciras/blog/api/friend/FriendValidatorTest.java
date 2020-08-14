@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,13 +20,26 @@ final class FriendValidatorTest {
 
 	private final HttpClient httpClient = HttpClient
 			.newBuilder()
-			.followRedirects(HttpClient.Redirect.ALWAYS)
+			.followRedirects(Redirect.ALWAYS)
 			.build();
 
 	private final FriendValidator validator = new FriendValidator(httpClient, "https://blog.example.com");
 
 	private final List<HttpServer> servers = new ArrayList<>();
 
+	@AfterEach
+	void clearServers() {
+		servers.forEach(server -> server.stop(0));
+	}
+
+	/**
+	 * 创建一个测试用的HTTP服务器，该服务器在运行完一个用例之后将自动关闭。
+	 * <p>
+	 * 对请求处理器也做了封装，自动调用 HttpExchange.close() 省点事。
+	 *
+	 * @param handler 请求处理器
+	 * @return 服务器的URI
+	 */
 	private URI createServer(HttpHandler handler) throws IOException {
 		var server = HttpServer.create(new InetSocketAddress(0), 0);
 		server.createContext("/", e -> {
@@ -41,11 +55,6 @@ final class FriendValidatorTest {
 		return URI.create("http://localhost:" + address.getPort());
 	}
 
-	@AfterEach
-	void clearServers() {
-		servers.forEach(server -> server.stop(0));
-	}
-
 	@Test
 	void dead() throws Exception {
 		var result = validator.visit(URI.create("https://localhost:1")).get();
@@ -58,6 +67,19 @@ final class FriendValidatorTest {
 
 		var result = validator.visit(uri).get();
 		assertThat(result.isAlive()).isFalse();
+	}
+
+	@Test
+	void userAgent() throws Exception {
+		var uri = createServer(exchange -> {
+			assertThat(exchange.getRequestHeaders().getFirst("User-Agent"))
+					.isEqualTo("KacirasBlog Friend Validator (+https://blog.example.com/about/blogger#friend");
+
+			exchange.sendResponseHeaders(200, 0);
+		});
+
+		var result = validator.visit(uri).get();
+		assertThat(result.isAlive()).isTrue();
 	}
 
 	@Test
@@ -76,7 +98,7 @@ final class FriendValidatorTest {
 
 	/**
 	 * 想起来 Medium 网站就有无限重定向的问题，这里也测一下。
-	 *
+	 * <p>
 	 * 从源码来看，jdk.internal.net.httpRedirectFilter#handleResponse 里有检查次数，应该不会出问题。
 	 * jdk.httpclient.redirects.retrylimit 参数可以设置重定向上限
 	 */

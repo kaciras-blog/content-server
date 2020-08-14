@@ -12,9 +12,15 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 public final class FriendSitePage {
 
+	/**
+	 * 该网站能否正常访问
+	 */
 	@Getter
 	private final boolean alive;
 
+	/**
+	 * 该网站迁移到的新的地址，如果没有迁移则为null。
+	 */
 	@Nullable
 	@Getter
 	private final URI newUrl;
@@ -23,7 +29,7 @@ public final class FriendSitePage {
 	private final String html;
 
 	/**
-	 * 检查指定的HTML页面里是否存在本站的链接。
+	 * 页面里是否存在本站的链接（互链）。
 	 *
 	 * @return 如果存在返回true
 	 */
