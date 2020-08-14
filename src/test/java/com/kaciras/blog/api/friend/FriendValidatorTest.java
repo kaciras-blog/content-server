@@ -34,7 +34,11 @@ final class FriendValidatorTest {
 		});
 		server.start();
 		servers.add(server);
-		return URI.create("http://localhost:" + server.getAddress().getPort());
+		return serverUri(server.getAddress());
+	}
+
+	private URI serverUri(InetSocketAddress address) {
+		return URI.create("http://localhost:" + address.getPort());
 	}
 
 	@AfterEach
@@ -44,6 +48,12 @@ final class FriendValidatorTest {
 
 	@Test
 	void dead() throws Exception {
+		var result = validator.visit(URI.create("https://localhost:1")).get();
+		assertThat(result.isAlive()).isFalse();
+	}
+
+	@Test
+	void serverError() throws Exception {
 		var uri = createServer(exchange -> exchange.sendResponseHeaders(500, 0));
 
 		var result = validator.visit(uri).get();
@@ -62,6 +72,24 @@ final class FriendValidatorTest {
 		var result = validator.visit(redirect).get();
 		assertThat(result.isAlive()).isTrue();
 		assertThat(result.getNewUrl()).isEqualTo(newSite);
+	}
+
+	/**
+	 * 想起来 Medium 网站就有无限重定向的问题，这里也测一下。
+	 *
+	 * 从源码来看，jdk.internal.net.httpRedirectFilter#handleResponse 里有检查次数，应该不会出问题。
+	 * jdk.httpclient.redirects.retrylimit 参数可以设置重定向上限
+	 */
+	@Test
+	void infiniteRedirect() throws Exception {
+		var redirect = createServer(exchange -> {
+			var self = serverUri(exchange.getLocalAddress());
+			exchange.getResponseHeaders().add("Location", self.toString());
+			exchange.sendResponseHeaders(301, 0);
+		});
+
+		var result = validator.visit(redirect).get();
+		assertThat(result.isAlive()).isFalse();
 	}
 
 	@Test

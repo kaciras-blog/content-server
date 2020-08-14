@@ -22,7 +22,6 @@ class FriendValidator {
 	}
 
 
-
 	public CompletableFuture<FriendSitePage> visit(URI uri) {
 		var userAgent = String.format("KacirasBlog Friend Validator (+%s/about/blogger#friend", myOrigin);
 
@@ -32,14 +31,15 @@ class FriendValidator {
 
 		return httpClient
 				.sendAsync(request.build(), HttpResponse.BodyHandlers.ofString())
-				.thenApply(this::handleResponse);
+				.thenApply(this::handleResponse)
+				.exceptionally(e -> unavailable());
 	}
 
 	private FriendSitePage handleResponse(HttpResponse<String> response) {
 		var hundred = response.statusCode() / 100;
 
 		if (hundred != 2) {
-			return new FriendSitePage(false, null, myOrigin, null);
+			return unavailable();
 		}
 
 		URI newUrl = null;
@@ -48,5 +48,9 @@ class FriendValidator {
 		}
 
 		return new FriendSitePage(true, newUrl, myOrigin, response.body());
+	}
+
+	private FriendSitePage unavailable() {
+		return new FriendSitePage(false, null, myOrigin, null);
 	}
 }
