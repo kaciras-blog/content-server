@@ -10,6 +10,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.scheduling.annotation.Async;
 
+import java.net.URI;
 import java.time.Instant;
 
 public class NotificationService {
@@ -49,8 +50,8 @@ public class NotificationService {
 
 	// 加上异步以便不干扰调用方的流程，如果出了异常也属于本模块的。
 	@Async
-	public void reportFriend(FriendLink friend, Instant time, FriendAccident.Type type) {
-		friends.rightPush(new FriendAccident(type, friend.name, friend.url, time));
+	public void reportFriend(FriendAccident.Type type, FriendLink friend, Instant time, URI newUrl) {
+		friends.rightPush(new FriendAccident(type, friend.name, friend.url, newUrl, time));
 	}
 
 	@Async

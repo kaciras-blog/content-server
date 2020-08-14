@@ -6,8 +6,6 @@ import com.kaciras.blog.api.notification.FriendAccident;
 import com.kaciras.blog.api.notification.NotificationService;
 import com.kaciras.blog.infra.RedisExtensions;
 import lombok.RequiredArgsConstructor;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -21,16 +19,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.CompletionStage;
-import java.util.function.Predicate;
 
 /**
  * 定时扫描对方的网站，检查是否嗝屁（默哀），以及单方面删除本站（为什么不跟人家做朋友了）。
@@ -47,7 +39,7 @@ public class FriendValidateService {
 	private final FriendRepository repository;
 
 	private final Clock clock;
-	private final HttpClient httpClient;
+	private final FriendValidator validator;
 
 	private final TaskScheduler taskScheduler;
 
@@ -55,9 +47,6 @@ public class FriendValidateService {
 
 	@Value("${app.validate-friend}")
 	private boolean enable;
-
-	@Value("${app.origin}")
-	private String myOrigin;
 
 	@Autowired
 	private void setRedis(RedisConnectionFactory redisFactory, ObjectMapper objectMapper) {
@@ -128,66 +117,42 @@ public class FriendValidateService {
 		if (queue.isEmpty()) {
 			return;
 		}
-		validate(queue.remove()).thenRun(() -> validateFriendsAsync(queue));
-	}
-
-	public CompletionStage<Void> validate(ValidateRecord record) {
-		var userAgent = String.format("KacirasBlog Friend Validator (+%s/about/blogger#bot", myOrigin);
+		var record = queue.remove();
 		var checkUrl = record.friendPage != null ? record.friendPage : record.url;
 
-		var request = HttpRequest.newBuilder(checkUrl)
-				.header("User-Agent", userAgent)
-				.timeout(Duration.ofSeconds(10));
-
-		return httpClient
-				.sendAsync(request.build(), BodyHandlers.ofString())
-				.thenAccept(res -> this.handleResponse(record, res));
+		validator.visit(checkUrl)
+				.thenAccept(page -> this.handleResponse(record, page));
 	}
 
-	private void handleResponse(ValidateRecord record, HttpResponse<String> response) {
+	private void handleResponse(ValidateRecord record, FriendSitePage page) {
 		record.validate = clock.instant();
 
-		if (response.statusCode() / 100 != 2) {
+		if (!page.isAlive()) {
 			record.failed++;
 
 			if (record.failed > 3) {
+				report(FriendAccident.Type.Inaccessible, record, null);
 				record.failed = 0;
-				report(record, FriendAccident.Type.Inaccessible);
 			}
-			updateRecordEntry(record);
-
-		} else if (record.friendPage != null) {
-			if (!checkMyLink(response.body())) {
-				report(record, FriendAccident.Type.AbandonedMe);
-			}
+		} else {
 			record.failed = 0;
-			updateRecordEntry(record);
+
+			if (page.getNewUrl() != null) {
+				report(FriendAccident.Type.Moved, record, page.getNewUrl());
+			}
+
+			if (record.friendPage != null && !page.hasMyLink()) {
+				report(FriendAccident.Type.AbandonedMe, record, null);
+			}
 		}
+
+		updateRecordEntry(record);
 	}
 
-	/**
-	 * 检查指定的HTML页面里是否存在本站的链接。
-	 *
-	 * @param html HTML页面
-	 * @return 如果存在返回true
-	 */
-	private boolean checkMyLink(String html) {
-
-		Predicate<Element> isLinkToMySite = el -> {
-			var href = URI.create(el.attr("href"));
-			var origin = href.getScheme() + "://" + href.getHost();
-			return myOrigin.equals(origin);
-		};
-
-		return Jsoup.parse(html)
-				.getElementsByTag("a")
-				.stream()
-				.anyMatch(isLinkToMySite);
-	}
-
-	private void report(ValidateRecord record, FriendAccident.Type type) {
+	private void report(FriendAccident.Type type, ValidateRecord record, URI newUrl) {
 		var friend = repository.get(record.url.getHost());
-		notificationService.reportFriend(friend, record.validate, type);
+		assert friend != null;
+		notificationService.reportFriend(type, friend, record.validate, newUrl);
 	}
 
 	/**

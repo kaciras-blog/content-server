@@ -14,12 +14,17 @@ import java.time.Instant;
 public final class FriendAccident {
 
 	public enum Type {
+		Moved,
 		AbandonedMe,
 		Inaccessible,
 	}
 
 	private final Type type;
+
 	private final String name;
 	private final URI url;
+
+	private final URI newUrl;
+
 	private final Instant time;
 }
