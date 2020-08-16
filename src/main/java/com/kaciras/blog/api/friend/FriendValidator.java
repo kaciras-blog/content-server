@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
  * 处理友链验证逻辑的类，支持对网站的存活、迁移、互链做检查。
  */
 @Component
-final class FriendValidator {
+class FriendValidator {
 
 	private final HttpClient httpClient;
 	private final String myOrigin;
@@ -24,6 +24,7 @@ final class FriendValidator {
 	public FriendValidator(HttpClient httpClient, @Value("${app.origin}") String myOrigin) {
 		this.httpClient = httpClient;
 		this.myOrigin = myOrigin;
+
 		userAgent = String.format("KacirasBlog Friend Validator (+%s/about/blogger#friend", myOrigin);
 	}
 

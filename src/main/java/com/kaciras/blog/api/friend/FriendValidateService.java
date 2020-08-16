@@ -120,8 +120,7 @@ public class FriendValidateService {
 		var record = queue.remove();
 		var checkUrl = record.friendPage != null ? record.friendPage : record.url;
 
-		validator.visit(checkUrl)
-				.thenAccept(page -> this.handleResponse(record, page));
+		validator.visit(checkUrl).thenAccept(page -> this.handleResponse(record, page));
 	}
 
 	private void handleResponse(ValidateRecord record, FriendSitePage page) {
