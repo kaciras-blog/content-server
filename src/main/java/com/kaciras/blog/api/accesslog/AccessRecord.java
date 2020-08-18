@@ -24,7 +24,6 @@ public final class AccessRecord {
 	@Nullable
 	private String params;
 
-	/** UA可以自定义，可能有些无法解析，只能直接保存，然后在分析时解析 */
 	@Nullable
 	private String userAgent;
 

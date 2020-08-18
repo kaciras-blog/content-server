@@ -48,7 +48,14 @@ public final class AccessLoggingFilter extends HttpFilter {
 	// 垃圾@Async对内部调用不代理，即使设置了 proxyTargetClass 也没用
 	private void log(HttpServletRequest request, HttpServletResponse response, Instant start, Instant end) {
 		var path = request.getRequestURI();
-		if (path == null) return; // 忽略一些奇葩情况
+		var delay = Duration.between(start, end).toMillis();
+
+		if (path == null) {
+			return; // 忽略一些奇葩情况
+		}
+		if (delay < 10) {
+			return; // 太小的时间就不记录了
+		}
 
 		var record = new AccessRecord();
 		record.setIp(Utils.addressFromRequest(request));
@@ -59,7 +66,6 @@ public final class AccessLoggingFilter extends HttpFilter {
 		record.setParams(request.getQueryString());
 
 		// 响应超时，再大的数也没有意义，限制到65535。
-		var delay = Duration.between(start, end).toMillis();
 		record.setDelay(Math.min(delay, MAX_DELAY));
 
 		if (request.getContentLength() > -1) {
