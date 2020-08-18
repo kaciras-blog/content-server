@@ -73,7 +73,7 @@ final class FriendValidatorTest {
 	void userAgent() throws Exception {
 		var uri = createServer(exchange -> {
 			assertThat(exchange.getRequestHeaders().getFirst("User-Agent"))
-					.isEqualTo("KacirasBlog Friend Validator (+https://blog.example.com/about/blogger#friend");
+					.isEqualTo("KacirasBlog Friend Validator (https://blog.example.com/about/me#friend");
 
 			exchange.sendResponseHeaders(200, 0);
 		});
