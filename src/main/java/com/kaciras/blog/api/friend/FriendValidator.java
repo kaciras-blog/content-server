@@ -25,7 +25,7 @@ class FriendValidator {
 		this.httpClient = httpClient;
 		this.myOrigin = myOrigin;
 
-		userAgent = String.format("KacirasBlog Friend Validator (+%s/about/blogger#friend", myOrigin);
+		userAgent = String.format("KacirasBlog Friend Validator (+%s/about/me#friend", myOrigin);
 	}
 
 	/**
