@@ -84,6 +84,10 @@ app:
     csrf:
       skip-safe: false
 
+  session:
+    cookie:
+      secure: true
+
   cors:
     allowed-methods: "*"
     allowed-headers: [X-CSRF-Token, X-Requested-With, Content-Type]

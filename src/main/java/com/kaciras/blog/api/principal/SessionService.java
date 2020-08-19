@@ -26,6 +26,7 @@ public final class SessionService {
 		var csrfCookie = new Cookie(CSRF_COOKIE_NAME, csrfToken);
 		csrfCookie.setPath("/");
 		csrfCookie.setDomain(cookieProperties.getDomain());
+		csrfCookie.setSecure(true);
 
 		if (remember) {
 			csrfCookie.setMaxAge(session.getMaxInactiveInterval());
