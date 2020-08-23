@@ -150,7 +150,9 @@ public class FriendValidateService {
 
 	private void report(FriendAccident.Type type, ValidateRecord record, URI newUrl) {
 		var friend = repository.get(record.url.getHost());
-		assert friend != null;
+		if (friend == null) {
+			return; // 不会遇到正好刚刚删除的情况吧
+		}
 		notificationService.reportFriend(type, friend, record.validate, newUrl);
 	}
 

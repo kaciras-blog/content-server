@@ -3,36 +3,31 @@ package com.kaciras.blog.api.friend;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.RedisKeys;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.BoundListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.time.Clock;
-import java.util.List;
-import java.util.Map;
 
 /**
- * 友链的存储服务，保存了友链的信息及排序，并提供CURD和重排功能。
+ * 友链的存储服务，保存了友链的信息及排序，并提供 CURD 和重排功能。
  * <p>
- * 数据的持久化使用Redis，用一个 HASH 保存友链对象，以及一个 LIST 保存顺序。
+ * 数据的持久化使用 Redis，用一个 HASH 保存友链对象，以及一个 LIST 保存顺序。
  * <p>
  * 【一致性问题】
- * SpringDataRedis的事务写起来真的丑，所以这里尽量在不使用事务的情况下保证数据一致。
+ * 因为 SpringDataRedis 的事务写起来真的丑，所以这里使用了缓存模式避免事务。
+ * getFriends() 始终返回缓存，启动和修改后都会更新缓存；
+ * 单个查询方法 getFriend() 是原子的不存在一致性问题就不用管了。
  * <p>
- * 首先要求同一时刻只能调用一个修改方法，因为只有博主一人能修改所以是可行的，不过要防止未看到结果前再次提交。
- * 这使修改操作之间无需考虑线程安全问题。
- * <p>
- * 在对两个存储的访问上遵循以下原则：
- * 1）添加时先加 HASH 后加 LIST，删除时反之，保证 HASH 里一定包含 LIST 的元素。
- * 2）getFriends() 使用事务同时查询出 LIST 和 HASH，这个事务是无法避免的。
- * 3）博客系统的不要求实时性，即使查到了旧内容也无关紧要。
- * 这些确保了 getFriends() 方法即使处于修改方法的中间状态，其结果也是正确的。
- * <p>
- * 重排序使用临时列表 + RENAME 的方式（类似CopyOnWrite）保证了原子性，不会出现 LIST 为空的中间情况。
+ * 不过这也要求同一时刻只能调用一个修改方法，因为只有博主能修改所以是可以的。
+ * 在 Controller 里用了 synchronized 防止并发，这使修改操作不会因为线程安全问题导致缓存更新错误。
  */
-@SuppressWarnings({"ConstantConditions", "NullableProblems"})
+@SuppressWarnings("ConstantConditions")
 @Repository
 public class FriendRepository {
 
@@ -42,7 +37,8 @@ public class FriendRepository {
 
 	private final BoundHashOperations<String, String, FriendLink> friendMap;
 	private final BoundListOperations<String, String> hostList;
-	private final BoundListOperations<String, String> hostListTemp;
+
+	private FriendLink[] cache;
 
 	FriendRepository(Clock clock, RedisConnectionFactory redisFactory, ObjectMapper objectMapper) {
 		this.clock = clock;
@@ -50,11 +46,6 @@ public class FriendRepository {
 		var hashSerializer = new Jackson2JsonRedisSerializer<>(FriendLink.class);
 		hashSerializer.setObjectMapper(objectMapper);
 
-		/*
-		 * 两个存储必须用同一个 RedisTemplate，因为事务的序列化设置保存在里头。
-		 * 恰好这里一个 HASH 一个 LIST 可以分别设置序列化方式，如果是有冲突的的话只能用 RedisCallback 的重载
-		 * 来执行事务，然后自个处理序列化。
-		 */
 		template = new RedisTemplate<>();
 		template.setConnectionFactory(redisFactory);
 		template.setDefaultSerializer(RedisSerializer.string());
@@ -63,7 +54,18 @@ public class FriendRepository {
 
 		friendMap = template.boundHashOps(RedisKeys.Friends.of("map"));
 		hostList = template.boundListOps(RedisKeys.Friends.of("list"));
-		hostListTemp = template.boundListOps(RedisKeys.Friends.of("temp"));
+	}
+
+	/**
+	 * 生成缓存，只有调用了此方法，用户看到的数据才会更新。
+	 * <p>
+	 * 在启动时调用确保缓存存在，修改后也要调用来刷新缓存。
+	 */
+	@PostConstruct
+	private void generateCache() {
+		var list = hostList.range(0, -1);
+		var map = friendMap.entries();
+		cache = list.stream().map(map::get).toArray(FriendLink[]::new);
 	}
 
 	/**
@@ -71,21 +73,11 @@ public class FriendRepository {
 	 *
 	 * @return 友链列表
 	 */
-	@SuppressWarnings("unchecked")
 	public FriendLink[] getFriends() {
-		List<?> snapshot = template.execute(new SessionCallback<>() {
-			public <K, V> List<?> execute(RedisOperations<K, V> operations) {
-				operations.multi();
-				hostList.range(0, -1);
-				friendMap.entries();
-				return operations.exec();
-			}
-		});
-		// JAVA的垃圾类型系统不支持单独标记List元素的类型，所以只能强制转换
-		var list = (List<String>) snapshot.get(0);
-		var map = (Map<String, FriendLink>) snapshot.get(1);
-
-		return list.stream().map(map::get).toArray(FriendLink[]::new);
+		if (cache != null) {
+			return cache;
+		}
+		throw new IllegalStateException("竟然未生成缓存？");
 	}
 
 	/**
@@ -111,6 +103,7 @@ public class FriendRepository {
 
 		if (friendMap.putIfAbsent(host, friend)) {
 			hostList.rightPush(host);
+			generateCache();
 			return true;
 		}
 		return false;
@@ -140,6 +133,7 @@ public class FriendRepository {
 			friendMap.delete(host);
 		}
 
+		generateCache();
 		return true;
 	}
 
@@ -150,21 +144,24 @@ public class FriendRepository {
 	 * @return 如果友链存在且成功删除则为true，否则false
 	 */
 	public boolean remove(String host) {
-		hostList.remove(1, host);
-		return friendMap.delete(host) != 0;
+		if (hostList.remove(1, host) == 0) {
+			friendMap.delete(host);
+			generateCache();
+			return true;
+		}
+		return false;
 	}
 
 	/**
 	 * 根据给定的域名列表更新友链的排序。
-	 * 域名列表里必须包含与原来同样的元素，否则会出现一致性问题。
 	 * <p>
-	 * 【坑】
-	 * BoundKeyOperations.rename() 竟然不是简单地 RENAME，还把绑定的键给改了艹
+	 * 域名列表里必须包含与原来同样的元素，否则会出现一致性问题。
 	 *
 	 * @param newList 新的域名列表
 	 */
 	public void updateSort(String[] newList) {
-		hostListTemp.rightPushAll(newList);
-		template.rename(hostListTemp.getKey(), hostList.getKey());
+		template.unlink(hostList.getKey());
+		hostList.rightPushAll(newList);
+		generateCache();
 	}
 }

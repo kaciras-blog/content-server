@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 
+/**
+ * 修改相关的 API 都加了锁，保证不会有线程安全问题。
+ * 这些修改 API 只有博主自己偶尔用用，所以不需要考虑性能。
+ */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/friends")
@@ -39,7 +43,7 @@ class FriendController {
 	 */
 	@RequirePermission
 	@PostMapping
-	public ResponseEntity<FriendLink> makeFriend(@RequestBody @Valid FriendLink friend) {
+	public synchronized ResponseEntity<FriendLink> makeFriend(@RequestBody @Valid FriendLink friend) {
 		if (!repository.addFriend(friend)) {
 			throw new ResourceStateException("该站点的友链已存在");
 		}
@@ -54,7 +58,7 @@ class FriendController {
 	 */
 	@RequirePermission
 	@DeleteMapping("/{host}")
-	public void rupture(@PathVariable String host) {
+	public synchronized void rupture(@PathVariable String host) {
 		if (!repository.remove(host)) {
 			throw new ResourceNotFoundException();
 		}
@@ -69,7 +73,7 @@ class FriendController {
 	 */
 	@RequirePermission
 	@PutMapping("/{host}")
-	public void updateFriend(@PathVariable String host, @RequestBody @Valid FriendLink friend) {
+	public synchronized void updateFriend(@PathVariable String host, @RequestBody @Valid FriendLink friend) {
 		if(!repository.updateFriend(host, friend)) {
 			throw new ResourceNotFoundException();
 		}
@@ -86,7 +90,7 @@ class FriendController {
 	 */
 	@RequirePermission
 	@PutMapping
-	public void updateSort(@RequestBody String[] hostList) {
+	public synchronized void updateSort(@RequestBody String[] hostList) {
 		repository.updateSort(hostList);
 	}
 }
