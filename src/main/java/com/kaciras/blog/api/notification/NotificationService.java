@@ -1,12 +1,10 @@
 package com.kaciras.blog.api.notification;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kaciras.blog.api.RedisOperationBuilder;
+import com.kaciras.blog.api.RedisOperationsBuilder;
 import com.kaciras.blog.api.article.Article;
 import com.kaciras.blog.api.discuss.Discussion;
 import com.kaciras.blog.api.friend.FriendLink;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.scheduling.annotation.Async;
 
@@ -24,16 +22,14 @@ public class NotificationService {
 	@Value("${app.origin}")
 	private String origin;
 
-	public NotificationService(RedisConnectionFactory factory,
-							   ObjectMapper objectMapper,
+	public NotificationService(RedisOperationsBuilder redisBuilder,
 							   String adminAddress,
 							   MailService mailService) {
 		this.mailService = mailService;
 		this.adminAddress = adminAddress;
 
-		var builder = new RedisOperationBuilder(factory, objectMapper);
-		friends = builder.bindList("notice:fr", FriendAccident.class);
-		discussions = builder.bindList("notice:dz", DiscussionActivity.class);
+		friends = redisBuilder.bindList("notice:fr", FriendAccident.class);
+		discussions = redisBuilder.bindList("notice:dz", DiscussionActivity.class);
 	}
 
 	public Notifications getAll() {
@@ -89,6 +85,7 @@ public class NotificationService {
 		var size = discussions.rightPush(entry);
 
 		// 只有通知为空时才发邮件，因为未读消息发一个邮件提醒去控制台看就行了。
+		// noinspection ConstantConditions
 		if (size == 1 && adminAddress != null) {
 			var html = "<p>详情请前往控制台查看哦</p><p>如果还要接收邮件，请清除全部评论通知</p>";
 			mailService.send(adminAddress, "博客有新评论", html);

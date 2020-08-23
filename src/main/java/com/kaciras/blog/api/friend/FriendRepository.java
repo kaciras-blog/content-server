@@ -1,12 +1,9 @@
 package com.kaciras.blog.api.friend;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.RedisKeys;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import com.kaciras.blog.api.RedisOperationsBuilder;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
@@ -25,7 +22,7 @@ import java.time.Clock;
  * 单个查询方法 getFriend() 是原子的不存在一致性问题就不用管了。
  * <p>
  * 不过这也要求同一时刻只能调用一个修改方法，因为只有博主能修改所以是可以的。
- * 在 Controller 里用了 synchronized 防止并发，这使修改操作不会因为线程安全问题导致缓存更新错误。
+ * 在 Controller 里用了 synchronized 来实现，这使修改操作不会因为线程安全问题导致缓存更新错误。
  */
 @SuppressWarnings("ConstantConditions")
 @Repository
@@ -33,27 +30,15 @@ public class FriendRepository {
 
 	private final Clock clock;
 
-	private final RedisTemplate<String, String> template;
-
 	private final BoundHashOperations<String, String, FriendLink> friendMap;
 	private final BoundListOperations<String, String> hostList;
 
 	private FriendLink[] cache;
 
-	FriendRepository(Clock clock, RedisConnectionFactory redisFactory, ObjectMapper objectMapper) {
+	FriendRepository(Clock clock, RedisOperationsBuilder redisBuilder) {
 		this.clock = clock;
-
-		var hashSerializer = new Jackson2JsonRedisSerializer<>(FriendLink.class);
-		hashSerializer.setObjectMapper(objectMapper);
-
-		template = new RedisTemplate<>();
-		template.setConnectionFactory(redisFactory);
-		template.setDefaultSerializer(RedisSerializer.string());
-		template.setHashValueSerializer(hashSerializer);
-		template.afterPropertiesSet();
-
-		friendMap = template.boundHashOps(RedisKeys.Friends.of("map"));
-		hostList = template.boundListOps(RedisKeys.Friends.of("list"));
+		friendMap = redisBuilder.bindHash(RedisKeys.Friends.of("map"), FriendLink.class);
+		hostList = redisBuilder.bindList(RedisKeys.Friends.of("list"), RedisSerializer.string());
 	}
 
 	/**
@@ -62,7 +47,7 @@ public class FriendRepository {
 	 * 在启动时调用确保缓存存在，修改后也要调用来刷新缓存。
 	 */
 	@PostConstruct
-	private void generateCache() {
+	private void generateFirendsCache() {
 		var list = hostList.range(0, -1);
 		var map = friendMap.entries();
 		cache = list.stream().map(map::get).toArray(FriendLink[]::new);
@@ -87,7 +72,7 @@ public class FriendRepository {
 	 * @return 友链对象，如果不存在则为null
 	 */
 	@Nullable
-	public FriendLink get(String host) {
+	public FriendLink findByHost(String host) {
 		return friendMap.get(host);
 	}
 
@@ -103,7 +88,7 @@ public class FriendRepository {
 
 		if (friendMap.putIfAbsent(host, friend)) {
 			hostList.rightPush(host);
-			generateCache();
+			generateFirendsCache();
 			return true;
 		}
 		return false;
@@ -133,7 +118,7 @@ public class FriendRepository {
 			friendMap.delete(host);
 		}
 
-		generateCache();
+		generateFirendsCache();
 		return true;
 	}
 
@@ -144,9 +129,9 @@ public class FriendRepository {
 	 * @return 如果友链存在且成功删除则为true，否则false
 	 */
 	public boolean remove(String host) {
-		if (hostList.remove(1, host) == 0) {
+		if (hostList.remove(1, host) != 0) {
 			friendMap.delete(host);
-			generateCache();
+			generateFirendsCache();
 			return true;
 		}
 		return false;
@@ -160,8 +145,8 @@ public class FriendRepository {
 	 * @param newList 新的域名列表
 	 */
 	public void updateSort(String[] newList) {
-		template.unlink(hostList.getKey());
+		hostList.getOperations().unlink(hostList.getKey());
 		hostList.rightPushAll(newList);
-		generateCache();
+		generateFirendsCache();
 	}
 }

@@ -61,7 +61,7 @@ final class FriendValidateServiceTest {
 		when(clock.instant()).thenReturn(time);
 		var friend = createFriend(domain, friendPage, time);
 		service.addForValidate(friend);
-		when(repository.get(eq(domain))).thenReturn(friend);
+		when(repository.findByHost(eq(domain))).thenReturn(friend);
 		return friend;
 	}
 

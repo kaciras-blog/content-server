@@ -149,7 +149,7 @@ public class FriendValidateService {
 	}
 
 	private void report(FriendAccident.Type type, ValidateRecord record, URI newUrl) {
-		var friend = repository.get(record.url.getHost());
+		var friend = repository.findByHost(record.url.getHost());
 		if (friend == null) {
 			return; // 不会遇到正好刚刚删除的情况吧
 		}
