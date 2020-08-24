@@ -1,17 +1,14 @@
 package com.kaciras.blog.api.friend;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.RedisKeys;
+import com.kaciras.blog.api.RedisOperationsBuilder;
 import com.kaciras.blog.api.notification.FriendAccident;
 import com.kaciras.blog.api.notification.NotificationService;
 import com.kaciras.blog.infra.RedisExtensions;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.support.collections.DefaultRedisMap;
 import org.springframework.data.redis.support.collections.RedisMap;
 import org.springframework.scheduling.TaskScheduler;
@@ -31,8 +28,9 @@ import java.util.Queue;
  * 【安全性】
  * 发送请求可能暴露服务器的地址，这种情况下可以通过 app.http-client.proxy 设置代理。
  */
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class FriendValidateService {
 
 	private final NotificationService notificationService;
@@ -49,17 +47,8 @@ public class FriendValidateService {
 	private boolean enable;
 
 	@Autowired
-	private void setRedis(RedisConnectionFactory redisFactory, ObjectMapper objectMapper) {
-		var hvs = new Jackson2JsonRedisSerializer<>(ValidateRecord.class);
-		hvs.setObjectMapper(objectMapper);
-
-		var validate = new RedisTemplate<String, Object>();
-		validate.setConnectionFactory(redisFactory);
-		validate.setDefaultSerializer(RedisSerializer.string());
-		validate.setHashValueSerializer(hvs);
-		validate.afterPropertiesSet();
-
-		validateMap = new DefaultRedisMap<>(RedisKeys.Friends.of("validate"), validate);
+	private void setRedis(RedisOperationsBuilder builder) {
+		validateMap = new DefaultRedisMap<>(builder.bindHash(RedisKeys.Friends.of("validate"), ValidateRecord.class));
 	}
 
 	@PostConstruct
@@ -98,19 +87,26 @@ public class FriendValidateService {
 	 */
 	public void startValidation() {
 		var queue = new LinkedList<ValidateRecord>();
-		validateMap.values().stream().filter(this::shouldValidate).forEach(queue::addFirst);
+		var records = validateMap.values();
+
+		records.stream().filter(this::shouldValidate).forEach(queue::addFirst);
+
+		if (!queue.isEmpty()) {
+			logger.info("共有{}个友链，本次检测{}个", records.size(), queue.size());
+		}
+
 		validateFriendsAsync(queue);
 	}
 
 	/**
-	 * 判断友链是否需要检测，如果之前一直都正常则30天检查一次，否则7天后再次检查。
+	 * 判断友链是否需要检测，如果之前一直都正常则30天检查一次，上次无法访问则7天后再次检查。
 	 *
 	 * @param record 检测记录
 	 * @return 如果需要检测则为true
 	 */
 	private boolean shouldValidate(ValidateRecord record) {
 		var p = record.failed > 0 ? Duration.ofDays(7) : Duration.ofDays(30);
-		return record.validate.plus(p).isAfter(clock.instant());
+		return record.validate.plus(p).isBefore(clock.instant());
 	}
 
 	private void validateFriendsAsync(Queue<ValidateRecord> queue) {
@@ -120,12 +116,15 @@ public class FriendValidateService {
 		var record = queue.remove();
 		var checkUrl = record.friendPage != null ? record.friendPage : record.url;
 
-		validator.visit(checkUrl).thenAccept(page -> this.handleResponse(record, page));
+		validator.visit(checkUrl)
+				.thenAccept(page -> this.handleResponse(record, page))
+				.thenRun(() -> validateFriendsAsync(queue));
 	}
 
 	private void handleResponse(ValidateRecord record, FriendSitePage page) {
 		record.validate = clock.instant();
 
+		// 如果访问失败则7天后再次检测，连续4次（一个月）都失败的视为无法访问
 		if (!page.isAlive()) {
 			record.failed++;
 
@@ -134,12 +133,15 @@ public class FriendValidateService {
 				record.failed = 0;
 			}
 		} else {
+			// 一旦访问成功就把失败次数归零
 			record.failed = 0;
 
+			// 有重定向直接报告
 			if (page.getNewUrl() != null) {
 				report(FriendAccident.Type.Moved, record, page.getNewUrl());
 			}
 
+			// 如果友链输入了互链检查地址则判断是否存在本站的链接
 			if (record.friendPage != null && !page.hasMyLink()) {
 				report(FriendAccident.Type.AbandonedMe, record, null);
 			}
@@ -157,7 +159,8 @@ public class FriendValidateService {
 	}
 
 	/**
-	 * 保存检查记录。用了 Lua 脚本来实现 putIfExists，确保不会添加已删除的记录。
+	 * 更新友链的检查记录。
+	 * 用了 Lua 脚本来实现 putIfExists，确保不会添加已删除的记录。
 	 *
 	 * @param record 新的记录
 	 */

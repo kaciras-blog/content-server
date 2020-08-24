@@ -21,8 +21,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.kaciras.blog.api.friend.TestHelper.createFriend;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.noInteractions;
 
 @Import({
@@ -66,13 +65,13 @@ final class FriendValidateServiceTest {
 	}
 
 	private void setValidateResult(boolean alive, URI newUrl, String html) {
-		when(validator.visit(any())).thenReturn(CompletableFuture
-				.completedFuture(new FriendSitePage(alive, newUrl, null, html)));
+		var rv = new FriendSitePage(alive, newUrl, null, html);
+		when(validator.visit(any())).thenReturn(CompletableFuture.completedFuture(rv));
 	}
 
 	@Test
 	void failedCount() throws Exception {
-		var friend = addRecord("example.com", null, Instant.EPOCH);
+		addRecord("example.com", null, Instant.EPOCH);
 		setValidateResult(false, null, null);
 
 		service.startValidation();
@@ -91,5 +90,21 @@ final class FriendValidateServiceTest {
 		service.startValidation();
 
 		verify(notification).reportFriend(eq(FriendAccident.Type.Inaccessible), eq(friend), any(), isNull());
+	}
+
+	@Test
+	void shouldValidate() {
+		var now = Instant.now();
+		var f1 = addRecord("1.com", null, Instant.EPOCH);
+		addRecord("2.com", null, now);
+		var f3 = addRecord("3.com", null, Instant.EPOCH);
+		setValidateResult(false, null, null);
+
+		when(clock.instant()).thenReturn(now);
+		service.startValidation();
+
+		verify(validator, times(2)).visit(any());
+		verify(validator).visit(eq(f1.url));
+		verify(validator).visit(eq(f3.url));
 	}
 }
