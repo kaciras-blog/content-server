@@ -18,8 +18,8 @@ import java.time.Clock;
  * <p>
  * 【一致性问题】
  * 因为 SpringDataRedis 的事务写起来真的丑，所以这里使用了缓存模式避免事务。
- * getFriends() 始终返回缓存，启动和修改后都会更新缓存；
- * 单个查询方法 getFriend() 是原子的不存在一致性问题就不用管了。
+ * getFriends() 只访问缓存，启动和修改后都会更新缓存；
+ * 单个查询方法 getFriend() 是原子的不存在一致性问题就不管了。
  * <p>
  * 不过这也要求同一时刻只能调用一个修改方法，因为只有博主能修改所以是可以的。
  * 在 Controller 里用了 synchronized 来实现，这使修改操作不会因为线程安全问题导致缓存更新错误。
@@ -47,7 +47,7 @@ public class FriendRepository {
 	 * 在启动时调用确保缓存存在，修改后也要调用来刷新缓存。
 	 */
 	@PostConstruct
-	private void generateFirendsCache() {
+	private void generateFriendsCache() {
 		var list = hostList.range(0, -1);
 		var map = friendMap.entries();
 		cache = list.stream().map(map::get).toArray(FriendLink[]::new);
@@ -88,7 +88,7 @@ public class FriendRepository {
 
 		if (friendMap.putIfAbsent(host, friend)) {
 			hostList.rightPush(host);
-			generateFirendsCache();
+			generateFriendsCache();
 			return true;
 		}
 		return false;
@@ -118,7 +118,7 @@ public class FriendRepository {
 			friendMap.delete(host);
 		}
 
-		generateFirendsCache();
+		generateFriendsCache();
 		return true;
 	}
 
@@ -131,7 +131,7 @@ public class FriendRepository {
 	public boolean remove(String host) {
 		if (hostList.remove(1, host) != 0) {
 			friendMap.delete(host);
-			generateFirendsCache();
+			generateFriendsCache();
 			return true;
 		}
 		return false;
@@ -147,6 +147,6 @@ public class FriendRepository {
 	public void updateSort(String[] newList) {
 		hostList.getOperations().unlink(hostList.getKey());
 		hostList.rightPushAll(newList);
-		generateFirendsCache();
+		generateFriendsCache();
 	}
 }
