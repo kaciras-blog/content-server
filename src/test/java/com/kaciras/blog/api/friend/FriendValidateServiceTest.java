@@ -58,9 +58,11 @@ final class FriendValidateServiceTest {
 
 	private FriendLink addRecord(String domain, String friendPage, Instant time) {
 		when(clock.instant()).thenReturn(time);
+
 		var friend = createFriend(domain, friendPage, time);
 		service.addForValidate(friend);
 		when(repository.findByHost(eq(domain))).thenReturn(friend);
+
 		return friend;
 	}
 
@@ -70,7 +72,7 @@ final class FriendValidateServiceTest {
 	}
 
 	@Test
-	void failedCount() throws Exception {
+	void failedCount() {
 		addRecord("example.com", null, Instant.EPOCH);
 		setValidateResult(false, null, null);
 
@@ -80,14 +82,14 @@ final class FriendValidateServiceTest {
 	}
 
 	@Test
-	void notAlive() throws Exception {
+	void notAlive() {
 		var friend = addRecord("example.com", null, Instant.EPOCH);
 		setValidateResult(false, null, null);
 
-		service.startValidation();
-		service.startValidation();
-		service.startValidation();
-		service.startValidation();
+		for (int i = 0; i < 4; i++) {
+			when(clock.instant()).thenReturn(Instant.MAX, Instant.EPOCH);
+			service.startValidation();
+		}
 
 		verify(notification).reportFriend(eq(FriendAccident.Type.Inaccessible), eq(friend), any(), isNull());
 	}
