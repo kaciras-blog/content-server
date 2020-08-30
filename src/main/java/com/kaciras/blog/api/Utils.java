@@ -79,6 +79,6 @@ public class Utils {
 	 * @return 如果value是null返回false，否则返回其非装箱值。
 	 */
 	public boolean nullableBool(Boolean value) {
-		return value == null ? false : value;
+		return value != null && value;
 	}
 }
