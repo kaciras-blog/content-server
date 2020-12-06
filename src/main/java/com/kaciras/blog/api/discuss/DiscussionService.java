@@ -85,14 +85,6 @@ public class DiscussionService {
 		return discussion;
 	}
 
-	public void voteUp(int id, InetAddress address) {
-		repository.get(id).getVoterList().add(address);
-	}
-
-	public void revokeVote(int id, InetAddress address) {
-		repository.get(id).getVoterList().remove(address);
-	}
-
 	/**
 	 * 批量更新评论的状态。
 	 * TODO:

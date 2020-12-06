@@ -1,6 +1,5 @@
 package com.kaciras.blog.api.discuss;
 
-import com.kaciras.blog.infra.exception.DataTooBigException;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,6 @@ public final class Discussion {
 
 	// 可变字段
 	private DiscussionState state;
-	private int voteCount;
 
 	private Discussion(int objectId, int type, int userId, int parent, String content) {
 		this.objectId = objectId;
@@ -50,10 +48,6 @@ public final class Discussion {
 		this.userId = userId;
 		this.parent = parent;
 		this.content = content;
-	}
-
-	public VoterList getVoterList() {
-		return new VoterList(this.id);
 	}
 
 	public Discussion createReply(int userId, String content) {
@@ -76,9 +70,6 @@ public final class Discussion {
 	private static Discussion create(int objectId, int type, int userId, int parent, String content) {
 		if (content == null || content.length() == 0) {
 			throw new RequestArgumentException("评论内容不能为空");
-		}
-		if (content.length() > 64 * 40) {
-			throw new DataTooBigException("评论内容过长");
 		}
 		return new Discussion(objectId, type, userId, parent, content);
 	}

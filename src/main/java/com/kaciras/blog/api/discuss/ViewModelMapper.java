@@ -78,7 +78,6 @@ abstract class ViewModelMapper {
 				.map(this::toReplyView)
 				.collect(Collectors.toList()));
 
-		result.setVoted(model.getVoterList().contains(address));
 		return result;
 	}
 

@@ -20,8 +20,8 @@ public final class SqlProvider {
 			var order = Misc.getFirst(pageable.getSort());
 			var column = order.getProperty();
 
-			if (!column.equals("id") && !column.equals("vote")) {
-				throw new RequestArgumentException("排序字段仅支持 id 和 vote");
+			if (!column.equals("id")) {
+				throw new RequestArgumentException("排序字段仅支持 id");
 			}
 			sql.ORDER_BY(column + " " + order.getDirection());
 		}

@@ -15,24 +15,16 @@ public final class DiscussionVo {
 
 	private int objectId;
 	private int type;
-
 	private int parent;
-
 	private int floor;
-
-	private UserVo user;
 	private String nickname;
-
 	private String content;
-
 	private boolean deleted;
-	private int voteCount;
-
 	private Instant time;
 
-	// 下面是非共有字段
 
-	private boolean voted;
+	// 下面是非共有字段
+	private UserVo user;
 	private List<DiscussionVo> replies;
 	private int replyCount;
 

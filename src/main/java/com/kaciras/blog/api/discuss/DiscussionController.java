@@ -26,7 +26,7 @@ class DiscussionController {
 
 	/**
 	 * 验证查询参数是否合法，该方法只检查用户的请求，对于内部查询不限制。
-	 * 查询至少包含对象ID、用户ID、评论ID其中之一的过滤条件，如果是管理则可以无视。
+	 * 查询至少包含对象、用户、父亲论其中之一的过滤条件，如果是管理则可以无视。
 	 *
 	 * @param query 查询对象
 	 */
@@ -74,12 +74,9 @@ class DiscussionController {
 
 	// 无论是否审核都返回视图，前端可以通过 state 判断
 	@PostMapping
-	public ResponseEntity<DiscussionVo> post(
-			HttpServletRequest request,
-			@Valid @RequestBody PublishInput input) {
-
-		var addr = Utils.addressFromRequest(request);
-		var discussion = discussionService.add(input, addr);
+	public ResponseEntity<DiscussionVo> post(HttpServletRequest request, @Valid @RequestBody PublishInput input) {
+		var address = Utils.addressFromRequest(request);
+		var discussion = discussionService.add(input, address);
 
 		// TODO: 越来越觉得要尽快迁移GraphQL了
 		var vo = mapper.toReplyView(discussion);
@@ -94,23 +91,6 @@ class DiscussionController {
 	@PatchMapping
 	public ResponseEntity<Void> patch(@RequestBody PatchInput input) {
 		discussionService.batchUpdate(input);
-		return ResponseEntity.noContent().build();
-	}
-
-	/**
-	 * 点赞功能，每个用户对每个评论只能点赞一次，若重复点赞则返回409.
-	 *
-	 * @param id 要点赞的评论ID
-	 */
-	@PostMapping("/{id}/votes")
-	public ResponseEntity<Void> postVote(@PathVariable int id, HttpServletRequest request) {
-		discussionService.voteUp(id, Utils.addressFromRequest(request));
-		return ResponseEntity.created(URI.create("discussions/" + id + "/votes")).build();
-	}
-
-	@DeleteMapping("/{id}/votes")
-	public ResponseEntity<Void> revokeVote(@PathVariable int id, HttpServletRequest request) {
-		discussionService.revokeVote(id, Utils.addressFromRequest(request));
 		return ResponseEntity.noContent().build();
 	}
 }
