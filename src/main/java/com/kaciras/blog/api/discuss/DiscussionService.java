@@ -1,7 +1,5 @@
 package com.kaciras.blog.api.discuss;
 
-import com.kaciras.blog.api.article.Article;
-import com.kaciras.blog.api.article.ArticleRepository;
 import com.kaciras.blog.api.config.BindConfig;
 import com.kaciras.blog.api.notification.NotificationService;
 import com.kaciras.blog.infra.exception.PermissionException;
@@ -22,9 +20,11 @@ public class DiscussionService {
 	private final DiscussionRepository repository;
 	private final DiscussionDAO dao;
 
-	private final ArticleRepository articleRepository;
+	private final ChannelRegistration channels;
+
 	private final NotificationService notificationService;
 
+	@SuppressWarnings("unused")
 	@BindConfig("discussion")
 	private DiscussionOptions options;
 
@@ -55,12 +55,8 @@ public class DiscussionService {
 		var user = SecurityContext.getUserId();
 		Discussion discussion;
 		Discussion parent = null;
-		Article article = null;
 
-		// 检查文章是否存在。目前仅有两个类型而且区别逻辑较少，所以暂时没有做抽象
-		if (input.getType() == 0) {
-			article = articleRepository.findById(input.getObjectId());
-		}
+		var channel = channels.getChannel(input.getType(), input.getObjectId());
 
 		if (input.getParent() == 0) {
 			discussion = Discussion.create(input.getObjectId(), input.getType(), user, input.getContent());
@@ -79,7 +75,7 @@ public class DiscussionService {
 		repository.add(discussion);
 
 		if (discussion.getState() == DiscussionState.Visible) {
-			notificationService.reportDiscussion(discussion, parent, article);
+			notificationService.reportDiscussion(discussion, parent, channel);
 		}
 
 		return discussion;
