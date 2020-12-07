@@ -22,7 +22,6 @@ public final class DiscussionVo {
 	private boolean deleted;
 	private Instant time;
 
-
 	// 下面是非共有字段
 	private UserVo user;
 	private List<DiscussionVo> replies;

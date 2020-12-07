@@ -3,6 +3,7 @@
 /*!50503 SET NAMES utf8mb4 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0 */;
 /*!40101 SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES = @@SQL_NOTES, SQL_NOTES = 0 */;
 
 CREATE TABLE IF NOT EXISTS `access_log`
 (
@@ -71,30 +72,21 @@ CREATE TABLE IF NOT EXISTS `category_tree`
 
 CREATE TABLE IF NOT EXISTS `discussion`
 (
-    `id`        int(10) unsigned    NOT NULL AUTO_INCREMENT,
-    `object_id` int(10) unsigned    NOT NULL,
-    `type`      tinyint(3) unsigned NOT NULL DEFAULT 0,
-    `floor`     int(10) unsigned    NOT NULL,
-    `parent`    int(10) unsigned    NOT NULL DEFAULT 0,
-    `user_id`   int(10) unsigned    NOT NULL,
-    `nickname`  varchar(16)                  DEFAULT NULL,
-    `content`   text                NOT NULL,
-    `time`      datetime(6)         NOT NULL,
-    `state`     tinyint(3) unsigned NOT NULL DEFAULT 0 COMMENT '0-正常 1-删除 2-待审',
-    `vote`      int(10)             NOT NULL DEFAULT 0 COMMENT '冗余，排序用',
-    `address`   binary(16)          NOT NULL,
+    `id`        int(10) unsigned      NOT NULL AUTO_INCREMENT,
+    `object_id` int(10) unsigned      NOT NULL,
+    `type`      tinyint(3) unsigned   NOT NULL DEFAULT 0,
+    `floor`     int(10) unsigned      NOT NULL,
+    `parent`    int(10) unsigned      NOT NULL DEFAULT 0,
+    `user_id`   int(10) unsigned      NOT NULL,
+    `nickname`  varchar(16)                    DEFAULT NULL,
+    `content`   text                  NOT NULL,
+    `source`    mediumint(8) unsigned NOT NULL DEFAULT 0,
+    `state`     tinyint(3) unsigned   NOT NULL DEFAULT 0 COMMENT '0-正常 1-删除 2-待审',
+    `time`      datetime(6)           NOT NULL,
+    `address`   binary(16)            NOT NULL,
     PRIMARY KEY (`id`),
-    KEY `user_id` (`user_id`),
     KEY `parent` (`parent`),
     KEY `object_id_type` (`object_id`, `type`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4;
-
-CREATE TABLE IF NOT EXISTS `discussion_vote`
-(
-    `id`      int(10) unsigned NOT NULL,
-    `address` binary(16)       NOT NULL,
-    PRIMARY KEY (`id`, `address`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 
@@ -156,3 +148,4 @@ CREATE TABLE IF NOT EXISTS `user`
 /*!40101 SET SQL_MODE = IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS = IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
 /*!40101 SET CHARACTER_SET_CLIENT = @OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES = @OLD_SQL_NOTES */;

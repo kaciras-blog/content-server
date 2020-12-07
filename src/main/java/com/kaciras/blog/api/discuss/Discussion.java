@@ -1,46 +1,60 @@
 package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.infra.exception.RequestArgumentException;
-import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.net.InetAddress;
 import java.time.Instant;
 
+/**
+ * 评论对象，无论是顶层评论还是楼中楼都是这个。
+ * <p>
+ * 【关于点赞功能】
+ * 评论曾经有点赞功能但后来移除了，理由有这么几点：
+ * <ol>
+ *     <li>
+ *     点赞只有在人数足够的情况下才有意义，而博客站很难有这么多的评论者，这让它成为了鸡肋。
+ *     据我观察大多数博客都没有此功能，贴吧也没有。
+ *     </li>
+ *     <li>
+ *     评论系统以匿名为主，只能以 IP 来鉴别独立访问者，但 IP 容易变导致一个人可以重复点赞。
+ *     </li>
+ * </ol>
+ */
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "userId", "objectId"})
 @Data
-@Configurable
 public final class Discussion {
 
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private DiscussionDAO dao;
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
+	/** 每条评论都有唯一的ID */
 	private int id;
 
-	// 创建时就需要的字段
 	private int objectId;
 	private int type;
+
 	private int userId;
 	private int parent;
-	private String content;
+	private int floor;
 
 	private String nickname;
+	private String content;
+
+	private int score;
+
+	private DiscussionState state;
+
+	/** 提交评论的时间 */
 	private Instant time;
 
 	/** 发送评论的IP，用于批量查找垃圾评论 */
 	private InetAddress address;
 
-	private int floor;
-
-	// 可变字段
-	private DiscussionState state;
+	/** 回复（楼中楼）总数 */
+	private int reply;
 
 	private Discussion(int objectId, int type, int userId, int parent, String content) {
 		this.objectId = objectId;

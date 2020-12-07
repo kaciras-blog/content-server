@@ -8,7 +8,14 @@ import org.apache.ibatis.jdbc.SQL;
 public final class SqlProvider {
 
 	public String select(DiscussionQuery query) {
-		var sql = new SQL().SELECT("*").FROM("discussion");
+
+		// 因为回复数不多就不加冗余字段里，直接 COUNT 统计。
+		var sql = new SQL()
+				.SELECT("A.*, COUNT(*) as reply")
+				.FROM("discussion AS A")
+				.LEFT_OUTER_JOIN("discussion AS B ON B.parent=A.id")
+				.GROUP_BY("A.id");
+
 		putFilters(sql, query);
 
 		var pageable = query.getPageable();
@@ -20,10 +27,10 @@ public final class SqlProvider {
 			var order = Misc.getFirst(pageable.getSort());
 			var column = order.getProperty();
 
-			if (!column.equals("id")) {
-				throw new RequestArgumentException("排序字段仅支持 id");
+			switch (column) {
+				case "reply", "id", "score" -> sql.ORDER_BY(column + " " + order.getDirection());
+				default -> throw new RequestArgumentException("不支持的排序：" + column);
 			}
-			sql.ORDER_BY(column + " " + order.getDirection());
 		}
 
 		return sql.OFFSET(pageable.getPageNumber()).LIMIT(pageable.getPageSize()).toString();
@@ -45,7 +52,7 @@ public final class SqlProvider {
 		}
 		if (query.getObjectId() != null) {
 			if (query.getType() == null) {
-				throw new RequestArgumentException("查询参数中有objectId的情况下必须指定type");
+				throw new RequestArgumentException("查询参数中有 objectId 的情况下必须指定 type");
 			}
 			sql.WHERE("object_id = #{objectId}");
 		}

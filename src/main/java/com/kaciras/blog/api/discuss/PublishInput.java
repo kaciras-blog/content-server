@@ -16,6 +16,8 @@ final class PublishInput {
 
 	private final int parent;
 
+	private final int score;
+
 	@Length(max = 16)
 	private final String nickname;
 
