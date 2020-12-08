@@ -45,7 +45,7 @@ final class FriendRepositoryTest {
 		rv.createTime = friend.createTime;
 
 		assertThat(friend.createTime).isNotNull();
-		assertThat(rv).isEqualToComparingFieldByField(friend);
+		assertThat(rv).usingRecursiveComparison().isEqualTo(friend);
 	}
 
 	@Test

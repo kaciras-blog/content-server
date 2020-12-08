@@ -50,9 +50,9 @@ final class FriendControllerTest extends AbstractControllerTest {
 				objectMapper.getTypeFactory().constructCollectionType(List.class, FriendLink.class));
 
 		assertThat(list).hasSize(3);
-		assertThat(list.get(0)).isEqualToComparingFieldByField(result[0]);
-		assertThat(list.get(1)).isEqualToComparingFieldByField(result[1]);
-		assertThat(list.get(2)).isEqualToComparingFieldByField(result[2]);
+		assertThat(list.get(0)).usingRecursiveComparison().isEqualTo(result[0]);
+		assertThat(list.get(1)).usingRecursiveComparison().isEqualTo(result[1]);
+		assertThat(list.get(2)).usingRecursiveComparison().isEqualTo(result[2]);
 	}
 
 	private static Stream<Arguments> invalidFriends() {
