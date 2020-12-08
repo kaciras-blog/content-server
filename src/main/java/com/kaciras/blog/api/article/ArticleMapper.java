@@ -5,7 +5,7 @@ import com.kaciras.blog.api.category.Category;
 import com.kaciras.blog.api.category.CategoryManager;
 import com.kaciras.blog.api.category.CategoryRepository;
 import com.kaciras.blog.api.discuss.DiscussionQuery;
-import com.kaciras.blog.api.discuss.DiscussionService;
+import com.kaciras.blog.api.discuss.DiscussionRepository;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 abstract class ArticleMapper {
 
 	@Autowired
-	private DiscussionService discussionService;
+	private DiscussionRepository discussionRepository;
 
 	@Autowired
 	private CategoryRepository categoryRepository;
@@ -56,7 +56,7 @@ abstract class ArticleMapper {
 		}
 		var categoryPath = categoryRepository.get(article.getCategory()).getPathTo(request.getCategory());
 		vo.setCategories(mapCategoryPath(categoryPath));
-		vo.setDiscussionCount(discussionService.count(new DiscussionQuery().setObjectId(article.getId()).setType(0)));
+		vo.setDiscussionCount(discussionRepository.count(new DiscussionQuery().setObjectId(article.getId()).setType(0)));
 		return vo;
 	}
 

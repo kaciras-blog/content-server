@@ -1,6 +1,7 @@
 package com.kaciras.blog.api.discuss;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.kaciras.blog.api.NullOrNotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
@@ -19,6 +20,7 @@ final class PublishInput {
 	private final int score;
 
 	@Length(max = 16)
+	@NullOrNotBlank
 	private final String nickname;
 
 	@NotBlank

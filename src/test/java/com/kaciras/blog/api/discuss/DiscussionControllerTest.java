@@ -1,7 +1,7 @@
 package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.api.AbstractControllerTest;
-import com.kaciras.blog.api.article.ArticleRepository;
+import com.kaciras.blog.api.notification.NotificationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -12,13 +12,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 final class DiscussionControllerTest extends AbstractControllerTest {
 
 	@MockBean
-	private ArticleRepository repository;
+	private ChannelRegistration channels;
 
 	@MockBean
-	private DiscussionService service;
+	private DiscussionRepository repository;
 
 	@MockBean
-	private ViewModelMapper draftRepository;
+	private ViewModelMapper mapper;
+
+	@MockBean
+	private NotificationService notification;
 
 	@Test
 	void testPost() throws Exception {

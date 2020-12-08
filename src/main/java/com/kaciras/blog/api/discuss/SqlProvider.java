@@ -11,12 +11,12 @@ public final class SqlProvider {
 
 		// 因为回复数不多就不加冗余字段里，直接 COUNT 统计。
 		var sql = new SQL()
-				.SELECT("A.*, COUNT(*) as reply")
-				.FROM("discussion AS A")
-				.LEFT_OUTER_JOIN("discussion AS B ON B.parent=A.id")
-				.GROUP_BY("A.id");
+				.SELECT("*, COUNT(*) AS reply")
+				.FROM("discussion")
+				.JOIN("(SELECT parent AS _p FROM discussion) AS B ON B._p=id")
+				.GROUP_BY("id");
 
-		putFilters(sql, query);
+		applyFilters(sql, query);
 
 		var pageable = query.getPageable();
 		if (pageable == null) {
@@ -26,6 +26,7 @@ public final class SqlProvider {
 		if (pageable.getSort().isSorted()) {
 			var order = Misc.getFirst(pageable.getSort());
 			var column = order.getProperty();
+			sql.ORDER_BY(column + " " + order.getDirection());
 
 			switch (column) {
 				case "reply", "id", "score" -> sql.ORDER_BY(column + " " + order.getDirection());
@@ -37,18 +38,15 @@ public final class SqlProvider {
 	}
 
 	public String selectCount(DiscussionQuery query) {
-		var sql = new SQL().SELECT("COUNT(*)").FROM("discussion");
-		putFilters(sql, query);
+		var sql = new SQL().SELECT("COUNT(*)").FROM("discussion AS A");
+		applyFilters(sql, query);
 		return sql.toString();
 	}
 
-	// 前三个都带索引，state暂时没有索引所以放最后
-	private void putFilters(SQL sql, DiscussionQuery query) {
-		if (query.getUserId() != null) {
-			sql.WHERE("user_id = #{userId}");
-		}
-		if (query.getParent() != null) {
-			sql.WHERE("parent = #{parent}");
+	// 前三个都带索引，state 暂时没有索引所以放最后
+	private void applyFilters(SQL sql, DiscussionQuery query) {
+		if (query.getType() != null) {
+			sql.WHERE("type = #{type}");
 		}
 		if (query.getObjectId() != null) {
 			if (query.getType() == null) {
@@ -56,8 +54,11 @@ public final class SqlProvider {
 			}
 			sql.WHERE("object_id = #{objectId}");
 		}
-		if (query.getType() != null) {
-			sql.WHERE("type = #{type}");
+		if (query.getParent() != null) {
+			sql.WHERE("parent = #{parent}");
+		}
+		if (query.getUserId() != null) {
+			sql.WHERE("user_id = #{userId}");
 		}
 		sql.WHERE("state = #{state}"); // assert query.state != null
 	}

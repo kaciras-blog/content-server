@@ -1,11 +1,11 @@
 package com.kaciras.blog.api.discuss;
 
+import com.kaciras.blog.api.ListQueryView;
 import com.kaciras.blog.api.user.UserVo;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.List;
 
 @Getter
 @Setter
@@ -15,18 +15,21 @@ public final class DiscussionVo {
 
 	private int objectId;
 	private int type;
+
 	private int parent;
 	private int floor;
+
+	private UserVo user;
+
 	private String nickname;
 	private String content;
-	private boolean deleted;
 	private Instant time;
 
-	// 下面是非共有字段
-	private UserVo user;
-	private List<DiscussionVo> replies;
-	private int replyCount;
+	private boolean deleted;
 
-	/** 被评论的对象，该字段不限制类型，不同的对象可能类型也不同 */
-	private Object target;
+	// ========== 下面是可选的聚合属性 ==========
+
+	private DiscussChannel channel;
+
+	private ListQueryView<DiscussionVo> replies;
 }

@@ -2,6 +2,9 @@ package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.api.ListQueryView;
 import com.kaciras.blog.api.Utils;
+import com.kaciras.blog.api.config.BindConfig;
+import com.kaciras.blog.api.notification.NotificationService;
+import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.principal.RequirePermission;
 import com.kaciras.blog.infra.principal.SecurityContext;
@@ -14,15 +17,21 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Collections;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/discussions")
 class DiscussionController {
 
-	private final DiscussionService discussionService;
+	private final ChannelRegistration channels;
+	private final DiscussionRepository repository;
 	private final ViewModelMapper mapper;
+
+	private final NotificationService notificationService;
+
+	@SuppressWarnings("unused")
+	@BindConfig("discussion")
+	private DiscussionOptions options;
 
 	/**
 	 * 验证查询参数是否合法，该方法只检查用户的请求，对于内部查询不限制。
@@ -55,12 +64,12 @@ class DiscussionController {
 		query.setPageable(pageable);
 		verifyQuery(query);
 
-		var size = discussionService.count(query);
-		var result = discussionService.getList(query);
+		var size = repository.count(query);
+		var result = repository.findAll(query);
 
 		// 控制台里查询的，需要加上一个链接字段
 		if (query.isLinked()) {
-			return new ListQueryView<>(size, mapper.toLinkedView(result));
+			return new ListQueryView<>(size, mapper.toReplyView(result));
 		}
 
 		// 查询的是回复（楼中楼）
@@ -75,22 +84,48 @@ class DiscussionController {
 	// 无论是否审核都返回视图，前端可以通过 state 判断
 	@PostMapping
 	public ResponseEntity<DiscussionVo> post(HttpServletRequest request, @Valid @RequestBody PublishInput input) {
-		var address = Utils.addressFromRequest(request);
-		var discussion = discussionService.add(input, address);
+		if (!options.isEnabled()) {
+			throw new PermissionException("已禁止评论");
+		}
+		if (!options.isAllowAnonymous()) {
+			SecurityContext.requireLogin();
+		}
 
-		// TODO: 越来越觉得要尽快迁移GraphQL了
+		var discussion = mapper.fromInput(input);
+		discussion.setUserId(SecurityContext.getUserId());
+		discussion.setState(options.isModeration() ? DiscussionState.Moderation : DiscussionState.Visible);
+		discussion.setAddress(Utils.addressFromRequest(request));
+
+		Discussion parent = null;
+
+		if (discussion.getParent() != 0) {
+			parent = repository.get(input.getParent());
+			discussion.setType(parent.getType());
+			discussion.setObjectId(parent.getObjectId());
+		}
+
+		var channel = channels.getChannel(input.getType(), input.getObjectId());
+		repository.add(discussion);
+
+		if (discussion.getState() == DiscussionState.Visible) {
+			notificationService.reportDiscussion(discussion, parent, channel);
+		}
+
 		var vo = mapper.toReplyView(discussion);
 		if (discussion.getParent() == 0) {
-			vo.setReplies(Collections.emptyList());
+			vo.setReplies(ListQueryView.empty());
 		}
 
 		return ResponseEntity.created(URI.create("/discussions/" + discussion.getId())).body(vo);
 	}
 
-	@RequirePermission // 当前仅支持管理者更新评论
+	/**
+	 * 批量更新评论的状态，仅博主能使用。
+	 */
+	@RequirePermission
 	@PatchMapping
 	public ResponseEntity<Void> patch(@RequestBody PatchInput input) {
-		discussionService.batchUpdate(input);
+		repository.updateAll(input.ids, input.state);
 		return ResponseEntity.noContent().build();
 	}
 }

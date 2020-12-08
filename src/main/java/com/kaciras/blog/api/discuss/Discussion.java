@@ -1,9 +1,8 @@
 package com.kaciras.blog.api.discuss;
 
-import com.kaciras.blog.infra.exception.RequestArgumentException;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.net.InetAddress;
@@ -25,9 +24,9 @@ import java.time.Instant;
  * </ol>
  */
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
-@ToString(of = {"id", "userId", "objectId"})
-@Data
+@Getter
+@Setter
+@ToString(of = {"id", "objectId"})
 public final class Discussion {
 
 	/** 每条评论都有唯一的ID */
@@ -40,7 +39,12 @@ public final class Discussion {
 	private int parent;
 	private int floor;
 
+	/**
+	 * 昵称用于匿名下区分不同的评论者，由前端随意填写，可以重复。
+	 * 该字段可以为 null，但不能为空白字符串。
+	 */
 	private String nickname;
+
 	private String content;
 
 	private int score;
@@ -53,38 +57,6 @@ public final class Discussion {
 	/** 发送评论的IP，用于批量查找垃圾评论 */
 	private InetAddress address;
 
-	/** 回复（楼中楼）总数 */
+	/** 回复（楼中楼）总数，仅由 DAO 层设置 */
 	private int reply;
-
-	private Discussion(int objectId, int type, int userId, int parent, String content) {
-		this.objectId = objectId;
-		this.type = type;
-		this.userId = userId;
-		this.parent = parent;
-		this.content = content;
-	}
-
-	public Discussion createReply(int userId, String content) {
-		return create(objectId, type, userId, id, content);
-	}
-
-	/**
-	 * 创建一个顶层评论，该方法会检查评论内容是否合法。
-	 *
-	 * @param objectId 评论对象ID
-	 * @param type     评论对象类型
-	 * @param userId   评论者ID
-	 * @param content  评论内容
-	 * @return 新创建的评论对象
-	 */
-	public static Discussion create(int objectId, int type, int userId, String content) {
-		return create(objectId, type, userId, 0, content);
-	}
-
-	private static Discussion create(int objectId, int type, int userId, int parent, String content) {
-		if (content == null || content.length() == 0) {
-			throw new RequestArgumentException("评论内容不能为空");
-		}
-		return new Discussion(objectId, type, userId, parent, content);
-	}
 }
