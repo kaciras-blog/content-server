@@ -7,36 +7,34 @@ import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 
-import java.net.InetAddress;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 加上是否点赞过
- * （用户ID转为对象）                  加上回复第一页
- * 1.包含最基本字段的回复 -------------2----------------> 3.对外显示的评论
- * 加上回复数 |
- * +----------------> 4.控制台显示
- * 加上评论目标的信息
- * <p>
  * 注：MapStruct真TM垃圾，@IterableMapping(qualifiedByName = "@Named") 根本没用
  */
 @Mapper(config = MapStructConfig.class)
 abstract class ViewModelMapper {
 
 	@Autowired
-	private UserManager userManager;
-
-	@Autowired
 	private DiscussionRepository repository;
 
+	@Autowired
+	private UserManager userManager;
+
+	/**
+	 * 从发布请求创建一个评论对象，对应的字段将被设置。
+	 *
+	 * @param input 请求
+	 * @return 评论对象
+	 */
 	public abstract Discussion fromInput(PublishInput input);
 
-	public final List<DiscussionVo> toAggregatedView(List<Discussion> model, InetAddress address, int replySize) {
-		return model.stream().map(m -> toAggregatedView(m, address, replySize)).collect(Collectors.toList());
+	public final List<DiscussionVo> toAggregatedView(List<Discussion> model, int replySize) {
+		return model.stream().map(m -> toAggregatedView(m, replySize)).collect(Collectors.toList());
 	}
 
-	public final DiscussionVo toAggregatedView(Discussion model, InetAddress address, int replySize) {
+	public final DiscussionVo toAggregatedView(Discussion model, int replySize) {
 		var result = toReplyView(model);
 
 		var replies = repository.findAll(

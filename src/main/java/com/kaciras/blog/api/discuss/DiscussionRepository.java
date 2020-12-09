@@ -2,8 +2,6 @@ package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.infra.Misc;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
-import com.kaciras.blog.infra.exception.ResourceNotFoundException;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
@@ -12,8 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.util.List;
+import java.util.Optional;
 
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 @Repository
 public class DiscussionRepository {
 
@@ -47,9 +46,8 @@ public class DiscussionRepository {
 		return dao.count(query);
 	}
 
-	@NonNull
-	public Discussion get(int id) {
-		return dao.selectById(id).orElseThrow(ResourceNotFoundException::new);
+	public Optional<Discussion> get(int id) {
+		return dao.selectById(id);
 	}
 
 	public List<Discussion> findAll(@NonNull DiscussionQuery query) {

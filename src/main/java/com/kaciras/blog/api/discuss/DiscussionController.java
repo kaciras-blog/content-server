@@ -60,7 +60,7 @@ class DiscussionController {
 	 * Qualifier, SortDefault, SortDefaults 可以改变一些默认的行为，SpringBoot 也提供了对参数名的配置。
 	 */
 	@GetMapping
-	public ListQueryView<DiscussionVo> getList(HttpServletRequest request, DiscussionQuery query, Pageable pageable) {
+	public ListQueryView<DiscussionVo> getList(DiscussionQuery query, Pageable pageable) {
 		query.setPageable(pageable);
 		verifyQuery(query);
 
@@ -77,7 +77,7 @@ class DiscussionController {
 			return new ListQueryView<>(size, mapper.toReplyView(result));
 		}
 
-		var items = mapper.toAggregatedView(result, Utils.addressFromRequest(request), query.getReplySize());
+		var items = mapper.toAggregatedView(result, query.getReplySize());
 		return new ListQueryView<>(size, items);
 	}
 
@@ -99,12 +99,12 @@ class DiscussionController {
 		Discussion parent = null;
 
 		if (discussion.getParent() != 0) {
-			parent = repository.get(input.getParent());
+			parent = repository.get(input.getParent()).orElseThrow(RequestArgumentException::new);
 			discussion.setType(parent.getType());
 			discussion.setObjectId(parent.getObjectId());
 		}
 
-		var channel = channels.getChannel(input.getType(), input.getObjectId());
+		var channel = channels.getChannel(discussion);
 		repository.add(discussion);
 
 		if (discussion.getState() == DiscussionState.Visible) {
