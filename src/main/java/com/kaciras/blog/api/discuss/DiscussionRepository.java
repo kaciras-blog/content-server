@@ -5,7 +5,6 @@ import com.kaciras.blog.infra.exception.RequestArgumentException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
@@ -23,21 +22,35 @@ public class DiscussionRepository {
 	 * 添加一条评论，此方法会在评论对象中设置自动生成的 id 以及 floor。
 	 * 因为评论的楼层是连续的，所以新评论的楼层就是已有评论的数量 + 1。
 	 * <p>
-	 * 使用了串行级别的事务，因为楼层的确定需要获取评论数，存在幻读的可能。
-	 * <p>
 	 * 【楼层号从1开始】
 	 * 虽然咱码农的世界里编号都是从0开始的，但从1开始更通用些。
-	 * 先前是从0开始的，可以使用一句SQL更新：UPDATE discussion SET `floor`=`floor`+1
+	 * 先前是从0开始的，可以使用一句 SQL 更新：UPDATE discussion SET `floor`=`floor`+1
 	 *
 	 * @param discussion 评论对象
 	 */
-	@Transactional(isolation = Isolation.SERIALIZABLE)
+	@Transactional
 	public void add(@NonNull Discussion discussion) {
-		var count = discussion.getParent() == 0
-				? dao.countTopLevel(discussion.getObjectId(), discussion.getType())
-				: dao.countByParent(discussion.getParent());
+		if (discussion.getParent() != 0) {
+			var parent = dao.selectById(discussion.getParent()).orElseThrow(RequestArgumentException::new);
 
-		discussion.setFloor(count + 1);
+			if (discussion.getState() == DiscussionState.Visible) {
+				dao.addRepliesColumn(parent.getId(), 1);
+			}
+
+			/*
+			 * 当前的数据库设计中评论的ID是全局的，
+			 */
+			if (discussion.getObjectId() != parent.getObjectId()
+					|| discussion.getType() != parent.getType()) {
+				throw new RequestArgumentException("与父评论的频道不同");
+			}
+
+			// parent.getReplies() 返回的是可见的回复数，这里需要的是总数
+			discussion.setFloor(dao.countByParent(parent.getId()) + 1);
+		} else {
+			discussion.setFloor(dao.countTopLevel(discussion.getType(), discussion.getObjectId()) + 1);
+		}
+
 		discussion.setTime(clock.instant());
 		dao.insert(discussion);
 	}
@@ -75,11 +88,16 @@ public class DiscussionRepository {
 	 * 因为单个更新属于批量更新的特例，所以它也使用了这个方法。但如果遇到了需要在JAVA代码
 	 * 里鉴权等逻辑，则无法用一条SQL直接更新，还是得一个个UPDATE，目前也没找到更好的方法。
 	 *
-	 * @param ids ID列表
+	 * @param ids   ID列表
 	 * @param state 新状态
 	 */
 	@Transactional
 	public void updateAll(List<Integer> ids, DiscussionState state) {
-		ids.forEach(id -> dao.updateState(id, state));
+		var increment = state == DiscussionState.Visible ? 1 : -1;
+		for (var id : ids) {
+			var discussion = dao.selectById(id).orElseThrow(RequestArgumentException::new);
+			dao.updateState(id, state);
+			dao.addRepliesColumn(discussion.getParent(), increment);
+		}
 	}
 }

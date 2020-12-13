@@ -4,18 +4,29 @@ import com.kaciras.blog.infra.Misc;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import org.apache.ibatis.jdbc.SQL;
 
+import java.util.Arrays;
+
 @SuppressWarnings("unused")
 public final class SqlProvider {
 
+	private final String insertSQL;
+
+	// 字段一多就好麻烦啊，要不要换别的 ORM 库呢
+	public SqlProvider() {
+		String[] fields = {"type", "floor", "parent", "nickname", "content", "score", "time", "state", "address"};
+		var placeholders = Arrays.stream(fields).map(f -> "#{" + f + "}").toArray(String[]::new);
+
+		var sql = new SQL().INSERT_INTO("discussion");
+		sql.INTO_COLUMNS(fields).INTO_VALUES(placeholders);
+		this.insertSQL = sql.VALUES("object_id", "#{objectId}").VALUES("user_id", "#{userId}").toString();
+	}
+
+	public String insert(Discussion value) {
+		return insertSQL;
+	}
+
 	public String select(DiscussionQuery query) {
-
-		// 因为回复数不多就不加冗余字段里，直接 COUNT 统计。
-		var sql = new SQL()
-				.SELECT("*, COUNT(*) AS reply")
-				.FROM("discussion")
-				.JOIN("(SELECT parent AS _p FROM discussion) AS B ON B._p=id")
-				.GROUP_BY("id");
-
+		var sql = new SQL().SELECT("*").FROM("discussion");
 		applyFilters(sql, query);
 
 		var pageable = query.getPageable();
@@ -38,7 +49,7 @@ public final class SqlProvider {
 	}
 
 	public String selectCount(DiscussionQuery query) {
-		var sql = new SQL().SELECT("COUNT(*)").FROM("discussion AS A");
+		var sql = new SQL().SELECT("COUNT(*)").FROM("discussion");
 		applyFilters(sql, query);
 		return sql.toString();
 	}

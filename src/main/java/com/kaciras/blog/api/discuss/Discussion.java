@@ -26,7 +26,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(of = {"id", "objectId"})
+@ToString(of = {"id", "type", "objectId"})
 public final class Discussion {
 
 	/** 每条评论都有唯一的ID */
@@ -57,6 +57,6 @@ public final class Discussion {
 	/** 发送评论的IP，用于批量查找垃圾评论 */
 	private InetAddress address;
 
-	/** 回复（楼中楼）总数，仅由 DAO 层设置 */
-	private int reply;
+	/** 可见的回复（楼中楼）总数 */
+	private int replyCount;
 }
