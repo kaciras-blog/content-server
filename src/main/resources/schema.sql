@@ -72,21 +72,21 @@ CREATE TABLE IF NOT EXISTS `category_tree`
 
 CREATE TABLE IF NOT EXISTS `discussion`
 (
-    `id`        int(10) unsigned      NOT NULL AUTO_INCREMENT,
-    `object_id` int(10) unsigned      NOT NULL,
-    `type`      tinyint(3) unsigned   NOT NULL DEFAULT 0,
-    `floor`     int(10) unsigned      NOT NULL,
-    `parent`    int(10) unsigned      NOT NULL DEFAULT 0,
-    `user_id`   int(10) unsigned      NOT NULL,
-    `nickname`  varchar(16)                    DEFAULT NULL,
-    `content`   text                  NOT NULL,
-    `source`    mediumint(8) unsigned NOT NULL DEFAULT 0,
-    `state`     tinyint(3) unsigned   NOT NULL DEFAULT 0 COMMENT '0-正常 1-删除 2-待审',
-    `time`      datetime(6)           NOT NULL,
-    `address`   binary(16)            NOT NULL,
+    `id`          int(10) unsigned    NOT NULL AUTO_INCREMENT,
+    `type`        tinyint(3) unsigned NOT NULL DEFAULT 0,
+    `object_id`   int(10) unsigned    NOT NULL,
+    `floor`       int(10) unsigned    NOT NULL,
+    `parent`      int(10) unsigned    NOT NULL DEFAULT 0,
+    `user_id`     int(10) unsigned    NOT NULL,
+    `nickname`    varchar(16)                  DEFAULT NULL,
+    `content`     text                NOT NULL,
+    `state`       tinyint(3) unsigned NOT NULL DEFAULT 0 COMMENT '0-正常 1-删除 2-待审',
+    `time`        datetime(6)         NOT NULL,
+    `address`     binary(16)          NOT NULL,
+    `reply_count` int(10) unsigned    NOT NULL DEFAULT 0 COMMENT '为了查询方便冗余了',
     PRIMARY KEY (`id`),
     KEY `parent` (`parent`),
-    KEY `object_id_type` (`object_id`, `type`)
+    KEY `type_object_id` (`type`, `object_id`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
 

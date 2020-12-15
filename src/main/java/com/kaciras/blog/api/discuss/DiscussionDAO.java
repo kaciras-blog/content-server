@@ -15,14 +15,26 @@ interface DiscussionDAO {
 	@SelectProvider(type = SqlProvider.class, method = "select")
 	List<Discussion> selectList(DiscussionQuery query);
 
-	@SelectProvider(type = SqlProvider.class, method = "selectCount")
-	int count(DiscussionQuery query);
-
 	@Select("SELECT * FROM discussion WHERE id=#{id}")
 	Optional<Discussion> selectById(int id);
 
+	/**
+	 * 获取符合查询条件的评论总数，分页属性将被忽略。
+	 *
+	 * @param query 查询对象
+	 * @return 评论数
+	 */
+	@SelectProvider(type = SqlProvider.class, method = "selectCount")
+	int count(DiscussionQuery query);
+
+	/**
+	 * 修改评论的回复数，用于子评论改动后确保父评论数据一致。
+	 *
+	 * @param id    评论ID
+	 * @param value 增量
+	 */
 	@Update("UPDATE discussion SET reply_count = reply_count + #{value} WHERE id=#{id}")
-	void addRepliesColumn(int id, int value);
+	void addReplyCount(int id, int value);
 
 	/**
 	 * 更新一条评论的状态。
@@ -45,10 +57,9 @@ interface DiscussionDAO {
 	/**
 	 * 查询评论所在频道的顶层评论数量，不包含子评论（楼中楼）。
 	 *
-	 * @param type     频道类型
-	 * @param objectId 频道ID
+	 * @param discussion 评论
 	 * @return 评论数，不含楼中楼
 	 */
 	@Select("SELECT COUNT(*) FROM discussion WHERE object_id=#{objectId} AND type=#{type} AND parent=0")
-	int countTopLevel(int type, int objectId);
+	int countTopLevel(Discussion discussion);
 }

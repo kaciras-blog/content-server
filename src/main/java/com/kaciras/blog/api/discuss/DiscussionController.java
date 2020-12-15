@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -104,6 +105,7 @@ class DiscussionController {
 			discussion.setObjectId(parent.getObjectId());
 		}
 
+		// 获取频道，同时检查其是否存在
 		var channel = channels.getChannel(discussion);
 		repository.add(discussion);
 
@@ -124,8 +126,11 @@ class DiscussionController {
 	 */
 	@RequirePermission
 	@PatchMapping
+	@Transactional
 	public ResponseEntity<Void> patch(@RequestBody PatchInput input) {
-		repository.updateAll(input.ids, input.state);
+		for (var id : input.ids) {
+			repository.updateState(id, input.state);
+		}
 		return ResponseEntity.noContent().build();
 	}
 }

@@ -5,6 +5,7 @@ import com.kaciras.blog.infra.exception.RequestArgumentException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
@@ -19,8 +20,10 @@ public class DiscussionRepository {
 	private final Clock clock;
 
 	/**
-	 * 添加一条评论，此方法会在评论对象中设置自动生成的 id 以及 floor。
+	 * 添加一条评论，此方法会在评论对象中设置自动生成的 id, time 以及 floor。
 	 * 因为评论的楼层是连续的，所以新评论的楼层就是已有评论的数量 + 1。
+	 * <p>
+	 * 使用了串行级别的事务，因为楼层的确定需要获取评论数，存在幻读的可能。
 	 * <p>
 	 * 【楼层号从1开始】
 	 * 虽然咱码农的世界里编号都是从0开始的，但从1开始更通用些。
@@ -28,27 +31,18 @@ public class DiscussionRepository {
 	 *
 	 * @param discussion 评论对象
 	 */
-	@Transactional
+	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void add(@NonNull Discussion discussion) {
-		if (discussion.getParent() != 0) {
-			var parent = dao.selectById(discussion.getParent()).orElseThrow(RequestArgumentException::new);
+		var parent = discussion.getParent();
 
+		if (parent != 0) {
 			if (discussion.getState() == DiscussionState.Visible) {
-				dao.addRepliesColumn(parent.getId(), 1);
+				dao.addReplyCount(parent, 1);
 			}
-
-			/*
-			 * 当前的数据库设计中评论的ID是全局的，
-			 */
-			if (discussion.getObjectId() != parent.getObjectId()
-					|| discussion.getType() != parent.getType()) {
-				throw new RequestArgumentException("与父评论的频道不同");
-			}
-
 			// parent.getReplies() 返回的是可见的回复数，这里需要的是总数
-			discussion.setFloor(dao.countByParent(parent.getId()) + 1);
+			discussion.setFloor(dao.countByParent(parent) + 1);
 		} else {
-			discussion.setFloor(dao.countTopLevel(discussion.getType(), discussion.getObjectId()) + 1);
+			discussion.setFloor(dao.countTopLevel(discussion) + 1);
 		}
 
 		discussion.setTime(clock.instant());
@@ -66,13 +60,12 @@ public class DiscussionRepository {
 	public List<Discussion> findAll(@NonNull DiscussionQuery query) {
 		var pageable = query.getPageable();
 
-		// 检查排序字段
+		// 检查排序字段，如果在 SQLProvider 里检查错误会被包装
 		if (pageable != null && pageable.getSort().isSorted()) {
 			var column = Misc.getFirst(pageable.getSort()).getProperty();
 			switch (column) {
-				case "reply":
 				case "id":
-				case "score":
+				case "reply":
 					break;
 				default:
 					throw new RequestArgumentException("不支持的排序：" + column);
@@ -83,21 +76,23 @@ public class DiscussionRepository {
 	}
 
 	/**
-	 * 批量更新评论的状态。
-	 * TODO:
-	 * 因为单个更新属于批量更新的特例，所以它也使用了这个方法。但如果遇到了需要在JAVA代码
-	 * 里鉴权等逻辑，则无法用一条SQL直接更新，还是得一个个UPDATE，目前也没找到更好的方法。
+	 * 更新评论的状态。
 	 *
-	 * @param ids   ID列表
+	 * @param id    评论ID
 	 * @param state 新状态
 	 */
 	@Transactional
-	public void updateAll(List<Integer> ids, DiscussionState state) {
-		var increment = state == DiscussionState.Visible ? 1 : -1;
-		for (var id : ids) {
-			var discussion = dao.selectById(id).orElseThrow(RequestArgumentException::new);
-			dao.updateState(id, state);
-			dao.addRepliesColumn(discussion.getParent(), increment);
+	public void updateState(int id, DiscussionState state) {
+		var discussion = dao.selectById(id).orElseThrow(RequestArgumentException::new);
+		dao.updateState(id, state);
+
+		// 从可见变为不可见，或反过来时需要更新父评论的回复数
+		var ov = discussion.getState() == DiscussionState.Visible;
+		var nv = state == DiscussionState.Visible;
+		if (ov && !nv) {
+			dao.addReplyCount(discussion.getParent(), -1);
+		} else if (!ov && nv) {
+			dao.addReplyCount(discussion.getParent(), 1);
 		}
 	}
 }

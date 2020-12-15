@@ -14,7 +14,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.InetAddress;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,7 +86,14 @@ class DiscussionRepositoryTest {
 		assertThatThrownBy(() -> repository.findAll(query)).isInstanceOf(RequestArgumentException.class);
 	}
 
-	@Test
+	private static Stream<Arguments> queries() {
+//		Arguments.of(new DiscussionQuery(), )
+//		var default_ = new DiscussionQuery()
+		return Stream.of();
+	}
+
+	@MethodSource("queries")
+	@ParameterizedTest
 	void findAll() {
 		var _1 = addData(0);
 		addData(_1.getId());
@@ -102,37 +108,51 @@ class DiscussionRepositoryTest {
 	}
 
 	@Test
-	void updateAllToDeleted() {
+	void updateStateNonExists(){
+		assertThatThrownBy(() -> repository.updateState(777, DiscussionState.Deleted))
+				.isInstanceOf(RequestArgumentException.class);
+	}
+
+	private static Stream<Arguments> stateChanges() {
+		return Stream.of(
+				Arguments.of(DiscussionState.Visible, DiscussionState.Visible, 1),
+				Arguments.of(DiscussionState.Visible, DiscussionState.Deleted, 0),
+				Arguments.of(DiscussionState.Deleted, DiscussionState.Deleted, 0),
+				Arguments.of(DiscussionState.Deleted, DiscussionState.Visible, 1),
+				Arguments.of(DiscussionState.Moderation, DiscussionState.Visible, 1),
+				Arguments.of(DiscussionState.Moderation, DiscussionState.Deleted, 0)
+		);
+	}
+
+	@MethodSource("stateChanges")
+	@ParameterizedTest
+	void updateState(DiscussionState old, DiscussionState neW, int replyCount) {
 		var _1 = addData(0);
-		var _2 = addData(_1.getId());
+		var _2 = addData(_1.getId(), old);
 
-		repository.updateAll(List.of(_1.getId(), _2.getId()), DiscussionState.Deleted);
+		repository.updateState(_2.getId(), neW);
 
-		var query = new DiscussionQuery();
-		query.setState(DiscussionState.Deleted);
-		var list = repository.findAll(query);
+		var discussion = repository.get(_2.getId()).orElseThrow();
+		assertThat(discussion.getState()).isEqualTo(neW);
 
-		assertThat(list).hasSize(2);
-		assertThat(list.get(0).getState()).isEqualTo(DiscussionState.Deleted);
-		assertThat(list.get(0).getReplyCount()).isEqualTo(0);
-		assertThat(list.get(1).getState()).isEqualTo(DiscussionState.Deleted);
+		var parent = repository.get(_1.getId()).orElseThrow();
+		assertThat(parent.getReplyCount()).isEqualTo(replyCount);
 	}
 
 	@Test
-	void updateAllToVisible() {
-		var _1 = addData(0, DiscussionState.Moderation);
+	void updateStateToVisible() {
+		var _1 = addData(0);
 		var _2 = addData(_1.getId(), DiscussionState.Moderation);
 
-		repository.updateAll(List.of(_1.getId(), _2.getId()), DiscussionState.Visible);
+		repository.updateState(_2.getId(), DiscussionState.Visible);
 
-		var query = new DiscussionQuery();
-		query.setState(DiscussionState.Visible);
-		var list = repository.findAll(query);
+		var discussion = repository.get(_2.getId());
+		assertThat(discussion).isPresent();
+		assertThat(discussion.get().getState()).isEqualTo(DiscussionState.Visible);
 
-		assertThat(list).hasSize(2);
-		assertThat(list.get(0).getState()).isEqualTo(DiscussionState.Visible);
-		assertThat(list.get(0).getReplyCount()).isEqualTo(1);
-		assertThat(list.get(1).getState()).isEqualTo(DiscussionState.Visible);
+		var parent = repository.get(_1.getId());
+		assertThat(parent).isPresent();
+		assertThat(parent.get().getReplyCount()).isEqualTo(1);
 	}
 
 	@Test
