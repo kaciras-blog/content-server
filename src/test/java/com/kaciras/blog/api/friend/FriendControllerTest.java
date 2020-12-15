@@ -73,24 +73,36 @@ final class FriendControllerTest extends AbstractControllerTest {
 	@MethodSource("invalidFriends")
 	@ParameterizedTest
 	void invalidFriendLink(FriendLink value) throws Exception {
-		mockMvc
-				.perform(post("/friends").content(objectMapper.writeValueAsBytes(value)))
-				.andExpect(status().is(400));
+		var request = post("/friends").content(objectMapper.writeValueAsBytes(value));
+		mockMvc.perform(request).andExpect(status().is(400));
 	}
 
 	@Test
 	void add() throws Exception {
 		when(repository.addFriend(any())).thenReturn(true);
-		var body = objectMapper.writeValueAsString(createFriend("example.com"));
 
-		mockMvc.perform(post("/friends")
+		var request = post("/friends")
 				.principal(ADMIN)
-				.content(body))
+				.content(objectMapper.writeValueAsString(createFriend("example.com")));
+		mockMvc.perform(request)
 				.andExpect(status().is(201))
 				.andExpect(header().string("Location", "/friends/example.com"));
 
 		verify(repository).addFriend(any());
 		verify(validateService).addForValidate(any());
+	}
+
+	@Test
+	void repeatAdd() throws Exception {
+		when(repository.addFriend(any())).thenReturn(false);
+
+		var request = post("/friends")
+				.principal(ADMIN)
+				.content(objectMapper.writeValueAsString(createFriend("example.com")));
+		mockMvc.perform(request)
+				.andExpect(status().is(409));
+
+		verify(validateService, never()).addForValidate(any());
 	}
 
 	@Test

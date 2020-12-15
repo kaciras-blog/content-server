@@ -22,7 +22,6 @@ import java.util.concurrent.CompletableFuture;
 import static com.kaciras.blog.api.friend.TestHelper.createFriend;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.internal.verification.VerificationModeFactory.noInteractions;
 
 @Import({
 		KxCodecAutoConfiguration.class,
@@ -56,6 +55,14 @@ final class FriendValidateServiceTest {
 		redis.getConnection().flushDb();
 	}
 
+	/**
+	 * 添加一条友链记录到验证服务。
+	 *
+	 * @param domain 友链域名，注意不能重复哦
+	 * @param friendPage 对方的友链页
+	 * @param time 添加的时间
+	 * @return 返回创建的友链对象
+	 */
 	private FriendLink addRecord(String domain, String friendPage, Instant time) {
 		when(clock.instant()).thenReturn(time);
 
@@ -63,35 +70,18 @@ final class FriendValidateServiceTest {
 		service.addForValidate(friend);
 		when(repository.findByHost(eq(domain))).thenReturn(friend);
 
+		// 恢复到当前时间
+		when(clock.instant()).thenReturn(Instant.now());
 		return friend;
 	}
 
-	private void setValidateResult(boolean alive, URI newUrl, String html) {
-		var rv = new FriendSitePage(alive, newUrl, null, html);
-		when(validator.visit(any())).thenReturn(CompletableFuture.completedFuture(rv));
-	}
-
 	@Test
-	void failedCount() {
+	void remove() {
 		addRecord("example.com", null, Instant.EPOCH);
-		setValidateResult(false, null, null);
+		service.removeFromValidate("example.com");
 
 		service.startValidation();
-
-		verify(notification, noInteractions()).reportFriend(any(), any(), any(), any());
-	}
-
-	@Test
-	void notAlive() {
-		var friend = addRecord("example.com", null, Instant.EPOCH);
-		setValidateResult(false, null, null);
-
-		for (int i = 0; i < 4; i++) {
-			when(clock.instant()).thenReturn(Instant.MAX, Instant.EPOCH);
-			service.startValidation();
-		}
-
-		verify(notification).reportFriend(eq(FriendAccident.Type.Inaccessible), eq(friend), any(), isNull());
+		verify(validator, never()).visit(any());
 	}
 
 	@Test
@@ -108,5 +98,54 @@ final class FriendValidateServiceTest {
 		verify(validator, times(2)).visit(any());
 		verify(validator).visit(eq(f1.url));
 		verify(validator).visit(eq(f3.url));
+	}
+
+	private void setValidateResult(boolean alive, URI newUrl, String html) {
+		var rv = new FriendSitePage(alive, newUrl, null, html);
+		when(validator.visit(any())).thenReturn(CompletableFuture.completedFuture(rv));
+	}
+
+	@Test
+	void allowSmallFailedCount() {
+		addRecord("example.com", null, Instant.EPOCH);
+		setValidateResult(false, null, null);
+
+		service.startValidation();
+
+		verify(notification, never()).reportFriend(any(), any(), any(), any());
+	}
+
+	@Test
+	void notAlive() {
+		var friend = addRecord("example.com", null, Instant.EPOCH);
+		setValidateResult(false, null, null);
+
+		for (int i = 0; i < 4; i++) {
+			when(clock.instant()).thenReturn(Instant.MAX, Instant.EPOCH);
+			service.startValidation();
+		}
+
+		verify(notification).reportFriend(eq(FriendAccident.Type.Inaccessible), eq(friend), any(), isNull());
+	}
+
+	@Test
+	void siteMoved() {
+		var friend = addRecord("example.com", null, Instant.EPOCH);
+		var newUrl = URI.create("https://new.home");
+		setValidateResult(true, newUrl, null);
+
+		service.startValidation();
+
+		verify(notification).reportFriend(eq(FriendAccident.Type.Moved), eq(friend), any(), eq(newUrl));
+	}
+
+	@Test
+	void gotDumped() {
+		var friend = addRecord("example.com", "", Instant.EPOCH);
+		setValidateResult(true, null, "<html></html>");
+
+		service.startValidation();
+
+		verify(notification).reportFriend(eq(FriendAccident.Type.AbandonedMe), eq(friend), any(), any());
 	}
 }

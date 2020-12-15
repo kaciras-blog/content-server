@@ -40,12 +40,22 @@ final class FriendRepositoryTest {
 		repository.addFriend(friend);
 
 		var rv = repository.getFriends()[0];
-
-		// 忽略Json序列化精度问题
-		rv.createTime = friend.createTime;
-
 		assertThat(friend.createTime).isNotNull();
-		assertThat(rv).usingRecursiveComparison().isEqualTo(friend);
+
+		// 忽略 Json 序列化精度问题，下同
+		assertThat(rv).usingRecursiveComparison().ignoringFields("createTime").isEqualTo(friend);
+	}
+
+	@Test
+	void findByHost() {
+		var friend = createFriend("example.com");
+		repository.addFriend(friend);
+
+		assertThat(repository.findByHost("non.exists")).isNull();
+
+		var found = repository.findByHost("example.com");
+		assertThat(found).isNotNull();
+		assertThat(found).usingRecursiveComparison().ignoringFields("createTime").isEqualTo(friend);
 	}
 
 	@Test
