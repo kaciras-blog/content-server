@@ -26,7 +26,8 @@ final class MailServiceTest {
 		entry.setPreview("test content preview");
 		entry.setTime(Instant.now());
 		entry.setUrl("https://example.com");
-		entry.setFloor(7);
+		entry.setChannelFloor(7);
+		entry.setReplyFloor(1);
 
 		service.send("test@example.com", "网吧充钱提醒", "您有新的消息请注意查收");
 

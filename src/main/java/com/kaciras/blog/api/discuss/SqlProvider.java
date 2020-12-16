@@ -14,12 +14,17 @@ public final class SqlProvider {
 
 	// 字段一多就好麻烦啊，要不要换别的 ORM 库呢
 	public SqlProvider() {
-		String[] fields = {"type", "floor", "parent", "nickname", "content", "time", "state", "address"};
+		String[] fields = {"type", "parent", "nickname", "content", "time", "state", "address"};
 		var placeholders = Arrays.stream(fields).map(f -> "#{" + f + "}").toArray(String[]::new);
 
 		var sql = new SQL().INSERT_INTO("discussion");
 		sql.INTO_COLUMNS(fields).INTO_VALUES(placeholders);
-		this.insertSQL = sql.VALUES("object_id", "#{objectId}").VALUES("user_id", "#{userId}").toString();
+		this.insertSQL = sql
+				.VALUES("object_id", "#{objectId}")
+				.VALUES("user_id", "#{userId}")
+				.VALUES("reply_floor", "#{replyFloor}")
+				.VALUES("channel_floor", "#{channelFloor}")
+				.toString();
 	}
 
 	public String insert(Discussion value) {

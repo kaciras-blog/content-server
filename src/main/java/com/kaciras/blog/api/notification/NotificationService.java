@@ -53,7 +53,8 @@ public class NotificationService {
 		}
 
 		var entry = new DiscussionActivity();
-		entry.setFloor(discussion.getFloor());
+		entry.setChannelFloor(discussion.getChannelFloor());
+		entry.setReplyFloor(discussion.getReplyFloor());
 		entry.setTime(discussion.getTime());
 		entry.setUrl(channel.getUrl());
 		entry.setTitle(channel.getName());
@@ -63,7 +64,7 @@ public class NotificationService {
 		entry.setPreview(preview);
 
 		if (parent != null) {
-			entry.setParentFloor(parent.getFloor());
+			entry.setParentFloor(parent.getReplyFloor());
 		}
 
 		var size = discussions.rightPush(entry);

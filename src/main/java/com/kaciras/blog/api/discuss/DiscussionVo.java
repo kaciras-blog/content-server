@@ -17,7 +17,9 @@ public final class DiscussionVo {
 	private int type;
 
 	private int parent;
-	private int floor;
+
+	private int channelFloor;
+	private int replyFloor;
 
 	private UserVo user;
 

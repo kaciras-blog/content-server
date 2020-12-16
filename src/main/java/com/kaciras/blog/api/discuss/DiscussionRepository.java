@@ -20,14 +20,14 @@ public class DiscussionRepository {
 	private final Clock clock;
 
 	/**
-	 * 添加一条评论，此方法会在评论对象中设置自动生成的 id, time 以及 floor。
-	 * 因为评论的楼层是连续的，所以新评论的楼层就是已有评论的数量 + 1。
-	 * <p>
-	 * 使用了串行级别的事务，因为楼层的确定需要获取评论数，存在幻读的可能。
+	 * 添加一条评论，此方法会在评论对象中设置自动生成的 id, time 以及两个 floor。
+	 * 因为楼层是连续的，所以新评论的楼层就是已有评论的数量 + 1。
 	 * <p>
 	 * 【楼层号从1开始】
 	 * 虽然咱码农的世界里编号都是从0开始的，但从1开始更通用些。
-	 * 先前是从0开始的，可以使用一句 SQL 更新：UPDATE discussion SET `floor`=`floor`+1
+	 * <p>
+	 * 【事务】
+	 * 使用了串行级别的事务，因为楼层的确定需要获取评论数，存在幻读的可能。
 	 *
 	 * @param discussion 评论对象
 	 */
@@ -40,12 +40,13 @@ public class DiscussionRepository {
 				dao.addReplyCount(parent, 1);
 			}
 			// parent.getReplies() 返回的是可见的回复数，这里需要的是总数
-			discussion.setFloor(dao.countByParent(parent) + 1);
+			discussion.setReplyFloor(dao.countByParent(parent) + 1);
 		} else {
-			discussion.setFloor(dao.countTopLevel(discussion) + 1);
+			discussion.setReplyFloor(dao.countTopLevel(discussion) + 1);
 		}
 
 		discussion.setTime(clock.instant());
+		discussion.setChannelFloor(dao.countByChannel(discussion) + 1);
 		dao.insert(discussion);
 	}
 

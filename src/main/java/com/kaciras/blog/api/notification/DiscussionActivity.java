@@ -13,7 +13,9 @@ public final class DiscussionActivity {
 	private String url;
 	private String title;
 
-	private int floor;
+	private int channelFloor;
+	private int replyFloor;
+
 	private int parentFloor;
 
 	/** 内容预览 */

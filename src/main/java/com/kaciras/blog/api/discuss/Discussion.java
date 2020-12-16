@@ -10,6 +10,7 @@ import java.time.Instant;
 
 /**
  * 评论对象，无论是顶层评论还是楼中楼都是这个。
+ * 为了同时支持引用模式和楼中楼模式，评论具有两种楼层号。
  * <p/>
  * 【点赞功能】
  * 评论曾经有点赞功能但后来移除了，理由有这么几点：
@@ -40,6 +41,9 @@ public final class Discussion {
 	private int type;
 	private int objectId;
 
+	/**
+	 * 发表该评论的用户ID
+	 */
 	private int userId;
 
 	/**
@@ -48,9 +52,15 @@ public final class Discussion {
 	private int parent;
 
 	/**
-	 * 评论的楼层号，不同的被评论对象的楼层号是独立的。
+	 * 在频道内递增的楼层号。
 	 */
-	private int floor;
+	private int channelFloor;
+
+	/**
+	 * 在父评论范围内递增的楼层号。
+	 * 如果没有父评论，则以频道内顶层评论为范围。
+	 */
+	private int replyFloor;
 
 	/**
 	 * 昵称用于匿名下区分不同的评论者，由前端随意填写。

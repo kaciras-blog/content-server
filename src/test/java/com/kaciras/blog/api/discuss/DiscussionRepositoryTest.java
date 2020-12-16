@@ -68,14 +68,25 @@ class DiscussionRepositoryTest {
 
 	@Test
 	void add() {
-		var value = newDiscussion();
-		repository.add(value);
-
-		assertThat(value.getFloor()).isEqualTo(1);
-		assertThat(value.getTime()).isNotNull();
+		var top0 = addData(0);
+		var reply0 = addData(top0.getId());
+		var top1 = addData(0);
+		var reply1 = addData(top0.getId());
 
 		// Mariadb 的事务不回滚自增值，只能用大于来判断
-		assertThat(value.getId()).isGreaterThanOrEqualTo(1);
+		assertThat(top0.getId()).isGreaterThanOrEqualTo(1);
+		assertThat(top0.getTime()).isNotNull();
+		assertThat(top0.getReplyFloor()).isEqualTo(1);
+
+		assertThat(top0.getChannelFloor()).isEqualTo(1);
+		assertThat(reply0.getChannelFloor()).isEqualTo(2);
+		assertThat(top1.getChannelFloor()).isEqualTo(3);
+		assertThat(reply1.getChannelFloor()).isEqualTo(4);
+
+		assertThat(top0.getReplyFloor()).isEqualTo(1);
+		assertThat(reply0.getReplyFloor()).isEqualTo(1);
+		assertThat(top1.getReplyFloor()).isEqualTo(2);
+		assertThat(reply1.getReplyFloor()).isEqualTo(2);
 	}
 
 	@Test
@@ -108,7 +119,7 @@ class DiscussionRepositoryTest {
 	}
 
 	@Test
-	void updateStateNonExists(){
+	void updateStateNonExists() {
 		assertThatThrownBy(() -> repository.updateState(777, DiscussionState.Deleted))
 				.isInstanceOf(RequestArgumentException.class);
 	}
@@ -175,7 +186,8 @@ class DiscussionRepositoryTest {
 		assertThat(value.getObjectId()).isEqualTo(7);
 		assertThat(value.getState()).isEqualTo(DiscussionState.Visible);
 		assertThat(value.getTime()).isNotNull();
-		assertThat(value.getFloor()).isEqualTo(1);
+		assertThat(value.getChannelFloor()).isEqualTo(1);
+		assertThat(value.getReplyFloor()).isEqualTo(1);
 		assertThat(value.getContent()).isEqualTo(expected.getContent());
 		assertThat(value.getAddress()).isNotNull();
 	}

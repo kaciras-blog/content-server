@@ -5,6 +5,12 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 每个评论都有一个可选的父评论，以及任意数量的子评论，在数据结构上表现为树。
+ * 前端的两种模式：楼中楼和引用，也都能用树来表示。
+ * <p>
+ * 不同于分类，评论没有跨级查询需求，故没必要使用闭包表，直接存个 parent 即可。
+ */
 @Mapper
 interface DiscussionDAO {
 
@@ -45,6 +51,9 @@ interface DiscussionDAO {
 	@Update("UPDATE discussion SET state=#{state} WHERE id=#{id}")
 	void updateState(int id, DiscussionState state);
 
+	@Select("SELECT COUNT(*) FROM discussion WHERE type=#{type} AND object_id=#{objectId}")
+	int countByChannel(Discussion discussion);
+
 	/**
 	 * 查询指定的评论有多少个子评论，比用 DiscussionQuery 简洁些。
 	 *
@@ -60,6 +69,6 @@ interface DiscussionDAO {
 	 * @param discussion 评论
 	 * @return 评论数，不含楼中楼
 	 */
-	@Select("SELECT COUNT(*) FROM discussion WHERE object_id=#{objectId} AND type=#{type} AND parent=0")
+	@Select("SELECT COUNT(*) FROM discussion WHERE  type=#{type} AND object_id=#{objectId} AND parent=0")
 	int countTopLevel(Discussion discussion);
 }
