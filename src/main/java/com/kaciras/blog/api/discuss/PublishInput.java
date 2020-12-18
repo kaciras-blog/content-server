@@ -17,12 +17,12 @@ final class PublishInput {
 
 	private final int parent;
 
-	private final int score;
-
 	@Length(max = 16)
 	@NullOrNotBlank
 	private final String nickname;
 
+	// 底层使用 TEXT 类型，utf8mb4 一个字最多4字节
+	@Length(max = 65536 / 4 - 1)
 	@NotBlank
 	private final String content;
 }
