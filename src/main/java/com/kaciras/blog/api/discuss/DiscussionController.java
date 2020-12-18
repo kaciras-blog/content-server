@@ -65,21 +65,10 @@ class DiscussionController {
 		query.setPageable(pageable);
 		verifyQuery(query);
 
+		var discussions = repository.findAll(query);
 		var size = repository.count(query);
-		var result = repository.findAll(query);
 
-		// 控制台里查询的，需要加上一个链接字段
-		if (query.isLinked()) {
-			return new ListQueryView<>(size, mapper.toReplyView(result));
-		}
-
-		// 查询的是回复（楼中楼）
-		if (query.getParent() != 0) {
-			return new ListQueryView<>(size, mapper.toReplyView(result));
-		}
-
-		var items = mapper.toAggregatedView(result, query.getReplySize());
-		return new ListQueryView<>(size, items);
+		return new ListQueryView<>(size, mapper.toViewObject(discussions, query));
 	}
 
 	// 无论是否审核都返回视图，前端可以通过 state 判断
@@ -113,12 +102,9 @@ class DiscussionController {
 			notificationService.reportDiscussion(discussion, parent, channel);
 		}
 
-		var vo = mapper.toReplyView(discussion);
-		if (discussion.getParent() == 0) {
-			vo.setReplies(ListQueryView.empty());
-		}
-
-		return ResponseEntity.created(URI.create("/discussions/" + discussion.getId())).body(vo);
+		return ResponseEntity
+				.created(URI.create("/discussions/" + discussion.getId()))
+				.body(mapper.toViewObject(discussion));
 	}
 
 	/**

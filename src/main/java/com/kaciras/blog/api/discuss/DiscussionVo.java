@@ -1,11 +1,12 @@
 package com.kaciras.blog.api.discuss;
 
-import com.kaciras.blog.api.ListQueryView;
 import com.kaciras.blog.api.user.UserVo;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,11 +28,15 @@ public final class DiscussionVo {
 	private String content;
 	private Instant time;
 
+	private int replyCount;
+
 	private boolean deleted;
 
 	// ========== 下面是可选的聚合属性 ==========
 
 	private DiscussChannel channel;
 
-	private ListQueryView<DiscussionVo> replies;
+	private DiscussionVo replyTo;
+
+	private List<DiscussionVo> replies = Collections.emptyList();
 }
