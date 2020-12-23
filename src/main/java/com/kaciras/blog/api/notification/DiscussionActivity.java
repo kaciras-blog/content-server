@@ -13,7 +13,7 @@ public final class DiscussionActivity {
 	private String url;
 	private String title;
 
-	private int channelFloor;
+	private int topicFloor;
 	private int replyFloor;
 
 	private int parentFloor;

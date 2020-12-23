@@ -1,8 +1,8 @@
 package com.kaciras.blog.api.notification;
 
 import com.kaciras.blog.api.RedisOperationsBuilder;
-import com.kaciras.blog.api.discuss.DiscussChannel;
 import com.kaciras.blog.api.discuss.Discussion;
+import com.kaciras.blog.api.discuss.Topic;
 import com.kaciras.blog.api.friend.FriendLink;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.scheduling.annotation.Async;
@@ -47,17 +47,17 @@ public class NotificationService {
 	}
 
 	@Async
-	public void reportDiscussion(Discussion discussion, Discussion parent, DiscussChannel channel) {
+	public void reportDiscussion(Discussion discussion, Discussion parent, Topic topic) {
 		if (discussion.getUserId() == 2) {
 			return; // 自己的评论就不用提醒了
 		}
 
 		var entry = new DiscussionActivity();
-		entry.setChannelFloor(discussion.getChannelFloor());
+		entry.setTopicFloor(discussion.getTopicFloor());
 		entry.setReplyFloor(discussion.getReplyFloor());
 		entry.setTime(discussion.getTime());
-		entry.setUrl(channel.getUrl());
-		entry.setTitle(channel.getName());
+		entry.setUrl(topic.getUrl());
+		entry.setTitle(topic.getName());
 
 		var content = discussion.getContent();
 		var preview = content.length() > 200 ? content.substring(0, 200) + "..." : content;

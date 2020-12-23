@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `discussion`
     `type`          tinyint(3) unsigned NOT NULL DEFAULT 0,
     `object_id`     int(10) unsigned    NOT NULL,
     `parent`        int(10) unsigned    NOT NULL DEFAULT 0,
-    `channel_floor` int(10) unsigned    NOT NULL,
+    `topic_floor` int(10) unsigned    NOT NULL,
     `reply_floor`   int(10) unsigned    NOT NULL,
     `user_id`       int(10) unsigned    NOT NULL,
     `nickname`      varchar(16)                  DEFAULT NULL,

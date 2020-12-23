@@ -19,7 +19,7 @@ public final class DiscussionVo {
 
 	private int parent;
 
-	private int channelFloor;
+	private int topicFloor;
 	private int replyFloor;
 
 	private UserVo user;
@@ -34,7 +34,7 @@ public final class DiscussionVo {
 
 	// ========== 下面是可选的聚合属性 ==========
 
-	private DiscussChannel channel;
+	private Topic topic;
 
 	private DiscussionVo replyTo;
 

@@ -23,7 +23,7 @@ public final class SqlProvider {
 				.VALUES("object_id", "#{objectId}")
 				.VALUES("user_id", "#{userId}")
 				.VALUES("reply_floor", "#{replyFloor}")
-				.VALUES("channel_floor", "#{channelFloor}")
+				.VALUES("topic_floor", "#{topicFloor}")
 				.toString();
 	}
 

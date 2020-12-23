@@ -46,7 +46,7 @@ public class DiscussionRepository {
 		}
 
 		discussion.setTime(clock.instant());
-		discussion.setChannelFloor(dao.countByChannel(discussion) + 1);
+		discussion.setTopicFloor(dao.countByTopic(discussion) + 1);
 		dao.insert(discussion);
 	}
 

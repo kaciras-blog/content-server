@@ -52,13 +52,13 @@ public final class Discussion {
 	private int parent;
 
 	/**
-	 * 在频道内递增的楼层号。
+	 * 在主题内递增的楼层号。
 	 */
-	private int channelFloor;
+	private int topicFloor;
 
 	/**
 	 * 在父评论范围内递增的楼层号。
-	 * 如果没有父评论，则以频道内顶层评论为范围。
+	 * 如果没有父评论，则以主题内顶层评论为范围。
 	 */
 	private int replyFloor;
 

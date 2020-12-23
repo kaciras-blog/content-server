@@ -1,6 +1,8 @@
 package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.infra.exception.RequestArgumentException;
+import org.apache.ibatis.session.SqlSession;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -14,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.InetAddress;
+import java.sql.SQLException;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,6 +29,19 @@ class DiscussionRepositoryTest {
 
 	@Autowired
 	private DiscussionRepository repository;
+
+	@Autowired
+	private SqlSession sqlSession;
+
+	/**
+	 * Mariadb 和 MySQL 的事务不能回滚自增值，导致新加的行 ID 无法预测，必须手动重置下。
+	 */
+	@BeforeEach
+	void resetAutoIncrement() throws SQLException {
+		sqlSession.getConnection()
+				.createStatement()
+				.execute("ALTER TABLE discussion AUTO_INCREMENT = 1");
+	}
 
 	private static Discussion newDiscussion() {
 		var value = new Discussion();
@@ -78,10 +94,10 @@ class DiscussionRepositoryTest {
 		assertThat(top0.getTime()).isNotNull();
 		assertThat(top0.getReplyFloor()).isEqualTo(1);
 
-		assertThat(top0.getChannelFloor()).isEqualTo(1);
-		assertThat(reply0.getChannelFloor()).isEqualTo(2);
-		assertThat(top1.getChannelFloor()).isEqualTo(3);
-		assertThat(reply1.getChannelFloor()).isEqualTo(4);
+		assertThat(top0.getTopicFloor()).isEqualTo(1);
+		assertThat(reply0.getTopicFloor()).isEqualTo(2);
+		assertThat(top1.getTopicFloor()).isEqualTo(3);
+		assertThat(reply1.getTopicFloor()).isEqualTo(4);
 
 		assertThat(top0.getReplyFloor()).isEqualTo(1);
 		assertThat(reply0.getReplyFloor()).isEqualTo(1);
@@ -98,20 +114,18 @@ class DiscussionRepositoryTest {
 	}
 
 	private static Stream<Arguments> queries() {
-//		Arguments.of(new DiscussionQuery(), )
-//		var default_ = new DiscussionQuery()
-		return Stream.of();
+		return Stream.of(
+				Arguments.of(new DiscussionQuery().setParent(0))
+		);
 	}
 
 	@MethodSource("queries")
 	@ParameterizedTest
-	void findAll() {
+	void findAll(DiscussionQuery query) {
 		var _1 = addData(0);
 		addData(_1.getId());
 		addData(_1.getId(), DiscussionState.Deleted);
 
-		var query = new DiscussionQuery();
-		query.setParent(0);
 		var list = repository.findAll(query);
 
 		assertThat(list).hasSize(1);
@@ -186,7 +200,7 @@ class DiscussionRepositoryTest {
 		assertThat(value.getObjectId()).isEqualTo(7);
 		assertThat(value.getState()).isEqualTo(DiscussionState.Visible);
 		assertThat(value.getTime()).isNotNull();
-		assertThat(value.getChannelFloor()).isEqualTo(1);
+		assertThat(value.getTopicFloor()).isEqualTo(1);
 		assertThat(value.getReplyFloor()).isEqualTo(1);
 		assertThat(value.getContent()).isEqualTo(expected.getContent());
 		assertThat(value.getAddress()).isNotNull();

@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 final class DiscussionControllerTest extends AbstractControllerTest {
 
 	@SpyBean
-	private ChannelRegistration channels;
+	private TopicRegistration topics;
 
 	@MockBean
 	private DiscussionRepository repository;
@@ -62,12 +62,12 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	void postWithNonExistsChannel() throws Exception {
+	void postWithNonExistsTopic() throws Exception {
 		var input = new PublishInput(0, 0, 0, null, "test");
 		var body = objectMapper.writeValueAsString(input);
 
 		// 对与 spy 的对象，且方法内会抛异常，必须使用 doXX.when(obj).call 方式而不是 when(obj.call).thenXX
-		doThrow(new RequestArgumentException()).when(channels).getChannel(anyInt(), anyInt());
+		doThrow(new RequestArgumentException()).when(topics).get(anyInt(), anyInt());
 
 		mockMvc.perform(post("/discussions").content(body)).andExpect(status().is(400));
 	}
@@ -86,14 +86,14 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		var input = new PublishInput(0, 0, 0, null, "test");
 		var body = objectMapper.writeValueAsString(input);
 
-		var channel = new DiscussChannel("ch", "http://abc");
-		doReturn(channel).when(channels).getChannel(anyInt(), anyInt());
+		var topic = new Topic("ch", "http://example.com");
+		doReturn(topic).when(topics).get(anyInt(), anyInt());
 
 		mockMvc.perform(post("/discussions").content(body)).andExpect(status().is(201));
 
 		var captor = ArgumentCaptor.forClass(Discussion.class);
 		verify(repository).add(captor.capture());
-		verify(notification).reportDiscussion(any(), eq(null), eq(channel));
+		verify(notification).reportDiscussion(any(), eq(null), eq(topic));
 
 		var stored = captor.getValue();
 		assertThat(stored.getContent()).isEqualTo("test");

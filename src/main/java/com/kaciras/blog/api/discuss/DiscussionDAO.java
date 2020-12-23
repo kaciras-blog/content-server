@@ -52,7 +52,7 @@ interface DiscussionDAO {
 	void updateState(int id, DiscussionState state);
 
 	@Select("SELECT COUNT(*) FROM discussion WHERE type=#{type} AND object_id=#{objectId}")
-	int countByChannel(Discussion discussion);
+	int countByTopic(Discussion discussion);
 
 	/**
 	 * 查询指定的评论有多少个子评论，比用 DiscussionQuery 简洁些。
@@ -64,7 +64,7 @@ interface DiscussionDAO {
 	int countByParent(int id);
 
 	/**
-	 * 查询评论所在频道的顶层评论数量，不包含子评论（楼中楼）。
+	 * 查询评论所在主题的顶层评论数量，不包含子评论（楼中楼）。
 	 *
 	 * @param discussion 评论
 	 * @return 评论数，不含楼中楼

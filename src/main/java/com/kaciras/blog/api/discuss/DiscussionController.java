@@ -24,7 +24,7 @@ import java.net.URI;
 @RequestMapping("/discussions")
 class DiscussionController {
 
-	private final ChannelRegistration channels;
+	private final TopicRegistration topics;
 	private final DiscussionRepository repository;
 	private final ViewModelMapper mapper;
 
@@ -94,12 +94,12 @@ class DiscussionController {
 			discussion.setObjectId(parent.getObjectId());
 		}
 
-		// 获取频道，同时检查其是否存在
-		var channel = channels.getChannel(discussion);
+		// 获取主题，同时检查其是否存在
+		var topic = topics.get(discussion);
 		repository.add(discussion);
 
 		if (discussion.getState() == DiscussionState.Visible) {
-			notificationService.reportDiscussion(discussion, parent, channel);
+			notificationService.reportDiscussion(discussion, parent, topic);
 		}
 
 		return ResponseEntity

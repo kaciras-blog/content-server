@@ -8,13 +8,13 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
- * 频道的管理中心，处理评论频道相关的操作。
+ * 主题的管理中心，处理评论主题相关的操作。
  * <p>
  * 目前仅有两个类型所以就只有一个方法，如果要支持扩展就有得写了。
  */
 @RequiredArgsConstructor
 @Component
-public class ChannelRegistration {
+public class TopicRegistration {
 
 	private final ArticleRepository articleRepository;
 
@@ -22,17 +22,17 @@ public class ChannelRegistration {
 	private String origin;
 
 	/**
-	 * 获取评论所在的频道。
+	 * 获取评论所在的主题。
 	 *
 	 * @param discussion 评论
-	 * @return 频道
+	 * @return 主题
 	 */
-	public DiscussChannel getChannel(Discussion discussion) {
-		return getChannel(discussion.getType(), discussion.getObjectId());
+	public Topic get(Discussion discussion) {
+		return get(discussion.getType(), discussion.getObjectId());
 	}
 
 	/**
-	 * 查询一个评论频道的基本信息，如果频道不存在则抛出异常。
+	 * 查询一个评论主题的基本信息，如果主题不存在则抛出异常。
 	 * <p>
 	 * 【URL 的问题】
 	 * 页面的组织是前端的事情，按理说不应该在这里构造 URL，但如果 URL 随着评论一起提交，
@@ -41,18 +41,18 @@ public class ChannelRegistration {
 	 *
 	 * @param type     类型
 	 * @param objectId 对象ID
-	 * @return 频道对象
-	 * @throws RequestArgumentException 如果频道不存在，这里为了省事没用 NotFound 异常
+	 * @return 主题对象
+	 * @throws RequestArgumentException 如果主题不存在，这里为了省事没用 NotFound 异常
 	 */
 	@NonNull
-	public DiscussChannel getChannel(int type, int objectId) {
+	public Topic get(int type, int objectId) {
 		if (type == 0) {
 			var article = articleRepository.findById(objectId);
 			var url = String.format("%s/article/%d/%s", origin, article.getId(), article.getUrlTitle());
-			return new DiscussChannel(article.getTitle(), url);
+			return new Topic(article.getTitle(), url);
 		}
 		if (type == 1) {
-			return new DiscussChannel("关于 - 博主", origin + "/about/blogger");
+			return new Topic("关于 - 博主", origin + "/about/blogger");
 		}
 		throw new RequestArgumentException("被评论的对象不存在");
 	}
