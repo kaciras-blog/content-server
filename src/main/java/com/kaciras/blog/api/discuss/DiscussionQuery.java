@@ -27,8 +27,6 @@ public final class DiscussionQuery {
 
 	// ======== 下面的字段不在 SQL 中使用 ========
 
-	private boolean linked;
-
 	@Max(5)
 	private int replySize;
 
@@ -38,5 +36,5 @@ public final class DiscussionQuery {
 	 * GitHub 的 Comment 里将引用的评论作为内容的一部分并用 blockquote 标识，
 	 * 这在支持双模式的设计里行不通，因为引用的内容在楼中楼的里纯属多余。
 	 */
-	private boolean expandParent;
+	private boolean referenceMode;
 }

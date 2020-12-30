@@ -1,6 +1,5 @@
 package com.kaciras.blog.api.discuss;
 
-import com.kaciras.blog.api.ListQueryView;
 import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.api.config.BindConfig;
 import com.kaciras.blog.api.notification.NotificationService;
@@ -61,14 +60,18 @@ class DiscussionController {
 	 * Qualifier, SortDefault, SortDefaults 可以改变一些默认的行为，SpringBoot 也提供了对参数名的配置。
 	 */
 	@GetMapping
-	public ListQueryView<DiscussionVo> getList(DiscussionQuery query, Pageable pageable) {
+	public MappingListView<Integer, DiscussionVo> getList(DiscussionQuery query, Pageable pageable) {
 		query.setPageable(pageable);
 		verifyQuery(query);
 
-		var discussions = repository.findAll(query);
-		var size = repository.count(query);
+		var session = new QueryCacheSession(repository, mapper);
+		var total = repository.count(query);
 
-		return new ListQueryView<>(size, mapper.toViewObject(discussions, query));
+		var items = query.isReferenceMode()
+				? session.findAll(query)
+				: session.findAllWithChildren(query);
+
+		return new MappingListView<>(total, items, session.getObjects());
 	}
 
 	// 无论是否审核都返回视图，前端可以通过 state 判断

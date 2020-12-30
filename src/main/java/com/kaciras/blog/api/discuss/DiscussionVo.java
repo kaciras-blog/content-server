@@ -36,7 +36,5 @@ public final class DiscussionVo {
 
 	private Topic topic;
 
-	private DiscussionVo replyTo;
-
-	private List<DiscussionVo> replies = Collections.emptyList();
+	private List<Integer> replies = Collections.emptyList();
 }
