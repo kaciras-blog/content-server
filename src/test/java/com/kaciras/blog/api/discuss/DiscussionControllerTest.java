@@ -2,7 +2,7 @@ package com.kaciras.blog.api.discuss;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.AbstractControllerTest;
-import com.kaciras.blog.api.Snapshots;
+import com.kaciras.blog.api.SnapshotAssertion;
 import com.kaciras.blog.api.notification.NotificationService;
 import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.api.user.UserVo;
@@ -48,7 +48,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	private ObjectMapper objectMapper;
 
 	@Autowired
-	private Snapshots snapshots;
+	private SnapshotAssertion snapshot;
 
 	private static Stream<Arguments> invalidQueries() {
 		return Stream.of(
@@ -91,7 +91,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 
 		mockMvc.perform(request)
 				.andExpect(status().is(200))
-				.andExpect(snapshots.expectBodyToMatchSnapshot());
+				.andExpect(snapshot.matchBody());
 	}
 
 	@Test
@@ -108,7 +108,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 				.andReturn()
 				.getResponse();
 
-		snapshots.assertMatch(response.getContentAsString());
+		snapshot.assertMatch(response.getContentAsString());
 	}
 
 	private static Stream<Arguments> invalidPostRequests() {

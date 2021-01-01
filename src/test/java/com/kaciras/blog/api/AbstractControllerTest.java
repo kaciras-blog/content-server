@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.infra.principal.ServletSecurityContextFilter;
 import com.kaciras.blog.infra.principal.WebPrincipal;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
@@ -19,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @EnableLoadTimeWeaving
 @ActiveProfiles("test")
 @SpringBootTest
+@ExtendWith(SnapshotAssertion.TestContextHolder.class)
 public abstract class AbstractControllerTest {
 
 	public static final WebPrincipal ADMIN = new WebPrincipal(WebPrincipal.ADMIN_ID);
