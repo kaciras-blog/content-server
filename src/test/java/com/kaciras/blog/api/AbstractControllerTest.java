@@ -34,11 +34,14 @@ public abstract class AbstractControllerTest {
 
 	@BeforeEach
 	void setup() {
+		var requestTemplate = get("/")
+				.principal(ANONYMOUS)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding("utf-8");
+
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+				.defaultRequest(requestTemplate)
 				.addFilter(new ServletSecurityContextFilter())
-				.defaultRequest(get("/")
-						.contentType(MediaType.APPLICATION_JSON)
-						.principal(ANONYMOUS))
 				.build();
 	}
 }

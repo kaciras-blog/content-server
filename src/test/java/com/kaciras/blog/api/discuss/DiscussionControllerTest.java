@@ -2,6 +2,7 @@ package com.kaciras.blog.api.discuss;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.AbstractControllerTest;
+import com.kaciras.blog.api.Snapshots;
 import com.kaciras.blog.api.notification.NotificationService;
 import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.api.user.UserVo;
@@ -14,8 +15,12 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.web.servlet.RequestBuilder;
 
+import java.net.InetAddress;
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -41,6 +46,70 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+
+	@Autowired
+	private Snapshots snapshots;
+
+	private static Stream<Arguments> invalidQueries() {
+		return Stream.of(
+				Arguments.of(get("/discussions"), 403),
+				Arguments.of(get("/discussions").param("parent", "0").param("childCount", "100"), 400),
+				Arguments.of(get("/discussions").param("parent", "0").param("count", "100"), 400)
+		);
+	}
+
+	@MethodSource("invalidQueries")
+	@ParameterizedTest
+	void getListWithInvalidQuery(RequestBuilder request, int code) throws Exception {
+		mockMvc.perform(request).andExpect(status().is(code));
+	}
+
+	private Discussion newItem(int id, int parent) {
+		var result = new Discussion();
+		result.setId(id);
+		result.setParent(parent);
+		result.setObjectId(5);
+		result.setContent("评论内容，ID=" + id);
+		result.setState(DiscussionState.Visible);
+		result.setTime(Instant.EPOCH);
+		result.setAddress(InetAddress.getLoopbackAddress());
+		return result;
+	}
+
+	@Test
+	void getListWithChildren() throws Exception {
+		when(userManager.getUser(anyInt())).thenReturn(new UserVo());
+
+		var top = List.of(newItem(1, 0));
+		var children = List.of(newItem(2, 1), newItem(3, 1));
+		when(repository.findAll(any())).thenReturn(top, children);
+
+		var request = get("/discussions")
+				.param("parent", "0")
+				.param("count", "20")
+				.param("childCount", "5");
+
+		mockMvc.perform(request)
+				.andExpect(status().is(200))
+				.andExpect(snapshots.expectBodyToMatchSnapshot());
+	}
+
+	@Test
+	void getListWithParent() throws Exception {
+		when(userManager.getUser(anyInt())).thenReturn(new UserVo());
+
+		var request = get("/discussions")
+				.param("parent", "0")
+				.param("count", "20")
+				.param("includeParent", "true");
+
+		var response = mockMvc.perform(request)
+				.andExpect(status().is(200))
+				.andReturn()
+				.getResponse();
+
+		snapshots.assertMatch(response.getContentAsString());
+	}
 
 	private static Stream<Arguments> invalidPostRequests() {
 		var longText = new char[20000];
@@ -100,31 +169,6 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		assertThat(stored.getAddress()).isNotNull();
 		assertThat(stored.getUserId()).isEqualTo(0);
 		assertThat(stored.getState()).isEqualTo(DiscussionState.Visible);
-	}
-
-	private static Stream<Arguments> invalidQueries() {
-		return Stream.of(
-				Arguments.of(new DiscussionQuery(), 403)
-		);
-	}
-
-	@MethodSource("invalidQueries")
-	@ParameterizedTest
-	void getListWithInvalidQuery(DiscussionQuery query, int code) throws Exception {
-		var request = get("/discussions").content(objectMapper.writeValueAsBytes(query));
-		mockMvc.perform(request).andExpect(status().is(code));
-	}
-
-	@Test
-	void getList() throws Exception {
-		when(userManager.getUser(anyInt())).thenReturn(new UserVo());
-
-		var request = get("/discussions").param("parent", "0").param("count", "20");
-		var result = mockMvc.perform(request)
-				.andExpect(status().is(200))
-				.andReturn();
-
-		result.getResponse().getContentAsByteArray();
 	}
 
 	@Test
