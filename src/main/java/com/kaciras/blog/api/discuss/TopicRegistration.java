@@ -8,7 +8,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
- * 主题的管理中心，处理评论主题相关的操作。
+ * 主题管理中心，处理主题相关的逻辑。
+ * 主题这一层抽象用于将评论功能嵌入到不同的系统，就像 Disqus 那样。
  * <p>
  * 目前仅有两个类型所以就只有一个方法，如果要支持扩展就有得写了。
  */

@@ -4,9 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * 一个主题表示评论所在的板块，比如博客里的文章；论坛里的帖子；聊天室里的房间；GitHub 里的 issue。
- * <p>
- * 虽然感觉主题这个词不太准确，但英语太烂也想不出更好的。
+ * 评论所在的主题，表示评论集合所在的板块。
+ * 比如博客里的文章、论坛里的帖子、GitHub 里的 issue。
  */
 @RequiredArgsConstructor
 @Getter

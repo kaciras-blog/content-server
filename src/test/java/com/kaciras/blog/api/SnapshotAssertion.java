@@ -19,13 +19,20 @@ import java.nio.charset.StandardCharsets;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 /**
- * 快照测试工具，我搜了一圈也没看到快照测试相关的库，只能自己写一个。
+ * 控制器返回的数据太复杂懒得一个个断言，所以就需要一个快照测试工具，
+ * 我搜了一圈也没看到好用的快照测试库，只能自己写一个。
+ * <p>
+ * 快照文件保存在 src/test/resources/snapshots 目录下，属于源码的一部分，应当提交到版本控制系统。
  * <p>
  * 本工具不支持并发测试，且对断言方法的调用的次数和顺序必须是固定的。
- * <p>
+ *
+ * <h3>使用要求</h3>
  * 因为 JUnit 自己没有提供外部获取当前测试的方法，故需要注册一个扩展来追踪当前测试名.
  * 请在测试类上加入：
  * {@code @ExtendWith(Snapshots.TestContextHolder.class)}
+ *
+ * <h3>关于其它功能</h3>
+ * 暂不支持更新已存在的快照，请直接删除原快照然后再生成。
  */
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @Component
@@ -62,6 +69,9 @@ public final class SnapshotAssertion {
 
 	/**
 	 * 断言一个对象符合快照，使用 JSON 序列化将对象保存在快照文件中。
+	 * <p>
+	 * 这里直接使用 AssertJ 的断言而不是自己实现 Diff，因为 IDE 都支持对比差异。
+	 * 至于控制台的话……反正我从不用。
 	 */
 	public void assertMatch(Object object) throws Exception {
 		var actual = objectMapper.writeValueAsString(object);

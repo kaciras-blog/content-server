@@ -2,6 +2,7 @@ package com.kaciras.blog.api.discuss;
 
 import lombok.Getter;
 
+@SuppressWarnings({"FieldMayBeFinal", "unused"})
 @Getter
 final class DiscussionOptions {
 
