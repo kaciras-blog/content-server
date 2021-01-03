@@ -78,7 +78,11 @@ public final class SnapshotAssertion {
 		var file = getSnapshotFile();
 
 		if (file.exists()) {
-			assertThat(actual).isEqualTo(FileUtil.readAsString(file));
+			var expect = FileUtil.readAsString(file);
+
+			// 重新格式化，避免快照文件格式的影响。
+			expect = objectMapper.writeValueAsString(objectMapper.readTree(expect));
+			assertThat(actual).isEqualTo(expect);
 		} else {
 			file.getParentFile().mkdirs();
 			@Cleanup var stream = new FileOutputStream(file);
