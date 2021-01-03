@@ -14,10 +14,10 @@ public final class Topic {
 	/**
 	 * 主题的名字，可用于显示在前端。
 	 */
-	public final String name;
+	private final String name;
 
 	/**
 	 * 主题的地址，在这个地址里可以浏览其评论。
 	 */
-	public final String url;
+	private final String url;
 }
