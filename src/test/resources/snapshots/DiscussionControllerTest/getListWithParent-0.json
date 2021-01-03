@@ -1,0 +1,66 @@
+{
+	"total" : 3,
+	"items" : [
+		1,
+		2,
+		3
+	],
+	"objects" : {
+		"1" : {
+			"id" : 1,
+			"objectId" : 5,
+			"type" : 0,
+			"parent" : 0,
+			"topicFloor" : 0,
+			"replyFloor" : 0,
+			"user" : {
+				"id" : 0
+			},
+			"content" : "评论内容，ID=1",
+			"time" : 0,
+			"replyCount" : 0
+		},
+		"2" : {
+			"id" : 2,
+			"objectId" : 5,
+			"type" : 0,
+			"parent" : 1,
+			"topicFloor" : 0,
+			"replyFloor" : 0,
+			"user" : {
+				"id" : 0
+			},
+			"content" : "评论内容，ID=2",
+			"time" : 0,
+			"replyCount" : 0
+		},
+		"3" : {
+			"id" : 3,
+			"objectId" : 5,
+			"type" : 0,
+			"parent" : 4,
+			"topicFloor" : 0,
+			"replyFloor" : 0,
+			"user" : {
+				"id" : 0
+			},
+			"content" : "评论内容，ID=3",
+			"time" : 0,
+			"replyCount" : 0
+		},
+		"4" : {
+			"id" : 4,
+			"objectId" : 5,
+			"type" : 0,
+			"parent" : 0,
+			"topicFloor" : 0,
+			"replyFloor" : 0,
+			"user" : {
+				"id" : 0
+			},
+			"content" : "评论内容，ID=4",
+			"time" : 0,
+			"replyCount" : 0
+		}
+	}
+}

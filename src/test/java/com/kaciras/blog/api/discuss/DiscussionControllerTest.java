@@ -15,6 +15,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.net.InetAddress;
@@ -76,39 +77,76 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		return result;
 	}
 
+	@SuppressWarnings({"unchecked", "ConstantConditions"})
 	@Test
 	void getListWithChildren() throws Exception {
 		when(userManager.getUser(anyInt())).thenReturn(new UserVo());
 
 		var top = List.of(newItem(1, 0));
 		var children = List.of(newItem(2, 1), newItem(3, 1));
+		when(repository.count(any())).thenReturn(top.size());
 		when(repository.findAll(any())).thenReturn(top, children);
 
 		var request = get("/discussions")
-				.param("parent", "0")
+				.param("type", "0")
+				.param("objectId", "1")
 				.param("count", "20")
 				.param("childCount", "5");
 
 		mockMvc.perform(request)
 				.andExpect(status().is(200))
 				.andExpect(snapshot.matchBody());
+
+		var firstQuery = new DiscussionQuery()
+				.setType(0)
+				.setTopParent(0)
+				.setChildCount(5)
+				.setPageable(PageRequest.of(0, 20));
+		verify(repository).findAll(refEq(firstQuery));
+		verify(repository).count(refEq(firstQuery));
+
+		var secondQuery = new DiscussionQuery()
+				.setObjectId(1)
+				.setPageable(PageRequest.of(0, 5));
+		verify(repository).findAll(refEq(secondQuery));
+
+		verifyNoMoreInteractions(repository);
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	@Test
 	void getListWithParent() throws Exception {
 		when(userManager.getUser(anyInt())).thenReturn(new UserVo());
 
+		var first = List.of(
+				newItem(1, 0),
+				newItem(2, 1),
+				newItem(3, 4)
+		);
+		when(repository.count(any())).thenReturn(first.size());
+		when(repository.findAll(any())).thenReturn(first);
+		when(repository.get(eq(4))).thenReturn(Optional.of(newItem(4, 0)));
+
 		var request = get("/discussions")
-				.param("parent", "0")
+				.param("type", "0")
+				.param("objectId", "1")
 				.param("count", "20")
 				.param("includeParent", "true");
 
-		var response = mockMvc.perform(request)
+		mockMvc.perform(request)
 				.andExpect(status().is(200))
-				.andReturn()
-				.getResponse();
+				.andExpect(snapshot.matchBody());
 
-		snapshot.assertMatch(response.getContentAsString());
+		var firstQuery = new DiscussionQuery()
+				.setType(0)
+				.setObjectId(1)
+				.setIncludeParent(true)
+				.setPageable(PageRequest.of(0, 20));
+		verify(repository).findAll(refEq(firstQuery));
+		verify(repository).count(refEq(firstQuery));
+
+		verify(repository).get(eq(4));
+		verifyNoMoreInteractions(repository);
 	}
 
 	private static Stream<Arguments> invalidPostRequests() {

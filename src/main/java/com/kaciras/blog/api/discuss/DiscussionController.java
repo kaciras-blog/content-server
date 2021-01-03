@@ -40,7 +40,7 @@ class DiscussionController {
 	 * @param query 查询对象
 	 */
 	private void verifyQuery(DiscussionQuery query) {
-		if (query.getObjectId() == null && query.getUserId() == null && query.getParent() == null) {
+		if (query.getObjectId() == null && query.getUserId() == null && query.getTopParent() == null) {
 			SecurityContext.require("POWER_QUERY");
 		}
 		if (query.getState() != DiscussionState.Visible) {
@@ -60,16 +60,13 @@ class DiscussionController {
 	 * Qualifier, SortDefault, SortDefaults 可以改变一些默认的行为，SpringBoot 也提供了对参数名的配置。
 	 */
 	@GetMapping
-	public MappingListView<Integer, DiscussionVo> getList(DiscussionQuery query, Pageable pageable) {
+	public MappingListView<Integer, DiscussionVo> getList(@Valid DiscussionQuery query, Pageable pageable) {
 		query.setPageable(pageable);
 		verifyQuery(query);
 
 		var session = new QueryCacheSession(repository, mapper);
+		var items = session.execute(query);
 		var total = repository.count(query);
-
-		var items = query.isReferenceMode()
-				? session.findAll(query)
-				: session.findAllWithChildren(query);
 
 		return new MappingListView<>(total, items, session.getObjects());
 	}

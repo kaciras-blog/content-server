@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -30,11 +29,9 @@ public final class DiscussionVo {
 
 	private int replyCount;
 
-	private boolean deleted;
-
 	// ========== 下面是可选的聚合属性 ==========
 
 	private Topic topic;
 
-	private List<Integer> replies = Collections.emptyList();
+	private List<Integer> replies;
 }
