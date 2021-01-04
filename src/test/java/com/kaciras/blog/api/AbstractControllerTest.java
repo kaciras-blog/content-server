@@ -25,6 +25,7 @@ public abstract class AbstractControllerTest {
 
 	public static final WebPrincipal ADMIN = new WebPrincipal(WebPrincipal.ADMIN_ID);
 	public static final WebPrincipal ANONYMOUS = new WebPrincipal(WebPrincipal.ANONYMOUS_ID);
+	public static final WebPrincipal LOGINED = new WebPrincipal(666);
 
 	protected MockMvc mockMvc;
 

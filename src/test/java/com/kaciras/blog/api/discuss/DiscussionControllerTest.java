@@ -7,6 +7,7 @@ import com.kaciras.blog.api.notification.NotificationService;
 import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.api.user.UserVo;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -46,13 +47,27 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	private NotificationService notification;
 
 	@Autowired
+	private DiscussionController controller;
+
+	@Autowired
 	private ObjectMapper objectMapper;
 
 	@Autowired
 	private SnapshotAssertion snapshot;
 
+	@BeforeEach
+	void setUp() {
+		controller.setOptions(new DiscussionOptions());
+
+		var topic = new Topic("TestTopic", "http://example.com");
+		doReturn(topic).when(topics).get(anyInt(), anyInt());
+
+		doReturn(new UserVo()).when(userManager).getUser(anyInt());
+	}
+
 	private static Stream<Arguments> invalidQueries() {
 		return Stream.of(
+				Arguments.of(get("/discussions").param("state", "Moderation"), 403),
 				Arguments.of(get("/discussions"), 403),
 				Arguments.of(get("/discussions").param("parent", "0").param("childCount", "100"), 400),
 				Arguments.of(get("/discussions").param("parent", "0").param("count", "100"), 400)
@@ -80,8 +95,6 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	@SuppressWarnings({"unchecked", "ConstantConditions"})
 	@Test
 	void getListWithChildren() throws Exception {
-		when(userManager.getUser(anyInt())).thenReturn(new UserVo());
-
 		var top = List.of(newItem(1, 0));
 		var children = List.of(newItem(2, 1), newItem(3, 1));
 		when(repository.count(any())).thenReturn(top.size());
@@ -90,7 +103,6 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		var request = get("/discussions")
 				.param("type", "0")
 				.param("objectId", "1")
-				.param("count", "20")
 				.param("childCount", "5");
 
 		mockMvc.perform(request)
@@ -99,14 +111,14 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 
 		var firstQuery = new DiscussionQuery()
 				.setType(0)
-				.setTopParent(0)
+				.setObjectId(1)
 				.setChildCount(5)
 				.setPageable(PageRequest.of(0, 20));
 		verify(repository).findAll(refEq(firstQuery));
 		verify(repository).count(refEq(firstQuery));
 
 		var secondQuery = new DiscussionQuery()
-				.setObjectId(1)
+				.setTopParent(1)
 				.setPageable(PageRequest.of(0, 5));
 		verify(repository).findAll(refEq(secondQuery));
 
@@ -116,8 +128,6 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	@SuppressWarnings("ConstantConditions")
 	@Test
 	void getListWithParent() throws Exception {
-		when(userManager.getUser(anyInt())).thenReturn(new UserVo());
-
 		var first = List.of(
 				newItem(1, 0),
 				newItem(2, 1),
@@ -130,7 +140,6 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		var request = get("/discussions")
 				.param("type", "0")
 				.param("objectId", "1")
-				.param("count", "20")
 				.param("includeParent", "true");
 
 		mockMvc.perform(request)
@@ -168,45 +177,78 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		mockMvc.perform(post("/discussions").content(body)).andExpect(status().is(400));
 	}
 
+	/**
+	 * 测试用的 POST 请求体，因为多处使用所以提取出来了。
+	 */
+	private String getPostBody() throws Exception {
+		var input = new PublishInput(0, 0, 0, null, "test content");
+		return objectMapper.writeValueAsString(input);
+	}
+
 	@Test
 	void postWithNonExistsTopic() throws Exception {
-		var input = new PublishInput(0, 0, 0, null, "test");
-		var body = objectMapper.writeValueAsString(input);
-
 		// 对与 spy 的对象，且方法内会抛异常，必须使用 doXX.when(obj).call 方式而不是 when(obj.call).thenXX
 		doThrow(new RequestArgumentException()).when(topics).get(anyInt(), anyInt());
-
-		mockMvc.perform(post("/discussions").content(body)).andExpect(status().is(400));
+		mockMvc.perform(post("/discussions").content(getPostBody())).andExpect(status().is(400));
 	}
 
 	@Test
 	void postWithNonExistsParent() throws Exception {
+		when(repository.get(anyInt())).thenReturn(Optional.empty());
+
 		var input = new PublishInput(0, 0, 1, null, "test");
 		var body = objectMapper.writeValueAsString(input);
-
-		when(repository.get(anyInt())).thenReturn(Optional.empty());
 		mockMvc.perform(post("/discussions").content(body)).andExpect(status().is(400));
 	}
 
 	@Test
 	void publish() throws Exception {
-		var input = new PublishInput(0, 0, 0, null, "test");
-		var body = objectMapper.writeValueAsString(input);
-
-		var topic = new Topic("ch", "http://example.com");
-		doReturn(topic).when(topics).get(anyInt(), anyInt());
-
-		mockMvc.perform(post("/discussions").content(body)).andExpect(status().is(201));
+		mockMvc.perform(post("/discussions").content(getPostBody())).andExpect(status().is(201));
 
 		var captor = ArgumentCaptor.forClass(Discussion.class);
 		verify(repository).add(captor.capture());
-		verify(notification).reportDiscussion(any(), eq(null), eq(topic));
+
+		var topic = new Topic("TestTopic", "http://example.com");
+		verify(notification).reportDiscussion(any(), eq(null), refEq(topic));
 
 		var stored = captor.getValue();
-		assertThat(stored.getContent()).isEqualTo("test");
+		assertThat(stored.getContent()).isEqualTo("test content");
 		assertThat(stored.getAddress()).isNotNull();
 		assertThat(stored.getUserId()).isEqualTo(0);
 		assertThat(stored.getState()).isEqualTo(DiscussionState.Visible);
+	}
+
+	@Test
+	void optionDisabled() throws Exception {
+		var options = new DiscussionOptions();
+		options.disabled = true;
+		controller.setOptions(options);
+
+		mockMvc.perform(post("/discussions").content(getPostBody())).andExpect(status().is(403));
+	}
+
+	@Test
+	void optionLoginRequired() throws Exception {
+		var options = new DiscussionOptions();
+		options.loginRequired = true;
+		controller.setOptions(options);
+
+		var request = post("/discussions").content(getPostBody());
+		mockMvc.perform(request).andExpect(status().is(403));
+		mockMvc.perform(request.principal(LOGINED)).andExpect(status().is(201));
+	}
+
+	@Test
+	void optionModeration() throws Exception {
+		var options = new DiscussionOptions();
+		options.moderation = true;
+		controller.setOptions(options);
+
+		mockMvc.perform(post("/discussions").content(getPostBody())).andExpect(status().is(201));
+
+		var captor = ArgumentCaptor.forClass(Discussion.class);
+		verify(repository).add(captor.capture());
+		assertThat(captor.getValue().getState()).isEqualTo(DiscussionState.Moderation);
 	}
 
 	@Test

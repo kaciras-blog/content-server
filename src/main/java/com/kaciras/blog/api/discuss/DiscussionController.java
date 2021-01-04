@@ -8,6 +8,7 @@ import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.principal.RequirePermission;
 import com.kaciras.blog.infra.principal.SecurityContext;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ class DiscussionController {
 	private final NotificationService notificationService;
 
 	@SuppressWarnings("unused")
+	@Setter
 	@BindConfig("discussion")
 	private DiscussionOptions options;
 
@@ -74,16 +76,16 @@ class DiscussionController {
 	// 无论是否审核都返回视图，前端可以通过 state 判断
 	@PostMapping
 	public ResponseEntity<DiscussionVo> post(HttpServletRequest request, @Valid @RequestBody PublishInput input) {
-		if (!options.isEnabled()) {
+		if (options.disabled) {
 			throw new PermissionException("已禁止评论");
 		}
-		if (!options.isAllowAnonymous()) {
+		if (options.loginRequired) {
 			SecurityContext.requireLogin();
 		}
 
 		var discussion = mapper.fromInput(input);
 		discussion.setUserId(SecurityContext.getUserId());
-		discussion.setState(options.isModeration() ? DiscussionState.Moderation : DiscussionState.Visible);
+		discussion.setState(options.moderation ? DiscussionState.Moderation : DiscussionState.Visible);
 		discussion.setAddress(Utils.addressFromRequest(request));
 
 		Discussion parent = null;
