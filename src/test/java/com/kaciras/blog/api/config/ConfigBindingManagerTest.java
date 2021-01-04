@@ -1,6 +1,5 @@
 package com.kaciras.blog.api.config;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,9 @@ import org.springframework.test.context.ActiveProfiles;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 @Import({JacksonAutoConfiguration.class, ValidationAutoConfiguration.class})
 @ActiveProfiles("test")
 @SpringBootTest
@@ -26,48 +28,59 @@ class ConfigBindingManagerTest {
 	private ConfigRepository repository;
 
 	// 每个测试都重新创建，避免bind方法污染
-	private ConfigBindingManager configBindingManager;
+	private ConfigBindingManager manager;
 
 	private TestBindingConfig config;
 
 	@BeforeEach
 	void setUp() {
-		configBindingManager = new ConfigBindingManager(repository, validator);
-		configBindingManager.bind("test", TestBindingConfig.class, v -> config = v);
+		manager = new ConfigBindingManager(repository, validator);
+		manager.bind("test", TestBindingConfig.class, v -> config = v);
 	}
 
 	@Test
 	void testBindInit() {
-		Assertions.assertThat(config.getIntValue()).isEqualTo(33);
+		assertThat(config.getIntValue()).isEqualTo(33);
+	}
+
+	/**
+	 * 测试无法创建的类型，非静态内部类需要在构造方法中传入外层实例。
+	 */
+	@SuppressWarnings("InnerClassMayBeStatic")
+	final class ConstructorWithParam {}
+
+	@Test
+	void invalidConstructor() {
+		assertThatThrownBy(() -> manager.bind("ctor", ConstructorWithParam.class, v -> {}));
 	}
 
 	@Test
 	void bindUpdate() {
 		var newConfig = new TestBindingConfig();
 		newConfig.setIntValue(-123);
-		configBindingManager.set("test", newConfig);
+		manager.set("test", newConfig);
 
-		Assertions.assertThat(config.getIntValue()).isEqualTo(-123);
+		assertThat(config.getIntValue()).isEqualTo(-123);
 	}
 
 	@Test
 	void bindInvalidType() {
-		Assertions.assertThatThrownBy(() -> configBindingManager.set("test", null))
+		assertThatThrownBy(() -> manager.set("test", null))
 				.isInstanceOf(NullPointerException.class);
 
-		Assertions.assertThatThrownBy(() -> configBindingManager.set("test", Boolean.FALSE))
+		assertThatThrownBy(() -> manager.set("test", Boolean.FALSE))
 				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
 	void getWithoutBind() {
-		Assertions.assertThat(configBindingManager.<Object>get("not.bind")).isNull();
+		assertThat(manager.<Object>get("not.bind")).isNull();
 	}
 
 	/** ConfigBindingManager.get 会创建一个新对象 */
 	@Test
 	void isolation() {
-		Assertions.assertThat(configBindingManager.<TestBindingConfig>get("test")).isNotSameAs(config);
+		assertThat(manager.<TestBindingConfig>get("test")).isNotSameAs(config);
 	}
 
 	@Test
@@ -75,7 +88,7 @@ class ConfigBindingManagerTest {
 		var newConfig = new TestBindingConfig();
 		newConfig.setSubConfig(null);
 
-		Assertions.assertThatThrownBy(() -> configBindingManager.set("test", newConfig))
+		assertThatThrownBy(() -> manager.set("test", newConfig))
 				.isInstanceOf(ValidationException.class);
 	}
 
@@ -84,7 +97,7 @@ class ConfigBindingManagerTest {
 		var newConfig = new TestBindingConfig();
 		newConfig.setSmaller(newConfig.getBigger() + 666);
 
-		Assertions.assertThatThrownBy(() -> configBindingManager.set("test", newConfig))
+		assertThatThrownBy(() -> manager.set("test", newConfig))
 				.isInstanceOf(ValidationException.class);
 	}
 }
