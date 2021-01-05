@@ -7,6 +7,9 @@ server:
 #  additional-connector:
 #    port: 2400
 
+  # 如果服务器前面有反代，则取消注释此行以获取真实IP
+#  forward-headers-strategy: native
+
 # TODO: 下面两个数据库连接需要修改
 spring:
 
