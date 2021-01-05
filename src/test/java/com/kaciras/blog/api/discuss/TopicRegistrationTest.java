@@ -2,10 +2,12 @@ package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.api.article.Article;
 import com.kaciras.blog.api.article.ArticleRepository;
+import com.kaciras.blog.infra.exception.RequestArgumentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,6 +20,12 @@ final class TopicRegistrationTest {
 	@BeforeEach
 	void setUp(){
 		registration.setOrigin("https://blog.example.com");
+	}
+
+	@Test
+	void notFound(){
+		assertThatThrownBy(() -> registration.get(666, 888))
+				.isInstanceOf(RequestArgumentException.class);
 	}
 
 	@Test

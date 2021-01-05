@@ -1,7 +1,7 @@
 package com.kaciras.blog.api.discuss;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.kaciras.blog.api.NullOrNotBlank;
+import com.kaciras.blog.infra.validate.NullOrNotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
