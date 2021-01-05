@@ -3,7 +3,7 @@ package com.kaciras.blog.api;
 import lombok.experimental.UtilityClass;
 
 /**
- * 常量类，包含会话所有属性的名字。
+ * 常量类，包含 HTTP 会话所有属性的名字。
  * <p>
  * 为何不用枚举？因为会话属性以字符串作为键而不是枚举，如果用枚举，那么调用代码会是：
  * {@code session.get(SessionAttributes.CAPTCHA.value())}
@@ -12,7 +12,9 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class SessionAttributes {
 
-	public final String CAPTCHA = "Captcha";
-	public final String CAPTCHA_TIME = "CapTime";
-	public final String USER_ID = "UserId";
+	public String CAPTCHA = "Captcha";
+
+	public String CAPTCHA_TIME = "CapTime";
+
+	public String USER_ID = "UserId";
 }

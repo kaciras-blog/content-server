@@ -15,14 +15,14 @@ import java.time.Clock;
  * 友链的存储服务，保存了友链的信息及排序，并提供 CURD 和重排功能。
  * <p>
  * 数据的持久化使用 Redis，用一个 HASH 保存友链对象，以及一个 LIST 保存顺序。
- * <p>
- * 【一致性问题】
+ *
+ * <h2>一致性问题</h2>
  * 因为 SpringDataRedis 的事务写起来真的丑，所以这里使用了缓存模式避免事务。
  * getFriends() 只访问缓存，启动和修改后都会更新缓存；
  * 单个查询方法 getFriend() 是原子的不存在一致性问题就不管了。
  * <p>
  * 不过这也要求同一时刻只能调用一个修改方法，因为只有博主能修改所以是可以的。
- * 在 Controller 里用了 synchronized 来实现，这使修改操作不会因为线程安全问题导致缓存更新错误。
+ * 在 Controller 里用了 synchronized，使修改操作不会因为线程安全问题导致缓存更新错误。
  */
 @SuppressWarnings("ConstantConditions")
 @Repository
@@ -44,7 +44,7 @@ public class FriendRepository {
 	/**
 	 * 生成缓存，只有调用了此方法，用户看到的数据才会更新。
 	 * <p>
-	 * 在启动时调用确保缓存存在，修改后也要调用来刷新缓存。
+	 * 启动时必须调用该方法生成换成，修改后也要调用来刷新。
 	 */
 	@PostConstruct
 	private void generateFriendsCache() {
@@ -59,10 +59,7 @@ public class FriendRepository {
 	 * @return 友链列表
 	 */
 	public FriendLink[] getFriends() {
-		if (cache != null) {
-			return cache;
-		}
-		throw new IllegalStateException("竟然未生成缓存？");
+		return cache;
 	}
 
 	/**
