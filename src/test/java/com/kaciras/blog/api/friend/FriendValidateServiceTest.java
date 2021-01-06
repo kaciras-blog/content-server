@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import static com.kaciras.blog.api.friend.TestHelper.createFriend;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.internal.verification.VerificationModeFactory.noInteractions;
 
 @Import({
 		KxCodecAutoConfiguration.class,
@@ -58,9 +59,9 @@ final class FriendValidateServiceTest {
 	/**
 	 * 添加一条友链记录到验证服务。
 	 *
-	 * @param domain 友链域名，注意不能重复哦
+	 * @param domain     友链域名，注意不能重复哦
 	 * @param friendPage 对方的友链页
-	 * @param time 添加的时间
+	 * @param time       添加的时间
 	 * @return 返回创建的友链对象
 	 */
 	private FriendLink addRecord(String domain, String friendPage, Instant time) {
@@ -147,5 +148,18 @@ final class FriendValidateServiceTest {
 		service.startValidation();
 
 		verify(notification).reportFriend(eq(FriendAccident.Type.AbandonedMe), eq(friend), any(), any());
+	}
+
+	// 有记录但没有对应的友链，因为检查任务是异步的，所以可能有这种边界情况。
+	@Test
+	void danglingRecord() {
+		addRecord("example.com", null, Instant.EPOCH);
+		var newUrl = URI.create("https://new.home");
+		setValidateResult(true, newUrl, null);
+
+		when(repository.findByHost(any())).thenReturn(null);
+
+		service.startValidation();
+		verify(notification, noInteractions()).reportFriend(any(), any(), any(), any());
 	}
 }

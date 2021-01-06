@@ -8,13 +8,10 @@ import com.kaciras.blog.infra.RedisExtensions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.support.collections.DefaultRedisMap;
 import org.springframework.data.redis.support.collections.RedisMap;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
@@ -39,23 +36,13 @@ public class FriendValidateService {
 	private final Clock clock;
 	private final FriendValidator validator;
 
-	private final TaskScheduler taskScheduler;
-
 	private RedisMap<String, ValidateRecord> validateMap;
 
-	@Value("${app.validate-friend}")
-	private boolean enable;
-
+	// 该方法不能是 private，因为私有方法隐含 final，导致无法被 mock，而 Autowired 又让它被测试容器调用，
+	// 这导致实际的代码在 mock 测试中运行。
 	@Autowired
-	private void setRedis(RedisOperationsBuilder builder) {
+	void setRedis(RedisOperationsBuilder builder) {
 		validateMap = new DefaultRedisMap<>(builder.bindHash(RedisKeys.Friends.of("validate"), ValidateRecord.class));
-	}
-
-	@PostConstruct
-	private void init() {
-		if (enable) {
-			taskScheduler.scheduleAtFixedRate(this::startValidation, Duration.ofDays(1));
-		}
 	}
 
 	/**
@@ -81,9 +68,7 @@ public class FriendValidateService {
 	}
 
 	/**
-	 * 触发检测，将从所有的记录中筛选出待检查的友链进行检查。
-	 * <p>
-	 * 可以搞个定时任务来调用此方法。
+	 * 开始一次检查，从所有的记录中筛选出待检查的友链进行检查。
 	 */
 	public void startValidation() {
 		var queue = new LinkedList<ValidateRecord>();
@@ -153,7 +138,7 @@ public class FriendValidateService {
 	private void report(FriendAccident.Type type, ValidateRecord record, URI newUrl) {
 		var friend = repository.findByHost(record.url.getHost());
 		if (friend == null) {
-			return; // 不会遇到正好刚刚删除的情况吧
+			return; // 用户删除了友链产生不一致状态
 		}
 		notificationService.reportFriend(type, friend, record.validate, newUrl);
 	}
