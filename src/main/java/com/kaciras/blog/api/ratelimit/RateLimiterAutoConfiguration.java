@@ -52,19 +52,19 @@ public class RateLimiterAutoConfiguration {
 		return new RateLimitFilter(checkers);
 	}
 
-	private GenericRateChecker createGenericChecker() {
+	private RateLimiterChecker createGenericChecker() {
 		var limiter = new RedisTokenBucket(RedisKeys.RateLimit.value(), redis, clock);
 		var bucket = properties.generic;
 
 		if (bucket.size == 0) {
-			throw new IllegalArgumentException("全局限流器容量不能为0");
+			throw new IllegalArgumentException("令牌桶容量不能为0");
 		}
 		if (bucket.rate == 0) {
-			throw new IllegalArgumentException("全局限流器添加速率不能为0");
+			throw new IllegalArgumentException("令牌桶添加速率不能为0");
 		}
-
 		limiter.addBucket(bucket.size, bucket.rate);
-		return new GenericRateChecker(limiter);
+
+		return (ip, request) -> limiter.acquire(ip.toString(), 1);
 	}
 
 	private EffectRateChecker createEffectChecker() {
