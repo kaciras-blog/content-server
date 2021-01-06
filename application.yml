@@ -40,6 +40,11 @@ spring:
 #          starttls:
 #            enable: true
 
+  # 生产环境建议使用，启动时就加载 Servlet
+#  mvc:
+#    servlet:
+#      load-on-startup: 0
+
 app:
 
   # 网站的协议和域名
