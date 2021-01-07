@@ -38,7 +38,8 @@ public final class RateLimitFilter extends HttpFilter {
 							HttpServletResponse response,
 							FilterChain chain) throws IOException, ServletException {
 		var ip = Utils.addressFromRequest(request);
-		if (ip.isLoopbackAddress() || ip.isSiteLocalAddress()) {
+
+		if (Utils.isLocalNetwork(ip)) {
 			chain.doFilter(request, response);
 		} else {
 			var wait = checkers.stream()

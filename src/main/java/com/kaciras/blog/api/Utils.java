@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 import org.springframework.lang.NonNull;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -21,26 +22,18 @@ public class Utils {
 	}
 
 	/**
-	 * 获取HttpServletRequest的远程地址。
-	 * 该方法为SpringMVC特别处理，解决Mock请求的地址为空问题，以及烦人的UnknownHostException。
+	 * 获取HttpServletRequest的远程地址，处理烦人的 UnknownHostException。
 	 *
 	 * @param request 请求
-	 * @return IP地址，不会为null
+	 * @return IP 地址，不会为 null
 	 */
 	@NonNull
 	public InetAddress addressFromRequest(HttpServletRequest request) {
-		var addr = request.getRemoteAddr();
-
-		// 没有地址说明是Mock来的请求
-		if (addr == null) {
-			return InetAddress.getLoopbackAddress();
-		}
-
-		// 这里认为 HttpServletRequest.getRemoteAddr() 获取的格式一定是对的
+		var address = request.getRemoteAddr();
 		try {
-			return InetAddress.getByName(addr);
+			return InetAddress.getByName(address);
 		} catch (UnknownHostException e) {
-			throw new AssertionError("HttpServletRequest竟然返回无效的地址");
+			throw new UncheckedIOException(e);
 		}
 	}
 
