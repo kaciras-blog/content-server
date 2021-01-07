@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.user;
 
-import com.kaciras.blog.api.principal.AuthType;
+import com.kaciras.blog.api.account.AuthType;
 import com.kaciras.blog.infra.codec.ImageReference;
 import com.kaciras.blog.infra.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;

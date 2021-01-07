@@ -1,4 +1,4 @@
-package com.kaciras.blog.api.principal;
+package com.kaciras.blog.api.account;
 
 import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.api.Utils;

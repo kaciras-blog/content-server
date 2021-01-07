@@ -1,4 +1,4 @@
-package com.kaciras.blog.api.principal.local;
+package com.kaciras.blog.api.account.local;
 
 import com.kaciras.blog.api.Utils;
 import lombok.RequiredArgsConstructor;

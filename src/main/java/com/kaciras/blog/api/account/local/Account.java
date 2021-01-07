@@ -1,6 +1,6 @@
-package com.kaciras.blog.api.principal.local;
+package com.kaciras.blog.api.account.local;
 
-import com.kaciras.blog.api.principal.SessionRepository;
+import com.kaciras.blog.api.account.SessionRepository;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 @Configurable
 public final class Account {
 
-	/** 使用512位的Sha3算法对密码加密 */
+	/** 使用 SHA3-512 处理密码 */
 	private static final int HASH_SIZE = 512;
 
 	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
@@ -32,9 +32,6 @@ public final class Account {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private SessionRepository sessionRepository;
-
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 	private int id;
 	private String name;

@@ -1,4 +1,4 @@
-package com.kaciras.blog.api.principal.oauth2;
+package com.kaciras.blog.api.account.oauth2;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,12 +1,12 @@
-package com.kaciras.blog.api.principal.oauth2;
+package com.kaciras.blog.api.account.oauth2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.api.Utils;
-import com.kaciras.blog.api.principal.AuthType;
-import com.kaciras.blog.api.principal.SessionService;
+import com.kaciras.blog.api.account.AuthType;
+import com.kaciras.blog.api.account.SessionService;
 import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.ResourceDeletedException;

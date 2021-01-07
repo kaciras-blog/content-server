@@ -1,9 +1,9 @@
-package com.kaciras.blog.api.principal.local;
+package com.kaciras.blog.api.account.local;
 
 import com.kaciras.blog.api.SessionAttributes;
 import com.kaciras.blog.api.Utils;
-import com.kaciras.blog.api.principal.AuthType;
-import com.kaciras.blog.api.principal.SessionService;
+import com.kaciras.blog.api.account.AuthType;
+import com.kaciras.blog.api.account.SessionService;
 import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import lombok.RequiredArgsConstructor;
