@@ -9,7 +9,7 @@ public enum RedisKeys {
 	CardList("cards"),
 
 	/** Oauth2登陆会话前缀 */
-	OauthSession("oa:"),
+	OAuthSession("oa:"),
 
 	/** 一个账户所有会话的集合前缀 */
 	AccountSessions("ac:"),

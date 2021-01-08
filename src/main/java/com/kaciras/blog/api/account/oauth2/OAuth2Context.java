@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 public final class OAuth2Context {
 
 	private final String code;
+
 	private final String currentUri;
+
 	private final String state;
 }

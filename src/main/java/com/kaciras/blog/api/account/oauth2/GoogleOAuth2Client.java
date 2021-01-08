@@ -24,7 +24,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 @ConditionalOnProperty("app.oauth2.google.client-secret")
 @Component
 @RequiredArgsConstructor
-public final class GoogleOauth2Client implements Oauth2Client {
+public final class GoogleOAuth2Client implements OAuth2Client {
 
 	private final ObjectMapper objectMapper;
 	private final HttpClient httpClient;
@@ -52,7 +52,7 @@ public final class GoogleOauth2Client implements Oauth2Client {
 
 	@SuppressWarnings("ConstantConditions")
 	@Override
-	public UserInfo getUserInfo(OAuth2Context context) throws Exception {
+	public UserProfile getUserInfo(OAuth2Context context) throws Exception {
 		var formParams = UriComponentsBuilder.newInstance()
 				.queryParam("client_id", clientId)
 				.queryParam("client_secret", clientSecret)
@@ -68,14 +68,14 @@ public final class GoogleOauth2Client implements Oauth2Client {
 
 		var res = httpClient.send(request, BodyHandlers.ofString());
 		if (res.statusCode() != 200) {
-			throw new Error("Oauth Error" + res.body());
+			throw new Error("OAuth Error" + res.body());
 		}
 
 		var tokenEntity = objectMapper.readValue(res.body(), AccessTokenEntity.class);
 		return getUserProfile(tokenEntity.access_token);
 	}
 
-	private UserInfo getUserProfile(String accessToken) throws IOException, InterruptedException {
+	private UserProfile getUserProfile(String accessToken) throws IOException, InterruptedException {
 		var uu = UriComponentsBuilder
 				.fromUriString("https://www.googleapis.com/oauth2/v2/userinfo")
 				.queryParam("fields", "id,name,picture")
@@ -86,19 +86,16 @@ public final class GoogleOauth2Client implements Oauth2Client {
 				.build();
 
 		var res = httpClient.send(request, BodyHandlers.ofString());
-		return objectMapper.readValue(res.body(), GoogleUserInfo.class);
+		return objectMapper.readValue(res.body(), GoogleUserProfile.class);
 	}
 
 	@AllArgsConstructor(onConstructor_ = @JsonCreator(mode = Mode.PROPERTIES))
 	private static final class AccessTokenEntity {
 		private final String access_token;
-//		private final String refresh_token;
-//		private final String token_type;
-//		private final int expires_in;  // 秒,默认1小时
 	}
 
 	@AllArgsConstructor(onConstructor_ = @JsonCreator)
-	private static final class GoogleUserInfo implements UserInfo {
+	private static final class GoogleUserProfile implements UserProfile {
 
 		/** 谷歌的ID特别长，不能用long */
 		private final String id;

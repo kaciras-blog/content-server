@@ -23,7 +23,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 @ConditionalOnProperty("app.oauth2.github.client-secret")
 @Component
 @RequiredArgsConstructor
-public final class GithubOauth2Client implements Oauth2Client {
+public final class GithubOAuth2Client implements OAuth2Client {
 
 	private final ObjectMapper objectMapper;
 	private final HttpClient httpClient;
@@ -49,7 +49,7 @@ public final class GithubOauth2Client implements Oauth2Client {
 	}
 
 	@Override
-	public UserInfo getUserInfo(OAuth2Context context) throws Exception {
+	public UserProfile getUserInfo(OAuth2Context context) throws Exception {
 		var authUri = UriComponentsBuilder
 				.fromUriString("https://github.com/login/oauth/access_token")
 				.queryParam("client_id", clientId)
@@ -64,7 +64,7 @@ public final class GithubOauth2Client implements Oauth2Client {
 
 		var res = httpClient.send(request, BodyHandlers.ofString());
 		if (res.statusCode() != 200) {
-			throw new IOException("Oauth获取AccessToken失败，返回码：" + res.statusCode());
+			throw new IOException("OAuth获取AccessToken失败，返回码：" + res.statusCode());
 		}
 
 		var token = objectMapper.readValue(res.body(), AccessTokenEntity.class);
@@ -83,7 +83,7 @@ public final class GithubOauth2Client implements Oauth2Client {
 			throw new IOException("获取用户信息失败，返回码：" + res.statusCode());
 		}
 
-		return objectMapper.readValue(res.body(), UserProfile.class);
+		return objectMapper.readValue(res.body(), GithubUserProfile.class);
 	}
 
 	/*
@@ -94,12 +94,10 @@ public final class GithubOauth2Client implements Oauth2Client {
 	@AllArgsConstructor(onConstructor_ = @JsonCreator(mode = Mode.PROPERTIES))
 	private static final class AccessTokenEntity {
 		private final String access_token;
-//		private final String scope;
-//		private final String token_type;
 	}
 
 	@AllArgsConstructor(onConstructor_ = @JsonCreator)
-	private static final class UserProfile implements UserInfo {
+	private static final class GithubUserProfile implements UserProfile {
 
 		private final String id;
 		private final String login;

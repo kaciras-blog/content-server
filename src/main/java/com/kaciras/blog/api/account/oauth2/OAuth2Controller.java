@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/connect/{type}")
-public class Oauth2Controller {
+class OAuth2Controller {
 
 	private final SessionService sessionService;
 	private final OAuth2DAO oAuth2DAO;
@@ -51,14 +51,14 @@ public class Oauth2Controller {
 	private final RedisTemplate<String, byte[]> redisTemplate;
 	private final ObjectMapper objectMapper;
 
-	private Map<String, Oauth2Client> clientMap = Collections.emptyMap();
+	private Map<String, OAuth2Client> clientMap = Collections.emptyMap();
 
 	@Value("${app.origin}")
 	private String origin;
 
 	// 没有 bean 时注入 null 而不是空集合？
 	@Autowired(required = false)
-	private void initClientMap(Collection<Oauth2Client> beans) {
+	private void initClientMap(Collection<OAuth2Client> beans) {
 		clientMap = beans.stream()
 				.collect(Collectors.toMap(b -> b.authType().name().toLowerCase(), b -> b));
 	}
@@ -91,8 +91,8 @@ public class Oauth2Controller {
 		 * 加入 state 参数后，它将在跳转链接里被带上。state 值与会话相关联，攻击者无法修改受害者的 Cookie，
 		 * 所以他的 state 与受害者没有关联（查询不到），这样可以验证登录跳转是否是同一人。
 		 */
-		var oauthSession = new OauthSession(UUID.randomUUID().toString(), request.getParameter("ret"));
-		saveOAuthSession(request.getSession(true).getId(), oauthSession);
+		var authSession = new OAuthSession(UUID.randomUUID().toString(), request.getParameter("ret"));
+		saveOAuthSession(request.getSession(true).getId(), authSession);
 
 		// 【注意】request.getRequestURL() 不包含参数和hash部分
 		var redirect = UriComponentsBuilder
@@ -100,7 +100,7 @@ public class Oauth2Controller {
 				.path("/callback");
 
 		var authUri = client.authUri()
-				.queryParam("state", oauthSession.state)
+				.queryParam("state", authSession.state)
 				.queryParam("redirect_uri", redirect.toUriString())
 				.build().toUri();
 
@@ -126,11 +126,11 @@ public class Oauth2Controller {
 		}
 
 		// 获取会话，并检查state字段
-		var oauthSession = retrieveOAuthSession(request);
+		var authSession = retrieveOAuthSession(request);
 
 		// 从第三方服务读取用户信息
 		var code = request.getParameter("code");
-		var context = new OAuth2Context(code, request.getRequestURL().toString(), oauthSession.state);
+		var context = new OAuth2Context(code, request.getRequestURL().toString(), authSession.state);
 		var info = client.getUserInfo(context);
 
 		// 查询出在本系统里对应的用户，并设置会话属性（登录）
@@ -138,13 +138,13 @@ public class Oauth2Controller {
 		sessionService.putUser(request, response, localId, true);
 
 		// 没有跳转，可能不是从页面过来的请求，但也算正常请求
-		if (oauthSession.returnUri == null) {
+		if (authSession.returnUri == null) {
 			return ResponseEntity.ok().build();
 		}
 
 		// 固定域名和协议，以防跳转到其他网站
 		var redirect = UriComponentsBuilder
-				.fromUriString(oauthSession.returnUri)
+				.fromUriString(authSession.returnUri)
 				.uri(URI.create(origin))
 				.build().toUri();
 
@@ -157,8 +157,8 @@ public class Oauth2Controller {
 	 * @param id      用户会话的ID
 	 * @param session OAuth2会话
 	 */
-	private void saveOAuthSession(String id, OauthSession session) throws JsonProcessingException {
-		var key = RedisKeys.OauthSession.of(id);
+	private void saveOAuthSession(String id, OAuthSession session) throws JsonProcessingException {
+		var key = RedisKeys.OAuthSession.of(id);
 		var value = objectMapper.writeValueAsBytes(session);
 		redisTemplate.opsForValue().set(key, value, Duration.ofMinutes(10));
 	}
@@ -171,8 +171,8 @@ public class Oauth2Controller {
 	 * @throws ResourceDeletedException 如果认证会话过期了
 	 * @throws PermissionException      如果存在安全问题
 	 */
-	private OauthSession retrieveOAuthSession(HttpServletRequest request) throws IOException {
-		var key = RedisKeys.OauthSession.of(request.getSession(true).getId());
+	private OAuthSession retrieveOAuthSession(HttpServletRequest request) throws IOException {
+		var key = RedisKeys.OAuthSession.of(request.getSession(true).getId());
 		var record = redisTemplate.opsForValue().get(key);
 		if (record == null) {
 			throw new ResourceDeletedException("认证请求无效或已过期，请重新登录");
@@ -180,12 +180,12 @@ public class Oauth2Controller {
 
 		// 会话是一次性的，使用后立即删除。
 		redisTemplate.unlink(key);
-		var oauthSession = objectMapper.readValue(record, OauthSession.class);
+		var oAuthSession = objectMapper.readValue(record, OAuthSession.class);
 
 		// 检查请求中的 state 字段与会话中的是否一致，不同则终止并返回错误信息。
 		var state = request.getParameter("state");
-		if (oauthSession.state.equals(state)) {
-			return oauthSession;
+		if (oAuthSession.state.equals(state)) {
+			return oAuthSession;
 		}
 		throw new PermissionException("参数错误，您可能点击了不安全的链接，或遭到了钓鱼攻击");
 	}
@@ -199,7 +199,7 @@ public class Oauth2Controller {
 	 * @return 本地用户的ID，如果不存在则会创建
 	 */
 	@Transactional
-	protected int getLocalId(Oauth2Client.UserInfo profile, HttpServletRequest request, AuthType authType) {
+	protected int getLocalId(UserProfile profile, HttpServletRequest request, AuthType authType) {
 		var localId = oAuth2DAO.select(profile.id(), authType);
 
 		if (localId != null) {
@@ -213,7 +213,7 @@ public class Oauth2Controller {
 	}
 
 	@AllArgsConstructor(onConstructor_ = @JsonCreator)
-	private static final class OauthSession {
+	private static final class OAuthSession {
 		public final String state;
 		public final String returnUri;
 	}
