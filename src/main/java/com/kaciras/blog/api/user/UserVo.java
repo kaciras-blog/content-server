@@ -12,10 +12,13 @@ import java.time.Instant;
 public final class UserVo {
 
 	private int id;
-	private AuthType authType;
 
 	private String name;
 	private ImageReference avatar;
 
-	private Instant registerTime;
+	private AuthType auth;
+
+	private Instant createTime;
+
+	// IP 地址仅用于批量处理，不在前端显示
 }

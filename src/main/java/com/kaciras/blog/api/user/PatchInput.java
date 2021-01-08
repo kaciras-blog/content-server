@@ -10,7 +10,7 @@ import javax.validation.constraints.Pattern;
 
 @AllArgsConstructor(onConstructor_ = @JsonCreator)
 @Getter
-final class PatchMap {
+final class PatchInput {
 
 	@Pattern(regexp = "^[\\u4E00-\\u9FFFa-zA-Z0-9_]{1,16}$")
 	private final String name;

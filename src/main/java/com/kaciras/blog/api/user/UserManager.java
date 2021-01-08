@@ -16,8 +16,7 @@ public class UserManager {
 	private final UserMapper mapper;
 
 	/**
-	 * 获取指定ID用户的信息。
-	 * 该视图是面向公共的，一些敏感字段必须过滤掉。
+	 * 获取指定 ID 用户的信息。
 	 *
 	 * @param id 用户ID
 	 * @return 用户信息
@@ -27,17 +26,15 @@ public class UserManager {
 		if (user == null) {
 			throw new ResourceNotFoundException("User[id=" + id + "] 不存在");
 		}
-		var view = mapper.toUserVo(user);
-		view.setAuthType(null);
-		return view;
+		return mapper.toUserVo(user);
 	}
 
 	public int createNew(String name, AuthType authType, InetAddress ip) {
 		var user = new User();
 		user.setName(name);
 		user.setAvatar(ImageReference.parse("akalin.jpg"));
-		user.setAuthType(authType);
-		user.setRegisterIP(ip);
+		user.setAuth(authType);
+		user.setCreateIP(ip);
 
 		repository.add(user);
 		return user.getId();
