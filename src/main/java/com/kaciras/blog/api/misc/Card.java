@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-@ToString(of = {"name", "link"})
+@ToString(of = "name")
 @Getter
 @Setter
 public final class Card {
