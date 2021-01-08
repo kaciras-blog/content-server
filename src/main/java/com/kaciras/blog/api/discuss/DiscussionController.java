@@ -37,12 +37,12 @@ class DiscussionController {
 
 	/**
 	 * 验证查询参数是否合法，该方法只检查用户的请求，对于内部查询不限制。
-	 * 查询至少包含对象、用户、父亲论其中之一的过滤条件，如果是管理则可以无视。
+	 * 查询必须包含的过滤条件，如果是管理则可以无视。
 	 *
 	 * @param query 查询对象
 	 */
 	private void verifyQuery(DiscussionQuery query) {
-		if (query.getObjectId() == null && query.getUserId() == null && query.getTopParent() == null) {
+		if (query.getNestId() == null && (query.getType() == null || query.getObjectId() == null)) {
 			SecurityContext.require("POWER_QUERY");
 		}
 		if (query.getState() != DiscussionState.Visible) {
@@ -94,6 +94,12 @@ class DiscussionController {
 			parent = repository.get(input.getParent()).orElseThrow(RequestArgumentException::new);
 			discussion.setType(parent.getType());
 			discussion.setObjectId(parent.getObjectId());
+
+			if (parent.getNestId() == 0) {
+				discussion.setNestId(parent.getId());
+			} else {
+				discussion.setNestId(parent.getNestId());
+			}
 		}
 
 		// 获取主题，同时检查其是否存在

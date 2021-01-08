@@ -18,16 +18,17 @@ public final class DiscussionVo {
 
 	private int parent;
 
-	private int topicFloor;
-	private int replyFloor;
+	private int floor;
+	private int treeFloor;
+
+	private int nestId;
+	private int nestSize;
 
 	private UserVo user;
 
 	private String nickname;
 	private String content;
 	private Instant time;
-
-	private int replyCount;
 
 	// ========== 下面是可选的聚合属性 ==========
 

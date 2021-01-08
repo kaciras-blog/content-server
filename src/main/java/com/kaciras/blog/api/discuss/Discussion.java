@@ -34,36 +34,55 @@ import java.time.Instant;
 public final class Discussion {
 
 	/**
-	 * 每条评论都有一个全局唯一的ID。
+	 * 每条评论都有一个全局唯一的 ID。
 	 */
 	private int id;
 
+	/**
+	 * 主题的类型。
+	 */
 	private int type;
+
+	/**
+	 * 主题的 ID。
+	 */
 	private int objectId;
 
 	/**
-	 * 发表该评论的用户ID
+	 * 发表该评论的用户 ID
 	 */
 	private int userId;
 
 	/**
-	 * 父评论的ID，如果没有则为0.
+	 * 父评论的 ID，如果没有则为0.
 	 */
 	private int parent;
 
 	/**
 	 * 在主题内递增的楼层号。
 	 */
-	private int topicFloor;
+	private int floor;
 
 	/**
-	 * 在父评论范围内递增的楼层号。
-	 * 如果没有父评论，则以主题内顶层评论为范围。
+	 * 在父评论范围内递增的楼层号，如果没有父评论，则以主题为范围。
 	 */
-	private int replyFloor;
+	private int treeFloor;
 
 	/**
-	 * 昵称用于匿名下区分不同的评论者，由前端随意填写。
+	 * 本系统里把楼中楼称为窝（Nest），一窝评论……挺形象的。
+	 *
+	 * nestId 等于顶层评论的 ID，楼中楼里所有的评论都有相同的 nestId。
+	 * 顶层评论的上级是主题已脱离评论表，所以其 nestId = 0。
+	 */
+	private int nestId;
+
+	/**
+	 * 楼中楼里可见的回复总数，不包括删除和审核中的。
+	 */
+	private int nestSize;
+
+	/**
+	 * 昵称用于匿名下区分不同的评论者，前端可随意填写。
 	 * 该字段可以为 null，但不能为空白字符串，长度限制由其它地方决定。
 	 */
 	private String nickname;
@@ -84,12 +103,7 @@ public final class Discussion {
 	private Instant time;
 
 	/**
-	 * 发送评论的IP，用于批量查找垃圾评论
+	 * 发送评论时的 IP，用于批量查找垃圾评论。
 	 */
 	private InetAddress address;
-
-	/**
-	 * 可见的回复总数，不包括删除和审核中的。
-	 */
-	private int replyCount;
 }

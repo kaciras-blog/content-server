@@ -34,12 +34,17 @@ final class QueryCacheSession {
 	 * @return 评论的ID列表
 	 */
 	public List<Integer> execute(DiscussionQuery query) {
+		var stream = findAll(query);
+
 		if (query.isIncludeParent()) {
-			return collectId(findAll(query).peek(this::addParentToMap));
-		} else {
-			var page = PageRequest.of(0, query.getChildCount());
-			return collectId(findAll(query).peek(v -> attachChildren(v, page)));
+			stream = stream.peek(this::addParentToMap);
 		}
+		if (query.getChildCount() > 0) {
+			var page = PageRequest.of(0, query.getChildCount());
+			stream = stream.peek(v -> attachChildren(v, page));
+		}
+
+		return collectId(stream);
 	}
 
 	/**
@@ -59,15 +64,14 @@ final class QueryCacheSession {
 	 */
 	private void attachChildren(DiscussionVo vo, Pageable pageable) {
 		var childrenQuery = new DiscussionQuery()
-				.setTopParent(vo.getId())
+				.setNestId(vo.getId())
 				.setPageable(pageable);
-
-		vo.setReplies(collectId(findAll(childrenQuery)));
+		vo.setReplies(collectId(findAll(childrenQuery).peek(this::addParentToMap)));
 	}
 
 	/**
 	 * 查询评论列表，将其中每个评论转换为视图对象并加入到 object 中。
-	 *
+	 * <p>
 	 * 这个过程有多个地方使用所以就提取出来了。
 	 *
 	 * @param query 查询条件

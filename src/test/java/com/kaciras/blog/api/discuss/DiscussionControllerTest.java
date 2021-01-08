@@ -68,9 +68,11 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	private static Stream<Arguments> invalidQueries() {
 		return Stream.of(
 				Arguments.of(get("/discussions").param("state", "Moderation"), 403),
+				Arguments.of(get("/discussions").param("type", "1"), 403),
+				Arguments.of(get("/discussions").param("objectId", "1"), 403),
 				Arguments.of(get("/discussions"), 403),
-				Arguments.of(get("/discussions").param("parent", "0").param("childCount", "100"), 400),
-				Arguments.of(get("/discussions").param("parent", "0").param("count", "100"), 400)
+				Arguments.of(get("/discussions").param("nestId", "0").param("childCount", "100"), 400),
+				Arguments.of(get("/discussions").param("nestId", "0").param("count", "100"), 400)
 		);
 	}
 
@@ -118,7 +120,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		verify(repository).count(refEq(firstQuery));
 
 		var secondQuery = new DiscussionQuery()
-				.setTopParent(1)
+				.setNestId(1)
 				.setPageable(PageRequest.of(0, 5));
 		verify(repository).findAll(refEq(secondQuery));
 

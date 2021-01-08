@@ -37,16 +37,16 @@ public class DiscussionRepository {
 
 		if (parent != 0) {
 			if (discussion.getState() == DiscussionState.Visible) {
-				dao.addReplyCount(parent, 1);
+				dao.addNestSize(parent, 1);
 			}
 			// parent.getReplies() 返回的是可见的回复数，这里需要的是总数
-			discussion.setReplyFloor(dao.countByParent(parent) + 1);
+			discussion.setTreeFloor(dao.countByParent(parent) + 1);
 		} else {
-			discussion.setReplyFloor(dao.countTopLevel(discussion) + 1);
+			discussion.setTreeFloor(dao.countTopLevel(discussion) + 1);
 		}
 
 		discussion.setTime(clock.instant());
-		discussion.setTopicFloor(dao.countByTopic(discussion) + 1);
+		discussion.setFloor(dao.countByTopic(discussion) + 1);
 		dao.insert(discussion);
 	}
 
@@ -66,7 +66,7 @@ public class DiscussionRepository {
 			var column = Misc.getFirst(pageable.getSort()).getProperty();
 			switch (column) {
 				case "id":
-				case "reply":
+				case "nest_size":
 					break;
 				default:
 					throw new RequestArgumentException("不支持的排序：" + column);
@@ -91,9 +91,9 @@ public class DiscussionRepository {
 		var ov = discussion.getState() == DiscussionState.Visible;
 		var nv = state == DiscussionState.Visible;
 		if (ov && !nv) {
-			dao.addReplyCount(discussion.getParent(), -1);
+			dao.addNestSize(discussion.getParent(), -1);
 		} else if (!ov && nv) {
-			dao.addReplyCount(discussion.getParent(), 1);
+			dao.addNestSize(discussion.getParent(), 1);
 		}
 	}
 }

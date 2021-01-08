@@ -39,8 +39,8 @@ interface DiscussionDAO {
 	 * @param id    评论ID
 	 * @param value 增量
 	 */
-	@Update("UPDATE discussion SET reply_count = reply_count + #{value} WHERE id=#{id}")
-	void addReplyCount(int id, int value);
+	@Update("UPDATE discussion SET nest_size = nest_size + #{value} WHERE id=#{id}")
+	void addNestSize(int id, int value);
 
 	/**
 	 * 更新一条评论的状态。
@@ -69,6 +69,6 @@ interface DiscussionDAO {
 	 * @param discussion 评论
 	 * @return 评论数，不含楼中楼
 	 */
-	@Select("SELECT COUNT(*) FROM discussion WHERE  type=#{type} AND object_id=#{objectId} AND parent=0")
+	@Select("SELECT COUNT(*) FROM discussion WHERE type=#{type} AND object_id=#{objectId} AND parent=0")
 	int countTopLevel(Discussion discussion);
 }

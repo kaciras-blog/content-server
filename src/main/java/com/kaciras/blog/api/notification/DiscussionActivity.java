@@ -13,10 +13,8 @@ public final class DiscussionActivity {
 	private String url;
 	private String title;
 
-	private int topicFloor;
-	private int replyFloor;
-
-	private int parentFloor;
+	private int floor;
+	private int treeFloor;
 
 	/** 内容预览 */
 	private String preview;

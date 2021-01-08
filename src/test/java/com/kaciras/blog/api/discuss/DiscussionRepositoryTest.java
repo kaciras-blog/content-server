@@ -92,17 +92,17 @@ class DiscussionRepositoryTest {
 		// Mariadb 的事务不回滚自增值，只能用大于来判断
 		assertThat(top0.getId()).isGreaterThanOrEqualTo(1);
 		assertThat(top0.getTime()).isNotNull();
-		assertThat(top0.getReplyFloor()).isEqualTo(1);
+		assertThat(top0.getTreeFloor()).isEqualTo(1);
 
-		assertThat(top0.getTopicFloor()).isEqualTo(1);
-		assertThat(reply0.getTopicFloor()).isEqualTo(2);
-		assertThat(top1.getTopicFloor()).isEqualTo(3);
-		assertThat(reply1.getTopicFloor()).isEqualTo(4);
+		assertThat(top0.getFloor()).isEqualTo(1);
+		assertThat(reply0.getFloor()).isEqualTo(2);
+		assertThat(top1.getFloor()).isEqualTo(3);
+		assertThat(reply1.getFloor()).isEqualTo(4);
 
-		assertThat(top0.getReplyFloor()).isEqualTo(1);
-		assertThat(reply0.getReplyFloor()).isEqualTo(1);
-		assertThat(top1.getReplyFloor()).isEqualTo(2);
-		assertThat(reply1.getReplyFloor()).isEqualTo(2);
+		assertThat(top0.getTreeFloor()).isEqualTo(1);
+		assertThat(reply0.getTreeFloor()).isEqualTo(1);
+		assertThat(top1.getTreeFloor()).isEqualTo(2);
+		assertThat(reply1.getTreeFloor()).isEqualTo(2);
 	}
 
 	@Test
@@ -115,7 +115,7 @@ class DiscussionRepositoryTest {
 
 	private static Stream<Arguments> queries() {
 		return Stream.of(
-				Arguments.of(new DiscussionQuery().setParent(0))
+				Arguments.of(new DiscussionQuery().setNestId(0))
 		);
 	}
 
@@ -129,7 +129,7 @@ class DiscussionRepositoryTest {
 		var list = repository.findAll(query);
 
 		assertThat(list).hasSize(1);
-		assertThat(list.get(0).getReplyCount()).isEqualTo(1);
+		assertThat(list.get(0).getNestSize()).isEqualTo(1);
 	}
 
 	@Test
@@ -161,7 +161,7 @@ class DiscussionRepositoryTest {
 		assertThat(discussion.getState()).isEqualTo(neW);
 
 		var parent = repository.get(_1.getId()).orElseThrow();
-		assertThat(parent.getReplyCount()).isEqualTo(replyCount);
+		assertThat(parent.getNestSize()).isEqualTo(replyCount);
 	}
 
 	@Test
@@ -177,7 +177,7 @@ class DiscussionRepositoryTest {
 
 		var parent = repository.get(_1.getId());
 		assertThat(parent).isPresent();
-		assertThat(parent.get().getReplyCount()).isEqualTo(1);
+		assertThat(parent.get().getNestSize()).isEqualTo(1);
 	}
 
 	@Test
@@ -200,8 +200,8 @@ class DiscussionRepositoryTest {
 		assertThat(value.getObjectId()).isEqualTo(7);
 		assertThat(value.getState()).isEqualTo(DiscussionState.Visible);
 		assertThat(value.getTime()).isNotNull();
-		assertThat(value.getTopicFloor()).isEqualTo(1);
-		assertThat(value.getReplyFloor()).isEqualTo(1);
+		assertThat(value.getFloor()).isEqualTo(1);
+		assertThat(value.getTreeFloor()).isEqualTo(1);
 		assertThat(value.getContent()).isEqualTo(expected.getContent());
 		assertThat(value.getAddress()).isNotNull();
 	}
