@@ -1,6 +1,5 @@
-package com.kaciras.blog.api.notification;
+package com.kaciras.blog.api.notice;
 
-import com.kaciras.blog.api.discuss.Discussion;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +20,9 @@ final class NotificationServiceTest {
 	@MockBean
 	private ThreadPoolTaskScheduler executor;
 
+	@MockBean
+	private MailService mailService;
+
 	@Autowired
 	private NotificationService service;
 
@@ -28,7 +30,7 @@ final class NotificationServiceTest {
 	void asyncReport() {
 		clearInvocations(executor); // TODO: 每次测试都加载全部bean很烦人
 
-		service.reportDiscussion(new Discussion(), null, null);
+		service.add(new TestActivity());
 		verify(executor).submit(any(Callable.class));
 	}
 }

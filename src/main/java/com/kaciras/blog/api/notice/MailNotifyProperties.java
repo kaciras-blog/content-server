@@ -1,4 +1,4 @@
-package com.kaciras.blog.api.notification;
+package com.kaciras.blog.api.notice;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;

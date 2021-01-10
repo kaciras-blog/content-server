@@ -2,8 +2,7 @@ package com.kaciras.blog.api.friend;
 
 import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.api.RedisOperationsBuilder;
-import com.kaciras.blog.api.notification.FriendAccident;
-import com.kaciras.blog.api.notification.NotificationService;
+import com.kaciras.blog.api.notice.NotificationService;
 import com.kaciras.blog.infra.RedisExtensions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -140,7 +139,8 @@ public class FriendValidateService {
 		if (friend == null) {
 			return; // 用户删除了友链产生不一致状态
 		}
-		notificationService.reportFriend(type, friend, record.validate, newUrl);
+		var activity = new FriendAccident(type, friend.name, friend.url, newUrl, record.validate);
+		notificationService.add(activity);
 	}
 
 	/**

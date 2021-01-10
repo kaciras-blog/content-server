@@ -2,7 +2,7 @@ package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.api.config.BindConfig;
-import com.kaciras.blog.api.notification.NotificationService;
+import com.kaciras.blog.api.notice.NotificationService;
 import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.principal.RequirePermission;
@@ -107,12 +107,30 @@ class DiscussionController {
 		repository.add(discussion);
 
 		if (discussion.getState() == DiscussionState.Visible) {
-			notificationService.reportDiscussion(discussion, parent, topic);
+			reportDiscussion(discussion, parent, topic);
 		}
 
 		return ResponseEntity
 				.created(URI.create("/discussions/" + discussion.getId()))
 				.body(mapper.toViewObject(discussion));
+	}
+
+	void reportDiscussion(Discussion discussion, Discussion parent, Topic topic) {
+		if (discussion.getUserId() == 2) {
+			return; // 自己的评论就不用提醒了
+		}
+
+		var entry = new DiscussionActivity();
+		entry.setFloor(discussion.getFloor());
+		entry.setTreeFloor(discussion.getTreeFloor());
+		entry.setTime(discussion.getTime());
+		entry.setUrl(topic.getUrl());
+		entry.setTitle(topic.getName());
+
+		var content = discussion.getContent();
+		var preview = content.length() > 200 ? content.substring(0, 200) + "..." : content;
+		entry.setPreview(preview);
+		notificationService.add(entry);
 	}
 
 	/**

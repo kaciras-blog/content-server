@@ -3,7 +3,7 @@ package com.kaciras.blog.api.discuss;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.AbstractControllerTest;
 import com.kaciras.blog.api.SnapshotAssertion;
-import com.kaciras.blog.api.notification.NotificationService;
+import com.kaciras.blog.api.notice.NotificationService;
 import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.api.user.UserVo;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
@@ -161,7 +161,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	}
 
 	private static Stream<Arguments> invalidPostRequests() {
-		var longText = new char[20000];
+		var longText = new char[5001];
 		Arrays.fill(longText, '蛤');
 		return Stream.of(
 				Arguments.of("{ \"content\": \" \" }"),
@@ -175,7 +175,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 
 	@MethodSource("invalidPostRequests")
 	@ParameterizedTest
-	void postWithInvalidField(String body) throws Exception {
+	void invalidPublish(String body) throws Exception {
 		mockMvc.perform(post("/discussions").content(body)).andExpect(status().is(400));
 	}
 
@@ -188,14 +188,14 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	void postWithNonExistsTopic() throws Exception {
+	void publishToNonExistsTopic() throws Exception {
 		// 对与 spy 的对象，且方法内会抛异常，必须使用 doXX.when(obj).call 方式而不是 when(obj.call).thenXX
 		doThrow(new RequestArgumentException()).when(topics).get(anyInt(), anyInt());
 		mockMvc.perform(post("/discussions").content(getPostBody())).andExpect(status().is(400));
 	}
 
 	@Test
-	void postWithNonExistsParent() throws Exception {
+	void publishToNonExistsParent() throws Exception {
 		when(repository.get(anyInt())).thenReturn(Optional.empty());
 
 		var input = new PublishInput(0, 0, 1, null, "test");
@@ -211,7 +211,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		verify(repository).add(captor.capture());
 
 		var topic = new Topic("TestTopic", "http://example.com");
-		verify(notification).reportDiscussion(any(), eq(null), refEq(topic));
+		verify(notification).add(any());
 
 		var stored = captor.getValue();
 		assertThat(stored.getContent()).isEqualTo("test content");

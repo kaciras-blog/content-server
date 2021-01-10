@@ -1,4 +1,4 @@
-package com.kaciras.blog.api.notification;
+package com.kaciras.blog.api.notice;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +17,13 @@ public class MailService {
 
 	private final JavaMailSender mailSender;
 	private final String from;
+	private final String adminAddress;
+
+	public void sendToAdmin(String title, String html) {
+		if (adminAddress != null) {
+			send(adminAddress, title, html);
+		}
+	}
 
 	/**
 	 * 发送邮件，使用 FreeMarker 模板来生成邮件内容。
@@ -30,8 +37,8 @@ public class MailService {
 		var helper = new MimeMessageHelper(message);
 
 		try {
-			helper.setTo(to);
 			helper.setFrom(from, "KacirasBlog");
+			helper.setTo(to);
 			helper.setSubject(title);
 
 			/*

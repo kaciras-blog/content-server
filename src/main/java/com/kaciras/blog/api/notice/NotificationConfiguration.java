@@ -1,17 +1,18 @@
-package com.kaciras.blog.api.notification;
+package com.kaciras.blog.api.notice;
 
-import com.kaciras.blog.api.RedisOperationsBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.Optional;
 
 @EnableConfigurationProperties(MailNotifyProperties.class)
-@org.springframework.context.annotation.Configuration(proxyBeanMethods = false)
+@Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
 public class NotificationConfiguration {
 
@@ -20,17 +21,14 @@ public class NotificationConfiguration {
 	@ConditionalOnProperty(prefix = "app.mail-notify", name = "from")
 	@Bean
 	public MailService mailService(JavaMailSender mailSender) {
-		return new MailService(mailSender, properties.from);
+		return new MailService(mailSender, properties.from, properties.address);
 	}
 
 	@Bean
 	public NotificationService notificationService(
-			RedisOperationsBuilder redisBuilder,
-			Optional<MailService> mailService
-	) {
-		if (properties.address != null && mailService.isEmpty()) {
-			throw new BeanCreationException("app.mail-notify 需要配置邮件 spring.mail");
-		}
-		return new NotificationService(redisBuilder, properties.address, mailService.orElse(null));
+			ObjectMapper objectMapper,
+			RedisTemplate<String, byte[]> redis,
+			Optional<MailService> mailService) {
+		return new NotificationService(redis.opsForList(), objectMapper, mailService.orElse(null));
 	}
 }

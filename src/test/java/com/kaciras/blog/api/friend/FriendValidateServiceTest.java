@@ -1,10 +1,10 @@
 package com.kaciras.blog.api.friend;
 
-import com.kaciras.blog.api.notification.FriendAccident;
-import com.kaciras.blog.api.notification.NotificationService;
+import com.kaciras.blog.api.notice.NotificationService;
 import com.kaciras.blog.infra.autoconfigure.KxCodecAutoConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
@@ -20,7 +20,9 @@ import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 
 import static com.kaciras.blog.api.friend.TestHelper.createFriend;
-import static org.mockito.ArgumentMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.noInteractions;
 
@@ -113,7 +115,7 @@ final class FriendValidateServiceTest {
 
 		service.startValidation();
 
-		verify(notification, never()).reportFriend(any(), any(), any(), any());
+		verify(notification, noInteractions()).add(any());
 	}
 
 	@Test
@@ -126,7 +128,15 @@ final class FriendValidateServiceTest {
 			service.startValidation();
 		}
 
-		verify(notification).reportFriend(eq(FriendAccident.Type.Inaccessible), eq(friend), any(), isNull());
+		var captor = ArgumentCaptor.forClass(FriendAccident.class);
+		verify(notification).add(captor.capture());
+
+		var activity = captor.getValue();
+		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.Inaccessible);
+		assertThat(activity.getUrl()).isEqualTo(friend.url);
+		assertThat(activity.getName()).isEqualTo(friend.name);
+		assertThat(activity.getTime()).isNotNull();
+		assertThat(activity.getKind()).isEqualTo("fr");
 	}
 
 	@Test
@@ -137,7 +147,14 @@ final class FriendValidateServiceTest {
 
 		service.startValidation();
 
-		verify(notification).reportFriend(eq(FriendAccident.Type.Moved), eq(friend), any(), eq(newUrl));
+		var captor = ArgumentCaptor.forClass(FriendAccident.class);
+		verify(notification).add(captor.capture());
+
+		var activity = captor.getValue();
+		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.Moved);
+		assertThat(activity.getUrl()).isEqualTo(friend.url);
+		assertThat(activity.getName()).isEqualTo(friend.name);
+		assertThat(activity.getNewUrl()).isEqualTo(newUrl);
 	}
 
 	@Test
@@ -147,7 +164,13 @@ final class FriendValidateServiceTest {
 
 		service.startValidation();
 
-		verify(notification).reportFriend(eq(FriendAccident.Type.AbandonedMe), eq(friend), any(), any());
+		var captor = ArgumentCaptor.forClass(FriendAccident.class);
+		verify(notification).add(captor.capture());
+
+		var activity = captor.getValue();
+		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.AbandonedMe);
+		assertThat(activity.getUrl()).isEqualTo(friend.url);
+		assertThat(activity.getName()).isEqualTo(friend.name);
 	}
 
 	// 有记录但没有对应的友链，因为检查任务是异步的，所以可能有这种边界情况。
@@ -156,10 +179,10 @@ final class FriendValidateServiceTest {
 		addRecord("example.com", null, Instant.EPOCH);
 		var newUrl = URI.create("https://new.home");
 		setValidateResult(true, newUrl, null);
-
 		when(repository.findByHost(any())).thenReturn(null);
 
 		service.startValidation();
-		verify(notification, noInteractions()).reportFriend(any(), any(), any(), any());
+
+		verify(notification, noInteractions()).add(any());
 	}
 }

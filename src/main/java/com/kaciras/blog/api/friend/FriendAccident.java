@@ -1,5 +1,6 @@
-package com.kaciras.blog.api.notification;
+package com.kaciras.blog.api.friend;
 
+import com.kaciras.blog.api.notice.HttpNotice;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +12,7 @@ import java.time.Instant;
  */
 @RequiredArgsConstructor
 @Getter
-public final class FriendAccident {
+final class FriendAccident implements HttpNotice {
 
 	public enum Type {
 		Moved,
@@ -27,4 +28,9 @@ public final class FriendAccident {
 	private final URI newUrl;
 
 	private final Instant time;
+
+	@Override
+	public String getKind() {
+		return "fr";
+	}
 }
