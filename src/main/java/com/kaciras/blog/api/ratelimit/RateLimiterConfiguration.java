@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(RateLimiterProperties.class)
-public class RateLimiterAutoConfiguration {
+public class RateLimiterConfiguration {
 
 	private final RateLimiterProperties properties;
 
@@ -25,7 +25,7 @@ public class RateLimiterAutoConfiguration {
 
 	private final RedisTemplate<String, Object> redis;
 
-	public RateLimiterAutoConfiguration(RateLimiterProperties properties, RedisConnectionFactory factory, Clock clock) {
+	public RateLimiterConfiguration(RateLimiterProperties properties, RedisConnectionFactory factory, Clock clock) {
 		this.properties = properties;
 		this.factory = factory;
 		this.clock = clock;

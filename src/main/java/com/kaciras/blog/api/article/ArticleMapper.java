@@ -56,7 +56,7 @@ abstract class ArticleMapper {
 		}
 		var categoryPath = categoryRepository.get(article.getCategory()).getPathTo(request.getCategory());
 		vo.setCategories(mapCategoryPath(categoryPath));
-		vo.setDiscussionCount(discussionRepository.count(new DiscussionQuery().setObjectId(article.getId()).setType(0)));
+		vo.setDiscussionCount(discussionRepository.count(new DiscussionQuery().setObjectId(article.getId()).setType(1)));
 		return vo;
 	}
 

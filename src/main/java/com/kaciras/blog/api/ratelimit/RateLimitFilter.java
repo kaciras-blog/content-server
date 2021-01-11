@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * 限流过滤器，拦截过于频繁的访问以保护系统。
  *
- * <h2>关于 CORS 预检请求的处理</h2>
+ * <h2>CORS 预检请求的处理</h2>
  * CORS 预检请求发起的时机和数量无法预测，但在 CorsFilter 里已经过滤掉了。
  * 这要求该过滤器在 CorsFilter 之后，请用 Order 来改变顺序。
  * 不合规范的 OPTIONS 请求视为非正常行为，一样进行速率限制，故这里不检查请求的方法。
@@ -26,9 +26,9 @@ import java.util.List;
 @Order(Integer.MIN_VALUE + 20)
 @Slf4j
 @RequiredArgsConstructor
-public final class RateLimitFilter extends HttpFilter {
+final class RateLimitFilter extends HttpFilter {
 
-	/** 当达到限制时返回一些相关信息 */
+	/** 表示需要等待多少秒的响应头 */
 	private static final String RATE_LIMIT_HEADER = "X-RateLimit-Wait";
 
 	private final List<RateLimiterChecker> checkers;
