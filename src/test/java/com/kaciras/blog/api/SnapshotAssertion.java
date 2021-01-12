@@ -54,8 +54,8 @@ public final class SnapshotAssertion {
 		this.objectMapper = objectMapper.copy()
 				.enable(SerializationFeature.INDENT_OUTPUT)
 				.setDefaultPrettyPrinter(printer)
-				.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
-				.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+				.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+				.enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
 	}
 
 	/**

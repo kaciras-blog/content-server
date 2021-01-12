@@ -35,6 +35,9 @@ public abstract class AbstractControllerTest {
 	@Autowired
 	protected ObjectMapper objectMapper;
 
+	@Autowired
+	protected SnapshotAssertion snapshot;
+
 	@BeforeEach
 	void setup() {
 		var requestTemplate = get("/")

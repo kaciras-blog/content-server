@@ -47,12 +47,6 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	@Autowired
 	private DiscussionController controller;
 
-	@Autowired
-	private ObjectMapper objectMapper;
-
-	@Autowired
-	private SnapshotAssertion snapshot;
-
 	@BeforeEach
 	void setUp() {
 		controller.setOptions(new DiscussionOptions());
