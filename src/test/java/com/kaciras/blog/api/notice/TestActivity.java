@@ -1,9 +1,21 @@
 package com.kaciras.blog.api.notice;
 
-public class TestActivity implements HttpNotice {
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+final class TestActivity implements Activity, MailNotice {
+
+	public int intValue;
 
 	@Override
-	public String getKind() {
-		return "test";
+	public ActivityType getActivityType() {
+		return ActivityType.Discussion;
+	}
+
+	@Override
+	public void sendMail(boolean clear, MailService sender) {
+		if(clear) {
+			sender.sendToAdmin("title", "content");
+		}
 	}
 }

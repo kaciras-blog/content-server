@@ -1,16 +1,15 @@
 package com.kaciras.blog.api.discuss;
 
-import com.kaciras.blog.api.notice.HttpNotice;
+import com.kaciras.blog.api.notice.Activity;
+import com.kaciras.blog.api.notice.ActivityType;
 import com.kaciras.blog.api.notice.MailNotice;
 import com.kaciras.blog.api.notice.MailService;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
-
 @Getter
 @Setter
-final class DiscussionActivity implements HttpNotice, MailNotice {
+final class DiscussionActivity implements Activity, MailNotice {
 
 	/** 评论所在的页面地址和标题 */
 	private String url;
@@ -22,12 +21,9 @@ final class DiscussionActivity implements HttpNotice, MailNotice {
 	/** 内容预览 */
 	private String preview;
 
-	/** 评论时间 */
-	private Instant time;
-
 	@Override
-	public String getKind() {
-		return "dz";
+	public ActivityType getActivityType() {
+		return ActivityType.Discussion;
 	}
 
 	@Override

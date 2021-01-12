@@ -1,6 +1,7 @@
 package com.kaciras.blog.api.friend;
 
-import com.kaciras.blog.api.notice.NotificationService;
+import com.kaciras.blog.api.notice.ActivityType;
+import com.kaciras.blog.api.notice.NoticeService;
 import com.kaciras.blog.infra.autoconfigure.KxCodecAutoConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.noIntera
 final class FriendValidateServiceTest {
 
 	@MockBean
-	private NotificationService notification;
+	private NoticeService notification;
 
 	@MockBean
 	private FriendRepository repository;
@@ -135,8 +136,7 @@ final class FriendValidateServiceTest {
 		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.Inaccessible);
 		assertThat(activity.getUrl()).isEqualTo(friend.url);
 		assertThat(activity.getName()).isEqualTo(friend.name);
-		assertThat(activity.getTime()).isNotNull();
-		assertThat(activity.getKind()).isEqualTo("fr");
+		assertThat(activity.getActivityType()).isEqualTo(ActivityType.Friend);
 	}
 
 	@Test

@@ -1,8 +1,10 @@
 package com.kaciras.blog.api.notice;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
+@RequiredArgsConstructor
 @ConfigurationProperties("app.mail-notify")
 @ConstructorBinding
 public final class MailNotifyProperties {
@@ -16,9 +18,4 @@ public final class MailNotifyProperties {
 	 * 接收全站消息提醒的邮箱，如果为 null 则不发送邮件
 	 */
 	public final String address;
-
-	public MailNotifyProperties(String from, String address) {
-		this.from = from;
-		this.address = address;
-	}
 }

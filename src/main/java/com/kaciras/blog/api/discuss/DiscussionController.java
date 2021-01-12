@@ -2,7 +2,7 @@ package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.api.config.BindConfig;
-import com.kaciras.blog.api.notice.NotificationService;
+import com.kaciras.blog.api.notice.NoticeService;
 import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.principal.RequirePermission;
@@ -28,7 +28,7 @@ class DiscussionController {
 	private final DiscussionRepository repository;
 	private final ViewModelMapper mapper;
 
-	private final NotificationService notificationService;
+	private final NoticeService noticeService;
 
 	@SuppressWarnings("unused")
 	@Setter
@@ -123,14 +123,13 @@ class DiscussionController {
 		var entry = new DiscussionActivity();
 		entry.setFloor(discussion.getFloor());
 		entry.setTreeFloor(discussion.getTreeFloor());
-		entry.setTime(discussion.getTime());
 		entry.setUrl(topic.getUrl());
 		entry.setTitle(topic.getName());
 
 		var content = discussion.getContent();
 		var preview = content.length() > 200 ? content.substring(0, 200) + "..." : content;
 		entry.setPreview(preview);
-		notificationService.add(entry);
+		noticeService.add(entry);
 	}
 
 	/**

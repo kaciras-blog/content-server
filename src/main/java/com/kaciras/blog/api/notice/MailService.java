@@ -1,5 +1,6 @@
 package com.kaciras.blog.api.notice;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,9 +10,12 @@ import javax.mail.MessagingException;
 import java.io.IOException;
 
 /**
- * 由于我懒得搞邮箱验证（不验证有滥用风险），所以不支持给别人发邮件。
+ * 可选的发邮件服务，如果没有配置邮件则该 Bean 不存在。
+ *
+ * <h2>安全性</h2>
+ * 给别人发邮件前一定要先验证地址，否则可能被利用作为邮件轰炸机之类的导致被拉黑。
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public class MailService {
 
@@ -19,6 +23,12 @@ public class MailService {
 	private final String from;
 	private final String adminAddress;
 
+	/**
+	 * 发送一个邮件给博主，如果博主没有设置自己的邮件地址则什么也不做。
+	 *
+	 * @param title 标题
+	 * @param html  内容，HTML格式
+	 */
 	public void sendToAdmin(String title, String html) {
 		if (adminAddress != null) {
 			send(adminAddress, title, html);
@@ -30,7 +40,7 @@ public class MailService {
 	 *
 	 * @param to    邮件发到哪
 	 * @param title 标题
-	 * @param html  内容，可以使用HTML
+	 * @param html  内容，HTML格式
 	 */
 	public void send(String to, String title, String html) {
 		var message = mailSender.createMimeMessage();

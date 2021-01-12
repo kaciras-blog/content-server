@@ -1,20 +1,21 @@
 package com.kaciras.blog.api.notice;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kaciras.blog.api.RedisOperationsBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.mail.javamail.JavaMailSender;
 
-import java.util.Optional;
-
+/*
+ * 通知一般用 Notification，但这词太长也不好看，于是就改成 Notice 反正个人项目意思差不多就行了。
+ */
 @EnableConfigurationProperties(MailNotifyProperties.class)
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
-public class NotificationConfiguration {
+public class NoticeConfiguration {
 
 	private final MailNotifyProperties properties;
 
@@ -25,10 +26,7 @@ public class NotificationConfiguration {
 	}
 
 	@Bean
-	public NotificationService notificationService(
-			ObjectMapper objectMapper,
-			RedisTemplate<String, byte[]> redis,
-			Optional<MailService> mailService) {
-		return new NotificationService(redis.opsForList(), objectMapper, mailService.orElse(null));
+	public BoundListOperations<String, Notice> noticeRedisList(RedisOperationsBuilder redis) {
+		return redis.bindList("notice", Notice.class);
 	}
 }

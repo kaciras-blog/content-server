@@ -1,9 +1,7 @@
 package com.kaciras.blog.api.discuss;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.AbstractControllerTest;
-import com.kaciras.blog.api.SnapshotAssertion;
-import com.kaciras.blog.api.notice.NotificationService;
+import com.kaciras.blog.api.notice.NoticeService;
 import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.api.user.UserVo;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
@@ -44,7 +42,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	private UserManager userManager;
 
 	@MockBean
-	private NotificationService notification;
+	private NoticeService notification;
 
 	@Autowired
 	private DiscussionController controller;

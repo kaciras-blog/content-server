@@ -2,7 +2,7 @@ package com.kaciras.blog.api.friend;
 
 import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.api.RedisOperationsBuilder;
-import com.kaciras.blog.api.notice.NotificationService;
+import com.kaciras.blog.api.notice.NoticeService;
 import com.kaciras.blog.infra.RedisExtensions;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +20,8 @@ import java.util.Queue;
 /**
  * 定时扫描对方的网站，检查是否嗝屁（默哀），以及单方面删除本站（为什么不跟人家做朋友了）。
  * 要启用检查，请将 app.validate-friend 设置为 true。
- * <p>
- * 【安全性】
+ *
+ * <h2>安全性</h2>
  * 发送请求可能暴露服务器的地址，这种情况下可以通过 app.http-client.proxy 设置代理。
  */
 @Service
@@ -29,7 +29,7 @@ import java.util.Queue;
 @Slf4j
 public class FriendValidateService {
 
-	private final NotificationService notificationService;
+	private final NoticeService noticeService;
 	private final FriendRepository repository;
 
 	private final Clock clock;
@@ -139,8 +139,7 @@ public class FriendValidateService {
 		if (friend == null) {
 			return; // 用户删除了友链产生不一致状态
 		}
-		var activity = new FriendAccident(type, friend.name, friend.url, newUrl, record.validate);
-		notificationService.add(activity);
+		noticeService.add(new FriendAccident(type, friend.name, friend.url, newUrl));
 	}
 
 	/**

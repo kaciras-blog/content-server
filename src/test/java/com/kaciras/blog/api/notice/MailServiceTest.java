@@ -12,6 +12,7 @@ import javax.mail.internet.MimeMessage;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.noInteractions;
 
 final class MailServiceTest {
@@ -22,7 +23,12 @@ final class MailServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		Mockito.when(mockSender.createMimeMessage()).thenReturn(new JavaMailSenderImpl().createMimeMessage());
+		when(mockSender.createMimeMessage()).thenReturn(new JavaMailSenderImpl().createMimeMessage());
+	}
+
+	@Test
+	void exception() {
+		service.send("", "<- 地址为空会抛出异常", "异常直接处理了不会跑到外层");
 	}
 
 	@Test
