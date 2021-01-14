@@ -1,5 +1,5 @@
-# 配置一些属性的默认值，如果不改动代码只是运行的话不需要修改此文件。
-# 运行所需的环境配置在根目录的 application.yml 里
+# 配置一些属性的默认值，此文件属于源码的一部分，如果不改动代码只是运行的话不需要修改。
+# 运行所需的环境配置（数据库、密码等）在根目录的 application.yml 里
 
 server:
 
@@ -11,9 +11,6 @@ server:
 
   tomcat:
     connection-timeout: 10s
-
-    threads:
-      max: 2
 
   servlet:
     register-default-servlet: false
@@ -38,10 +35,10 @@ spring:
       - org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration
 
   main:
+    banner-mode: "off"
 
     # LTW 自动注入不支持延迟初始化
     lazy-initialization: false
-    banner-mode: "off"
 
   jmx:
     enabled: false

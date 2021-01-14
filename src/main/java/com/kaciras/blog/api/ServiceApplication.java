@@ -3,9 +3,6 @@ package com.kaciras.blog.api;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.kaciras.blog.infra.Misc;
 import com.kaciras.blog.infra.autoconfigure.*;
-import io.lettuce.core.resource.DefaultClientResources;
-import io.lettuce.core.resource.DefaultEventLoopGroupProvider;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -113,19 +110,6 @@ public class ServiceApplication {
 		taskScheduler.setThreadNamePrefix("SharedPool-");
 		customizers.forEach(customizer -> customizer.customize(taskScheduler));
 		return taskScheduler;
-	}
-
-	/**
-	 * 减少Lettuce的线程数，注意这里降低到了比推荐的最低数量还少，可能会造成性能问题。
-	 * EventLoopGroup 和 EventExecutorGroup 的类型与 DefaultClientResources 构造方法里的默认类型一致。
-	 *
-	 * @see org.springframework.boot.autoconfigure.data.redis.LettuceConnectionConfiguration#lettuceClientResources()
-	 */
-	@Bean(destroyMethod = "shutdown")
-	DefaultClientResources lettuceClientResources() {
-		return DefaultClientResources.builder()
-				.eventExecutorGroup(DefaultEventLoopGroupProvider.createEventLoopGroup(DefaultEventExecutorGroup.class, 2))
-				.eventLoopGroupProvider(new DefaultEventLoopGroupProvider(1)).build();
 	}
 
 	/**
