@@ -30,9 +30,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  * 因为 JUnit 自己没有提供外部获取当前测试的方法，故需要注册一个扩展来追踪当前测试名.
  * 请在测试类上加入：
  * {@code @ExtendWith(Snapshots.TestContextHolder.class)}
- *
- * <h3>关于其它功能</h3>
- * 暂不支持更新已存在的快照，请直接删除原快照然后再生成。
  */
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @Component
@@ -69,15 +66,16 @@ public final class SnapshotAssertion {
 
 	/**
 	 * 断言一个对象符合快照，使用 JSON 序列化将对象保存在快照文件中。
+	 * 如果启动参数中设置了 -DupdateSnapshot 则强制更新快照。
 	 * <p>
-	 * 这里直接使用 AssertJ 的断言而不是自己实现 Diff，因为 IDE 都支持对比差异。
+	 * 这里直接使用 AssertJ 的断言而不是自己实现 Diff，因为 IDE 都支持对比差异，
 	 * 至于控制台的话……反正我从不用。
 	 */
 	public void assertMatch(Object object) throws Exception {
 		var actual = objectMapper.writeValueAsString(object);
 		var file = getSnapshotFile();
 
-		if (file.exists()) {
+		if (file.exists() && System.getProperty("updateSnapshot") == null) {
 			var expect = FileUtil.readAsString(file);
 
 			// 重新格式化，避免快照文件格式的影响。
@@ -100,7 +98,7 @@ public final class SnapshotAssertion {
 	 */
 	private File getSnapshotFile() {
 		if (testClass == null) {
-			throw new Error("必须把 TestContextHolder 注册到 JUnit 扩展才能使用快照");
+			throw new Error("必须把 TestContextHolder 注册到 JUnit 扩展");
 		}
 		var template = "src/test/resources/snapshots/%s/%s-%d.json";
 		return new File(String.format(template, testClass, testName, index++));
