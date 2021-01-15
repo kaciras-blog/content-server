@@ -3,6 +3,8 @@ package com.kaciras.blog.api.ratelimit;
 import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.infra.ratelimit.RedisBlockingLimiter;
 import com.kaciras.blog.infra.ratelimit.RedisTokenBucket;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +14,7 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
 import java.time.Clock;
-import java.util.ArrayList;
+import java.util.List;
 
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(RateLimiterProperties.class)
@@ -38,42 +40,27 @@ public class RateLimiterConfiguration {
 		redis.afterPropertiesSet();
 	}
 
+	// 注意这些 @Bean 方法是有前后顺序的，不要乱改。
+
+	@ConditionalOnProperty(prefix = "app.rate-limit.generic", name = {"rate", "size"})
 	@Bean
-	RateLimitFilter rateLimitFilter() {
-		var checkers = new ArrayList<RateLimiterChecker>(2);
-
-		// 这里决定Checker的顺序，先通用后特殊
-		if (properties.generic != null) {
-			checkers.add(createGenericChecker());
-		}
-		if (properties.effective != null) {
-			checkers.add(createEffectChecker());
-		}
-		return new RateLimitFilter(checkers);
-	}
-
-	private RateLimiterChecker createGenericChecker() {
-		var limiter = new RedisTokenBucket(RedisKeys.RateLimit.value(), redis, clock);
+	RateLimiterChecker genericRateChecker() {
 		var bucket = properties.generic;
-
-		if (bucket.size == 0) {
-			throw new IllegalArgumentException("令牌桶容量不能为0");
-		}
-		if (bucket.rate == 0) {
-			throw new IllegalArgumentException("令牌桶添加速率不能为0");
-		}
+		var limiter = new RedisTokenBucket(RedisKeys.RateLimit.value(), redis, clock);
 		limiter.addBucket(bucket.size, bucket.rate);
 
 		return (ip, request) -> limiter.acquire(ip.toString(), 1);
 	}
 
-	private EffectRateChecker createEffectChecker() {
+	@ConditionalOnProperty(prefix = "app.rate-limit.effective", name = "block-times")
+	@Bean
+	EffectRateChecker effectRateChecker() {
 		var config = properties.effective;
-
 		var inner = new RedisTokenBucket(RedisKeys.EffectRate.value(), redis, clock);
+
 		for (var limit : config.limits) {
-			var bucket = limit.toTokenBucket();
-			inner.addBucket(bucket.size, bucket.rate);
+			var rate = limit.permits / (double) limit.time.toSeconds();
+			inner.addBucket(limit.permits, rate);
 		}
 
 		var wrapper = new RedisBlockingLimiter(RedisKeys.EffectBlocking.value(), inner, factory, clock);
@@ -81,5 +68,12 @@ public class RateLimiterConfiguration {
 		wrapper.setRefreshOnReject(config.refreshOnReject);
 
 		return new EffectRateChecker(wrapper);
+	}
+
+	// ConditionalOnBean 需要指定的 bean 先注册，所以这个必须放到最下面
+	@ConditionalOnBean(value = RateLimiterChecker.class)
+	@Bean
+	RateLimitFilter rateLimitFilter(List<RateLimiterChecker> checkers) {
+		return new RateLimitFilter(checkers);
 	}
 }
