@@ -12,7 +12,7 @@ import java.time.Instant;
 @AllArgsConstructor
 public final class FriendLink {
 
-	/** 对方网站的URL，友链以它的域名作为ID */
+	/** 对方网站的 URL，友链以它的域名作为ID */
 	@NotNull
 	@HttpURI
 	public URI url;
@@ -27,7 +27,7 @@ public final class FriendLink {
 	@NotNull
 	public ImageReference background;
 
-	/** 用于验证对方是否加本站为友链的页面，为null则不验证 */
+	/** 用于验证对方是否加本站为友链的页面，为 null 则不验证 */
 	@HttpURI
 	public URI friendPage;
 

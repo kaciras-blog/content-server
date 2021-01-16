@@ -1,8 +1,11 @@
 package com.kaciras.blog.api.config;
 
 import com.kaciras.blog.infra.func.UncheckedConsumer;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -11,13 +14,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Service
 public class ConfigBindingManager {
 
 	// 目前仅在启动时添加，不存在线程安全问题
 	private final Map<String, ChangeListener> bindings = new HashMap<>();
 
 	private final ConfigRepository configRepository;
+
+	@Nullable
 	private final Validator validator;
 
 	public <T> void bind(String name, Class<T> type, UncheckedConsumer<T> setter) {

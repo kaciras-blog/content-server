@@ -67,9 +67,10 @@ app:
 
     allowed-origins: http://localhost
 
-#  mail-notify:
-#    from: YourMail@example.com
-#    address: YourMail@example.com
+#  notice:
+#    mail:
+#      from: Sender@example.com
+#      admin: YourMail@example.com
 
   # 没什么鸟用的限流器配置
 #  rate-limit:

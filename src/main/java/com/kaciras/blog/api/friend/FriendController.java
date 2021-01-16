@@ -83,10 +83,9 @@ class FriendController {
 
 	/**
 	 * 虽然很多人会避免对友链排序，他们使用字母序、添加顺序等。
-	 *
 	 * 但是啊，喜欢的友链排难道不应该在前面吗。
 	 *
-	 * @param hostList 新的顺序
+	 * @param hostList 新的顺序，是域名的列表
 	 */
 	@RequirePermission
 	@PutMapping

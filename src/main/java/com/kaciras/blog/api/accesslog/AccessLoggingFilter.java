@@ -3,7 +3,6 @@ package com.kaciras.blog.api.accesslog;
 import com.kaciras.blog.api.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
@@ -16,6 +15,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 
 @Order(-10)
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public final class AccessLoggingFilter extends HttpFilter {
 	private final Clock clock;
 
 	// 跟定时任务共用一个线程池，就不再额外开线程了
-	private final ThreadPoolTaskScheduler threadPool;
+	private final Executor threadPool;
 
 	private final AccessLoggingDAO accessLoggingDAO;
 

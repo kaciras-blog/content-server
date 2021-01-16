@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.function.Predicate;
 
 @RequiredArgsConstructor
-public final class FriendSitePage {
+final class FriendSitePage {
 
 	/**
 	 * 该网站能否正常访问
@@ -26,12 +26,16 @@ public final class FriendSitePage {
 	private final URI newUrl;
 
 	private final String myOrigin;
+
 	private final String html;
 
 	/**
 	 * 页面里是否存在本站的链接（互链）。
+	 * <p>
+	 * 现在动态站很多也没几个做 SSR 的，直接检查页面很容易误报，
+	 * 这种小功能也懒得去上无头浏览器，不管了。
 	 *
-	 * @return 如果存在返回true
+	 * @return 如果存在返回 true
 	 */
 	public boolean hasMyLink() {
 		Predicate<Element> isLinkToMySite = el -> {

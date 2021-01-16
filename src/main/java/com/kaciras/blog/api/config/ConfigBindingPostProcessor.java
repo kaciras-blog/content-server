@@ -6,6 +6,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Modifier;
 
@@ -15,13 +16,13 @@ import java.lang.reflect.Modifier;
  * @see ConfigBindingManager
  */
 @RequiredArgsConstructor
-public final class ConfigBindingPostProcessor implements BeanPostProcessor {
+final class ConfigBindingPostProcessor implements BeanPostProcessor {
 
 	private final BeanDefinitionRegistry beanRegistry;
 	private final ConfigBindingManager configBindingManager;
 
 	@Override
-	public Object postProcessBeforeInitialization(Object bean, String beanName) {
+	public Object postProcessBeforeInitialization(Object bean, @NonNull String beanName) {
 		var clazz = bean.getClass();
 		if (!clazz.getName().startsWith("com.kaciras")) {
 			return bean;

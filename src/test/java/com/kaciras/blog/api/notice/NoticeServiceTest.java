@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.mockito.internal.verification.VerificationModeFactory.noMoreInteractions;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -47,12 +48,15 @@ final class NoticeServiceTest {
 	}
 
 	@Test
-	void add() {
+	void sendMail() {
 		clearInvocations(executor);
 
+		service.add(new TestActivity2());
+		service.add(new TestActivity(666));
 		service.add(new TestActivity(666));
 
 		verify(mailService).sendToAdmin(eq("title"), eq("content"));
+		verify(mailService, noMoreInteractions()).sendToAdmin(any(), any());
 	}
 
 	@Test
@@ -73,6 +77,6 @@ final class NoticeServiceTest {
 
 		service.clear();
 
-		assertThat(service.getAll()).isEmpty();;
+		assertThat(service.getAll()).isEmpty();
 	}
 }

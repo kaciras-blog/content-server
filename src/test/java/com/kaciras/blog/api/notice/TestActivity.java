@@ -14,7 +14,7 @@ final class TestActivity implements Activity, MailNotice {
 
 	@Override
 	public void sendMail(boolean clear, MailService sender) {
-		if(clear) {
+		if (clear) {
 			sender.sendToAdmin("title", "content");
 		}
 	}

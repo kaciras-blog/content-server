@@ -11,6 +11,13 @@ import org.springframework.stereotype.Service;
 import java.time.Clock;
 import java.util.List;
 
+/**
+ * 面对不同类型通知包含的信息不同这个问题，有两种常见方案：
+ * <ol>
+ *     <li>提前渲染，在存储前就生成通知内容，统一通知类型</li>
+ *     <li>动态类型，通知系统不知晓通知的类型，一律</li>
+ * </ol>
+ */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Service
 public class NoticeService {
@@ -47,22 +54,24 @@ public class NoticeService {
 	public void add(Activity activity) {
 		var data = objectMapper.valueToTree(activity);
 		var notice = new Notice(activity.getActivityType(), clock.instant(), data);
-		var index = redis.rightPush(notice);
+		redis.rightPush(notice);
 
 		/*
 		 * 因为邮件仅通知有新回复即可，完整的通知列表在网页端，所以不需要每次都发。
 		 * 发送一个邮件即表明已经通知。
 		 *
-		 * 在控制台里清空所有通知表示全部处理完等待新消息，此时存储的消息是空的，
-		 * 新消息的序号是1，可以发送邮件。
+		 * 在控制台里清空所有通知表示全部处理完等待新消息，此时可以发送邮件。
+		 * 这里查看一下同类消息的数量来判断是否清空过，相当于 SQL 的 SELECT COUNT(*) WHERE type=?。
 		 *
-		 * 通常来说只有同一类型的不存在时才发，但这里仅支持全部清空，所以就不区分这个了。
+		 * 【其它方案】
+		 * 把这个逻辑转移到前端，发送完邮件设置一个标识阻止再发，前端看完所以消息后发一个请求重置该标识。
 		 */
-		// noinspection ConstantConditions
-		var isFirst = index == 1;
+		var typeCount = getAll().stream()
+				.filter(n -> n.getType() == notice.getType())
+				.count();
 
 		if (mailService != null && activity instanceof MailNotice) {
-			((MailNotice) activity).sendMail(isFirst, mailService);
+			((MailNotice) activity).sendMail(typeCount <= 1, mailService);
 		}
 	}
 }

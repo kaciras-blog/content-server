@@ -15,14 +15,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 @EnableConfigurationProperties(MailNotifyProperties.class)
 @Configuration(proxyBeanMethods = false)
 @RequiredArgsConstructor
-public class NoticeConfiguration {
+class NoticeConfiguration {
 
 	private final MailNotifyProperties properties;
 
 	@ConditionalOnProperty(prefix = "app.mail-notify", name = "from")
 	@Bean
 	public MailService mailService(JavaMailSender mailSender) {
-		return new MailService(mailSender, properties.from, properties.address);
+		return new MailService(mailSender, properties.from, properties.admin);
 	}
 
 	@Bean

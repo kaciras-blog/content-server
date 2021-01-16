@@ -88,8 +88,16 @@ class ConfigBindingManagerTest {
 		var newConfig = new TestBindingConfig();
 		newConfig.setSubConfig(null);
 
-		assertThatThrownBy(() -> manager.set("test", newConfig))
-				.isInstanceOf(ValidationException.class);
+		assertThatThrownBy(() -> manager.set("test", newConfig)).isInstanceOf(ValidationException.class);
+	}
+
+	@Test
+	void noJsr303Validator() {
+		var newConfig = new TestBindingConfig();
+		newConfig.setSubConfig(null);
+
+		var manager = new ConfigBindingManager(repository, null);
+		manager.set("test", newConfig);
 	}
 
 	@Test
@@ -97,7 +105,6 @@ class ConfigBindingManagerTest {
 		var newConfig = new TestBindingConfig();
 		newConfig.setSmaller(newConfig.getBigger() + 666);
 
-		assertThatThrownBy(() -> manager.set("test", newConfig))
-				.isInstanceOf(ValidationException.class);
+		assertThatThrownBy(() -> manager.set("test", newConfig)).isInstanceOf(ValidationException.class);
 	}
 }
