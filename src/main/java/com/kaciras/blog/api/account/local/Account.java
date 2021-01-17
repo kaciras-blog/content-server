@@ -67,8 +67,11 @@ public final class Account {
 	}
 
 	/**
-	 * 生成盐值，并对密码进行HASH加密。
-	 * SHA3算法不需要采用HMAC来加盐，直接跟密码连在一起即可。
+	 * 生成盐值，并对密码进行 Hash 加密。
+	 *
+	 * <h2>HAMC</h2>
+	 * SHA3 不需要采用 HMAC 来加盐，直接跟密码连一起即可。
+	 * <a href="https://crypto.stackexchange.com/a/17928">参考</a>
 	 *
 	 * @param password 原始密码文本
 	 * @param salt     盐值

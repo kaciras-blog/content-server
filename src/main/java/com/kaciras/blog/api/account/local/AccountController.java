@@ -29,7 +29,8 @@ import java.time.Clock;
 @RequestMapping("/accounts")
 class AccountController {
 
-	private static final long CAPTCHA_LIFE_TIME = 5 * 60 * 1000;
+	/** 验证码过期时间（毫秒） */
+	private static final long CAPTCHA_EXPIRE = 5 * 60 * 1000;
 
 	private final Clock clock;
 
@@ -76,7 +77,7 @@ class AccountController {
 		}
 
 		var time = (long) session.getAttribute(SessionAttributes.CAPTCHA_TIME);
-		if (clock.millis() - time > CAPTCHA_LIFE_TIME) {
+		if (clock.millis() - time > CAPTCHA_EXPIRE) {
 			throw new RequestArgumentException("验证码已过期，请重试");
 		}
 	}

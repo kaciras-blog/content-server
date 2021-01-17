@@ -12,11 +12,7 @@ import java.time.Clock;
 import java.util.List;
 
 /**
- * 面对不同类型通知包含的信息不同这个问题，有两种常见方案：
- * <ol>
- *     <li>提前渲染，在存储前就生成通知内容，统一通知类型</li>
- *     <li>动态类型，通知系统不知晓通知的类型，一律</li>
- * </ol>
+ * 通知服务，提供对通知消息的增删查，也能发邮件。
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Service

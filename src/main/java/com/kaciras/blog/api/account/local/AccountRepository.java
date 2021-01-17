@@ -13,8 +13,6 @@ public class AccountRepository {
 
 	private final AccountDAO accountDAO;
 
-	// accountDAO 是由 mybatis 自动实现的会抛出 SQLException
-	@SuppressWarnings("RedundantThrows")
 	public void add(Account account) throws SQLException {
 		accountDAO.insert(account);
 	}

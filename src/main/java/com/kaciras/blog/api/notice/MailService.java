@@ -36,7 +36,7 @@ public class MailService {
 	}
 
 	/**
-	 * 发送邮件，使用 FreeMarker 模板来生成邮件内容。
+	 * 发送邮件。
 	 *
 	 * @param to    邮件发到哪
 	 * @param title 标题

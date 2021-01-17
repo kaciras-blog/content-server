@@ -36,7 +36,9 @@ import java.util.stream.Collectors;
 
 /**
  * 处理 OAuth2 登录的控制器，OAuth2 有固定的流程所以所以统一在此处理。
- * <p>
+ * 也是在 OAuth2 流程中，用于本系统和第一方用户通信的类。
+ *
+ * <h2>为何不用 Spring-Security-OAuth </h2>
  * 虽然 Spring 有这功能，但因为 OAuth2 流程很简单所以自己写一遍学习一下。
  */
 @RequiredArgsConstructor
