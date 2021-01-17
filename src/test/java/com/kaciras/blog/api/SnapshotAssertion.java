@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -35,9 +36,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Component
 public final class SnapshotAssertion {
 
-	private static String testClass;
-	private static String testName;
+	private static Class<?> clazz;
+	private static Method method;
 	private static int index;
+	private static int calls;
 
 	private final ObjectMapper objectMapper;
 
@@ -97,20 +99,30 @@ public final class SnapshotAssertion {
 	 * @return 当前断言对应的快照文件
 	 */
 	private File getSnapshotFile() {
-		if (testClass == null) {
+		if (clazz == null) {
 			throw new Error("必须把 TestContextHolder 注册到 JUnit 扩展");
 		}
-		var template = "src/test/resources/snapshots/%s/%s-%d.json";
-		return new File(String.format(template, testClass, testName, index++));
+		var template = "src/test/resources/snapshots/%s/%s-%d-%d.json";
+		var c = clazz.getSimpleName();
+		var m = method.getName();
+		return new File(String.format(template, c, m, index, calls++));
 	}
 
+	/**
+	 * 用来获取当前测试名字的 JUnit 扩展，使用了全局变量不支持并发测试。
+	 * <p>
+	 * 要支持并发测试的话稍加改动应该是可行的，不过调用肯定会复杂些。
+	 */
 	static final class TestContextHolder implements BeforeEachCallback {
 
 		@Override
 		public void beforeEach(ExtensionContext context) {
-			index = 0;
-			testClass = context.getRequiredTestClass().getSimpleName();
-			testName = context.getRequiredTestMethod().getName();
+			var lastMethod = method;
+			var lastClass = clazz;
+			calls = 0;
+			method = context.getRequiredTestMethod();
+			clazz = context.getRequiredTestClass();
+			index = (method == lastMethod && clazz == lastClass) ? index + 1 : 0;
 		}
 	}
 }
