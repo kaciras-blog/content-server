@@ -1,0 +1,11 @@
+spring:
+
+  main:
+    log-startup-info: false
+    banner-mode: "off"
+
+  session:
+    store-type: redis
+    timeout: 30m
+    redis:
+      namespace: test

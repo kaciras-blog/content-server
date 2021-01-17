@@ -1,0 +1,81 @@
+测试环境（本地Hyper-V虚拟机）：
+CPU: Intel i5-4200M
+RAM: DDR3-1600
+System: Centos7 Linux-4.17.12
+Redis: 5.0.5 malloc=jemalloc-5.1.0 bits=64
+
+====== EVALSHA 7433090df99d101d69d5bf574d3af5933cfa3e65 1 qwer 1 0 360 90000 500 ======
+  100000 requests completed in 2.49 seconds
+  5 parallel clients
+  3 bytes payload
+  keep alive: 1
+
+99.92% <= 1 milliseconds
+99.98% <= 2 milliseconds
+99.99% <= 3 milliseconds
+100.00% <= 6 milliseconds
+100.00% <= 7 milliseconds
+100.00% <= 7 milliseconds
+40209.09 requests per second
+
+对照 (redis-benchmark -c 5 -q):
+
+PING_INLINE: 61919.50 requests per second
+PING_BULK: 72516.32 requests per second
+SET: 74349.44 requests per second
+GET: 63856.96 requests per second
+INCR: 62073.25 requests per second
+LPUSH: 45351.48 requests per second
+RPUSH: 38431.98 requests per second
+LPOP: 75471.70 requests per second
+RPOP: 74571.22 requests per second
+SADD: 68917.99 requests per second
+HSET: 75815.01 requests per second
+SPOP: 65231.57 requests per second
+LPUSH (needed to benchmark LRANGE): 75815.01 requests per second
+LRANGE_100 (first 100 elements): 38804.81 requests per second
+LRANGE_300 (first 300 elements): 18577.00 requests per second
+LRANGE_500 (first 450 elements): 12656.63 requests per second
+LRANGE_600 (first 600 elements): 10271.16 requests per second
+MSET (10 keys): 59880.24 requests per second
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+测试环境（VPS）：
+CPU: Intel Xeon-E5 2xCore KVM
+System: Centos7 Linux-5.1.8
+Redis: 5.0.5 malloc=jemalloc-5.1.0 bits=64
+
+====== EVALSHA 7433090df99d101d69d5bf574d3af5933cfa3e65 1 qwer 1 0 360 90000 500 ======
+  100000 requests completed in 5.20 seconds
+  5 parallel clients
+  3 bytes payload
+  keep alive: 1
+
+99.96% <= 1 milliseconds
+99.98% <= 2 milliseconds
+99.99% <= 3 milliseconds
+99.99% <= 6 milliseconds
+100.00% <= 6 milliseconds
+19227.07 requests per second
+
+对照 (redis-benchmark -c 5 -q):
+
+PING_INLINE: 43159.26 requests per second
+PING_BULK: 48262.55 requests per second
+SET: 43421.62 requests per second
+GET: 52110.47 requests per second
+INCR: 41442.19 requests per second
+LPUSH: 42571.31 requests per second
+RPUSH: 37778.62 requests per second
+LPOP: 43122.04 requests per second
+RPOP: 42517.01 requests per second
+SADD: 44622.94 requests per second
+HSET: 40502.23 requests per second
+SPOP: 51203.28 requests per second
+LPUSH (needed to benchmark LRANGE): 36231.88 requests per second
+LRANGE_100 (first 100 elements): 29036.00 requests per second
+LRANGE_300 (first 300 elements): 13758.94 requests per second
+LRANGE_500 (first 450 elements): 9779.00 requests per second
+LRANGE_600 (first 600 elements): 7890.79 requests per second
+MSET (10 keys): 29154.52 requests per second
