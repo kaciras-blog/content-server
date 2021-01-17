@@ -1,0 +1,16 @@
+[
+	{
+		"type" : "Friend",
+		"time" : 0,
+		"data" : {
+			"intValue" : 666
+		}
+	},
+	{
+		"type" : "Friend",
+		"time" : 0,
+		"data" : {
+			"intValue" : 666
+		}
+	}
+]

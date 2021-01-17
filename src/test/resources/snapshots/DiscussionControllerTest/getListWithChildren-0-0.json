@@ -7,16 +7,17 @@
 		"1" : {
 			"id" : 1,
 			"objectId" : 5,
-			"type" : 0,
+			"type" : 1,
 			"parent" : 0,
-			"topicFloor" : 0,
-			"replyFloor" : 0,
+			"floor" : 0,
+			"treeFloor" : 0,
+			"nestId" : 0,
+			"nestSize" : 0,
 			"user" : {
 				"id" : 0
 			},
 			"content" : "评论内容，ID=1",
 			"time" : 0,
-			"replyCount" : 0,
 			"replies" : [
 				2,
 				3
@@ -25,30 +26,32 @@
 		"2" : {
 			"id" : 2,
 			"objectId" : 5,
-			"type" : 0,
+			"type" : 1,
 			"parent" : 1,
-			"topicFloor" : 0,
-			"replyFloor" : 0,
+			"floor" : 0,
+			"treeFloor" : 0,
+			"nestId" : 0,
+			"nestSize" : 0,
 			"user" : {
 				"id" : 0
 			},
 			"content" : "评论内容，ID=2",
-			"time" : 0,
-			"replyCount" : 0
+			"time" : 0
 		},
 		"3" : {
 			"id" : 3,
 			"objectId" : 5,
-			"type" : 0,
+			"type" : 1,
 			"parent" : 1,
-			"topicFloor" : 0,
-			"replyFloor" : 0,
+			"floor" : 0,
+			"treeFloor" : 0,
+			"nestId" : 0,
+			"nestSize" : 0,
 			"user" : {
 				"id" : 0
 			},
 			"content" : "评论内容，ID=3",
-			"time" : 0,
-			"replyCount" : 0
+			"time" : 0
 		}
 	}
 }

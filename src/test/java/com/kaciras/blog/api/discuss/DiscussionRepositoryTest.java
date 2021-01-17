@@ -57,6 +57,8 @@ class DiscussionRepositoryTest {
 
 	private Discussion addData(int parent, DiscussionState state) {
 		var value = newDiscussion();
+		value.setType(1);
+		value.setObjectId(7);
 		value.setParent(parent);
 		value.setState(state);
 		repository.add(value);

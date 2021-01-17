@@ -78,6 +78,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		var result = new Discussion();
 		result.setId(id);
 		result.setParent(parent);
+		result.setType(1);
 		result.setObjectId(5);
 		result.setContent("评论内容，ID=" + id);
 		result.setState(DiscussionState.Visible);
@@ -127,7 +128,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 				newItem(2, 1),
 				newItem(3, 4)
 		);
-		when(repository.count(any())).thenReturn(first.size());
+		when(repository.count(any())).thenReturn(4);
 		when(repository.findAll(any())).thenReturn(first);
 		when(repository.get(eq(4))).thenReturn(Optional.of(newItem(4, 0)));
 
@@ -153,7 +154,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	}
 
 	private static Stream<Arguments> invalidPostRequests() {
-		var longText = new char[5001];
+		var longText = new char[16384];
 		Arrays.fill(longText, '蛤');
 		return Stream.of(
 				Arguments.of("{ \"content\": \" \" }"),
