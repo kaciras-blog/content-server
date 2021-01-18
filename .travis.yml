@@ -15,5 +15,11 @@ jdk:
 services:
   - redis
 
+addons:
+  mariadb: "10.5"
+
+before_install:
+  - sudo mysql -e 'CREATE DATABASE blog;'
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)

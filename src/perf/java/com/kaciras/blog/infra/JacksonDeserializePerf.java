@@ -106,9 +106,9 @@ public class JacksonDeserializePerf {
 		var f = objectMapper.readValue(json, PublicFields.class);
 		var s = objectMapper.readValue(json, Setters.class);
 
-		assertThat(c).isEqualToComparingFieldByField(f);
-		assertThat(f).isEqualToComparingFieldByField(s);
-		assertThat(f).isEqualToComparingFieldByField(object);
+		assertThat(c).usingRecursiveComparison().isEqualTo(f);
+		assertThat(f).usingRecursiveComparison().isEqualTo(s);
+		assertThat(f).usingRecursiveComparison().isEqualTo(object);
 	}
 
 	@Benchmark

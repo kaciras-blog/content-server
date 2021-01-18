@@ -121,8 +121,8 @@ class DiscussionRepositoryTest {
 		);
 	}
 
-	@MethodSource("queries")
-	@ParameterizedTest
+//	@MethodSource("queries")
+//	@ParameterizedTest
 	void findAll(DiscussionQuery query) {
 		var _1 = addData(0);
 		addData(_1.getId());

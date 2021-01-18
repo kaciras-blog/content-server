@@ -2,8 +2,7 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<name>Kaciras Blog content server</name>
-	<description>Content server for Kaciras blog</description>
+	<description>Kaciras Blog content server</description>
 
 	<groupId>com.kaciras.blog</groupId>
 	<artifactId>content-server</artifactId>
@@ -28,14 +27,6 @@
 	</properties>
 
 	<dependencies>
-
-		<!-- 自己的其它项目 -->
-		<dependency>
-			<groupId>com.kaciras.blog</groupId>
-			<artifactId>infra</artifactId>
-			<version>1.1.4</version>
-		</dependency>
-
 		<!-- 编译期依赖，以及开发时才需要的库 -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -101,22 +92,38 @@
 			<artifactId>spring-session-data-redis</artifactId>
 		</dependency>
 
-		<!-- 数据库驱动 -->
+		<!-- 其它非 Spring 依赖 -->
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>1.13.1</version>
 		</dependency>
 
-		<!-- Spring单元测试依赖 -->
+		<!-- 测试依赖 -->
+		<dependency>
+			<groupId>org.openjdk.jmh</groupId>
+			<artifactId>jmh-generator-annprocess</artifactId>
+			<version>1.27</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>30.1-jre</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -127,15 +134,31 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<skip>true</skip>
 					<argLine>-javaagent:${ltw.agent}</argLine>
-					<forkMode>once</forkMode>
-					<useSystemClassLoader>true</useSystemClassLoader>
+					<argLine>-Dspring.profiles.active=dev</argLine>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.6</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<!--
-				把LTW的依赖复制到构建目录，如果想用 java 启动的话记得加上 -javaagent:target/spring-instrument-xxx.jar
+				把 LTW 的依赖复制到构建目录，启动时记得加上 -javaagent:target/spring-instrument-xxx.jar
 			 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -157,18 +180,15 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<agents>${ltw.agent}</agents>
 					<jvmArguments>
-						-Xmx256M
-						-Xms256M
-						-XX:+HeapDumpOnOutOfMemoryError
-						-noverify
 						-Djava.awt.headless=true
+						-noverify
+						-XX:+HeapDumpOnOutOfMemoryError
 					</jvmArguments>
 				</configuration>
 			</plugin>

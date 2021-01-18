@@ -1,30 +1,31 @@
 # 运行该程序前需要配置此文件
+
 server:
 
-  port: 2375
+#  port: 2375
 
-  # 如果使用了TLS，又同时要支持HTTP连接，则启用这个选项
+  # 如果使用了TLS，又同时要支持 HTTP 连接，则启用这个选项
 #  additional-connector:
 #    port: 2400
 
   # 如果服务器前面有反代，则取消注释此行以获取真实IP
 #  forward-headers-strategy: native
 
-# TODO: 下面两个数据库连接需要修改
+# TODO: 要运行此项目请将 datasource 和 redis 改成你自己的环境
 spring:
 
   # 你需要先创建数据库，SpringBoot 能自动建表。
   # 建表脚本是 src/main/resources 目录下的 schema.sql 和 data.sql
   datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://localhost:3306/blog?allowMultiQueries=true
     username: root
-    password: <your password>
-    driver-class-name: org.mariadb.jdbc.Driver
+#    password: <your password>
 
   redis:
     host: localhost
-    port: 6375
-    password: <your password>
+    port: 6379
+#    password: <your password>
 
   # 邮件服务配置，邮件通知功能需要
 #  mail:
@@ -72,7 +73,7 @@ app:
 #      from: Sender@example.com
 #      admin: YourMail@example.com
 
-  # 没什么鸟用的限流器配置
+  # 限流器相关配置，如果不设置将不限流
 #  rate-limit:
 
     # 目前单页最大4个请求，保守起见 *5 倍，每秒 2 个也比较高了。
@@ -98,7 +99,7 @@ app:
 #        - permits: 300
 #          time: 86400
 
-    # 本系统支持 OAuth2 登录，取消下面的注释并填写 client-id 和 client-secret 即可启用
+    # 本系统支持 OAuth2 登录，填写 client-id 和 client-secret 即可启用
   #  oauth2:
 
   #     申请页面 https://console.developers.google.com/apis/credentials
@@ -111,6 +112,6 @@ app:
   #      client-id: <your client-id>
   #      client-secret: <your client-secret>
 
-  # 代理 HTTP Client 请求，服务器在在墙内，以及需要隐藏服务器地址时需要
+  # 代理 HTTP Client 请求，机器在在墙内，以及想隐藏服务器地址时可使用
 #  http-client:
 #    proxy: "localhost:1080"
