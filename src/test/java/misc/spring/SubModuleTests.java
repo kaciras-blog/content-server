@@ -1,4 +1,4 @@
-package spring;
+package misc.spring;
 
 import com.kaciras.blog.api.article.ArticleRepository;
 import com.kaciras.blog.infra.Misc;

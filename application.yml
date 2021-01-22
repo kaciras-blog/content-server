@@ -2,7 +2,7 @@
 
 server:
 
-#  port: 2375
+#  port: 8080
 
   # 如果使用了TLS，又同时要支持 HTTP 连接，则启用这个选项
 #  additional-connector:

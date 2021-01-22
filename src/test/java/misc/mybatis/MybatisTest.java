@@ -1,7 +1,7 @@
 /*
  * 对 Mybatis 一些特性的验证
  */
-package test.mybatis;
+package misc.mybatis;
 
 import com.kaciras.blog.infra.autoconfigure.KxCodecAutoConfiguration;
 import org.apache.ibatis.binding.BindingException;

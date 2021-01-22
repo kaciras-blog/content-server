@@ -1,4 +1,4 @@
-package test.mybatis;
+package misc.mybatis;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
