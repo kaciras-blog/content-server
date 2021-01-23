@@ -39,7 +39,6 @@ import java.time.Clock;
 		KxSpringSessionAutoConfiguration.class,
 		KxCodecAutoConfiguration.class,
 		KxPrincipalAutoConfiguration.class,
-		DevelopmentAutoConfiguration.class,
 		HttpClientAutoConfiguration.class,
 })
 /*
