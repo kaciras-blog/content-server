@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<include resource="org/springframework/boot/logging/logback/base.xml"/>
-
-	<logger name="com.kaciras.blog" level="WARN"/>
-
-	<logger name="io.lettuce.core" level="OFF"/>
-	<logger name="org.springframework" level="OFF"/>
-	<logger name="org.apache.catalina" level="OFF"/>
+	<root level="OFF"/> <!-- 测试时关闭日志 -->
 </configuration>
