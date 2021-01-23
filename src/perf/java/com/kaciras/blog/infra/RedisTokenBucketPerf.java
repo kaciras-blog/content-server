@@ -14,8 +14,8 @@ import java.time.Clock;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 测量 RedisTokenBucket 的性能，其 acquire 方法包括三个方面的开销：JAVA层逻辑、通信开销、Redis脚本执行时间。
- * 如果单独衡量 TokenBucket.lua 脚本的性能，请使用 redis-benchmark 来测，结果见 resource/TokenBucketBenchmark.txt
+ * RedisTokenBucket 的性能包括三个方面的开销：JAVA层逻辑、通信开销、Redis脚本执行时间。
+ * 如果单独测量 TokenBucket.lua，请使用 redis-benchmark，结果见 resource/TokenBucketBenchmark.txt
  * <p>
  * Benchmark                       Mode  Cnt    Score    Error  Units
  * RedisTokenBucketPerf.buckets1   avgt    5  319.992 ±  7.507  us/op
