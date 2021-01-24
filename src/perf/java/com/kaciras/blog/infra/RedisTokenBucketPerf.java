@@ -3,8 +3,6 @@ package com.kaciras.blog.infra;
 import com.kaciras.blog.infra.ratelimit.RedisTokenBucket;
 import com.kaciras.blog.infra.ratelimit.TestRedisConfiguration;
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -74,12 +72,5 @@ public class RedisTokenBucketPerf {
 	@Benchmark
 	public long buckets40() {
 		return forty.acquire(KEY, 100);
-	}
-
-	public static void main(String[] args) throws Exception {
-		var options = new OptionsBuilder()
-				.include(RedisTokenBucketPerf.class.getSimpleName())
-				.build();
-		new Runner(options).run();
 	}
 }

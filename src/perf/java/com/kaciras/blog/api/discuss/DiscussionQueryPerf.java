@@ -4,22 +4,19 @@ import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.api.user.UserVo;
 import com.kaciras.blog.infra.autoconfigure.KxCodecAutoConfiguration;
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.RunnerException;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.Clock;
 import java.util.concurrent.TimeUnit;
 
-@State(Scope.Thread)
+@State(Scope.Benchmark)
 @BenchmarkMode(Mode.AverageTime)
 @Measurement(iterations = 5, time = 5)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
@@ -75,7 +72,7 @@ public class DiscussionQueryPerf {
 
 	@Import(KxCodecAutoConfiguration.class)
 	@EnableAutoConfiguration
-	@Configuration(proxyBeanMethods = false)
+	@TestConfiguration(proxyBeanMethods = false)
 	private static final class SpringConfig {
 
 		@Bean
@@ -104,12 +101,5 @@ public class DiscussionQueryPerf {
 		public UserVo getUser(int id) {
 			return null;
 		}
-	}
-
-	public static void main(String[] args) throws RunnerException {
-		var options = new OptionsBuilder()
-				.include(DiscussionQueryPerf.class.getSimpleName())
-				.build();
-		new Runner(options).run();
 	}
 }

@@ -1,8 +1,6 @@
 package com.kaciras.blog.infra;
 
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,7 +20,7 @@ import java.util.regex.Pattern;
  * StringMatchPerf.regexp          thrpt    5    9.505 ±  0.085  ops/us
  * StringMatchPerf.switchCase      thrpt    5  221.765 ± 41.768  ops/us
  */
-@State(Scope.Thread)
+@State(Scope.Benchmark)
 @Fork(1)
 @Measurement(iterations = 5, time = 5)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
@@ -102,12 +100,5 @@ public class StringMatchPerf {
 	@Benchmark
 	public boolean regexp() {
 		return string != null && regex.matcher(string).find();
-	}
-
-	public static void main(String[] args) throws Exception {
-		var options = new OptionsBuilder()
-				.include(StringMatchPerf.class.getSimpleName())
-				.build();
-		new Runner(options).run();
 	}
 }

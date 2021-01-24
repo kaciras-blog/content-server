@@ -1,9 +1,6 @@
 package com.kaciras.blog.infra;
 
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.RunnerException;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
@@ -11,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 经测试，DirectByteBuffer 的创建挺耗时的，在小数据量下性能不好；直接操作数组和 HeapByteBuffer 的性能相差不大。
  */
-@State(Scope.Thread)
+@State(Scope.Benchmark)
 @Fork(1)
 @Measurement(iterations = 5, time = 5)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
@@ -61,12 +58,5 @@ public class BytesConcatPerf {
 		var result = new byte[SIZE];
 		buffer.flip().get(result);
 		return result;
-	}
-
-	public static void main(String[] args) throws RunnerException {
-		var options = new OptionsBuilder()
-				.include(BytesConcatPerf.class.getSimpleName())
-				.build();
-		new Runner(options).run();
 	}
 }

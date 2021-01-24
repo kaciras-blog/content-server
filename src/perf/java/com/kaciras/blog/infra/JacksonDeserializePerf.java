@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.concurrent.TimeUnit;
 
@@ -124,12 +122,5 @@ public class JacksonDeserializePerf {
 	@Benchmark
 	public Object setters() throws Exception {
 		return objectMapper.readValue(json, Setters.class);
-	}
-
-	public static void main(String[] args) throws Exception {
-		var options = new OptionsBuilder()
-				.include(JacksonDeserializePerf.class.getSimpleName())
-				.build();
-		new Runner(options).run();
 	}
 }

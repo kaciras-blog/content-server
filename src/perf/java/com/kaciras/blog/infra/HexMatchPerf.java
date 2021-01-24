@@ -3,9 +3,6 @@ package com.kaciras.blog.infra;
 import com.kaciras.blog.infra.codec.CodecUtils;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.RunnerException;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.util.BitSet;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +29,7 @@ import java.util.regex.Pattern;
  * HexMatchPerf.regexp               thrpt    5   6.245 ± 0.013  ops/us
  * HexMatchPerf.switchExpression     thrpt    5  10.674 ± 1.342  ops/us
  */
-@State(Scope.Thread)
+@State(Scope.Benchmark)
 @Fork(1)
 @Measurement(iterations = 5, time = 5)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
@@ -120,12 +117,5 @@ public class HexMatchPerf {
 		for (var c : text.toCharArray()) {
 			blackhole.consume(BIT_SET.get(c));
 		}
-	}
-
-	public static void main(String[] args) throws RunnerException {
-		var options = new OptionsBuilder()
-				.include(HexMatchPerf.class.getSimpleName())
-				.build();
-		new Runner(options).run();
 	}
 }
