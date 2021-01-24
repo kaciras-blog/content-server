@@ -70,6 +70,7 @@ public class DiscussionQueryPerf {
 		return new QueryCacheSession(repository, mapper).execute(nmode);
 	}
 
+	// 与 Configuration 不同，TestConfiguration 不会被自动扫描到而干扰其它测试
 	@Import(KxCodecAutoConfiguration.class)
 	@EnableAutoConfiguration
 	@TestConfiguration(proxyBeanMethods = false)

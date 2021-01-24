@@ -194,4 +194,47 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<!--
+		参考了 Vert.x 的写法用 assembly plugin 打包测试代码和依赖，
+		StackOverflow 也有相关问题 https://stackoverflow.com/a/36047816
+	 -->
+	<profiles>
+		<profile>
+			<id>benchmarks</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>assemble-benchmarks</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<archive>
+										<manifest>
+											<mainClass>org.openjdk.jmh.Main</mainClass>
+										</manifest>
+									</archive>
+									<descriptors>
+										<descriptor>src/test/perf/assembly.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

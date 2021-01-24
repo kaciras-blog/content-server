@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * RedisTokenBucket 的性能包括三个方面的开销：JAVA层逻辑、通信开销、Redis脚本执行时间。
- * 如果单独测量 TokenBucket.lua，请使用 redis-benchmark，结果见 resource/TokenBucketBenchmark.txt
+ * 如果单独测量 TokenBucket.lua，请使用 redis-benchmark，结果见 resource/TokenBucket.txt
  * <p>
  * Benchmark                       Mode  Cnt    Score    Error  Units
  * RedisTokenBucketPerf.buckets1   avgt    5  319.992 ±  7.507  us/op
