@@ -1,45 +1,39 @@
 package com.kaciras.blog.api.discuss;
 
+import com.kaciras.blog.AbstractSpringPerf;
 import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.api.user.UserVo;
 import com.kaciras.blog.infra.autoconfigure.KxCodecAutoConfiguration;
 import org.openjdk.jmh.annotations.*;
-import org.springframework.boot.WebApplicationType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.time.Clock;
 import java.util.concurrent.TimeUnit;
 
+@ContextConfiguration(classes = DiscussionQueryPerf.SpringConfig.class)
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.AverageTime)
 @Measurement(iterations = 5, time = 5)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-public class DiscussionQueryPerf {
+public class DiscussionQueryPerf extends AbstractSpringPerf {
 
-	private ConfigurableApplicationContext context;
-
+	@Autowired
 	private DiscussionRepository repository;
+
+	@Autowired
 	private ViewModelMapper mapper;
 
 	private DiscussionQuery qmode;
 	private DiscussionQuery nmode;
 
 	@Setup
-	public void setUp() {
-		context = new SpringApplicationBuilder(SpringConfig.class)
-				.profiles("test")
-				.web(WebApplicationType.NONE)
-				.run();
-
-		mapper = context.getBean(ViewModelMapper.class);
-		repository = context.getBean(DiscussionRepository.class);
-
+	public void setUp2() {
 		var page = PageRequest.of(0, 20);
 
 		qmode = new DiscussionQuery()
@@ -53,11 +47,6 @@ public class DiscussionQueryPerf {
 				.setType(1)
 				.setObjectId(1)
 				.setPageable(page);
-	}
-
-	@TearDown
-	public void close() {
-		context.close();
 	}
 
 	@Benchmark
@@ -74,7 +63,7 @@ public class DiscussionQueryPerf {
 	@Import(KxCodecAutoConfiguration.class)
 	@EnableAutoConfiguration
 	@TestConfiguration(proxyBeanMethods = false)
-	private static final class SpringConfig {
+	static class SpringConfig {
 
 		@Bean
 		UserManager userManager() {

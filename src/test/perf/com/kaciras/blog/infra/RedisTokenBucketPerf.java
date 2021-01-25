@@ -1,12 +1,12 @@
 package com.kaciras.blog.infra;
 
+import com.kaciras.blog.AbstractSpringPerf;
 import com.kaciras.blog.infra.ratelimit.RedisTokenBucket;
 import com.kaciras.blog.infra.ratelimit.TestRedisConfiguration;
 import org.openjdk.jmh.annotations.*;
-import org.springframework.boot.WebApplicationType;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.time.Clock;
 import java.util.concurrent.TimeUnit;
@@ -19,30 +19,25 @@ import java.util.concurrent.TimeUnit;
  * RedisTokenBucketPerf.buckets1   avgt    5  319.992 ±  7.507  us/op
  * RedisTokenBucketPerf.buckets40  avgt    5  461.470 ± 19.464  us/op
  */
-@SuppressWarnings({"UnusedReturnValue", "unchecked"})
+@ContextConfiguration(classes = TestRedisConfiguration.class)
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.AverageTime)
 @Fork(1)
 @Measurement(iterations = 5, time = 10)
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
-public class RedisTokenBucketPerf {
+public class RedisTokenBucketPerf extends AbstractSpringPerf {
 
 	private static final String NAMESPACE = "TokenBucket:";
 	private static final String KEY = "Benchmark";
 
-	private ConfigurableApplicationContext context;
+	@Autowired
+	private RedisTemplate<String, Object> template;
 
 	private RedisTokenBucket single;
 	private RedisTokenBucket forty;
 
-	@Setup
-	public void setUp() {
-		context = new SpringApplicationBuilder(TestRedisConfiguration.class).web(WebApplicationType.NONE).run();
-	}
-
 	@Setup(Level.Iteration)
 	public void setUpIteration() {
-		var template = (RedisTemplate<String, Object>) context.getBean("testRedisTemplate");
 		template.unlink(KEY);
 
 		single = new RedisTokenBucket(NAMESPACE, template, Clock.systemDefaultZone());
@@ -55,11 +50,6 @@ public class RedisTokenBucketPerf {
 		for (int i = 0; i < 20; i++) {
 			forty.addBucket(Integer.MAX_VALUE, 10_0000);
 		}
-	}
-
-	@TearDown
-	public void tearDown() {
-		context.close();
 	}
 
 	// 下面测量包含1个桶和40个桶时的执行时间
