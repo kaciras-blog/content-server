@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.GenericApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("unused")
 final class AutoBindTest {
 
-	@Configuration(proxyBeanMethods = false)
+	@TestConfiguration(proxyBeanMethods = false)
 	@RequiredArgsConstructor
 	static class BindTestConfig {
 

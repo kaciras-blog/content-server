@@ -42,7 +42,7 @@ public class KxWebUtilsAutoConfiguration {
 			connector.setPort(additionalConnectorProperties.getPort());
 
 			var protocolHandler = (AbstractProtocol<?>) connector.getProtocolHandler();
-			protocolHandler.setMaxThreads(serverProperties.getTomcat().getMaxThreads());
+			protocolHandler.setMaxThreads(serverProperties.getTomcat().getThreads().getMax());
 			protocolHandler.setAddress(additionalConnectorProperties.getAddress());
 
 			if (serverProperties.getHttp2().isEnabled()) {

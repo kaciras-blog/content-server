@@ -18,18 +18,17 @@ final class TopicRegistrationTest {
 	private final TopicRegistration registration = new TopicRegistration(articleRepository);
 
 	@BeforeEach
-	void setUp(){
+	void setUp() {
 		registration.setOrigin("https://blog.example.com");
 	}
 
 	@Test
-	void notFound(){
-		assertThatThrownBy(() -> registration.get(666, 888))
-				.isInstanceOf(RequestArgumentException.class);
+	void notFound() {
+		assertThatThrownBy(() -> registration.get(66, 88)).isInstanceOf(RequestArgumentException.class);
 	}
 
 	@Test
-	void getArticleTopic(){
+	void getArticleTopic() {
 		var article = new Article();
 		article.setId(666);
 		article.setTitle("Title of the article");

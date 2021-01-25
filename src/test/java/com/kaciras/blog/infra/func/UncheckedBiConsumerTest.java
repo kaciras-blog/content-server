@@ -18,7 +18,7 @@ final class UncheckedBiConsumerTest {
 	@Test
 	void noThrows() {
 		var holder = new AtomicReference<Integer>();
-		BiConsumer<Integer, Integer> setter = (UncheckedBiConsumer<Integer, Integer>) (t,u) -> holder.set(t*u);
+		BiConsumer<Integer, Integer> setter = (UncheckedBiConsumer<Integer, Integer>) (t, u) -> holder.set(t * u);
 
 		setter.accept(4, 8);
 		assertThat(holder.get()).isEqualTo(32);

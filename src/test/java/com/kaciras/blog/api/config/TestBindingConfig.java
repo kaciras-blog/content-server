@@ -9,7 +9,7 @@ import java.lang.annotation.ElementType;
 
 @Setter
 @Getter
-public class TestBindingConfig implements ValidatedConfig{
+public class TestBindingConfig implements ValidatedConfig {
 
 	private int intValue = 33;
 

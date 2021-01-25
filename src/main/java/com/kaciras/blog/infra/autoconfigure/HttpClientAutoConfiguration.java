@@ -12,7 +12,7 @@ import java.net.http.HttpClient;
 import java.util.concurrent.Executor;
 
 /**
- * 虽然Spring的RestTemplate也不错，但我还是喜欢原生的HttpClient啦
+ * 虽然 Spring 的 RestTemplate 也不错，但我还是喜欢原生的 HttpClient
  */
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(HttpClientProperties.class)

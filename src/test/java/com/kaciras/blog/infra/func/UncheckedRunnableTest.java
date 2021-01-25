@@ -31,7 +31,9 @@ final class UncheckedRunnableTest {
 
 	@Test
 	void uncheckedHelpers() {
-		Runnable runnable = FunctionUtils.unchecked(() -> { throw new IOException(); });
+		Runnable runnable = FunctionUtils.unchecked(() -> {
+			throw new IOException();
+		});
 		assertThat(runnable).isInstanceOf(UncheckedRunnable.class);
 	}
 }

@@ -18,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 // DataSourceAutoConfiguration 内置的扫描器值扫描标记为 AutoConfigurationPackages(@EnableAutoConfiguration) 的包，
 // 如果待扫描的Mapper不在这些包里就需要手动添加 @MapperScan("xxx") 来扫描
-@MapperScan("test.mybatis")
+@MapperScan("misc.mybatis")
 @ImportAutoConfiguration({
 		DataSourceAutoConfiguration.class,
 		MybatisAutoConfiguration.class,

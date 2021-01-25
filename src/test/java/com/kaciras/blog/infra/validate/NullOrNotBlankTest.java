@@ -32,7 +32,7 @@ public class NullOrNotBlankTest {
 	}
 
 	@Test
-	void rejectBlank(){
+	void rejectBlank() {
 		var violations = validator.validate(new FieldHost(""));
 
 		assertThat(violations).hasSize(1);

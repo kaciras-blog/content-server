@@ -16,7 +16,7 @@ final class KxPrincipalAutoConfigurationTest {
 
 	// 没啥好测的，就测一下启动算了
 	@Test
-	void defaults () {
+	void defaults() {
 		contextRunner.run(context -> {
 			assertThat(context).hasSingleBean(ServletPrincipalFilter.class);
 			assertThat(context).doesNotHaveBean(ServletSecurityContextFilter.class);
