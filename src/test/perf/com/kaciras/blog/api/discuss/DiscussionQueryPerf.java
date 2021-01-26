@@ -11,15 +11,20 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.Clock;
 import java.util.concurrent.TimeUnit;
 
 @ContextConfiguration(classes = DiscussionQueryPerf.SpringConfig.class)
 @State(Scope.Benchmark)
-@BenchmarkMode(Mode.AverageTime)
 @Measurement(iterations = 5, time = 5)
+@Fork(1)
+@BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class DiscussionQueryPerf extends AbstractSpringPerf {
 
@@ -29,24 +34,39 @@ public class DiscussionQueryPerf extends AbstractSpringPerf {
 	@Autowired
 	private ViewModelMapper mapper;
 
-	private DiscussionQuery qmode;
+	@Autowired
+	private DataSource dataSource;
+
 	private DiscussionQuery nmode;
+	private DiscussionQuery qmode;
 
 	@Setup
-	public void setUp2() {
-		var page = PageRequest.of(0, 20);
+	public void setup() throws SQLException, IOException {
+		nmode = new DiscussionQuery()
+				.setChildCount(5)
+				.setType(1)
+				.setObjectId(2)
+				.setPageable(PageRequest.of(0, 30));
 
+		var sort = Sort.by(Sort.Order.desc("id"));
+		var page2 = PageRequest.of(0, 30, sort);
 		qmode = new DiscussionQuery()
 				.setIncludeParent(true)
 				.setType(1)
 				.setObjectId(1)
-				.setPageable(page);
+				.setPageable(page2);
 
-		nmode = new DiscussionQuery()
-				.setChildCount(5)
-				.setType(1)
-				.setObjectId(1)
-				.setPageable(page);
+		new DataGenerator(this).insertTestData();
+	}
+
+	public void closeSpringContext() throws Exception {
+		try (var connection = dataSource.getConnection()) {
+			var stat = connection.createStatement();
+			stat.execute("TRUNCATE discussion");
+			stat.close();
+			connection.commit();
+		}
+		super.closeSpringContext(); // 别忘了调用父方法
 	}
 
 	@Benchmark
