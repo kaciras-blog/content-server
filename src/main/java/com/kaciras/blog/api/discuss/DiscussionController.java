@@ -49,8 +49,8 @@ class DiscussionController {
 			SecurityContext.require("POWER_QUERY");
 		}
 		if (query.getPageable() == null) {
-			query.setPageable(PageRequest.of(0, 20));
-		} else if (query.getPageable().getPageSize() > 20) {
+			query.setPageable(PageRequest.of(0, 30));
+		} else if (query.getPageable().getPageSize() > 30) {
 			throw new RequestArgumentException("查询的数量过多");
 		}
 	}

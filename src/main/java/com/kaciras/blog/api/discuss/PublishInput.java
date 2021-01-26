@@ -18,7 +18,7 @@ final class PublishInput {
 	// 回复不需要 objectId 和 type，只需要被回复者的 ID 即可。
 	private final int parent;
 
-	@Length(max = 16)
+	@Length(max = 10)
 	@NullOrNotBlank
 	private final String nickname;
 
