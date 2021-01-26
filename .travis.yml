@@ -4,6 +4,8 @@ git:
   depth: false
   quiet: true
 
+dist: focal
+
 cache:
   directories:
     - $HOME/.m2
