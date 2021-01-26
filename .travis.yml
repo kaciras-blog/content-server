@@ -22,6 +22,8 @@ addons:
 
 before_install:
   - sudo mysql -e 'CREATE DATABASE blog;'
+  - sudo mysql -e 'SELECT host,user FROM mysql.user;'
+  - cat /etc/mysql/my.cnf
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

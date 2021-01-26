@@ -20,7 +20,7 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://127.0.0.1:3306/blog?allowMultiQueries=true
     username: root
-#    password: <your password>
+    password:
 
   redis:
     host: localhost
