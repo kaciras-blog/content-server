@@ -22,7 +22,7 @@ addons:
 
 before_install:
   - sudo mysql -e "CREATE DATABASE blog;"
-  - sudo mysql -e "UPDATE mysql.user SET Password='' WHERE User='root';"
+  - sudo mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('');"
   - sudo mysql -e "FLUSH PRIVILEGES;"
 
 after_success:
