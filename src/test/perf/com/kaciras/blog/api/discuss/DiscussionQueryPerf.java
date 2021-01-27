@@ -20,10 +20,17 @@ import java.sql.SQLException;
 import java.time.Clock;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Benchmark                      Mode  Cnt  Score   Error  Units
+ * DiscussionQueryPerf.nestMode   avgt   25  9.200 ± 0.167  ms/op
+ * DiscussionQueryPerf.quoteMode  avgt   25  1.653 ± 0.056  ms/op
+ *
+ * CTE + ROW_NUMBER() 方式 65.069 ± 26.782 ms/op 反而更慢。
+ * 楼中楼单独一个方法查询能快 1ms 没啥意义。
+ */
 @ContextConfiguration(classes = DiscussionQueryPerf.SpringConfig.class)
 @State(Scope.Benchmark)
 @Measurement(iterations = 5, time = 5)
-@Fork(1)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class DiscussionQueryPerf extends AbstractSpringPerf {
