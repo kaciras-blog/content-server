@@ -1,6 +1,8 @@
 package com.kaciras.blog.api.discuss;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.net.InetAddress;
 import java.time.Instant;
@@ -8,18 +10,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+/**
+ * 测试数据生成工具，向数据库中插入满足引用模式和楼中楼模式最大查询结果的数据。
+ */
 @RequiredArgsConstructor
 final class DataGenerator {
 
 	private final List<Discussion> list = new ArrayList<>();
+
 	private final DiscussionQueryPerf perf;
 
 	private int objectId;
 
 	public void insertTestData() {
-		var dao = perf.getContext().getBean(DiscussionDAO.class);
+		var context = perf.getContext();
 		generateTestData();
-		list.forEach(dao::insert);
+
+		var transaction = context.getBean(PlatformTransactionManager.class);
+		var status = transaction.getTransaction(new DefaultTransactionDefinition());
+		var dao = context.getBean(DiscussionDAO.class);
+
+		try {
+			list.forEach(dao::insert);
+			transaction.commit(status);
+		} catch (Exception ex) {
+			transaction.rollback(status);
+		}
 	}
 
 	private void generateTestData() {
@@ -64,10 +80,10 @@ final class DataGenerator {
 		return value;
 	}
 
-	public static void main(String... args) throws Exception {
+	public static void main(String... args) {
 		var perf = new DiscussionQueryPerf();
 		perf.initSpringContext();
 		new DataGenerator(perf).insertTestData();
-		perf.closeSpringContext();
+		perf.getContext().close();
 	}
 }
