@@ -21,9 +21,9 @@ addons:
   mariadb: "10.5"
 
 before_install:
-  - sudo mysql -e 'CREATE DATABASE blog;'
-  - sudo mysql -e 'SELECT host,user,password FROM mysql.user;'
-  - cat /etc/mysql/mariadb.conf.d/50-server.cnf
+  - sudo mysql -e "CREATE DATABASE blog;"
+  - sudo mysql -e "UPDATE mysql.user SET Password='' WHERE User='root';"
+  - sudo mysql -e "FLUSH PRIVILEGES;"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
