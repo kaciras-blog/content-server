@@ -66,7 +66,7 @@ final class QueryCacheSession {
 		var childrenQuery = new DiscussionQuery()
 				.setNestId(vo.getId())
 				.setPageable(pageable);
-		vo.setReplies(collectId(findAll(childrenQuery).peek(this::addParentToMap)));
+		vo.setReplies(collectId(findAll(childrenQuery)));
 	}
 
 	/**
