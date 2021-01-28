@@ -38,10 +38,15 @@ class MybatisTest {
 		Assertions.assertThatThrownBy(mapper::selectNullableBool).isInstanceOf(BindingException.class);
 	}
 
-	/** Mybatis 不支持 OptionalInt */
+	/** Mybatis 不支持返回 Stream */
+	@Test
+	void testStream() {
+		Assertions.assertThat(mapper.selectStream()).isNull();
+	}
+
+	/** Mybatis 不支持返回 OptionalInt */
 	@Test
 	void testOptionalPrimitives() {
-		var optInt = mapper.selectOptionalInt();
-		Assertions.assertThat(optInt).isNull();
+		Assertions.assertThat(mapper.selectOptionalInt()).isNull();
 	}
 }
