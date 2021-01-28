@@ -43,6 +43,11 @@ public final class SnapshotAssertion {
 
 	private final ObjectMapper objectMapper;
 
+	/**
+	 * 因为用户可能使用自定义的 ObjectMapper，所以这里需要传入以便使配置一致。
+	 *
+	 * @param objectMapper 内部的转换器将复制它的配置
+	 */
 	public SnapshotAssertion(ObjectMapper objectMapper) {
 		var indenter = new DefaultIndenter().withIndent("\t");
 
@@ -117,12 +122,12 @@ public final class SnapshotAssertion {
 
 		@Override
 		public void beforeEach(ExtensionContext context) {
-			var lastMethod = method;
-			var lastClass = clazz;
+			var latestMethod = method;
+			var latestClass = clazz;
 			calls = 0;
 			method = context.getRequiredTestMethod();
 			clazz = context.getRequiredTestClass();
-			index = (method == lastMethod && clazz == lastClass) ? index + 1 : 0;
+			index = (method == latestMethod && clazz == latestClass) ? index + 1 : 0;
 		}
 	}
 }

@@ -1,11 +1,10 @@
 package com.kaciras.blog.api.discuss;
 
+import com.google.common.base.CaseFormat;
 import com.kaciras.blog.infra.Misc;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import org.apache.ibatis.jdbc.SQL;
 import org.springframework.data.domain.Pageable;
-
-import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public final class SqlProvider {
@@ -14,17 +13,14 @@ public final class SqlProvider {
 
 	// 字段一多就好麻烦啊，要不要换别的 ORM 库呢
 	public SqlProvider() {
-		String[] fields = {"type", "parent", "floor", "nickname", "content", "time", "state", "address"};
-		var placeholders = Arrays.stream(fields).map(f -> "#{" + f + "}").toArray(String[]::new);
-
 		var sql = new SQL().INSERT_INTO("discussion");
-		sql.INTO_COLUMNS(fields).INTO_VALUES(placeholders);
-		this.insertSQL = sql
-				.VALUES("object_id", "#{objectId}")
-				.VALUES("user_id", "#{userId}")
-				.VALUES("nest_id", "#{nestId}")
-				.VALUES("tree_floor", "#{treeFloor}")
-				.toString();
+
+		for (var field : Discussion.class.getDeclaredFields()) {
+			var name = field.getName();
+			var column = CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, name);
+			sql.VALUES(column, "#{" + name + "}");
+		}
+		this.insertSQL = sql.toString();
 	}
 
 	public String insert(Discussion value) {
