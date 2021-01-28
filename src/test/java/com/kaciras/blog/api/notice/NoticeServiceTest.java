@@ -43,7 +43,7 @@ final class NoticeServiceTest {
 	void asyncReport() {
 		clearInvocations(executor); // TODO: 每次测试都加载全部bean很烦人，要重构下
 
-		service.add(new TestActivity(666));
+		service.notify(new TestActivity(666));
 		verify(executor).submit(any(Callable.class));
 	}
 
@@ -51,9 +51,9 @@ final class NoticeServiceTest {
 	void sendMail() {
 		clearInvocations(executor);
 
-		service.add(new TestActivity2());
-		service.add(new TestActivity(666));
-		service.add(new TestActivity(666));
+		service.notify(new TestActivity2());
+		service.notify(new TestActivity(666));
+		service.notify(new TestActivity(666));
 
 		verify(mailService).sendToAdmin(eq("title"), eq("content"));
 		verify(mailService, noMoreInteractions()).sendToAdmin(any(), any());
@@ -61,7 +61,7 @@ final class NoticeServiceTest {
 
 	@Test
 	void getAll() {
-		service.add(new TestActivity(666));
+		service.notify(new TestActivity(666));
 
 		var list = service.getAll();
 
@@ -73,7 +73,7 @@ final class NoticeServiceTest {
 
 	@Test
 	void clearAll() {
-		service.add(new TestActivity(666));
+		service.notify(new TestActivity(666));
 
 		service.clear();
 

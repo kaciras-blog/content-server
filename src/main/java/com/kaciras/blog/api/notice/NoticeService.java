@@ -47,7 +47,7 @@ public class NoticeService {
 
 	// 加上异步以便不干扰调用方的流程，如果出了异常也只限于本模块。
 	@Async
-	public void add(Activity activity) {
+	public void notify(Activity activity) {
 		var data = objectMapper.valueToTree(activity);
 		var notice = new Notice(activity.getActivityType(), clock.instant(), data);
 		redis.rightPush(notice);

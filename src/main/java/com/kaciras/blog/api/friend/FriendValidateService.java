@@ -141,7 +141,7 @@ public class FriendValidateService {
 		if (friend == null) {
 			return; // 用户删除了友链产生不一致状态
 		}
-		noticeService.add(new FriendAccident(type, friend.name, friend.url, newUrl));
+		noticeService.notify(new FriendAccident(type, friend.name, friend.url, newUrl));
 	}
 
 	/**

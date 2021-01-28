@@ -116,7 +116,7 @@ final class FriendValidateServiceTest {
 
 		service.startValidation();
 
-		verify(notification, noInteractions()).add(any());
+		verify(notification, noInteractions()).notify(any());
 	}
 
 	@Test
@@ -130,7 +130,7 @@ final class FriendValidateServiceTest {
 		}
 
 		var captor = ArgumentCaptor.forClass(FriendAccident.class);
-		verify(notification).add(captor.capture());
+		verify(notification).notify(captor.capture());
 
 		var activity = captor.getValue();
 		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.Inaccessible);
@@ -148,7 +148,7 @@ final class FriendValidateServiceTest {
 		service.startValidation();
 
 		var captor = ArgumentCaptor.forClass(FriendAccident.class);
-		verify(notification).add(captor.capture());
+		verify(notification).notify(captor.capture());
 
 		var activity = captor.getValue();
 		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.Moved);
@@ -165,7 +165,7 @@ final class FriendValidateServiceTest {
 		service.startValidation();
 
 		var captor = ArgumentCaptor.forClass(FriendAccident.class);
-		verify(notification).add(captor.capture());
+		verify(notification).notify(captor.capture());
 
 		var activity = captor.getValue();
 		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.AbandonedMe);
@@ -183,6 +183,6 @@ final class FriendValidateServiceTest {
 
 		service.startValidation();
 
-		verify(notification, noInteractions()).add(any());
+		verify(notification, noInteractions()).notify(any());
 	}
 }

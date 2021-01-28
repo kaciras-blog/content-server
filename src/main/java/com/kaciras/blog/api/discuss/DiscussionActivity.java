@@ -15,6 +15,7 @@ final class DiscussionActivity implements Activity, MailNotice {
 	private String url;
 	private String title;
 
+	private DiscussionState state;
 	private int floor;
 	private int treeFloor;
 

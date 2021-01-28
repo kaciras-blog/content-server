@@ -105,31 +105,33 @@ class DiscussionController {
 		// 获取主题，同时检查其是否存在
 		var topic = topics.get(discussion);
 		repository.add(discussion);
-
-		if (discussion.getState() == DiscussionState.Visible) {
-			reportDiscussion(discussion, parent, topic);
-		}
+		notifyPublished(discussion);
 
 		return ResponseEntity
 				.created(URI.create("/discussions/" + discussion.getId()))
 				.body(mapper.toViewObject(discussion));
 	}
 
-	void reportDiscussion(Discussion discussion, Discussion parent, Topic topic) {
+	// 即使是审核模式也要发提醒
+	void notifyPublished(Discussion discussion) {
 		if (discussion.getUserId() == 2) {
 			return; // 自己的评论就不用提醒了
 		}
-
 		var entry = new DiscussionActivity();
 		entry.setFloor(discussion.getFloor());
 		entry.setTreeFloor(discussion.getTreeFloor());
+		entry.setState(discussion.getState());
+
+		var topic = topics.get(discussion);
 		entry.setUrl(topic.getUrl());
 		entry.setTitle(topic.getName());
 
 		var content = discussion.getContent();
-		var preview = content.length() > 200 ? content.substring(0, 200) + "..." : content;
-		entry.setPreview(preview);
-		noticeService.add(entry);
+		if (content.length() > 200) {
+			content = content.substring(0, 200) + "...";
+		}
+		entry.setPreview(content);
+		noticeService.notify(entry);
 	}
 
 	/**
