@@ -55,13 +55,13 @@ interface DiscussionDAO {
 	int countByTopic(Discussion discussion);
 
 	/**
-	 * 查询指定的评论有多少个子评论，比用 DiscussionQuery 简洁些。
+	 * 查询评论所在的楼中楼有多少个评论，比用 DiscussionQuery 简洁些。
 	 *
-	 * @param id 评论ID
+	 * @param discussion 评论
 	 * @return 子评论的数量
 	 */
-	@Select("SELECT COUNT(*) FROM discussion WHERE parent=#{id}")
-	int countByParent(int id);
+	@Select("SELECT COUNT(*) FROM discussion WHERE nest_id=#{nestId}")
+	int countByNest(Discussion discussion);
 
 	/**
 	 * 查询评论所在主题的顶层评论数量，不包含子评论（楼中楼）。

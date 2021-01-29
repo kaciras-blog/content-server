@@ -77,9 +77,9 @@ CREATE TABLE IF NOT EXISTS `discussion`
     `object_id`  int(10) unsigned    NOT NULL,
     `parent`     int(10) unsigned    NOT NULL DEFAULT 0,
     `floor`      int(10) unsigned    NOT NULL,
-    `tree_floor` int(10) unsigned    NOT NULL,
     `nest_id`    int(10) unsigned    NOT NULL,
-    `nest_size`  int(10) unsigned    NOT NULL DEFAULT 0 COMMENT '为了查询方便冗余了',
+    `nest_floor` int(10) unsigned    NOT NULL,
+    `nest_size`  int(10) unsigned    NOT NULL DEFAULT 0,
     `user_id`    int(10) unsigned    NOT NULL,
     `nickname`   varchar(16)                  DEFAULT NULL,
     `content`    text                NOT NULL,
@@ -136,13 +136,13 @@ CREATE TABLE IF NOT EXISTS `oauth`
 
 CREATE TABLE IF NOT EXISTS `user`
 (
-    `id`       int(10) unsigned    NOT NULL AUTO_INCREMENT,
-    `name`     varchar(16)         NOT NULL COMMENT '显示名可以重复',
-    `avatar`   binary(33)          NOT NULL,
-    `deleted`  bit(1)              NOT NULL DEFAULT b'0',
-    `auth`     tinyint(3) unsigned NOT NULL,
-    `reg_time` datetime(6)         NOT NULL DEFAULT current_timestamp(6),
-    `reg_ip`   binary(16)          NOT NULL,
+    `id`          int(10) unsigned    NOT NULL AUTO_INCREMENT,
+    `name`        varchar(16)         NOT NULL COMMENT '显示名可以重复',
+    `avatar`      binary(33)          NOT NULL,
+    `deleted`     bit(1)              NOT NULL DEFAULT b'0',
+    `auth`        tinyint(3) unsigned NOT NULL,
+    `create_time` datetime(6)         NOT NULL DEFAULT current_timestamp(6),
+    `create_ip`   binary(16)          NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = Aria
   DEFAULT CHARSET = utf8mb4 PAGE_CHECKSUM=1;

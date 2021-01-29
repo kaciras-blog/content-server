@@ -3,16 +3,16 @@ package com.kaciras.blog.api.discuss;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.net.InetAddress;
 import java.time.Instant;
 
 /**
  * 评论对象，无论是顶层评论还是楼中楼都是这个。
- * 为了同时支持引用模式和楼中楼模式，评论具有两种楼层号。
- * <p/>
- * 【点赞功能】
+ * <p>
+ * 以 nest 开头的三个字段是为了楼中楼查询方便而做的冗余。
+ *
+ * <h2>移除点赞功能</h2>
  * 评论曾经有点赞功能但后来移除了，理由有这么几点：
  * <ol>
  *     <li>
@@ -23,14 +23,13 @@ import java.time.Instant;
  *     评论系统以匿名为主，只能以 IP 来鉴别独立访问者，但 IP 容易变导致可以重复点赞。
  *     </li>
  * </ol>
- * <p/>
- * 【热度排序功能】
+ *
+ * <h2>热度排序功能</h2>
  * 目前还没想好怎么设计指标，而且访问量少的情况下没有意义，先不做。
  */
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(of = {"id", "type", "objectId"})
 public final class Discussion {
 
 	/**
@@ -64,17 +63,17 @@ public final class Discussion {
 	private int floor;
 
 	/**
-	 * 在父评论范围内递增的楼层号，如果没有父评论，则以主题为范围。
-	 */
-	private int treeFloor;
-
-	/**
 	 * 本系统里把楼中楼称为窝（Nest），一窝评论……挺形象的。
-	 *
+	 * <p>
 	 * nestId 等于顶层评论的 ID，楼中楼里所有的评论都有相同的 nestId。
 	 * 顶层评论的上级是主题已脱离评论表，所以其 nestId = 0。
 	 */
 	private int nestId;
+
+	/**
+	 * 在楼中楼范围内递增的楼层号，如果没有父评论，则以主题为范围。
+	 */
+	private int nestFloor;
 
 	/**
 	 * 楼中楼里可见的回复总数，不包括删除和审核中的。

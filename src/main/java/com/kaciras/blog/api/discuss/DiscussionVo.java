@@ -15,17 +15,14 @@ public final class DiscussionVo {
 
 	private int objectId;
 	private int type;
-
 	private int parent;
-
 	private int floor;
-	private int treeFloor;
 
 	private int nestId;
+	private int nestFloor;
 	private int nestSize;
 
 	private UserVo user;
-
 	private String nickname;
 	private String content;
 	private Instant time;

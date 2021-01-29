@@ -17,7 +17,7 @@ final class DiscussionActivity implements Activity, MailNotice {
 
 	private DiscussionState state;
 	private int floor;
-	private int treeFloor;
+	private int nestFloor;
 
 	/** 内容预览 */
 	private String preview;

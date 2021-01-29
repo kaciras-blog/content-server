@@ -51,9 +51,9 @@ public class DiscussionRepository {
 			}
 
 			// parent.getReplies() 返回的是可见的回复数，这里需要的是总数
-			discussion.setTreeFloor(dao.countByParent(pid) + 1);
+			discussion.setNestFloor(dao.countByNest(discussion) + 1);
 		} else {
-			discussion.setTreeFloor(dao.countTopLevel(discussion) + 1);
+			discussion.setNestFloor(dao.countTopLevel(discussion) + 1);
 		}
 
 		discussion.setTime(clock.instant());
