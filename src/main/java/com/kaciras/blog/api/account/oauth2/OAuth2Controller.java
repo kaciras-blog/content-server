@@ -1,7 +1,6 @@
 package com.kaciras.blog.api.account.oauth2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.api.Utils;
@@ -17,10 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -40,10 +37,12 @@ import java.util.stream.Collectors;
  *
  * <h2>为何不用 Spring-Security-OAuth </h2>
  * 虽然 Spring 有这功能，但因为 OAuth2 流程很简单所以自己写一遍学习一下。
+ *
+ * @see <a href="https://tools.ietf.org/html/rfc6749#section-4.1">RFC6749</a>
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/connect/{type}")
+@RequestMapping("/oauth2")
 class OAuth2Controller {
 
 	private final SessionService sessionService;
@@ -62,7 +61,7 @@ class OAuth2Controller {
 	@Autowired(required = false)
 	private void initClientMap(Collection<OAuth2Client> beans) {
 		clientMap = beans.stream()
-				.collect(Collectors.toMap(b -> b.authType().name().toLowerCase(), b -> b));
+				.collect(Collectors.toMap(b -> b.authType().name().toLowerCase(), Function.identity()));
 	}
 
 	/**
@@ -71,11 +70,8 @@ class OAuth2Controller {
 	 * @param type    第三方名称
 	 * @param request 请求对象
 	 */
-	@GetMapping
-	public ResponseEntity<Void> redirect(
-			@PathVariable String type,
-			HttpServletRequest request) throws JsonProcessingException {
-
+	@GetMapping("/connect/{type}")
+	public ResponseEntity<Void> redirect(HttpServletRequest request, @PathVariable String type) throws Exception {
 		var client = clientMap.get(type);
 		if (client == null) {
 			return ResponseEntity.notFound().build();
@@ -93,46 +89,42 @@ class OAuth2Controller {
 		 * 加入 state 参数后，它将在跳转链接里被带上。state 值与会话相关联，攻击者无法修改受害者的 Cookie，
 		 * 所以他的 state 与受害者没有关联（查询不到），这样可以验证登录跳转是否是同一人。
 		 */
-		var authSession = new OAuthSession(UUID.randomUUID().toString(), request.getParameter("ret"));
-		saveOAuthSession(request.getSession(true).getId(), authSession);
+		var state = UUID.randomUUID().toString();
+		var authSession = new OAuthSession(type, state, request.getParameter("ret"));
+		saveOAuthSession(request, authSession);
 
-		// 【注意】request.getRequestURL() 不包含参数和hash部分
+		// request.getRequestURL() 不包含参数和 hash 部分
 		var redirect = UriComponentsBuilder
 				.fromUriString(request.getRequestURL().toString())
 				.path("/callback");
 
-		var authUri = client.authUri()
+		var authUri = client.uriTemplate()
 				.queryParam("state", authSession.state)
 				.queryParam("redirect_uri", redirect.toUriString())
-				.build().toUri();
+				.build();
 
-		return ResponseEntity.status(302).location(authUri).build();
+		return ResponseEntity.status(302).location(authUri.toUri()).build();
 	}
 
 	/**
 	 * OAuth 认证第二步，用户在第三方服务上确认授权，然后向本服务提供授权码。
 	 * 本服务需要根据使用该授权码来从第三方服务获取必要的信息以完成登录。
 	 *
-	 * @param type     第三方名称
+	 * @param code     返回的认证码
 	 * @param request  请求对象
 	 * @param response 响应对象
 	 */
 	@GetMapping("/callback")
-	public ResponseEntity<?> callback(@PathVariable String type,
-									  HttpServletRequest request,
-									  HttpServletResponse response) throws Exception {
-
-		var client = clientMap.get(type);
-		if (client == null) {
-			return ResponseEntity.notFound().build();
-		}
-
-		// 获取会话，并检查state字段
+	public ResponseEntity<Void> callback(@RequestParam String code,
+										 @RequestParam String state,
+										 HttpServletRequest request,
+										 HttpServletResponse response) throws Exception {
+		// 获取会话，并检查 state 字段
 		var authSession = retrieveOAuthSession(request);
+		var client = clientMap.get(authSession.provider);
 
 		// 从第三方服务读取用户信息
-		var code = request.getParameter("code");
-		var context = new OAuth2Context(code, request.getRequestURL().toString(), authSession.state);
+		var context = new OAuth2Context(code, request.getRequestURL().toString(), state);
 		var info = client.getUserInfo(context);
 
 		// 查询出在本系统里对应的用户，并设置会话属性（登录）
@@ -148,28 +140,29 @@ class OAuth2Controller {
 		var redirect = UriComponentsBuilder
 				.fromUriString(authSession.returnUri)
 				.uri(URI.create(origin))
-				.build().toUri();
+				.build();
 
-		return ResponseEntity.status(302).location(redirect).build();
+		return ResponseEntity.status(302).location(redirect.toUri()).build();
 	}
 
 	/**
 	 * 保存临时的 OAuth2 会话，会话有一个较短的过期时间。
 	 *
-	 * @param id      用户会话的ID
+	 * @param request 请求对象
 	 * @param session OAuth2会话
 	 */
-	private void saveOAuthSession(String id, OAuthSession session) throws JsonProcessingException {
-		var key = RedisKeys.OAuthSession.of(id);
+	private void saveOAuthSession(HttpServletRequest request, OAuthSession session) throws IOException {
+		var key = RedisKeys.OAuthSession.of(request.getSession(true).getId());
 		var value = objectMapper.writeValueAsBytes(session);
 		redisTemplate.opsForValue().set(key, value, Duration.ofMinutes(10));
 	}
 
 	/**
 	 * 获取请求用户保存的 OAuth2 会话，同时会做必要的安全检查。
+	 * 会话是一次性的，一旦获取就会从存储中删除。
 	 *
 	 * @param request 请求对象
-	 * @return 认证会话
+	 * @return OAuth2会话
 	 * @throws ResourceDeletedException 如果认证会话过期了
 	 * @throws PermissionException      如果存在安全问题
 	 */
@@ -216,6 +209,7 @@ class OAuth2Controller {
 
 	@AllArgsConstructor(onConstructor_ = @JsonCreator)
 	private static final class OAuthSession {
+		public final String provider;
 		public final String state;
 		public final String returnUri;
 	}

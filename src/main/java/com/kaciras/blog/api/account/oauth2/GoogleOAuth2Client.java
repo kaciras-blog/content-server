@@ -41,7 +41,7 @@ public final class GoogleOAuth2Client implements OAuth2Client {
 	}
 
 	@Override
-	public UriComponentsBuilder authUri() {
+	public UriComponentsBuilder uriTemplate() {
 		return UriComponentsBuilder
 				.fromUriString("https://accounts.google.com/o/oauth2/auth")
 				.queryParam("client_id", clientId)
