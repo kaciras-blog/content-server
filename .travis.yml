@@ -1,5 +1,7 @@
 language: java
 
+# 不要用最新版 Ubuntu 跟 mariadb 插件不兼容
+
 git:
   depth: false
   quiet: true
@@ -18,11 +20,12 @@ services:
 addons:
   mariadb: "10.5"
 
-# Travis 的 Mariadb 没有配置用户会导致无法登录，需要手动处理下
+# Travis 的 Mariadb 没有配置用户会导致无法登录，需要手动处理下。
+# 另外命令必须要有 sudo 否则登不上。
 before_install:
-  - mysql -e "CREATE DATABASE blog;"
-  - mysql -e "SET PASSWORD FOR 'root'@'localhost' = '';"
-  - mysql -e "FLUSH PRIVILEGES;"
+  - sudo mariadb -e "CREATE DATABASE blog;"
+  - sudo mariadb -e "SET PASSWORD FOR 'root'@'localhost' = '';"
+  - sudo mariadb -e "FLUSH PRIVILEGES;"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

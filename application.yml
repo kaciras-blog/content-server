@@ -18,9 +18,9 @@ spring:
   # 建表脚本是 src/main/resources 目录下的 schema.sql 和 data.sql
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://127.0.0.1:3306/blog?allowMultiQueries=true
+    url: jdbc:mariadb://localhost:3306/blog?allowMultiQueries=true
     username: root
-    password:
+#    password: <your password>
 
   redis:
     host: localhost
