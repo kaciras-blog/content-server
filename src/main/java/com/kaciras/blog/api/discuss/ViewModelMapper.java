@@ -21,8 +21,20 @@ abstract class ViewModelMapper {
 	 */
 	public abstract Discussion fromInput(PublishInput input);
 
-	protected UserVo userFromDiscussion(Discussion discussion) {
-		return userManager.getUser(discussion.getUserId());
+	/**
+	 * 从评论创建通知对象，其中内容字段将截断到 200 字以内。
+	 *
+	 * @param value 评论
+	 * @param topic 主题
+	 * @return 通知对象
+	 */
+	@Mapping(target = "title", source = "topic.name")
+	@Mapping(target = "preview", source = "value")
+	public abstract DiscussionActivity toActivity(Discussion value, Topic topic);
+
+	String contentPreview(Discussion value) {
+		var c = value.getContent();
+		return c.length() > 200 ? c.substring(0, 200) : c;
 	}
 
 	/**
@@ -33,4 +45,8 @@ abstract class ViewModelMapper {
 	 */
 	@Mapping(target = "user", source = "source")
 	protected abstract DiscussionVo toViewObject(Discussion source);
+
+	UserVo userFromDiscussion(Discussion discussion) {
+		return userManager.getUser(discussion.getUserId());
+	}
 }

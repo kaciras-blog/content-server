@@ -104,32 +104,14 @@ class DiscussionController {
 			topic = topics.get(discussion);
 		}
 
-		notifyPublished(discussion, topic);
+		// 发送通知提醒，自己的评论就不用了
+		if (discussion.getUserId() != 2) {
+			noticeService.notify(mapper.toActivity(discussion, topic));
+		}
 
 		return ResponseEntity
 				.created(URI.create("/discussions/" + discussion.getId()))
 				.body(mapper.toViewObject(discussion));
-	}
-
-	// 即使是审核模式也要发提醒
-	void notifyPublished(Discussion discussion, Topic topic) {
-		if (discussion.getUserId() == 2) {
-			return; // 自己的评论就不用提醒了
-		}
-		var entry = new DiscussionActivity();
-		entry.setFloor(discussion.getFloor());
-		entry.setTreeFloor(discussion.getTreeFloor());
-		entry.setState(discussion.getState());
-
-		entry.setUrl(topic.getUrl());
-		entry.setTitle(topic.getName());
-
-		var content = discussion.getContent();
-		if (content.length() > 200) {
-			content = content.substring(0, 200) + "...";
-		}
-		entry.setPreview(content);
-		noticeService.notify(entry);
 	}
 
 	/**
