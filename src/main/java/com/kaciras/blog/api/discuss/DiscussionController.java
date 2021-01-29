@@ -1,5 +1,6 @@
 package com.kaciras.blog.api.discuss;
 
+import com.kaciras.blog.api.MappingListView;
 import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.api.config.BindConfig;
 import com.kaciras.blog.api.notice.NoticeService;
