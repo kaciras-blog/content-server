@@ -19,6 +19,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 
+/**
+ * 评论的数据结构是一颗含有不同类型对象的树，根节点是主题，下面的节点是评论。
+ */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/discussions")
@@ -73,9 +76,10 @@ class DiscussionController {
 		return new MappingListView<>(total, items, session.getObjects());
 	}
 
-	// 无论是否审核都返回视图，前端可以通过 state 判断
 	@PostMapping
-	public ResponseEntity<DiscussionVo> post(HttpServletRequest request, @Valid @RequestBody PublishInput input) {
+	public ResponseEntity<DiscussionVo> post(
+			HttpServletRequest request,
+			@Valid @RequestBody PublishInput input) {
 		if (options.disabled) {
 			throw new PermissionException("已禁止评论");
 		}
@@ -85,27 +89,22 @@ class DiscussionController {
 
 		var discussion = mapper.fromInput(input);
 		discussion.setUserId(SecurityContext.getUserId());
-		discussion.setState(options.moderation ? DiscussionState.Moderation : DiscussionState.Visible);
+		discussion.setState(options.moderation
+				? DiscussionState.Moderation
+				: DiscussionState.Visible);
 		discussion.setAddress(Utils.addressFromRequest(request));
 
-		Discussion parent = null;
-
-		if (discussion.getParent() != 0) {
-			parent = repository.get(input.getParent()).orElseThrow(RequestArgumentException::new);
-			discussion.setType(parent.getType());
-			discussion.setObjectId(parent.getObjectId());
-
-			if (parent.getNestId() == 0) {
-				discussion.setNestId(parent.getId());
-			} else {
-				discussion.setNestId(parent.getNestId());
-			}
+		//
+		Topic topic;
+		if (discussion.getParent() == 0) {
+			topic = topics.get(discussion);
+			repository.add(discussion);
+		} else {
+			repository.add(discussion);
+			topic = topics.get(discussion);
 		}
 
-		// 获取主题，同时检查其是否存在
-		var topic = topics.get(discussion);
-		repository.add(discussion);
-		notifyPublished(discussion);
+		notifyPublished(discussion, topic);
 
 		return ResponseEntity
 				.created(URI.create("/discussions/" + discussion.getId()))
@@ -113,7 +112,7 @@ class DiscussionController {
 	}
 
 	// 即使是审核模式也要发提醒
-	void notifyPublished(Discussion discussion) {
+	void notifyPublished(Discussion discussion, Topic topic) {
 		if (discussion.getUserId() == 2) {
 			return; // 自己的评论就不用提醒了
 		}
@@ -122,7 +121,6 @@ class DiscussionController {
 		entry.setTreeFloor(discussion.getTreeFloor());
 		entry.setState(discussion.getState());
 
-		var topic = topics.get(discussion);
 		entry.setUrl(topic.getUrl());
 		entry.setTitle(topic.getName());
 

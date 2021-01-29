@@ -204,7 +204,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		verify(repository).add(captor.capture());
 
 		var topic = new Topic("TestTopic", "http://example.com");
-		verify(notification).add(any());
+		verify(notification).notify(any());
 
 		var stored = captor.getValue();
 		assertThat(stored.getContent()).isEqualTo("test content");

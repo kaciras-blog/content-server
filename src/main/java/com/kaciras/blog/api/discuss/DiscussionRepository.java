@@ -33,14 +33,25 @@ public class DiscussionRepository {
 	 */
 	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void add(@NonNull Discussion discussion) {
-		var parent = discussion.getParent();
+		var pid = discussion.getParent();
 
-		if (parent != 0) {
-			if (discussion.getState() == DiscussionState.Visible) {
-				dao.addNestSize(parent, 1);
+		if (pid != 0) {
+			var parent = get(pid).orElseThrow(RequestArgumentException::new);
+			discussion.setType(parent.getType());
+			discussion.setObjectId(parent.getObjectId());
+
+			if (parent.getNestId() == 0) {
+				discussion.setNestId(parent.getId());
+			} else {
+				discussion.setNestId(parent.getNestId());
 			}
+
+			if (discussion.getState() == DiscussionState.Visible) {
+				dao.addNestSize(pid, 1);
+			}
+
 			// parent.getReplies() 返回的是可见的回复数，这里需要的是总数
-			discussion.setTreeFloor(dao.countByParent(parent) + 1);
+			discussion.setTreeFloor(dao.countByParent(pid) + 1);
 		} else {
 			discussion.setTreeFloor(dao.countTopLevel(discussion) + 1);
 		}
