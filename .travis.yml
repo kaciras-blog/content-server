@@ -20,9 +20,9 @@ addons:
 
 # Travis 的 Mariadb 没有配置用户会导致无法登录，需要手动处理下
 before_install:
-  - sudo mysql -e "CREATE DATABASE blog;"
-  - sudo mysql -e "SET PASSWORD FOR 'root'@'localhost' = '';"
-  - sudo mysql -e "FLUSH PRIVILEGES;"
+  - mysql -e "CREATE DATABASE blog;"
+  - mysql -e "SET PASSWORD FOR 'root'@'localhost' = '';"
+  - mysql -e "FLUSH PRIVILEGES;"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
