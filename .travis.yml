@@ -4,8 +4,6 @@ git:
   depth: false
   quiet: true
 
-dist: focal
-
 cache:
   directories:
     - $HOME/.m2
@@ -20,10 +18,11 @@ services:
 addons:
   mariadb: "10.5"
 
+# Travis 的 Mariadb 没有配置用户会导致无法登录，需要手动处理下
 before_install:
-  - sudo mysql -e "CREATE DATABASE blog;"
-  - sudo mysql -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('');"
-  - sudo mysql -e "FLUSH PRIVILEGES;"
+  - mariadb -e "CREATE DATABASE blog;"
+  - mariadb -e "SET PASSWORD FOR 'root'@'localhost' = '';"
+  - mariadb -e "FLUSH PRIVILEGES;"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
