@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
@@ -22,10 +23,11 @@ public class HttpClientAutoConfiguration {
 	private final HttpClientProperties properties;
 
 	@Bean
-	HttpClient httpClient(ApplicationContext context) {
+	public HttpClient httpClient(ApplicationContext context) {
 		var builder = HttpClient.newBuilder();
 
-		if (properties.executor != null) {
+		// 考虑到配置文件没法设为 null 所以空字符串也排除。
+		if (StringUtils.hasText(properties.executor)) {
 			builder.executor(context.getBean(properties.executor, Executor.class));
 		}
 

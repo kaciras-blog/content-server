@@ -1,7 +1,6 @@
 package com.kaciras.blog.infra.autoconfigure;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
 import java.net.InetSocketAddress;
@@ -16,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HttpClientAutoConfigurationTest {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(HttpClientAutoConfiguration.class));
+			.withUserConfiguration(HttpClientAutoConfiguration.class);
 
 	@Test
 	void proxy() {

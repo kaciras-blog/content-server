@@ -18,8 +18,8 @@ import java.util.List;
  *
  * TODO: CORS 并不是经常改变或是具有通用设置的东西，搞这个类是否多余？
  */
-@EnableConfigurationProperties(CorsProperties.class)
 @Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(CorsProperties.class)
 @RequiredArgsConstructor
 public class KxGlobalCorsAutoConfiguration {
 

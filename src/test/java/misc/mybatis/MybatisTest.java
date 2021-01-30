@@ -32,7 +32,7 @@ class MybatisTest {
 	@Autowired
 	private TestMybatisMapper mapper;
 
-	/** 验证Mybatis不会把空值视作false */
+	/** Mybatis 不会把空值视作false */
 	@Test
 	void testSelectNullableBoolean() {
 		Assertions.assertThatThrownBy(mapper::selectNullableBool).isInstanceOf(BindingException.class);

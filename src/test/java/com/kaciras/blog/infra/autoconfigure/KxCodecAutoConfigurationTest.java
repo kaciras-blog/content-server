@@ -4,7 +4,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
-import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
 import static com.kaciras.blog.infra.TestHelper.getSubClassesInPackage;
@@ -13,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 final class KxCodecAutoConfigurationTest {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(KxCodecAutoConfiguration.class));
+			.withUserConfiguration(KxCodecAutoConfiguration.class);
 
 	@SuppressWarnings("unchecked")
 	@Test

@@ -27,9 +27,8 @@ final class KxWebUtilsAutoConfigurationTest {
 
 	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
 			.withPropertyValues("server.port=0")
-			.withConfiguration(AutoConfigurations.of(
-					KxWebUtilsAutoConfiguration.class,
-					ServletWebServerFactoryAutoConfiguration.class));
+			.withConfiguration(AutoConfigurations.of(ServletWebServerFactoryAutoConfiguration.class))
+			.withUserConfiguration(KxWebUtilsAutoConfiguration.class);
 
 	private static final class TestServlet extends HttpServlet {
 

@@ -79,7 +79,6 @@ mybatis:
 app:
 
   authorization:
-    security-context: true
     csrf:
       skip-safe: false
 

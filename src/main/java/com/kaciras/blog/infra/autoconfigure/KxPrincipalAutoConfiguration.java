@@ -5,13 +5,15 @@ import com.kaciras.blog.infra.principal.RequirePermission;
 import com.kaciras.blog.infra.principal.ServletPrincipalFilter;
 import com.kaciras.blog.infra.principal.ServletSecurityContextFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@EnableConfigurationProperties({AuthorizationProperties.class, SessionCookieProperties.class})
+/**
+ * 配置身份与权限功能，从 Session 中读取用户并检查 CSRF，设置 principal 和 SecurityContext，以及 AOP 权限拦截。
+ */
 @Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties({AuthorizationProperties.class, SessionCookieProperties.class})
 @RequiredArgsConstructor
 public class KxPrincipalAutoConfiguration {
 
@@ -32,26 +34,19 @@ public class KxPrincipalAutoConfiguration {
 		return filter;
 	}
 
-	@ConditionalOnProperty(name = "app.authorization.security-context", havingValue = "true")
+	/**
+	 * 注册 AOP 权限拦截器，可以对一些简单的权限进行拦截。
+	 *
+	 * @return 切面类
+	 * @see RequirePermission
+	 */
+	@Bean
+	public AuthorizeAspect authorizeAspect() {
+		return new AuthorizeAspect();
+	}
+
 	@Bean
 	public ServletSecurityContextFilter securityContextFilter() {
 		return new ServletSecurityContextFilter();
 	}
-
-	/**
-	 * 注册AOP权限拦截器，可以对一些简单的权限进行拦截。
-	 *
-	 * @return 切面类
-	 * @see AuthorizeAspect
-	 * @see RequirePermission
-	 */
-	@Bean
-	public AuthorizeAspect principalAspect() {
-		return new AuthorizeAspect();
-	}
-
-	/*
-	 * 【更新】移除Domain接口，当初的设想是通过AOP自动切换领域，但是方法的调用错综复杂，而且
-	 * 目前用不到纯属累赘。考虑到代码也没多少，直接删了完事。
-	 */
 }
