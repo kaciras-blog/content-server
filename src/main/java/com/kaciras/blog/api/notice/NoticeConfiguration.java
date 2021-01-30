@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.notice;
 
-import com.kaciras.blog.api.RedisOperationsBuilder;
+import com.kaciras.blog.infra.RedisOperationsBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

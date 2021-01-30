@@ -1,4 +1,4 @@
-package com.kaciras.blog.api;
+package com.kaciras.blog.infra;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -8,14 +8,12 @@ import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.stereotype.Component;
 
 /**
  * 鉴于 RedisTemplate 包含的太多，而实际使用时序列化方式与被存储对象高度相关，
  * 几乎每个地方都要创建自己的 RedisTemplate，所以搞了这个工具类来快速创建。
  */
 @RequiredArgsConstructor
-@Component
 public final class RedisOperationsBuilder {
 
 	private final RedisConnectionFactory factory;

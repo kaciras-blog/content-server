@@ -1,7 +1,7 @@
 package com.kaciras.blog.api.friend;
 
 import com.kaciras.blog.api.RedisKeys;
-import com.kaciras.blog.api.RedisOperationsBuilder;
+import com.kaciras.blog.infra.RedisOperationsBuilder;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.serializer.RedisSerializer;

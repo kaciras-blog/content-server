@@ -1,9 +1,9 @@
 package com.kaciras.blog.api.friend;
 
 import com.kaciras.blog.api.RedisKeys;
-import com.kaciras.blog.api.RedisOperationsBuilder;
 import com.kaciras.blog.api.notice.NoticeService;
 import com.kaciras.blog.infra.RedisExtensions;
+import com.kaciras.blog.infra.RedisOperationsBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

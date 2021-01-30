@@ -1,7 +1,7 @@
 package com.kaciras.blog.api.notice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kaciras.blog.api.RedisOperationsBuilder;
+import com.kaciras.blog.infra.RedisOperationsBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
