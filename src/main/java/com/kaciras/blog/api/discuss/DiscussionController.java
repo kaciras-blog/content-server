@@ -34,9 +34,8 @@ class DiscussionController {
 
 	private final NoticeService noticeService;
 
-	@SuppressWarnings("unused")
-	@Setter
 	@BindConfig("discussion")
+	@Setter
 	private DiscussionOptions options;
 
 	/**

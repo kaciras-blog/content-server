@@ -1,7 +1,6 @@
 package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.infra.exception.RequestArgumentException;
-import org.apache.ibatis.session.SqlSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.net.InetAddress;
 import java.sql.SQLException;
 import java.util.stream.Stream;
@@ -31,16 +31,16 @@ class DiscussionRepositoryTest {
 	private DiscussionRepository repository;
 
 	@Autowired
-	private SqlSession sqlSession;
+	private DataSource dataSource;
 
 	/**
 	 * Mariadb 和 MySQL 的事务不能回滚自增值，导致新加的行 ID 无法预测，必须手动重置下。
 	 */
 	@BeforeEach
 	void resetAutoIncrement() throws SQLException {
-		sqlSession.getConnection()
-				.createStatement()
-				.execute("ALTER TABLE discussion AUTO_INCREMENT = 1");
+		try (var conn = dataSource.getConnection()) {
+			conn.createStatement().execute("ALTER TABLE discussion AUTO_INCREMENT = 1");
+		}
 	}
 
 	private static Discussion newDiscussion() {
@@ -85,7 +85,7 @@ class DiscussionRepositoryTest {
 	}
 
 	@Test
-	void add() {
+	void populateOnAdd() {
 		var top0 = addData(0);
 		var reply0 = addData(top0.getId());
 		var top1 = addData(0);
@@ -94,17 +94,17 @@ class DiscussionRepositoryTest {
 		// Mariadb 的事务不回滚自增值，只能用大于来判断
 		assertThat(top0.getId()).isGreaterThanOrEqualTo(1);
 		assertThat(top0.getTime()).isNotNull();
-		assertThat(top0.getTreeFloor()).isEqualTo(1);
+		assertThat(top0.getNestFloor()).isEqualTo(1);
 
 		assertThat(top0.getFloor()).isEqualTo(1);
 		assertThat(reply0.getFloor()).isEqualTo(2);
 		assertThat(top1.getFloor()).isEqualTo(3);
 		assertThat(reply1.getFloor()).isEqualTo(4);
 
-		assertThat(top0.getTreeFloor()).isEqualTo(1);
-		assertThat(reply0.getTreeFloor()).isEqualTo(1);
-		assertThat(top1.getTreeFloor()).isEqualTo(2);
-		assertThat(reply1.getTreeFloor()).isEqualTo(2);
+		assertThat(top0.getNestFloor()).isEqualTo(1);
+		assertThat(reply0.getNestFloor()).isEqualTo(1);
+		assertThat(top1.getNestFloor()).isEqualTo(2);
+		assertThat(reply1.getNestFloor()).isEqualTo(2);
 	}
 
 	@Test
@@ -117,12 +117,12 @@ class DiscussionRepositoryTest {
 
 	private static Stream<Arguments> queries() {
 		return Stream.of(
-				Arguments.of(new DiscussionQuery().setNestId(0))
+				Arguments.of(new DiscussionQuery().setNestId(1))
 		);
 	}
 
-//	@MethodSource("queries")
-//	@ParameterizedTest
+	@MethodSource("queries")
+	@ParameterizedTest
 	void findAll(DiscussionQuery query) {
 		var _1 = addData(0);
 		addData(_1.getId());
@@ -131,7 +131,7 @@ class DiscussionRepositoryTest {
 		var list = repository.findAll(query);
 
 		assertThat(list).hasSize(1);
-		assertThat(list.get(0).getNestSize()).isEqualTo(1);
+		assertThat(list.get(0).getNestSize()).isEqualTo(0);
 	}
 
 	@Test
@@ -190,6 +190,7 @@ class DiscussionRepositoryTest {
 	@Test
 	void get() {
 		var expected = newDiscussion();
+		expected.setNickname("niconiconi");
 		expected.setType(3);
 		expected.setObjectId(7);
 		repository.add(expected);
@@ -203,8 +204,9 @@ class DiscussionRepositoryTest {
 		assertThat(value.getState()).isEqualTo(DiscussionState.Visible);
 		assertThat(value.getTime()).isNotNull();
 		assertThat(value.getFloor()).isEqualTo(1);
-		assertThat(value.getTreeFloor()).isEqualTo(1);
+		assertThat(value.getNestFloor()).isEqualTo(1);
 		assertThat(value.getContent()).isEqualTo(expected.getContent());
 		assertThat(value.getAddress()).isNotNull();
+		assertThat(value.getNickname()).isEqualTo("niconiconi");
 	}
 }
