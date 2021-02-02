@@ -12,14 +12,15 @@
 			"type" : 1,
 			"parent" : 0,
 			"floor" : 0,
-			"treeFloor" : 0,
 			"nestId" : 0,
+			"nestFloor" : 0,
 			"nestSize" : 0,
 			"user" : {
 				"id" : 0
 			},
 			"content" : "评论内容，ID=1",
-			"time" : 0
+			"time" : 0,
+			"state" : "Visible"
 		},
 		"2" : {
 			"id" : 2,
@@ -27,14 +28,15 @@
 			"type" : 1,
 			"parent" : 1,
 			"floor" : 0,
-			"treeFloor" : 0,
 			"nestId" : 0,
+			"nestFloor" : 0,
 			"nestSize" : 0,
 			"user" : {
 				"id" : 0
 			},
 			"content" : "评论内容，ID=2",
-			"time" : 0
+			"time" : 0,
+			"state" : "Visible"
 		},
 		"3" : {
 			"id" : 3,
@@ -42,14 +44,15 @@
 			"type" : 1,
 			"parent" : 4,
 			"floor" : 0,
-			"treeFloor" : 0,
 			"nestId" : 0,
+			"nestFloor" : 0,
 			"nestSize" : 0,
 			"user" : {
 				"id" : 0
 			},
 			"content" : "评论内容，ID=3",
-			"time" : 0
+			"time" : 0,
+			"state" : "Visible"
 		},
 		"4" : {
 			"id" : 4,
@@ -57,14 +60,15 @@
 			"type" : 1,
 			"parent" : 0,
 			"floor" : 0,
-			"treeFloor" : 0,
 			"nestId" : 0,
+			"nestFloor" : 0,
 			"nestSize" : 0,
 			"user" : {
 				"id" : 0
 			},
 			"content" : "评论内容，ID=4",
-			"time" : 0
+			"time" : 0,
+			"state" : "Visible"
 		}
 	}
 }

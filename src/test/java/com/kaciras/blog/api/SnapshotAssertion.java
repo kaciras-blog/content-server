@@ -6,9 +6,12 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.Cleanup;
+import lombok.SneakyThrows;
 import org.aspectj.util.FileUtil;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentMatchers;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.ResultMatcher;
 
@@ -23,12 +26,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  * 控制器返回的数据太复杂懒得一个个断言，所以就需要一个快照测试工具，
  * 我搜了一圈也没看到好用的快照测试库，只能自己写一个。
  * <p>
- * 快照文件保存在 src/test/resources/snapshots 目录下，属于源码的一部分，应当提交到版本控制系统。
+ * 快照保存在 src/test/resources/snapshots，属于测试代码的一部分，应当提交到版本控制系统。
  * <p>
- * 本工具不支持并发测试，且对断言方法的调用的次数和顺序必须是固定的。
+ * 本类不支持并发，且对断言方法的调用的次数和顺序必须是固定的。
  *
  * <h3>使用要求</h3>
- * 因为 JUnit 自己没有提供外部获取当前测试的方法，故需要注册一个扩展来追踪当前测试名.
+ * 因为 JUnit 自己没有提供从外部获取当前测试名的方法，所以用了一个扩展来追踪当前测试名。
  * 请在测试类上加入：
  * {@code @ExtendWith(Snapshots.TestContextHolder.class)}
  */
@@ -42,6 +45,10 @@ public final class SnapshotAssertion {
 	private static int calls;
 
 	private final ObjectMapper objectMapper;
+
+	// 快照和传入对象的 JSON 字符串，使用前先调用 createOrRead
+	private String expect;
+	private String actual;
 
 	/**
 	 * 因为用户可能使用自定义的 ObjectMapper，所以这里需要传入以便使配置一致。
@@ -72,23 +79,40 @@ public final class SnapshotAssertion {
 	}
 
 	/**
-	 * 断言一个对象符合快照，使用 JSON 序列化将对象保存在快照文件中。
-	 * 如果启动参数中设置了 -DupdateSnapshot 则强制更新快照。
-	 * <p>
-	 * 这里直接使用 AssertJ 的断言而不是自己实现 Diff，因为 IDE 都支持对比差异，
-	 * 至于控制台的话……反正我从不用。
+	 * 断言 Mock 对象的方法调用参数。
 	 */
-	public void assertMatch(Object object) throws Exception {
-		var actual = objectMapper.writeValueAsString(object);
+	public <T> T matchArg() {
+		return ArgumentMatchers.argThat(new MockitoArgMatcher<>());
+	}
+
+	/**
+	 * 使用 AssertJ 来断言对象符合保存的快照。
+	 * <p>
+	 * 这里没有自己实现 Diff 是因为 IDE 都支持对比差异，至于控制台的话……反正我从不用。
+	 */
+	public void assertMatch(Object object) {
+		createOrRead(object);
+		assertThat(actual).isEqualTo(expect);
+	}
+
+	/**
+	 * 读取快照，如果快照不存在则创建，使用 JSON 序列化将对象保存在快照文件中。
+	 * 如果启动参数中设置了 {@code -DupdateSnapshot} 则强制更新快照。
+	 *
+	 * @param object 对象
+	 */
+	@SneakyThrows
+	private void createOrRead(Object object) {
+		actual = objectMapper.writeValueAsString(object);
 		var file = getSnapshotFile();
 
 		if (file.exists() && System.getProperty("updateSnapshot") == null) {
-			var expect = FileUtil.readAsString(file);
+			expect = FileUtil.readAsString(file);
 
 			// 重新格式化，避免快照文件格式的影响。
 			expect = objectMapper.writeValueAsString(objectMapper.readTree(expect));
-			assertThat(actual).isEqualTo(expect);
 		} else {
+			expect = actual;
 			file.getParentFile().mkdirs();
 			@Cleanup var stream = new FileOutputStream(file);
 			stream.write(actual.getBytes(StandardCharsets.UTF_8));
@@ -128,6 +152,21 @@ public final class SnapshotAssertion {
 			method = context.getRequiredTestMethod();
 			clazz = context.getRequiredTestClass();
 			index = (method == latestMethod && clazz == latestClass) ? index + 1 : 0;
+		}
+	}
+
+	private final class MockitoArgMatcher<T> implements ArgumentMatcher<T> {
+
+		// Mockito 在一次断言中可能多次调用 Matcher，但快照是有副作用的，所以要跳过重复的调用。
+		private Boolean result;
+
+		@Override
+		public boolean matches(T argument) {
+			if (result != null) {
+				return result;
+			}
+			createOrRead(argument);
+			return result = expect.equals(actual);
 		}
 	}
 }

@@ -51,7 +51,7 @@ final class QueryCacheSession {
 	 * 引用模式，将每个结果的父评论加入到 objects 中。
 	 */
 	private void addParentToMap(DiscussionVo viewObject) {
-		var id = viewObject.getParent();
+		var id = viewObject.parent;
 		if (id == 0 || objects.containsKey(id)) {
 			return;
 		}
@@ -64,9 +64,9 @@ final class QueryCacheSession {
 	 */
 	private void attachChildren(DiscussionVo vo, Pageable pageable) {
 		var childrenQuery = new DiscussionQuery()
-				.setNestId(vo.getId())
+				.setNestId(vo.id)
 				.setPageable(pageable);
-		vo.setReplies(collectId(findAll(childrenQuery)));
+		vo.replies = collectId(findAll(childrenQuery));
 	}
 
 	/**
@@ -81,10 +81,10 @@ final class QueryCacheSession {
 		return repository.findAll(query)
 				.stream()
 				.map(mapper::toViewObject)
-				.peek(v -> objects.put(v.getId(), v));
+				.peek(v -> objects.put(v.id, v));
 	}
 
 	private List<Integer> collectId(Stream<DiscussionVo> stream) {
-		return stream.map(DiscussionVo::getId).collect(Collectors.toList());
+		return stream.map(v -> v.id).collect(Collectors.toList());
 	}
 }

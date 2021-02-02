@@ -1,35 +1,30 @@
 package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.api.user.UserVo;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.Instant;
 import java.util.List;
 
-@Getter
-@Setter
 public final class DiscussionVo {
 
-	private int id;
+	public int id;
 
-	private int objectId;
-	private int type;
-	private int parent;
-	private int floor;
+	public int objectId;
+	public int type;
+	public int parent;
+	public int floor;
 
-	private int nestId;
-	private int nestFloor;
-	private int nestSize;
+	public int nestId;
+	public int nestFloor;
+	public int nestSize;
 
-	private UserVo user;
-	private String nickname;
-	private String content;
-	private Instant time;
+	public UserVo user;
+	public String nickname;
+	public String content;
+	public Instant time;
+	public DiscussionState state;
 
 	// ========== 下面是可选的聚合属性 ==========
 
-	private Topic topic;
-
-	private List<Integer> replies;
+	public List<Integer> replies;
 }
