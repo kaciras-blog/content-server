@@ -129,14 +129,17 @@
 
 	<build>
 		<plugins>
-			<!-- argLine 只能有一个，多个参数用空格或换行 -->
+			<!--
+				<argLine> 元素只能有一个，多个参数用空格或换行。
+				JaCoCo 的代理必须放在 Spring 的后面否则会出现 AspectJ Internal Error
+			 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<argLine>
 						-javaagent:${ltw.agent}
-						-Dfile.encoding=UTF-8
+						@{argLine}
 						-Dspring.profiles.active=test
 					</argLine>
 				</configuration>
