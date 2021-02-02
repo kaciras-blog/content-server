@@ -94,15 +94,17 @@ class DiscussionController {
 				: DiscussionState.Visible);
 		discussion.setAddress(Utils.addressFromRequest(request));
 
-		//
+		// 获取主题，同时检查其是否存在
 		Topic topic;
-		if (discussion.getParent() == 0) {
-			topic = topics.get(discussion);
-			repository.add(discussion);
+		var pid = discussion.getParent();
+		if (pid != 0) {
+			var parent = repository.get(pid).orElseThrow(RequestArgumentException::new);
+			topic = topics.get(parent);
 		} else {
-			repository.add(discussion);
 			topic = topics.get(discussion);
 		}
+
+		repository.add(discussion);
 
 		// 发送通知提醒，自己的评论就不用了
 		if (discussion.getUserId() != 2) {

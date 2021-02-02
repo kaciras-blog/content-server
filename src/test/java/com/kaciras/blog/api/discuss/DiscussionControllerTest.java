@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static org.mockito.internal.verification.VerificationModeFactory.noInteractions;
 import static org.mockito.internal.verification.VerificationModeFactory.noMoreInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -194,6 +195,20 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		var input = new PublishInput(0, 0, 1, null, "test");
 		var body = objectMapper.writeValueAsString(input);
 		mockMvc.perform(post("/discussions").content(body)).andExpect(status().is(400));
+	}
+
+	@Test
+	void publishToDetachedParent() throws Exception {
+		when(repository.get(anyInt())).thenReturn(Optional.of(newItem(1, 0)));
+		doThrow(new RequestArgumentException()).when(topics).get(anyInt(), anyInt());
+
+		var input = new PublishInput(0, 0, 1, null, "test");
+		var body = objectMapper.writeValueAsString(input);
+
+		mockMvc.perform(post("/discussions").content(body))
+				.andExpect(status().is(400));
+
+		verify(repository, never()).add(any());
 	}
 
 	@Test
