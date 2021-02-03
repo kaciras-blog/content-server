@@ -5,9 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.Cleanup;
 import lombok.SneakyThrows;
-import org.aspectj.util.FileUtil;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.mockito.ArgumentMatcher;
@@ -16,9 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -35,7 +32,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  * 请在测试类上加入：
  * {@code @ExtendWith(Snapshots.TestContextHolder.class)}
  */
-@SuppressWarnings("ResultOfMethodCallIgnored")
 @Component
 public final class SnapshotAssertion {
 
@@ -107,15 +103,13 @@ public final class SnapshotAssertion {
 		var file = getSnapshotFile();
 
 		if (file.exists() && System.getProperty("updateSnapshot") == null) {
-			expect = FileUtil.readAsString(file);
+			expect = Files.readString(file.toPath());
 
-			// 重新格式化，避免快照文件格式的影响。
+			// 重新格式化，避免无效内容的影响。
 			expect = objectMapper.writeValueAsString(objectMapper.readTree(expect));
 		} else {
 			expect = actual;
-			file.getParentFile().mkdirs();
-			@Cleanup var stream = new FileOutputStream(file);
-			stream.write(actual.getBytes(StandardCharsets.UTF_8));
+			Files.writeString(file.toPath(), actual);
 		}
 	}
 
