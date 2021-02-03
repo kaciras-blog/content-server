@@ -15,6 +15,8 @@ import javax.validation.Validator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @Import({JacksonAutoConfiguration.class, ValidationAutoConfiguration.class})
 @ActiveProfiles("test")
@@ -27,7 +29,6 @@ class ConfigBindingManagerTest {
 	@MockBean
 	private ConfigRepository repository;
 
-	// 每个测试都重新创建，避免bind方法污染
 	private ConfigBindingManager manager;
 
 	private TestBindingConfig config;
@@ -106,5 +107,16 @@ class ConfigBindingManagerTest {
 		newConfig.setSmaller(newConfig.getBigger() + 666);
 
 		assertThatThrownBy(() -> manager.set("test", newConfig)).isInstanceOf(ValidationException.class);
+	}
+
+	@Test
+	void getConfigFromRepository() {
+		var config = new TestBindingConfig();
+		config.setIntValue(4396);
+		when(repository.load(eq("test"), eq(TestBindingConfig.class))).thenReturn(config);
+
+		var value = (TestBindingConfig) manager.get("test");
+
+		assertThat(value.getIntValue()).isEqualTo(4396);
 	}
 }

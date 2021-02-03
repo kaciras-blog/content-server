@@ -64,4 +64,17 @@ final class RateLimitFilterTest {
 		assertThat(response.getStatus()).isEqualTo(429);
 		assertThat(response.getHeader("X-RateLimit-Wait")).isEqualTo("100");
 	}
+
+	@Test
+	void allowed() throws Exception {
+		var checker = mock(RateLimiterChecker.class);
+		when(checker.check(any(), any())).thenReturn(0L);
+		var filter = new RateLimitFilter(List.of(checker));
+
+		var request = new MockHttpServletRequest();
+		request.setRemoteAddr("1234:6666::8888");
+
+		doFilter(filter, request);
+		assertThat(accepted).isTrue();
+	}
 }

@@ -12,10 +12,12 @@ import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.net.URI;
+import java.nio.file.Files;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
@@ -171,6 +173,16 @@ final class FriendValidateServiceTest {
 		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.AbandonedMe);
 		assertThat(activity.getUrl()).isEqualTo(friend.url);
 		assertThat(activity.getName()).isEqualTo(friend.name);
+	}
+
+	@Test
+	void hasMyLink() throws Exception {
+		var html = Files.readString(new ClassPathResource("friend-validate-2.html").getFile().toPath());
+		setValidateResult(true, null, html);
+
+		service.startValidation();
+
+		verify(notification, noInteractions()).notify(any());
 	}
 
 	// 有记录但没有对应的友链，因为检查任务是异步的，所以可能有这种边界情况。
