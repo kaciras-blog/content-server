@@ -1,8 +1,9 @@
 package com.kaciras.blog.api.discuss;
 
-import com.kaciras.blog.infra.Misc;
+import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.UncategorizedDataAccessException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -70,21 +71,11 @@ public class DiscussionRepository {
 	}
 
 	public List<Discussion> findAll(@NonNull DiscussionQuery query) {
-		var pageable = query.getPageable();
-
-		// 检查排序字段，如果在 SQLProvider 里检查错误会被包装
-		if (pageable != null && pageable.getSort().isSorted()) {
-			var column = Misc.getFirst(pageable.getSort()).getProperty();
-			switch (column) {
-				case "id":
-				case "nest_size":
-					break;
-				default:
-					throw new RequestArgumentException("不支持的排序：" + column);
-			}
+		try {
+			return dao.selectList(query);
+		} catch (UncategorizedDataAccessException e) {
+			throw Utils.unwrapSQLException(e);
 		}
-
-		return dao.selectList(query);
 	}
 
 	/**

@@ -1,0 +1,8 @@
+{
+	"floor" : 2,
+	"nestFloor" : 3,
+	"preview" : "test content",
+	"state" : "Visible",
+	"title" : "TestTopic",
+	"url" : "http://example.com"
+}

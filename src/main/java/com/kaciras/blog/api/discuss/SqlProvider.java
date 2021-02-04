@@ -44,7 +44,7 @@ public final class SqlProvider {
 		return sql.toString();
 	}
 
-	// 前三个都带索引，state 暂时没有索引所以放最后
+	// 前三个都带索引，state 没有所以放最后
 	private void applyFilters(SQL sql, DiscussionQuery query) {
 		if (query.getType() != null) {
 			sql.WHERE("type = #{type}");
@@ -63,8 +63,6 @@ public final class SqlProvider {
 
 	/**
 	 * 向 SQL 语句中添加排序和分页，查询数量不使用该方法。
-	 * <p>
-	 * 排序字段已经在上层做了检查防注入。
 	 *
 	 * @see DiscussionRepository#findAll
 	 */
@@ -73,6 +71,14 @@ public final class SqlProvider {
 		if (sort.isSorted()) {
 			var order = Misc.getFirst(sort);
 			var column = order.getProperty();
+
+			switch (column) {
+				case "id":
+				case "nest_size":
+					break;
+				default:
+					throw new RequestArgumentException("不支持的排序：" + column);
+			}
 			sql.ORDER_BY(column + " " + order.getDirection());
 		}
 		sql.OFFSET(pageable.getPageNumber()).LIMIT(pageable.getPageSize());

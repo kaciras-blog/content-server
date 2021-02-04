@@ -2,13 +2,17 @@ package com.kaciras.blog.api;
 
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.exception.ResourceNotFoundException;
+import com.kaciras.blog.infra.exception.WebBusinessException;
 import lombok.experimental.UtilityClass;
+import org.apache.ibatis.builder.BuilderException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.lang.NonNull;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Optional;
 
 @UtilityClass
 public class Utils {
@@ -19,6 +23,25 @@ public class Utils {
 
 	public void checkNotNegative(int value, String valname) {
 		if (value < 0) throw new RequestArgumentException("参数" + valname + "不能为负:" + value);
+	}
+
+	/**
+	 * 从 Mybatis 的异常里提取出 SQLProvider 里的异常，如果没有则返回原异常。
+	 *
+	 * TODO: 要不要上 AOP？
+	 *
+	 * @param e 原始异常
+	 * @return 提取后的异常
+	 * @see org.apache.ibatis.binding.MapperRegistry
+	 */
+	public static RuntimeException unwrapSQLException(DataAccessException e) {
+		return (RuntimeException) Optional
+				.ofNullable(e.getCause())
+				.filter(x -> x instanceof BuilderException)
+				.map(Throwable::getCause)
+				.map(Throwable::getCause)
+				.filter(x -> x instanceof WebBusinessException)
+				.orElse(e);
 	}
 
 	/**

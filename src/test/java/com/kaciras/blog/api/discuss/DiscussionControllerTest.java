@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -60,10 +61,11 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 
 	private static Stream<Arguments> invalidQueries() {
 		return Stream.of(
-				Arguments.of(get("/discussions").param("state", "Moderation"), 403),
-				Arguments.of(get("/discussions").param("type", "1"), 403),
-				Arguments.of(get("/discussions").param("objectId", "1"), 403),
 				Arguments.of(get("/discussions"), 403),
+				Arguments.of(get("/discussions").param("nestId", "0").param("state", "Moderation"), 403),
+				Arguments.of(get("/discussions").param("objectId", "1"), 403),
+				Arguments.of(get("/discussions").param("type", "1"), 403),
+
 				Arguments.of(get("/discussions").param("nestId", "0").param("childCount", "100"), 400),
 				Arguments.of(get("/discussions").param("nestId", "0").param("count", "100"), 400)
 		);
@@ -185,7 +187,10 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	void publishToNonExistsTopic() throws Exception {
 		// 对与 spy 的对象，且方法内会抛异常，必须使用 doXX.when(obj).call 方式而不是 when(obj.call).thenXX
 		doThrow(new RequestArgumentException()).when(topics).get(anyInt(), anyInt());
-		mockMvc.perform(post("/discussions").content(getPostBody())).andExpect(status().is(400));
+
+		mockMvc.perform(post("/discussions").content(getPostBody()))
+				.andExpect(status().is(400));
+		verify(repository, noInteractions()).add(any());
 	}
 
 	@Test
@@ -218,14 +223,27 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		var captor = ArgumentCaptor.forClass(Discussion.class);
 		verify(repository).add(captor.capture());
 
-		var topic = new Topic("TestTopic", "http://example.com");
-		verify(notification).notify(any());
-
 		var stored = captor.getValue();
 		assertThat(stored.getContent()).isEqualTo("test content");
 		assertThat(stored.getAddress()).isNotNull();
 		assertThat(stored.getUserId()).isEqualTo(0);
 		assertThat(stored.getState()).isEqualTo(DiscussionState.Visible);
+	}
+
+	@Test
+	void notifyPublish() throws Exception {
+		Answer<Void> mockAdd = i -> {
+			var v = i.getArgument(0, Discussion.class);
+			v.setNestId(1);
+			v.setFloor(2);
+			v.setNestFloor(3);
+			return null;
+		};
+		doAnswer(mockAdd).when(repository).add(any());
+
+		mockMvc.perform(post("/discussions").content(getPostBody()));
+
+		verify(notification).notify(snapshot.matchArg());
 	}
 
 	@Test

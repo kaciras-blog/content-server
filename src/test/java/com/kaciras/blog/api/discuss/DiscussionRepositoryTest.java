@@ -65,7 +65,7 @@ class DiscussionRepositoryTest {
 		return value;
 	}
 
-	private static Stream<Arguments> invalidDiscussions() {
+	private static Stream<Arguments> invalidInputs() {
 		var noContent = newDiscussion();
 		noContent.setContent(null);
 
@@ -78,7 +78,7 @@ class DiscussionRepositoryTest {
 		return Stream.of(Arguments.of(noContent), Arguments.of(noAddress), Arguments.of(noState));
 	}
 
-	@MethodSource("invalidDiscussions")
+	@MethodSource("invalidInputs")
 	@ParameterizedTest
 	void addInvalid(Discussion value) {
 		assertThatThrownBy(() -> repository.add(value)).isInstanceOf(DataIntegrityViolationException.class);
@@ -91,10 +91,12 @@ class DiscussionRepositoryTest {
 		var top1 = addData(0);
 		var reply1 = addData(top0.getId());
 
-		// Mariadb 的事务不回滚自增值，只能用大于来判断
-		assertThat(top0.getId()).isGreaterThanOrEqualTo(1);
+		assertThat(top0.getId()).isEqualTo(1);
+		assertThat(reply0.getId()).isEqualTo(2);
+		assertThat(top1.getId()).isEqualTo(3);
+		assertThat(reply1.getId()).isEqualTo(4);
+
 		assertThat(top0.getTime()).isNotNull();
-		assertThat(top0.getNestFloor()).isEqualTo(1);
 
 		assertThat(top0.getFloor()).isEqualTo(1);
 		assertThat(reply0.getFloor()).isEqualTo(2);
@@ -108,10 +110,8 @@ class DiscussionRepositoryTest {
 	}
 
 	@Test
-	void findWithInvalidSort() {
-		var query = new DiscussionQuery();
-		query.setPageable(PageRequest.of(0, 1, Sort.by("content")));
-
+	void brokenTopicKey(){
+		var query = new DiscussionQuery().setObjectId(7);
 		assertThatThrownBy(() -> repository.findAll(query)).isInstanceOf(RequestArgumentException.class);
 	}
 
@@ -132,6 +132,28 @@ class DiscussionRepositoryTest {
 
 		assertThat(list).hasSize(1);
 		assertThat(list.get(0).getNestSize()).isEqualTo(0);
+	}
+
+	@Test
+	void findWithInvalidSort() {
+		var query = new DiscussionQuery();
+		query.setPageable(PageRequest.of(0, 1, Sort.by("content")));
+
+		assertThatThrownBy(() -> repository.findAll(query)).isInstanceOf(RequestArgumentException.class);
+	}
+
+	@Test
+	void sortByNestSize() {
+		addData(0);
+		var _2 = addData(0);
+		addData(_2.getId());
+
+		var query = new DiscussionQuery();
+		var sort = Sort.by(Sort.Direction.DESC, "nest_size");
+		query.setPageable(PageRequest.of(0, 30, sort));
+		var list = repository.findAll(query);
+
+		assertThat(list.stream().map(Discussion::getId)).containsSequence(2,1,3);
 	}
 
 	@Test

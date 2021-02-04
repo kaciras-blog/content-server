@@ -8,9 +8,9 @@ import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.principal.RequirePermission;
 import com.kaciras.blog.infra.principal.SecurityContext;
+import com.kaciras.blog.infra.principal.WebPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,9 +51,9 @@ class DiscussionController {
 		if (query.getState() != DiscussionState.Visible) {
 			SecurityContext.require("POWER_QUERY");
 		}
-		if (query.getPageable() == null) {
-			query.setPageable(PageRequest.of(0, 30));
-		} else if (query.getPageable().getPageSize() > 30) {
+
+		// 若前端没设置 Pageable，Spring 会创建一个默认的
+		if (query.getPageable().getPageSize() > 30) {
 			throw new RequestArgumentException("查询的数量过多");
 		}
 	}
@@ -94,7 +94,7 @@ class DiscussionController {
 				: DiscussionState.Visible);
 		discussion.setAddress(Utils.addressFromRequest(request));
 
-		// 获取主题，同时检查其是否存在
+		// 获取主题，同时检查是否存在
 		Topic topic;
 		var pid = discussion.getParent();
 		if (pid != 0) {
@@ -107,7 +107,7 @@ class DiscussionController {
 		repository.add(discussion);
 
 		// 发送通知提醒，自己的评论就不用了
-		if (discussion.getUserId() != 2) {
+		if (discussion.getUserId() != WebPrincipal.ADMIN_ID) {
 			noticeService.notify(mapper.toActivity(discussion, topic));
 		}
 
