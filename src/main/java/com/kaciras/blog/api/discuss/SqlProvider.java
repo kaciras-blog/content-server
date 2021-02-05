@@ -1,7 +1,6 @@
 package com.kaciras.blog.api.discuss;
 
 import com.google.common.base.CaseFormat;
-import com.kaciras.blog.infra.Misc;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import org.apache.ibatis.jdbc.SQL;
 import org.springframework.data.domain.Pageable;
@@ -69,7 +68,7 @@ public final class SqlProvider {
 	private void applyPageable(SQL sql, Pageable pageable) {
 		var sort = pageable.getSort();
 		if (sort.isSorted()) {
-			var order = Misc.getFirst(sort);
+			var order = sort.iterator().next();
 			var column = order.getProperty();
 
 			switch (column) {

@@ -1,6 +1,5 @@
 package com.kaciras.blog.api.article;
 
-import com.kaciras.blog.infra.Misc;
 import org.apache.ibatis.jdbc.SQL;
 import org.springframework.data.domain.Sort;
 
@@ -35,7 +34,7 @@ public final class SqlProvider {
 		if (sort.isUnsorted()) {
 			sql.ORDER_BY("id DESC"); // 默认按发布顺序倒序
 		} else {
-			var order = Misc.getFirst(sort);
+			var order = sort.iterator().next();
 			var p = order.getProperty();
 
 			if (!allowFields.contains(p)) {
