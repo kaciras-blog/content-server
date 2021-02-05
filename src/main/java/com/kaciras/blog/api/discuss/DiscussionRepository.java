@@ -13,6 +13,10 @@ import java.time.Clock;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 虽然在设计上评论是主题的子树，但评论对象是聚合根，所以评论仓库不应关心主题的存在，
+ * 对主题的检查必须放在外部。
+ */
 @RequiredArgsConstructor
 @Repository
 public class DiscussionRepository {
@@ -21,13 +25,12 @@ public class DiscussionRepository {
 	private final Clock clock;
 
 	/**
-	 * 添加一条评论，此方法会在评论对象中设置自动生成的 id, time 以及两个 floor。
-	 * 因为楼层是连续的，所以新评论的楼层就是已有评论的数量 + 1。
-	 * <p>
-	 * 【楼层号从1开始】
+	 * 添加一条评论，只有由用户填写的字段会被使用，其它字段在成添加功后被设置。
+	 *
+	 * <h2>楼层号从1开始</h2>
 	 * 虽然咱码农的世界里编号都是从0开始的，但从1开始更通用些。
-	 * <p>
-	 * 【事务】
+	 *
+	 * <h2>事务</h2>
 	 * 使用了串行级别的事务，因为楼层的确定需要获取评论数，存在幻读的可能。
 	 *
 	 * @param discussion 评论对象
@@ -79,7 +82,7 @@ public class DiscussionRepository {
 	}
 
 	/**
-	 * 更新评论的状态。
+	 * 更新一条评论的状态。
 	 *
 	 * @param id    评论ID
 	 * @param state 新状态

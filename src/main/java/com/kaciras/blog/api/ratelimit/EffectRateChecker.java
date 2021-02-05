@@ -11,7 +11,7 @@ import java.net.InetAddress;
  * Effect 指有副作用的请求，如提交评论等
  */
 @RequiredArgsConstructor
-public final class EffectRateChecker implements RateLimiterChecker {
+public final class EffectRateChecker implements RateLimitChecker {
 
 	private final RateLimiter rateLimiter;
 

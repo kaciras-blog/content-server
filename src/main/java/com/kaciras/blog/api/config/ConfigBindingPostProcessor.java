@@ -11,7 +11,8 @@ import org.springframework.lang.NonNull;
 import java.lang.reflect.Modifier;
 
 /**
- * 在Spring容器启动时扫描所有bean，将标记了{@link BindConfig} 的字段绑定到{@link ConfigBindingManager}
+ * 扫描所有 bean，将标记了{@link BindConfig}的字段绑定到{@link ConfigBindingManager}。
+ *
  * @see BindConfig
  * @see ConfigBindingManager
  */

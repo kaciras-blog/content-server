@@ -31,7 +31,7 @@ final class RateLimitFilter extends HttpFilter {
 	/** 表示需要等待多少秒的响应头 */
 	private static final String RATE_LIMIT_HEADER = "X-RateLimit-Wait";
 
-	private final List<RateLimiterChecker> checkers;
+	private final List<RateLimitChecker> checkers;
 
 	@Override
 	protected void doFilter(HttpServletRequest request,

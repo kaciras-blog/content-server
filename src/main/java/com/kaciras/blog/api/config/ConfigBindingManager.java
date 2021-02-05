@@ -14,12 +14,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@SuppressWarnings("unchecked")
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Service
 public class ConfigBindingManager {
 
 	// 目前仅在启动时添加，不存在线程安全问题
-	private final Map<String, ChangeListener> bindings = new HashMap<>();
+	private final Map<String, ChangeListener<?>> bindings = new HashMap<>();
 
 	private final ConfigRepository configRepository;
 
@@ -28,20 +29,18 @@ public class ConfigBindingManager {
 
 	public <T> void bind(String name, Class<T> type, UncheckedConsumer<T> setter) {
 		setter.accept(getConfigObject(name, type));
-		var listener = bindings.computeIfAbsent(name, (__) -> new ChangeListener(type));
-		listener.add(setter);
+		var listener = bindings.computeIfAbsent(name, (__) -> new ChangeListener<>(type));
+		((ChangeListener<T>) listener).add(setter);
 	}
 
 	/**
-	 * 根据配置名获取配置对象，该配置对象是新建的，对其所做的修改不会直接影响配置的使用者。
-	 * 若要应用修改，请使用 set 方法显示应用某个配置对象。
-	 * 返回的配置对象始终从存储中加载，而不是某个正在使用的对象，使用 set 以外的方法修改配置将不影响此方法的返回值。
+	 * 根据配置名获取配置对象，返回值是新建的，对其所做的修改不会直接影响现有的配置。
+	 * 若要修改现有的配置，请使用 set 方法。
 	 *
 	 * @param name 配置名
 	 * @param <T>  配置对象的类型
-	 * @return 配置对象，如果不存在绑定记录则返回null
+	 * @return 配置对象，如果不存在绑定记录则返回 null
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> T get(String name) {
 		var binding = bindings.get(name);
 		if (binding == null) {
@@ -54,9 +53,9 @@ public class ConfigBindingManager {
 	 * 设置指定的配置，新的配置将应用到所有绑定了的地方，并保存在存储中以便下次使用。
 	 *
 	 * @param name  配置名
-	 * @param value 新的配置，不能为null
+	 * @param value 新的配置，不能为 null
 	 */
-	public void set(String name, Object value) {
+	public <T> void set(String name, T value) {
 		validate(name, Objects.requireNonNull(value));
 
 		var binding = bindings.get(name);
@@ -64,7 +63,7 @@ public class ConfigBindingManager {
 			if (binding.getType() != value.getClass()) {
 				throw new IllegalArgumentException("配置类型不符");
 			}
-			binding.fire(value);
+			((ChangeListener<T>) binding).fire(value);
 		}
 
 		configRepository.save(name, value);
@@ -91,8 +90,8 @@ public class ConfigBindingManager {
 	 *
 	 * @param name 配置名
 	 * @param type 配置对象的类型
-	 * @param <T>  垃圾JAVA不能直接从泛型读取class
-	 * @return 配置对象，不会为null
+	 * @param <T>  垃圾 JAVA 不能直接从泛型读取 class
+	 * @return 配置对象，不会为 null
 	 */
 	@NonNull
 	private <T> T getConfigObject(String name, Class<T> type) {

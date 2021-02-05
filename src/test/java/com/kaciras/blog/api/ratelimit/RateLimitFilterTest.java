@@ -38,7 +38,7 @@ final class RateLimitFilterTest {
 
 	@Test
 	void allowLAN() throws Exception {
-		var checker = mock(RateLimiterChecker.class);
+		var checker = mock(RateLimitChecker.class);
 		when(checker.check(any(), any())).thenReturn(100L);
 		var filter = new RateLimitFilter(List.of(checker));
 
@@ -51,7 +51,7 @@ final class RateLimitFilterTest {
 
 	@Test
 	void reject() throws Exception {
-		var checker = mock(RateLimiterChecker.class);
+		var checker = mock(RateLimitChecker.class);
 		when(checker.check(any(), any())).thenReturn(100L);
 		var filter = new RateLimitFilter(List.of(checker));
 
@@ -67,7 +67,7 @@ final class RateLimitFilterTest {
 
 	@Test
 	void allowed() throws Exception {
-		var checker = mock(RateLimiterChecker.class);
+		var checker = mock(RateLimitChecker.class);
 		when(checker.check(any(), any())).thenReturn(0L);
 		var filter = new RateLimitFilter(List.of(checker));
 

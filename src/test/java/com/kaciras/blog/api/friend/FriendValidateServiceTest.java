@@ -177,6 +177,7 @@ final class FriendValidateServiceTest {
 
 	@Test
 	void hasMyLink() throws Exception {
+		addRecord("example.com", "", Instant.EPOCH);
 		var html = Files.readString(new ClassPathResource("friend-validate-2.html").getFile().toPath());
 		setValidateResult(true, null, html);
 

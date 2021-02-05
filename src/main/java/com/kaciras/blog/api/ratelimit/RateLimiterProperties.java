@@ -8,7 +8,7 @@ import java.time.Duration;
 import java.util.List;
 
 @ConstructorBinding
-@ConfigurationProperties("app.rate-limit")
+@ConfigurationProperties("app.rate-limiter")
 @RequiredArgsConstructor
 public final class RateLimiterProperties {
 

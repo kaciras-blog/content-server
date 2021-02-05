@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 
 @FunctionalInterface
-public interface RateLimiterChecker {
+public interface RateLimitChecker {
 
 	/**
 	 * 检查请求是否过于频繁，如果是则返回等待的时间，否则返回零。

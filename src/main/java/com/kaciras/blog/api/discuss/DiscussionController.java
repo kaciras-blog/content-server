@@ -58,10 +58,12 @@ class DiscussionController {
 		}
 	}
 
-	/*
-	 * 【Pageable.sort 的自动绑定】
-	 * 请求中包含 sort=f0,f1,DESC 会解析为两个 Order，对应 f0, f1 两个字段，它们都是DESC降序。
-	 * 如果需要混合升降顺序，则得使用多个 sort 参数：sort=f0,ASC&sort=f1,DESC
+	/**
+	 * 查询评论列表，因为是公共 API 所以有一些限制以防止查询结果过多。
+	 *
+	 * <h2>Sort 的绑定</h2>
+	 * 请求中包含 sort=a,b,DESC 会解析为两个 Order，对应 a, b 两个字段，都是 DESC 降序。
+	 * 如果要混合升降顺序，得使用多个 sort 参数：sort=f0,ASC&sort=f1,DESC
 	 * Qualifier, SortDefault, SortDefaults 可以改变一些默认的行为，SpringBoot 也提供了对参数名的配置。
 	 */
 	@GetMapping
@@ -117,7 +119,7 @@ class DiscussionController {
 	}
 
 	/**
-	 * 批量更新评论的状态，仅博主能使用。
+	 * 批量更新评论的状态，在后台可能有用。
 	 */
 	@RequirePermission
 	@PatchMapping

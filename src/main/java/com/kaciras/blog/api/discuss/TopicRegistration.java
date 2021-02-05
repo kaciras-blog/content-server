@@ -25,7 +25,7 @@ public class TopicRegistration {
 	private String origin;
 
 	/**
-	 * 获取评论所在的主题。
+	 * 获取评论所在的主题，使用评论的 objectId 和 type。
 	 *
 	 * @param discussion 评论
 	 * @return 主题
@@ -37,14 +37,14 @@ public class TopicRegistration {
 	/**
 	 * 查询一个评论主题的基本信息，如果主题不存在则抛出异常。
 	 *
-	 * <h2>ID的起始值</h2>
+	 * <h2>ID 的起始值</h2>
 	 * 作为数字类型的默认值，零应当保留作为特殊意义比如未设置或无效，在某些情况下可以避免不必要的麻烦。
-	 * 所以这里的 type 和 objectId 都是从一开始。
+	 * 所以 type 和 objectId 都是从 1 开始。
 	 *
 	 * <h2>URL 的问题</h2>
 	 * 页面的组织是前端的事情，按理说不应该在这里构造 URL，但如果 URL 随着评论一起提交，
 	 * 则可能被伪造，后端要验证的话还是需要知道前端路由。
-	 * 下一版如果使用Node全栈，也许可以复用路由代码来确定 URL。
+	 * 下一版如果使用 Node 全栈，也许可以复用路由代码来确定 URL。
 	 *
 	 * @param type     类型
 	 * @param objectId 对象ID

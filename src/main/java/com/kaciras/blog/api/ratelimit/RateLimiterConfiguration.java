@@ -42,9 +42,9 @@ public class RateLimiterConfiguration {
 
 	// 注意这些 @Bean 方法是有前后顺序的，不要乱改。
 
-	@ConditionalOnProperty(prefix = "app.rate-limit.generic", name = {"rate", "size"})
+	@ConditionalOnProperty(prefix = "app.rate-limiter.generic", name = {"rate", "size"})
 	@Bean
-	RateLimiterChecker genericRateChecker() {
+	RateLimitChecker genericRateChecker() {
 		var bucket = properties.generic;
 		var limiter = new RedisTokenBucket(RedisKeys.RateLimit.value(), redis, clock);
 		limiter.addBucket(bucket.size, bucket.rate);
@@ -52,7 +52,7 @@ public class RateLimiterConfiguration {
 		return (ip, request) -> limiter.acquire(ip.toString(), 1);
 	}
 
-	@ConditionalOnProperty(prefix = "app.rate-limit.effective", name = "block-times")
+	@ConditionalOnProperty(prefix = "app.rate-limiter.effective", name = "block-times")
 	@Bean
 	EffectRateChecker effectRateChecker() {
 		var config = properties.effective;
@@ -71,9 +71,9 @@ public class RateLimiterConfiguration {
 	}
 
 	// ConditionalOnBean 需要指定的 bean 先注册，所以这个必须放到最下面
-	@ConditionalOnBean(value = RateLimiterChecker.class)
+	@ConditionalOnBean(value = RateLimitChecker.class)
 	@Bean
-	RateLimitFilter rateLimitFilter(List<RateLimiterChecker> checkers) {
+	RateLimitFilter rateLimitFilter(List<RateLimitChecker> checkers) {
 		return new RateLimitFilter(checkers);
 	}
 }

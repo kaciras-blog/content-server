@@ -7,14 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-@SuppressWarnings("unchecked")
 @RequiredArgsConstructor
-final class ChangeListener {
+final class ChangeListener<T> {
 
-	private final List<Consumer> listeners = new ArrayList<>(1);
+	private final List<Consumer<T>> listeners = new ArrayList<>(1);
 
 	@Getter
-	private final Class<?> type;
+	private final Class<T> type;
 
 	/**
 	 * 把配置对象应用到每个绑定点上。
@@ -22,11 +21,11 @@ final class ChangeListener {
 	 *
 	 * @param value 配置对象
 	 */
-	public void fire(Object value) {
+	public void fire(T value) {
 		listeners.forEach(lis -> lis.accept(value));
 	}
 
-	public void add(Consumer consumer) {
+	public void add(Consumer<T> consumer) {
 		listeners.add(consumer);
 	}
 }

@@ -1,4 +1,4 @@
-# 运行该程序前需要配置此文件
+# 程序的配置文件，要运行程序必需填写 spring.database 和 spring.redis 这两个数据库连接
 
 server:
 
@@ -11,7 +11,6 @@ server:
   # 如果服务器前面有反代，则取消注释此行以获取真实IP
 #  forward-headers-strategy: native
 
-# TODO: 要运行此项目请将 datasource 和 redis 改成你自己的环境
 spring:
 
   # 你需要先创建数据库，SpringBoot 能自动建表。
@@ -74,7 +73,7 @@ app:
 #      admin: YourMail@example.com
 
   # 限流器相关配置，如果不设置将不限流
-#  rate-limit:
+#  rate-limiter:
 
     # 目前单页最大4个请求，保守起见 *5 倍，每秒 2 个也比较高了。
 #    generic:
