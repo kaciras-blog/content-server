@@ -1,10 +1,10 @@
 package com.kaciras.blog.api.account.local;
 
 import com.kaciras.blog.api.SessionAttributes;
-import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.api.account.AuthType;
 import com.kaciras.blog.api.account.SessionService;
 import com.kaciras.blog.api.user.UserManager;
+import com.kaciras.blog.infra.RequestUtils;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +44,7 @@ class AccountController {
 									 HttpServletResponse response) {
 		checkCaptcha(request.getSession(true), dto.getCaptcha());
 
-		var account = createAccount(dto, Utils.addressFromRequest(request));
+		var account = createAccount(dto, RequestUtils.addressFromRequest(request));
 		sessionService.putUser(request, response, account.getId(), true);
 		return ResponseEntity.created(URI.create("/accounts/" + account.getId())).build();
 	}

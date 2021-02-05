@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.accesslog;
 
-import com.kaciras.blog.api.Utils;
+import com.kaciras.blog.infra.RequestUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -58,7 +58,7 @@ public final class AccessLoggingFilter extends HttpFilter {
 		}
 
 		var record = new AccessRecord();
-		record.setIp(Utils.addressFromRequest(request));
+		record.setIp(RequestUtils.addressFromRequest(request));
 		record.setMethod(request.getMethod());
 		record.setPath(path);
 		record.setStatusCode(response.getStatus());

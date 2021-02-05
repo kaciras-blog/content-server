@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.ratelimit;
 
-import com.kaciras.blog.api.Utils;
+import com.kaciras.blog.infra.RequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -37,9 +37,9 @@ final class RateLimitFilter extends HttpFilter {
 	protected void doFilter(HttpServletRequest request,
 							HttpServletResponse response,
 							FilterChain chain) throws IOException, ServletException {
-		var ip = Utils.addressFromRequest(request);
+		var ip = RequestUtils.addressFromRequest(request);
 
-		if (Utils.isLocalNetwork(ip)) {
+		if (RequestUtils.isLocalNetwork(ip)) {
 			chain.doFilter(request, response);
 		} else {
 			var wait = checkers.stream()

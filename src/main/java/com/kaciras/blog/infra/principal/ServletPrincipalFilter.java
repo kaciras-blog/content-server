@@ -1,6 +1,6 @@
 package com.kaciras.blog.infra.principal;
 
-import com.kaciras.blog.infra.Misc;
+import com.kaciras.blog.infra.RequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public final class ServletPrincipalFilter extends HttpFilter {
 		if (dynamicToken) {
 			Optional.ofNullable(request.getSession(false))
 					.map(session -> session.getAttribute("UserId"))
-					.filter(__ -> !Misc.isSafeRequest(request))
+					.filter(__ -> !RequestUtils.isSafeRequest(request))
 					.ifPresent(__ -> changeCsrfCookie(request, response));
 		}
 	}
@@ -73,7 +73,7 @@ public final class ServletPrincipalFilter extends HttpFilter {
 			var userId = Optional.ofNullable(getSession(false))
 					.map(session -> session.getAttribute("UserId"));
 
-			if (!(skipSafe && Misc.isSafeRequest(this))) {
+			if (!(skipSafe && RequestUtils.isSafeRequest(this))) {
 				userId = userId.filter((__) -> checkCSRF());
 			}
 

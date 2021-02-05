@@ -1,9 +1,9 @@
 package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.api.MappingListView;
-import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.api.config.BindConfig;
 import com.kaciras.blog.api.notice.NoticeService;
+import com.kaciras.blog.infra.RequestUtils;
 import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.principal.RequirePermission;
@@ -94,7 +94,7 @@ class DiscussionController {
 		discussion.setState(options.moderation
 				? DiscussionState.Moderation
 				: DiscussionState.Visible);
-		discussion.setAddress(Utils.addressFromRequest(request));
+		discussion.setAddress(RequestUtils.addressFromRequest(request));
 
 		// 获取主题，同时检查是否存在
 		Topic topic;

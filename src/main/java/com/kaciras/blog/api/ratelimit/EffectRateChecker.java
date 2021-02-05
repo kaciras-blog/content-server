@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.ratelimit;
 
-import com.kaciras.blog.infra.Misc;
+import com.kaciras.blog.infra.RequestUtils;
 import com.kaciras.blog.infra.ratelimit.RateLimiter;
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +17,7 @@ public final class EffectRateChecker implements RateLimitChecker {
 
 	@Override
 	public long check(InetAddress ip, HttpServletRequest request) {
-		if (Misc.isSafeRequest(request)) {
+		if (RequestUtils.isSafeRequest(request)) {
 			return 0;
 		}
 		return rateLimiter.acquire(ip.toString(), 1);

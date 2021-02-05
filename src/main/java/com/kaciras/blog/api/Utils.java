@@ -22,46 +22,8 @@ public class Utils {
 	}
 
 	public void checkNotNegative(int value, String valname) {
-		if (value < 0) throw new RequestArgumentException("参数" + valname + "不能为负:" + value);
-	}
-
-	/**
-	 * 从 Mybatis 的异常里提取出 SQLProvider 里的异常，如果没有则返回原异常。
-	 *
-	 * TODO: 要不要上 AOP？
-	 *
-	 * @param e 原始异常
-	 * @return 提取后的异常
-	 * @see org.apache.ibatis.binding.MapperRegistry
-	 */
-	public static RuntimeException unwrapSQLException(DataAccessException e) {
-		return (RuntimeException) Optional
-				.ofNullable(e.getCause())
-				.filter(x -> x instanceof BuilderException)
-				.map(Throwable::getCause)
-				.map(Throwable::getCause)
-				.filter(x -> x instanceof WebBusinessException)
-				.orElse(e);
-	}
-
-	/**
-	 * 获取HttpServletRequest的远程地址，处理烦人的 UnknownHostException。
-	 *
-	 * @param request 请求
-	 * @return IP 地址，不会为 null
-	 */
-	@NonNull
-	public InetAddress addressFromRequest(HttpServletRequest request) {
-		var address = request.getRemoteAddr();
-		try {
-			return InetAddress.getByName(address);
-		} catch (UnknownHostException e) {
-			throw new UncheckedIOException(e);
-		}
-	}
-
-	public boolean isLocalNetwork(InetAddress address) {
-		return address.isLoopbackAddress() || address.isSiteLocalAddress();
+		if (value < 0)
+			throw new RequestArgumentException("参数" + valname + "不能为负:" + value);
 	}
 
 	/**

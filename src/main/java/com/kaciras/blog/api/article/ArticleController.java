@@ -2,9 +2,9 @@ package com.kaciras.blog.api.article;
 
 import com.kaciras.blog.api.DeletedState;
 import com.kaciras.blog.api.ListQueryView;
-import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.api.draft.DraftContent;
 import com.kaciras.blog.api.draft.DraftRepository;
+import com.kaciras.blog.infra.RequestUtils;
 import com.kaciras.blog.infra.exception.ResourceDeletedException;
 import com.kaciras.blog.infra.principal.RequirePermission;
 import com.kaciras.blog.infra.principal.SecurityContext;
@@ -51,9 +51,9 @@ class ArticleController {
 			var nativeRequest = request.getNativeRequest(HttpServletRequest.class);
 
 			@SuppressWarnings("ConstantConditions")
-			var remote = Utils.addressFromRequest(nativeRequest);
+			var remote = RequestUtils.addressFromRequest(nativeRequest);
 
-			if (Utils.isLocalNetwork(remote)) {
+			if (RequestUtils.isLocalNetwork(remote)) {
 				var lastModified = repository.lastUpdate().toEpochMilli();
 				if (request.checkNotModified(lastModified)) {
 					return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
