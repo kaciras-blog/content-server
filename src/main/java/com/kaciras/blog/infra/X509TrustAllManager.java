@@ -7,7 +7,7 @@ import java.security.cert.X509Certificate;
 
 /**
  * 信任所有证书的过管理器，用于测试或内部调用的情况。
- *
+ * <p>
  * 这个类被排除在测试覆盖率之外，因为实在没啥好测的，调用方测测就够了。
  */
 final class X509TrustAllManager extends X509ExtendedTrustManager {
