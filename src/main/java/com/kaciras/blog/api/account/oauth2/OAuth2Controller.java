@@ -3,10 +3,10 @@ package com.kaciras.blog.api.account.oauth2;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.RedisKeys;
-import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.api.account.AuthType;
 import com.kaciras.blog.api.account.SessionService;
 import com.kaciras.blog.api.user.UserManager;
+import com.kaciras.blog.infra.RequestUtils;
 import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.ResourceDeletedException;
 import lombok.AllArgsConstructor;
@@ -96,7 +96,7 @@ class OAuth2Controller {
 		// request.getRequestURL() 不包含参数和 hash 部分
 		var redirect = UriComponentsBuilder
 				.fromUriString(request.getRequestURL().toString())
-				.path("/callback");
+				.replacePath("/oauth2/callback");
 
 		var authUri = client.uriTemplate()
 				.queryParam("state", authSession.state)
@@ -194,13 +194,13 @@ class OAuth2Controller {
 	 * @return 本地用户的ID，如果不存在则会创建
 	 */
 	@Transactional
-	protected int getLocalId(UserProfile profile, HttpServletRequest request, AuthType authType) {
+	int getLocalId(UserProfile profile, HttpServletRequest request, AuthType authType) {
 		var localId = oAuth2DAO.select(profile.id(), authType);
 
 		if (localId != null) {
 			return localId;
 		}
-		var regIP = Utils.addressFromRequest(request);
+		var regIP = RequestUtils.addressFromRequest(request);
 		var newId = userManager.createNew(profile.name(), authType, regIP);
 		oAuth2DAO.insert(profile.id(), authType, newId);
 
