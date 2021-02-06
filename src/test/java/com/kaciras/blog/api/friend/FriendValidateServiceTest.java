@@ -2,7 +2,7 @@ package com.kaciras.blog.api.friend;
 
 import com.kaciras.blog.api.notice.ActivityType;
 import com.kaciras.blog.api.notice.NoticeService;
-import com.kaciras.blog.infra.autoconfigure.KxCodecAutoConfiguration;
+import com.kaciras.blog.infra.autoconfigure.BlogJsonAutoConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.noInteractions;
 
 @Import({
-		KxCodecAutoConfiguration.class,
+		BlogJsonAutoConfiguration.class,
 		RedisAutoConfiguration.class,
 		JacksonAutoConfiguration.class,
 })

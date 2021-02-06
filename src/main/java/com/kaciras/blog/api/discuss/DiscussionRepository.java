@@ -1,9 +1,7 @@
 package com.kaciras.blog.api.discuss;
 
-import com.kaciras.blog.api.Utils;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.UncategorizedDataAccessException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
@@ -74,11 +72,7 @@ public class DiscussionRepository {
 	}
 
 	public List<Discussion> findAll(@NonNull DiscussionQuery query) {
-		try {
-			return dao.selectList(query);
-		} catch (UncategorizedDataAccessException e) {
-			throw Utils.unwrapSQLException(e);
-		}
+		return dao.selectList(query);
 	}
 
 	/**

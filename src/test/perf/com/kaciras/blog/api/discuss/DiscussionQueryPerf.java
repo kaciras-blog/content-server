@@ -3,7 +3,7 @@ package com.kaciras.blog.api.discuss;
 import com.kaciras.blog.AbstractSpringPerf;
 import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.api.user.UserVo;
-import com.kaciras.blog.infra.autoconfigure.KxCodecAutoConfiguration;
+import com.kaciras.blog.infra.autoconfigure.BlogMybatisAutoConfiguration;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -87,7 +87,7 @@ public class DiscussionQueryPerf extends AbstractSpringPerf {
 	}
 
 	// 与 Configuration 不同，TestConfiguration 不会被自动扫描到而干扰其它测试
-	@Import(KxCodecAutoConfiguration.class)
+	@Import(BlogMybatisAutoConfiguration.class)
 	@EnableAutoConfiguration
 	@TestConfiguration(proxyBeanMethods = false)
 	static class SpringConfig {

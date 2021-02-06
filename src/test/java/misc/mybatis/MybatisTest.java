@@ -3,7 +3,7 @@
  */
 package misc.mybatis;
 
-import com.kaciras.blog.infra.autoconfigure.KxCodecAutoConfiguration;
+import com.kaciras.blog.infra.autoconfigure.BlogMybatisAutoConfiguration;
 import org.apache.ibatis.binding.BindingException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,8 @@ import org.springframework.test.context.ActiveProfiles;
 @ImportAutoConfiguration({
 		DataSourceAutoConfiguration.class,
 		MybatisAutoConfiguration.class,
-		KxCodecAutoConfiguration.class})
+		BlogMybatisAutoConfiguration.class,
+})
 @ActiveProfiles("test")
 @SpringBootTest
 @SpringBootConfiguration

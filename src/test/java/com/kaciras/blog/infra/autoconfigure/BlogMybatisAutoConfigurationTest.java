@@ -1,5 +1,6 @@
 package com.kaciras.blog.infra.autoconfigure;
 
+import com.kaciras.blog.infra.MybatisMapperAspect;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandler;
 import org.junit.jupiter.api.Test;
@@ -9,10 +10,10 @@ import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import static com.kaciras.blog.infra.TestHelper.getSubClassesInPackage;
 import static org.assertj.core.api.Assertions.assertThat;
 
-final class KxCodecAutoConfigurationTest {
+final class BlogMybatisAutoConfigurationTest {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-			.withUserConfiguration(KxCodecAutoConfiguration.class);
+			.withUserConfiguration(BlogMybatisAutoConfiguration.class);
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -27,10 +28,11 @@ final class KxCodecAutoConfigurationTest {
 
 			var handlers = mybatisConfig.getTypeHandlerRegistry()
 					.getTypeHandlers()
-					.stream().map(Object::getClass);
+					.stream()
+					.map(Object::getClass);
 
 			assertThat(handlers).containsAll(shouldRegistered);
-			assertThat(context).hasBean("jacksonCustomizer");
+			assertThat(context).hasSingleBean(MybatisMapperAspect.class);
 		});
 	}
 }

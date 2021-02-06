@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.category;
 
-import com.kaciras.blog.infra.autoconfigure.KxCodecAutoConfiguration;
+import com.kaciras.blog.infra.autoconfigure.BlogMybatisAutoConfiguration;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -80,7 +80,7 @@ public class ServerPrepStmtsPerf {
 		return serverPreparedDAO.selectPathToAncestor(1, 666);
 	}
 
-	@Import(KxCodecAutoConfiguration.class)
+	@Import(BlogMybatisAutoConfiguration.class)
 	@EnableAutoConfiguration
 	@TestConfiguration(proxyBeanMethods = false)
 	static class SpringConfig {}
