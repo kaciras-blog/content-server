@@ -14,7 +14,7 @@ import java.util.Optional;
  * @see org.apache.ibatis.binding.MapperRegistry
  */
 @Aspect
-public class MybatisMapperAspect {
+public final class MybatisMapperAspect {
 
 	@Pointcut("@within(org.apache.ibatis.annotations.Mapper)")
 	private void mapper() {}
