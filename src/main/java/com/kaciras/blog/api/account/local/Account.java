@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.account.local;
 
-import com.kaciras.blog.api.account.SessionRepository;
+import com.kaciras.blog.api.account.HttpSessionTable;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -31,7 +31,7 @@ public final class Account {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private SessionRepository sessionRepository;
+	private HttpSessionTable httpSessionTable;
 
 	private int id;
 	private String name;
@@ -47,7 +47,7 @@ public final class Account {
 	public void changePassword(String password) {
 		encryptPassword(password);
 		accountDAO.updatePassword(this);
-		sessionRepository.clearAll(id);
+		httpSessionTable.clearAll(id);
 	}
 
 	/**

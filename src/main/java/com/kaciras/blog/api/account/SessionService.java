@@ -17,10 +17,13 @@ public final class SessionService {
 	private static final String CSRF_COOKIE_NAME = "CSRF-Token";
 
 	private final SessionCookieProperties cookieProperties;
+	private final HttpSessionTable sessionTable;
 
 	public void putUser(HttpServletRequest request, HttpServletResponse response, int id, boolean remember) {
 		var session = request.getSession(true);
 		session.setAttribute(SessionAttributes.USER_ID, id);
+
+		sessionTable.add(id, session.getId());
 
 		var csrfToken = UUID.randomUUID().toString();
 		var csrfCookie = new Cookie(CSRF_COOKIE_NAME, csrfToken);
