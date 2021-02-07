@@ -139,6 +139,7 @@ CREATE TABLE IF NOT EXISTS `user`
     `id`          int(10) unsigned    NOT NULL AUTO_INCREMENT,
     `name`        varchar(16)         NOT NULL COMMENT '显示名可以重复',
     `avatar`      binary(33)          NOT NULL,
+    `email`       tinytext                     DEFAULT NULL,
     `deleted`     bit(1)              NOT NULL DEFAULT b'0',
     `auth`        tinyint(3) unsigned NOT NULL,
     `create_time` datetime(6)         NOT NULL DEFAULT current_timestamp(6),

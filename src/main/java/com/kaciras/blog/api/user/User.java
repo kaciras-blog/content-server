@@ -23,6 +23,7 @@ public final class User {
 
 	private String name;
 	private ImageReference avatar;
+	private String email;
 
 	private boolean deleted;
 

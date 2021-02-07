@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.api.account.AuthType;
 import com.kaciras.blog.api.account.SessionService;
-import com.kaciras.blog.api.user.UserManager;
+import com.kaciras.blog.api.user.User;
+import com.kaciras.blog.api.user.UserRepository;
 import com.kaciras.blog.infra.RequestUtils;
+import com.kaciras.blog.infra.codec.ImageReference;
 import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.ResourceDeletedException;
 import lombok.AllArgsConstructor;
@@ -47,7 +49,7 @@ class OAuth2Controller {
 
 	private final SessionService sessionService;
 	private final OAuth2DAO oAuth2DAO;
-	private final UserManager userManager;
+	private final UserRepository userRepository;
 
 	private final RedisTemplate<String, byte[]> redisTemplate;
 	private final ObjectMapper objectMapper;
@@ -162,7 +164,7 @@ class OAuth2Controller {
 	 * 会话是一次性的，一旦获取就会从存储中删除。
 	 *
 	 * @param request 请求对象
-	 * @return OAuth2会话
+	 * @return OAuth2 会话
 	 * @throws ResourceDeletedException 如果认证会话过期了
 	 * @throws PermissionException      如果存在安全问题
 	 */
@@ -196,15 +198,20 @@ class OAuth2Controller {
 	@Transactional
 	int getLocalId(UserProfile profile, HttpServletRequest request, AuthType authType) {
 		var localId = oAuth2DAO.select(profile.id(), authType);
-
 		if (localId != null) {
 			return localId;
 		}
-		var regIP = RequestUtils.addressFromRequest(request);
-		var newId = userManager.createNew(profile.name(), authType, regIP);
-		oAuth2DAO.insert(profile.id(), authType, newId);
 
-		return newId;
+		var user = new User();
+		user.setAvatar(ImageReference.parse("akalin.jpg"));
+		user.setName(profile.name());
+		user.setEmail(profile.email());
+		user.setAuth(authType);
+		user.setCreateIP(RequestUtils.addressFromRequest(request));
+
+		userRepository.add(user);
+		oAuth2DAO.insert(profile.id(), authType, user.getId());
+		return user.getId();
 	}
 
 	@AllArgsConstructor(onConstructor_ = @JsonCreator)

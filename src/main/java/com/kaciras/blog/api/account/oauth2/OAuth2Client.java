@@ -6,7 +6,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 /**
  * 对各种第三方系统适配的接口，是 OAuth2 中用于本系统和第三方认证提供者通信的类。
  *
- * <h2>纯配置不可行</h2>
+ * <h2>不支持配置式</h2>
  * 一种想法是把各种系统不同的地方都作为配置项，Spring 就是这样做的：
  * {@code org.springframework.security.config.oauth2.client.CommonOAuth2Provider}
  *
@@ -17,7 +17,7 @@ public interface OAuth2Client {
 	AuthType authType();
 
 	/**
-	 * OAuth2 第一步，获取第三方系统 OAuth 授权页面的 URL 模板。
+	 * OAuth2 第一步，获取第三方系统授权页面的 URL 模板。
 	 */
 	UriComponentsBuilder uriTemplate();
 

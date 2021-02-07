@@ -21,7 +21,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 /**
  * https://developers.google.com/identity/protocols/OpenIDConnect
  */
-@ConditionalOnProperty("app.oauth2.google.client-secret")
+@ConditionalOnProperty(prefix = "app.oauth2.google", value = {"client-id", "client-secret"})
 @Component
 @RequiredArgsConstructor
 public final class GoogleOAuth2Client implements OAuth2Client {
@@ -97,10 +97,11 @@ public final class GoogleOAuth2Client implements OAuth2Client {
 	@AllArgsConstructor(onConstructor_ = @JsonCreator)
 	private static final class GoogleUserProfile implements UserProfile {
 
-		/** 谷歌的ID特别长，不能用long */
+		/** 谷歌的ID特别长，不能用整数类型 */
 		private final String id;
-		private final String picture;
 		private final String name;
+		private final String email;
+		private final String picture;
 
 		@Override
 		public String id() {
@@ -115,6 +116,11 @@ public final class GoogleOAuth2Client implements OAuth2Client {
 		@Override
 		public String name() {
 			return name;
+		}
+
+		@Override
+		public String email() {
+			return email;
 		}
 	}
 }

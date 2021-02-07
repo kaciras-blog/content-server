@@ -20,7 +20,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 /**
  * https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/
  */
-@ConditionalOnProperty("app.oauth2.github.client-secret")
+@ConditionalOnProperty(prefix = "app.oauth2.github", value = {"client-id", "client-secret"})
 @Component
 @RequiredArgsConstructor
 public final class GithubOAuth2Client implements OAuth2Client {
@@ -64,7 +64,7 @@ public final class GithubOAuth2Client implements OAuth2Client {
 
 		var res = httpClient.send(request, BodyHandlers.ofString());
 		if (res.statusCode() != 200) {
-			throw new IOException("OAuth获取AccessToken失败，返回码：" + res.statusCode());
+			throw new IOException("获取 AccessToken 失败，返回码：" + res.statusCode());
 		}
 
 		var token = objectMapper.readValue(res.body(), AccessTokenEntity.class);
@@ -102,6 +102,7 @@ public final class GithubOAuth2Client implements OAuth2Client {
 		private final String id;
 		private final String login;
 		private final String name;
+		private final String email;
 		private final String avatar_url;
 
 		@Override
@@ -112,6 +113,11 @@ public final class GithubOAuth2Client implements OAuth2Client {
 		@Override
 		public String name() {
 			return name != null ? name : login;
+		}
+
+		@Override
+		public String email() {
+			return email;
 		}
 
 		@Override
