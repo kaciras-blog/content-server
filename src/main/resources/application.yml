@@ -40,6 +40,10 @@ spring:
     # LTW 自动注入不支持延迟初始化
     lazy-initialization: false
 
+  mvc:
+    servlet:
+      load-on-startup: 0
+
   jmx:
     enabled: false
 
@@ -89,8 +93,8 @@ app:
   cors:
     allow-credentials: true
     allowed-methods: "*"
-    allowed-headers: [X-CSRF-Token, X-Requested-With, Content-Type]
-    exposed-headers: [Location, X-RateLimit-Wait]
+    allowed-headers: [ X-CSRF-Token, X-Requested-With, Content-Type ]
+    exposed-headers: [ Location, X-RateLimit-Wait ]
 
   http-client:
     timeout: 8s

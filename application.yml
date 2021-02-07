@@ -40,14 +40,9 @@ spring:
 #          starttls:
 #            enable: true
 
-  # 生产环境建议使用，启动时就加载 Servlet
-#  mvc:
-#    servlet:
-#      load-on-startup: 0
-
 app:
 
-  # 网站的协议和域名
+  # 网站（前端页面）的协议和域名
   origin: http://localhost
 
   # 是否启用友链（存活和互友）自动检查
