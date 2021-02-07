@@ -33,11 +33,13 @@ abstract class ArticleMapper {
 
 	public ArticleVo toViewObject(Article article) {
 		var vo = createVoFrom(article);
-		article.getPrev().map(ArticleLink::of).ifPresent(vo::setPrev);
-		article.getNext().map(ArticleLink::of).ifPresent(vo::setNext);
+		article.getPrev().map(this::toLink).ifPresent(vo::setPrev);
+		article.getNext().map(this::toLink).ifPresent(vo::setNext);
 		vo.setBanner(categoryManager.getBanner(article.getCategory()));
 		return vo;
 	}
+
+	abstract ArticleLink toLink(Article article);
 
 	public List<PreviewVo> toPreview(@NonNull List<Article> articles, ArticleListQuery request) {
 		return articles.stream().map(article -> toPreview(article, request)).collect(Collectors.toList());
