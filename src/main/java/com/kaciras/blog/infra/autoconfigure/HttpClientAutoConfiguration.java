@@ -27,11 +27,11 @@ public class HttpClientAutoConfiguration {
 		var builder = HttpClient.newBuilder();
 
 		// 考虑到配置文件没法设为 null 所以空字符串也排除。
-		if (StringUtils.hasText(properties.executor)) {
+		if (StringUtils.hasLength(properties.executor)) {
 			builder.executor(context.getBean(properties.executor, Executor.class));
 		}
 
-		if (properties.proxy != null) {
+		if (StringUtils.hasLength(properties.proxy)) {
 			var hostPort = properties.proxy.split(":", 2);
 			var address = new InetSocketAddress(hostPort[0], Integer.parseInt(hostPort[1]));
 			builder.proxy(ProxySelector.of(address));

@@ -1,15 +1,8 @@
 spring:
 
   main:
-    banner-mode: "off"
     allow-bean-definition-overriding: true
     log-startup-info: false
-
-  session:
-    store-type: redis
-    timeout: 30m
-    redis:
-      namespace: test
 
 app:
 

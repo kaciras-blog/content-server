@@ -83,8 +83,7 @@ class AuthorizeAspectTest {
 	}
 
 	/**
-	 * Aspect 类的这俩方法仅作为注解的载体，不会被调用，所以会拉低测试覆盖率。
-	 * 这里给它调用一下，避免这种情况。
+	 * Aspect 类的一些方法仅作为注解的载体，不被调用从而拉低测试覆盖率，这里给它调用一下。
 	 */
 	@Test
 	void fixCoverage() throws Exception {

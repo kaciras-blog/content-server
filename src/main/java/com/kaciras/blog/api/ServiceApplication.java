@@ -70,14 +70,6 @@ public class ServiceApplication {
 		return template;
 	}
 
-	@Bean
-	RedisTemplate<byte[], byte[]> bytesRedisTemplate(RedisConnectionFactory connectionFactory) {
-		var template = new RedisTemplate<byte[], byte[]>();
-		template.setEnableDefaultSerializer(false);
-		template.setConnectionFactory(connectionFactory);
-		return template;
-	}
-
 	/**
 	 * 在序列化JSON时过滤掉为null的字段，可以减小一些体积并屏蔽不可见的字段。
 	 * 该类型的Bean还有几个，为了防止重名给它起个App开头的名字。

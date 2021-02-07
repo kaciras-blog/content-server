@@ -1,10 +1,18 @@
 package com.kaciras.blog.infra;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.io.UncheckedIOException;
 import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 final class RequestUtilsTest {
 
@@ -13,15 +21,41 @@ final class RequestUtilsTest {
 		var request = new MockHttpServletRequest();
 
 		var address = RequestUtils.addressFromRequest(request);
-		Assertions.assertThat(request.getRemoteAddr()).isNotNull();
-		Assertions.assertThat(address.isLoopbackAddress()).isTrue();
+		assertThat(request.getRemoteAddr()).isNotNull();
+		assertThat(address.isLoopbackAddress()).isTrue();
 
 		request.setRemoteAddr("1234::5678");
 		address = RequestUtils.addressFromRequest(request);
-		Assertions.assertThat(address).isInstanceOf(Inet6Address.class);
+		assertThat(address).isInstanceOf(Inet6Address.class);
 
 		request.setRemoteAddr(null);
 		address = RequestUtils.addressFromRequest(request);
-		Assertions.assertThat(address.isLoopbackAddress()).isTrue();
+		assertThat(address.isLoopbackAddress()).isTrue();
+	}
+
+	@Test
+	void addressFromRequestUnknownHost() {
+		var request = new MockHttpServletRequest();
+		request.setRemoteAddr("invalid");
+		assertThatThrownBy(() -> RequestUtils.addressFromRequest(request)).isInstanceOf(UncheckedIOException.class);
+	}
+
+	private static Stream<Arguments> addressAndType() {
+		return Stream.of(
+				Arguments.of("127.0.0.1", true),
+				Arguments.of("192.168.0.1", true),
+				Arguments.of("localhost", true),
+				Arguments.of("[::1]", true),
+				Arguments.of("1.1.1.1", false),
+				Arguments.of("[1234::1]", false)
+		);
+	}
+
+	@MethodSource("addressAndType")
+	@ParameterizedTest
+	void isLocalNetwork(String host, boolean expect) throws Exception {
+		var address = InetAddress.getByName(host);
+		var actual = RequestUtils.isLocalNetwork(address);
+		assertThat(actual).isEqualTo(expect);
 	}
 }

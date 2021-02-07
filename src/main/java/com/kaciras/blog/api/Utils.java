@@ -2,23 +2,14 @@ package com.kaciras.blog.api;
 
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.exception.ResourceNotFoundException;
-import com.kaciras.blog.infra.exception.WebBusinessException;
 import lombok.experimental.UtilityClass;
-import org.apache.ibatis.builder.BuilderException;
-import org.springframework.dao.DataAccessException;
-import org.springframework.lang.NonNull;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.UncheckedIOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Optional;
 
 @UtilityClass
 public class Utils {
 
 	public void checkPositive(int value, String valname) {
-		if (value <= 0) throw new RequestArgumentException("参数" + valname + "必须是正数:" + value);
+		if (value <= 0)
+			throw new RequestArgumentException("参数" + valname + "必须是正数:" + value);
 	}
 
 	public void checkNotNegative(int value, String valname) {
@@ -33,7 +24,8 @@ public class Utils {
 	 * @throws ResourceNotFoundException 如果没有影响任何行
 	 */
 	public void checkEffective(int rows) {
-		if (rows <= 0) throw new ResourceNotFoundException();
+		if (rows <= 0)
+			throw new ResourceNotFoundException();
 	}
 
 	/**
