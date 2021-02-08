@@ -1,6 +1,7 @@
 package com.kaciras.blog.api.article;
 
 import com.kaciras.blog.api.MapStructConfig;
+import com.kaciras.blog.api.category.Banner;
 import com.kaciras.blog.api.category.Category;
 import com.kaciras.blog.api.category.CategoryManager;
 import com.kaciras.blog.api.category.CategoryRepository;
@@ -31,17 +32,22 @@ abstract class ArticleMapper {
 
 	private final Pattern urlKeywords = Pattern.compile("[\\s?#@:&\\\\/=\"'`,.!]+");
 
-	public ArticleVO toViewObject(Article article) {
-		var vo = createVoFrom(article);
-		article.getPrev().map(this::toLink).ifPresent(x -> vo.prev = x);
-		article.getNext().map(this::toLink).ifPresent(x -> vo.next = x);
-		vo.banner = categoryManager.getBanner(article.getCategory());
-		return vo;
-	}
+	/**
+	 * 将内部的领域对象转换为面向前端的视图对象。
+	 *
+	 * @param article 文章
+	 * @return 视图对象
+	 */
+	@Mapping(target = "banner", source = "article")
+	public abstract ArticleVO toViewObject(Article article);
 
 	abstract ArticleLink toLink(Article article);
 
-	public List<PreviewVO> toPreview(@NonNull List<Article> articles, ArticleListQuery request) {
+	final Banner getBannerFrom(Article article) {
+		return categoryManager.getBanner(article.getCategory());
+	}
+
+	public final List<PreviewVO> toPreview(@NonNull List<Article> articles, ArticleListQuery request) {
 		return articles.stream().map(article -> toPreview(article, request)).collect(Collectors.toList());
 	}
 
@@ -51,13 +57,15 @@ abstract class ArticleMapper {
 	 * @param article 文章对象
 	 * @return 聚合后的对象
 	 */
-	PreviewVO toPreview(Article article, ArticleListQuery request) {
+	final PreviewVO toPreview(Article article, ArticleListQuery request) {
 		var vo = createPreviewFrom(article);
 		if (request.isContent()) {
 			vo.content = article.getContent();
 		}
+
 		var categoryPath = categoryRepository.get(article.getCategory()).getPathTo(request.getCategory());
 		vo.categories = mapCategoryPath(categoryPath);
+
 		vo.discussionCount = discussionRepository.count(new DiscussionQuery().setObjectId(article.getId()).setType(1));
 		return vo;
 	}
@@ -66,27 +74,37 @@ abstract class ArticleMapper {
 	@Mapping(target = "content", ignore = true)
 	abstract PreviewVO createPreviewFrom(Article article);
 
-	@Mapping(target = "prev", ignore = true)
-	@Mapping(target = "next", ignore = true)
-	abstract ArticleVO createVoFrom(Article article);
-
 	abstract List<CategoryNode> mapCategoryPath(List<Category> categories);
 
 	/**
 	 * 由发表请求创建文章对象，是文章的工厂方法。
 	 *
-	 * @param request 发表请求
+	 * @param data 发表请求
 	 * @return 文章对象
 	 */
-	public Article createArticle(PublishDTO request) {
+	public final Article createArticle(PublishDTO data) {
 		var article = new Article();
-		update(article, request);
-
-		article.setCategory(request.category);
-		article.setUrlTitle(StringUtils.trimTrailingCharacter(urlKeywords
-				.matcher(request.urlTitle).replaceAll("-"), '-'));
+		update(article, data);
+		article.setUrlTitle(processUrlTitle(data.urlTitle));
 		return article;
 	}
 
-	public abstract void update(@MappingTarget Article article, PublishDTO dto);
+	/**
+	 * 处理一下 URL 标题，使其更适合显示在 URL 里。
+	 *
+	 * @param value 原始 URL 标题
+	 * @return 处理后的字符串
+	 */
+	final String processUrlTitle(String value) {
+		value = urlKeywords.matcher(value).replaceAll("-");
+		return StringUtils.trimTrailingCharacter(value, '-');
+	}
+
+	/**
+	 * 从 DTO 请求更新文章对象相应的属性。
+	 *
+	 * @param article 文章
+	 * @param data 更新请求
+	 */
+	public abstract void update(@MappingTarget Article article, PublishDTO data);
 }

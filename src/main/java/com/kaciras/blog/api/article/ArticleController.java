@@ -112,20 +112,20 @@ class ArticleController {
 	}
 
 	// 这个涉及到草稿表，调用方需要加事物
-	private void updateDraft(Article article, PublishDTO request) {
-		if (request.destroy) {
-			draftRepository.remove(request.draftId);
+	private void updateDraft(Article article, PublishDTO data) {
+		if (data.destroy) {
+			draftRepository.remove(data.draftId);
 		} else {
-			var draft = draftRepository.findById(request.draftId);
+			var draft = draftRepository.findById(data.draftId);
 			draft.setArticleId(article.getId());
 			draftRepository.update(draft);
 
 			var history = new DraftContent();
-			history.setTitle(request.title);
-			history.setKeywords(String.join(" ", request.keywords));
-			history.setCover(request.cover);
-			history.setSummary(request.summary);
-			history.setContent(request.content);
+			history.setTitle(data.title);
+			history.setKeywords(String.join(" ", data.keywords));
+			history.setCover(data.cover);
+			history.setSummary(data.summary);
+			history.setContent(data.content);
 			draft.getHistoryList().add(history);
 		}
 	}

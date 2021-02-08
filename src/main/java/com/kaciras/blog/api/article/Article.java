@@ -7,10 +7,10 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @EqualsAndHashCode(of = "id", callSuper = false)
 @ToString(of = "id")
@@ -83,12 +83,16 @@ public class Article {
 		classifyDAO.updateByArticle(id, category);
 	}
 
-	// prev 是个常用的简写可以使用
-	public Optional<Article> getPrev() {
+	// 1) prev 是个常用的简写所以没问题
+	// 2) 因为 MapStruct 不支持 Optional，所以退回到 nullable value
+
+	@Nullable
+	public Article getPrev() {
 		return articleDAO.getNeighbor(id, "<");
 	}
 
-	public Optional<Article> getNext() {
+	@Nullable
+	public Article getNext() {
 		return articleDAO.getNeighbor(id, ">");
 	}
 }

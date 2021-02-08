@@ -32,7 +32,7 @@ abstract class ViewModelMapper {
 	@Mapping(target = "preview", source = "value")
 	public abstract DiscussionActivity toActivity(Discussion value, Topic topic);
 
-	String contentPreview(Discussion value) {
+	final String contentPreview(Discussion value) {
 		var c = value.getContent();
 		return c.length() > 200 ? c.substring(0, 200) : c;
 	}
@@ -44,7 +44,7 @@ abstract class ViewModelMapper {
 	 * @return 评论视图对象
 	 */
 	@Mapping(target = "user", source = "source")
-	protected abstract DiscussionVO toViewObject(Discussion source);
+	abstract DiscussionVO toViewObject(Discussion source);
 
 	UserVO userFromDiscussion(Discussion discussion) {
 		return userManager.getUser(discussion.getUserId());

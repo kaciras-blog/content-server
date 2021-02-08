@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
+/**
+ * <h2>暂时无法实现的功能</h2>
+ * 不支持删除，因为删除后分类的关联对象（文章等）迁移很麻烦。
+ */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/categories")
@@ -30,8 +34,9 @@ class CategoryController {
 
 	@RequirePermission
 	@PostMapping
-	public ResponseEntity<CategoryVO> create(@RequestBody CategoryAttributes attrs, @RequestParam int parent) {
-		var category = mapper.toCategory(attrs);
+	public ResponseEntity<CategoryVO> create(@RequestBody CreateDTO data, @RequestParam int parent) {
+		var category = new Category();
+		mapper.update(category, data);
 		repository.add(category, parent);
 
 		return ResponseEntity
@@ -42,11 +47,11 @@ class CategoryController {
 	@RequirePermission
 	@Transactional
 	@PostMapping("/transfer")
-	public ResponseEntity<Void> move(@RequestBody MoveDTO dto) {
-		var category = repository.get(dto.id);
-		var newParent = repository.get(dto.parent);
+	public ResponseEntity<Void> move(@RequestBody MoveDTO moveDTO) {
+		var category = repository.get(moveDTO.id);
+		var newParent = repository.get(moveDTO.parent);
 
-		if (dto.treeMode) {
+		if (moveDTO.treeMode) {
 			category.moveTreeTo(newParent);
 		} else {
 			category.moveTo(newParent);
@@ -57,22 +62,10 @@ class CategoryController {
 
 	@RequirePermission
 	@PutMapping("/{id}")
-	public CategoryVO update(@PathVariable int id, @RequestBody CategoryAttributes attributes) {
+	public CategoryVO update(@PathVariable int id, @RequestBody CreateDTO data) {
 		var category = repository.get(id);
-		mapper.update(category, attributes);
+		mapper.update(category, data);
 		repository.update(category);
 		return mapper.categoryView(category);
 	}
-
-// TODO:暂不支持删除，删除后文章的迁移有问题
-//	@RequirePermission
-//	@DeleteMapping("/{id}")
-//	public ResponseEntity<Void> delete(@PathVariable int id, @RequestParam boolean tree) {
-//		if (tree) {
-//			repository.removeTree(id);
-//		} else {
-//			repository.remove(id);
-//		}
-//		return ResponseEntity.noContent().build();
-//	}
 }

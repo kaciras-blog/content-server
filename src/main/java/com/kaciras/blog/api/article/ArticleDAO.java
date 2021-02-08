@@ -19,7 +19,7 @@ interface ArticleDAO {
 	// 小心注入，comparator 参数必须限制在比较符号。
 	@Select("SELECT * FROM article WHERE id ${comparator} #{id} AND deleted=0 LIMIT 1")
 	@ResultMap("com.kaciras.blog.api.article.ArticleDAO.articleMap")
-	Optional<Article> getNeighbor(int id, String comparator);
+	Article getNeighbor(int id, String comparator);
 
 	@Select("SELECT COUNT(*) FROM article")
 	int selectCount();
