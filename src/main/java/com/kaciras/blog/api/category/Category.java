@@ -1,6 +1,7 @@
 package com.kaciras.blog.api.category;
 
 import com.kaciras.blog.api.Utils;
+import com.kaciras.blog.infra.codec.ImageReference;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -12,7 +13,7 @@ import java.util.List;
 @EqualsAndHashCode(of = "id", callSuper = false)
 @Data
 @Configurable
-public class Category extends CategoryAttributes {
+public class Category {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -22,6 +23,12 @@ public class Category extends CategoryAttributes {
 	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 	private int id;
+
+	private String name;
+	private ImageReference cover;
+	private String description;
+	private ImageReference background;
+	private int theme;
 
 	public int getParent() {
 		return dao.selectAncestor(id, 1);

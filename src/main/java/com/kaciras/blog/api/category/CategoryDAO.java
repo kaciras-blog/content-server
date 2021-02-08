@@ -46,7 +46,7 @@ interface CategoryDAO {
 	 * @param attributes 新的属性集合
 	 */
 	@Update("UPDATE category SET cover=#{cover},background=#{background},theme=#{theme} WHERE id=0")
-	void updateRoot(CategoryAttributes attributes);
+	void updateRoot(Category attributes);
 
 	@Insert("INSERT INTO category(name, cover, description, background, theme) " +
 			"VALUES(#{name},#{cover},#{description}, #{background}, #{theme})")

@@ -18,10 +18,10 @@ class HotArticleController {
 	private final ArticleRepository repository;
 	private final ArticleMapper mapper;
 
-	private List<PreviewVo> popular;
+	private List<PreviewVO> popular;
 
 	@GetMapping("/articles")
-	public List<PreviewVo> getHotArticles() {
+	public List<PreviewVO> getHotArticles() {
 		return popular;
 	}
 

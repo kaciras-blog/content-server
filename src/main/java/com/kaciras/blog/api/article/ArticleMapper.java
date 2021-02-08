@@ -31,17 +31,17 @@ abstract class ArticleMapper {
 
 	private final Pattern urlKeywords = Pattern.compile("[\\s?#@:&\\\\/=\"'`,.!]+");
 
-	public ArticleVo toViewObject(Article article) {
+	public ArticleVO toViewObject(Article article) {
 		var vo = createVoFrom(article);
-		article.getPrev().map(this::toLink).ifPresent(vo::setPrev);
-		article.getNext().map(this::toLink).ifPresent(vo::setNext);
-		vo.setBanner(categoryManager.getBanner(article.getCategory()));
+		article.getPrev().map(this::toLink).ifPresent(x -> vo.prev = x);
+		article.getNext().map(this::toLink).ifPresent(x -> vo.next = x);
+		vo.banner = categoryManager.getBanner(article.getCategory());
 		return vo;
 	}
 
 	abstract ArticleLink toLink(Article article);
 
-	public List<PreviewVo> toPreview(@NonNull List<Article> articles, ArticleListQuery request) {
+	public List<PreviewVO> toPreview(@NonNull List<Article> articles, ArticleListQuery request) {
 		return articles.stream().map(article -> toPreview(article, request)).collect(Collectors.toList());
 	}
 
@@ -51,26 +51,26 @@ abstract class ArticleMapper {
 	 * @param article 文章对象
 	 * @return 聚合后的对象
 	 */
-	PreviewVo toPreview(Article article, ArticleListQuery request) {
+	PreviewVO toPreview(Article article, ArticleListQuery request) {
 		var vo = createPreviewFrom(article);
 		if (request.isContent()) {
-			vo.setContent(article.getContent());
+			vo.content = article.getContent();
 		}
 		var categoryPath = categoryRepository.get(article.getCategory()).getPathTo(request.getCategory());
-		vo.setCategories(mapCategoryPath(categoryPath));
-		vo.setDiscussionCount(discussionRepository.count(new DiscussionQuery().setObjectId(article.getId()).setType(1)));
+		vo.categories = mapCategoryPath(categoryPath);
+		vo.discussionCount = discussionRepository.count(new DiscussionQuery().setObjectId(article.getId()).setType(1));
 		return vo;
 	}
 
 	// 排除内容属性，由外层的方法决定是否复制
 	@Mapping(target = "content", ignore = true)
-	abstract PreviewVo createPreviewFrom(Article article);
+	abstract PreviewVO createPreviewFrom(Article article);
 
 	@Mapping(target = "prev", ignore = true)
 	@Mapping(target = "next", ignore = true)
-	abstract ArticleVo createVoFrom(Article article);
+	abstract ArticleVO createVoFrom(Article article);
 
-	abstract List<SimpleCategoryVo> mapCategoryPath(List<Category> categories);
+	abstract List<CategoryNode> mapCategoryPath(List<Category> categories);
 
 	/**
 	 * 由发表请求创建文章对象，是文章的工厂方法。
@@ -78,15 +78,15 @@ abstract class ArticleMapper {
 	 * @param request 发表请求
 	 * @return 文章对象
 	 */
-	public Article createArticle(PublishInput request) {
+	public Article createArticle(PublishDTO request) {
 		var article = new Article();
 		update(article, request);
 
-		article.setCategory(request.getCategory());
+		article.setCategory(request.category);
 		article.setUrlTitle(StringUtils.trimTrailingCharacter(urlKeywords
-				.matcher(request.getUrlTitle()).replaceAll("-"), '-'));
+				.matcher(request.urlTitle).replaceAll("-"), '-'));
 		return article;
 	}
 
-	public abstract void update(@MappingTarget Article article, ArticleContentBase contentBase);
+	public abstract void update(@MappingTarget Article article, PublishDTO dto);
 }

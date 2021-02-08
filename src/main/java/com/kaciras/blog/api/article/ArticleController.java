@@ -75,7 +75,7 @@ class ArticleController {
 	}
 
 	@GetMapping("/{id}")
-	public ArticleVo get(@PathVariable int id) {
+	public ArticleVO get(@PathVariable int id) {
 		var article = repository.findById(id);
 		if (article.isDeleted()) {
 			throw new ResourceDeletedException();
@@ -87,7 +87,7 @@ class ArticleController {
 	@Transactional
 	@RequirePermission
 	@PostMapping
-	public ResponseEntity<ArticleVo> post(@RequestBody @Valid PublishInput request) {
+	public ResponseEntity<ArticleVO> post(@RequestBody @Valid PublishDTO request) {
 		var article = mapper.createArticle(request);
 		repository.add(article);
 		updateDraft(article, request);
@@ -101,7 +101,7 @@ class ArticleController {
 	@Transactional
 	@RequirePermission
 	@PutMapping("/{id}")
-	public ArticleVo update(@PathVariable int id, @RequestBody PublishInput request) {
+	public ArticleVO update(@PathVariable int id, @RequestBody PublishDTO request) {
 		var article = repository.findById(id);
 
 		mapper.update(article, request);
@@ -112,31 +112,31 @@ class ArticleController {
 	}
 
 	// 这个涉及到草稿表，调用方需要加事物
-	private void updateDraft(Article article, PublishInput request) {
-		if (request.isDestroy()) {
-			draftRepository.remove(request.getDraftId());
+	private void updateDraft(Article article, PublishDTO request) {
+		if (request.destroy) {
+			draftRepository.remove(request.draftId);
 		} else {
-			var draft = draftRepository.findById(request.getDraftId());
+			var draft = draftRepository.findById(request.draftId);
 			draft.setArticleId(article.getId());
 			draftRepository.update(draft);
 
 			var history = new DraftContent();
-			history.setTitle(request.getTitle());
-			history.setKeywords(String.join(" ", request.getKeywords()));
-			history.setCover(request.getCover());
-			history.setSummary(request.getSummary());
-			history.setContent(request.getContent());
+			history.setTitle(request.title);
+			history.setKeywords(String.join(" ", request.keywords));
+			history.setCover(request.cover);
+			history.setSummary(request.summary);
+			history.setContent(request.content);
 			draft.getHistoryList().add(history);
 		}
 	}
 
 	@RequirePermission
 	@PatchMapping("/{id}")
-	public ArticleVo patch(@PathVariable int id, @RequestBody PatchInput patchInput) {
+	public ArticleVO patch(@PathVariable int id, @RequestBody PatchDTO patch) {
 		var article = repository.findById(id);
-		Optional.ofNullable(patchInput.getCategory()).ifPresent(article::updateCategory);
-		Optional.ofNullable(patchInput.getDeletion()).ifPresent(article::updateDeleted);
-		Optional.ofNullable(patchInput.getUrlTitle()).ifPresent(article::updateUrlTitle);
+		Optional.ofNullable(patch.category).ifPresent(article::updateCategory);
+		Optional.ofNullable(patch.deletion).ifPresent(article::updateDeleted);
+		Optional.ofNullable(patch.urlTitle).ifPresent(article::updateUrlTitle);
 		return mapper.toViewObject(article);
 	}
 }

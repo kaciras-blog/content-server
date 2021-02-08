@@ -16,18 +16,18 @@ interface DraftMapper {
 	DraftContent fromArticle(Article article);
 
 	@IterableMapping(qualifiedByName = "toDraftVo")
-	List<DraftVo> toDraftVo(List<Draft> draft);
+	List<DraftVO> toDraftVo(List<Draft> draft);
 
 	@Named("toDraftVo")
-	default DraftVo toDraftVo(Draft draft) {
+	default DraftVO toDraftVo(Draft draft) {
 		var vo = createDraftVo(draft);
 		var lastHistory = draft.getHistoryList().findLatest();
-		vo.setTitle(lastHistory.getTitle());
-		vo.setUpdateTime(lastHistory.getTime());
-		vo.setLastSaveCount(lastHistory.getSaveCount());
+		vo.title = lastHistory.getTitle();
+		vo.updateTime = lastHistory.getTime();
+		vo.lastSaveCount = lastHistory.getSaveCount();
 		return vo;
 	}
 
 	@Mapping(target = "createTime", source = "time")
-	DraftVo createDraftVo(Draft draft);
+	DraftVO createDraftVo(Draft draft);
 }

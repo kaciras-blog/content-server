@@ -2,23 +2,19 @@ package com.kaciras.blog.api.user;
 
 import com.kaciras.blog.api.account.AuthType;
 import com.kaciras.blog.infra.codec.ImageReference;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.Instant;
 
-@Getter
-@Setter
-public final class UserVo {
+public final class UserVO {
 
-	private int id;
+	public int id;
 
-	private String name;
-	private ImageReference avatar;
+	public String name;
+	public ImageReference avatar;
 
-	private AuthType auth;
+	public AuthType auth;
 
-	private Instant createTime;
+	public Instant createTime;
 
 	// IP 地址仅用于批量处理，不在前端显示
 }

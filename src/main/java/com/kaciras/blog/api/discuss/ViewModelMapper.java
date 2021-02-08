@@ -2,7 +2,7 @@ package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.api.MapStructConfig;
 import com.kaciras.blog.api.user.UserManager;
-import com.kaciras.blog.api.user.UserVo;
+import com.kaciras.blog.api.user.UserVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ abstract class ViewModelMapper {
 	 * @param input 请求
 	 * @return 评论对象
 	 */
-	public abstract Discussion fromInput(PublishInput input);
+	public abstract Discussion fromInput(PublishDTO input);
 
 	/**
 	 * 从评论创建通知对象，其中内容字段将截断到 200 字以内。
@@ -44,9 +44,9 @@ abstract class ViewModelMapper {
 	 * @return 评论视图对象
 	 */
 	@Mapping(target = "user", source = "source")
-	protected abstract DiscussionVo toViewObject(Discussion source);
+	protected abstract DiscussionVO toViewObject(Discussion source);
 
-	UserVo userFromDiscussion(Discussion discussion) {
+	UserVO userFromDiscussion(Discussion discussion) {
 		return userManager.getUser(discussion.getUserId());
 	}
 }

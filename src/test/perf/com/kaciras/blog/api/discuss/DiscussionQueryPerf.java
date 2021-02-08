@@ -2,7 +2,7 @@ package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.AbstractSpringPerf;
 import com.kaciras.blog.api.user.UserManager;
-import com.kaciras.blog.api.user.UserVo;
+import com.kaciras.blog.api.user.UserVO;
 import com.kaciras.blog.infra.autoconfigure.BlogMybatisAutoConfiguration;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +115,7 @@ public class DiscussionQueryPerf extends AbstractSpringPerf {
 		}
 
 		@Override
-		public UserVo getUser(int id) {
+		public UserVO getUser(int id) {
 			return null;
 		}
 	}

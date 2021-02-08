@@ -6,5 +6,5 @@ import org.mapstruct.Mapper;
 @Mapper(config = MapStructConfig.class)
 interface UserMapper {
 
-	UserVo toUserVo(User user);
+	UserVO toUserVo(User user);
 }

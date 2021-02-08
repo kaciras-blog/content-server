@@ -19,7 +19,7 @@ class SessionUserController {
 	private final UserMapper userMapper;
 
 	@GetMapping
-	public UserVo get() {
+	public UserVO get() {
 		return userMapper.toUserVo(repository.get(SecurityContext.getUserId()));
 	}
 
@@ -30,12 +30,12 @@ class SessionUserController {
 	}
 
 	@PatchMapping
-	public ResponseEntity<Void> patch(@RequestBody @Valid PatchInput patch) {
+	public ResponseEntity<Void> patch(@RequestBody @Valid PatchDTO patch) {
 		SecurityContext.requireLogin();
 		var user = repository.get(SecurityContext.getUserId());
 
-		user.setName(patch.getName());
-		user.setAvatar(patch.getAvatar());
+		user.setName(patch.name);
+		user.setAvatar(patch.avatar);
 		repository.update(user);
 
 		return ResponseEntity.noContent().build();

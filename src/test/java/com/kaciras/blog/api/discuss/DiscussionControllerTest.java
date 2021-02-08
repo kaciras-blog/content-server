@@ -3,7 +3,7 @@ package com.kaciras.blog.api.discuss;
 import com.kaciras.blog.api.AbstractControllerTest;
 import com.kaciras.blog.api.notice.NoticeService;
 import com.kaciras.blog.api.user.UserManager;
-import com.kaciras.blog.api.user.UserVo;
+import com.kaciras.blog.api.user.UserVO;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		var topic = new Topic("TestTopic", "http://example.com");
 		doReturn(topic).when(topics).get(anyInt(), anyInt());
 
-		doReturn(new UserVo()).when(userManager).getUser(anyInt());
+		doReturn(new UserVO()).when(userManager).getUser(anyInt());
 	}
 
 	private static Stream<Arguments> invalidQueries() {
@@ -179,7 +179,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	 * 测试用的 POST 请求体，因为多处使用所以提取出来了。
 	 */
 	private String getPostBody() throws Exception {
-		var input = new PublishInput(0, 0, 0, null, "test content");
+		var input = new PublishDTO(0, 0, 0, null, "test content");
 		return objectMapper.writeValueAsString(input);
 	}
 
@@ -197,7 +197,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	void publishToNonExistsParent() throws Exception {
 		when(repository.get(anyInt())).thenReturn(Optional.empty());
 
-		var input = new PublishInput(0, 0, 1, null, "test");
+		var input = new PublishDTO(0, 0, 1, null, "test");
 		var body = objectMapper.writeValueAsString(input);
 		mockMvc.perform(post("/discussions").content(body)).andExpect(status().is(400));
 	}
@@ -207,7 +207,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		when(repository.get(anyInt())).thenReturn(Optional.of(newItem(1, 0)));
 		doThrow(new RequestArgumentException()).when(topics).get(anyInt(), anyInt());
 
-		var input = new PublishInput(0, 0, 1, null, "test");
+		var input = new PublishDTO(0, 0, 1, null, "test");
 		var body = objectMapper.writeValueAsString(input);
 
 		mockMvc.perform(post("/discussions").content(body))

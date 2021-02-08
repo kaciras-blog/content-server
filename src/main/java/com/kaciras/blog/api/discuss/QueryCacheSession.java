@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 final class QueryCacheSession {
 
 	@Getter
-	private final Map<Integer, DiscussionVo> objects = new HashMap<>();
+	private final Map<Integer, DiscussionVO> objects = new HashMap<>();
 
 	private final DiscussionRepository repository;
 	private final ViewModelMapper mapper;
@@ -50,7 +50,7 @@ final class QueryCacheSession {
 	/**
 	 * 引用模式，将每个结果的父评论加入到 objects 中。
 	 */
-	private void addParentToMap(DiscussionVo viewObject) {
+	private void addParentToMap(DiscussionVO viewObject) {
 		var id = viewObject.parent;
 		if (id == 0 || objects.containsKey(id)) {
 			return;
@@ -62,7 +62,7 @@ final class QueryCacheSession {
 	/**
 	 * 楼中楼模式，将每个结果的下级评论加入到 objects 中，并把它们的 ID 保存到 replies 字段。
 	 */
-	private void attachChildren(DiscussionVo vo, Pageable pageable) {
+	private void attachChildren(DiscussionVO vo, Pageable pageable) {
 		var childrenQuery = new DiscussionQuery()
 				.setNestId(vo.id)
 				.setPageable(pageable);
@@ -77,14 +77,14 @@ final class QueryCacheSession {
 	 * @param query 查询条件
 	 * @return 视图对象的流，用于后续操作
 	 */
-	private Stream<DiscussionVo> findAll(DiscussionQuery query) {
+	private Stream<DiscussionVO> findAll(DiscussionQuery query) {
 		return repository.findAll(query)
 				.stream()
 				.map(mapper::toViewObject)
 				.peek(v -> objects.put(v.id, v));
 	}
 
-	private List<Integer> collectId(Stream<DiscussionVo> stream) {
+	private List<Integer> collectId(Stream<DiscussionVO> stream) {
 		return stream.map(v -> v.id).collect(Collectors.toList());
 	}
 }

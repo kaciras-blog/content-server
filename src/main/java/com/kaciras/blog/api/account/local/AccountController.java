@@ -39,21 +39,21 @@ class AccountController {
 	private final UserManager userManager;
 
 	@PostMapping
-	public ResponseEntity<Void> post(@Valid @RequestBody RegisterRequest dto,
+	public ResponseEntity<Void> post(@Valid @RequestBody RegisterDTO data,
 									 HttpServletRequest request,
 									 HttpServletResponse response) {
-		checkCaptcha(request.getSession(true), dto.getCaptcha());
+		checkCaptcha(request.getSession(true), data.captcha);
 
-		var account = createAccount(dto, RequestUtils.addressFromRequest(request));
+		var account = createAccount(data, RequestUtils.addressFromRequest(request));
 		sessionService.putUser(request, response, account.getId(), true);
 		return ResponseEntity.created(URI.create("/accounts/" + account.getId())).build();
 	}
 
 	@Transactional
-	protected Account createAccount(RegisterRequest request, InetAddress ip) {
+	protected Account createAccount(RegisterDTO data, InetAddress ip) {
 		try {
-			var id = userManager.createNew(request.getName(), AuthType.Local, ip);
-			var account = Account.create(id, request.getName(), request.getPassword());
+			var id = userManager.createNew(data.name, AuthType.Local, ip);
+			var account = Account.create(id, data.name, data.password);
 			repository.add(account);
 			return account;
 		} catch (SQLException e) {
@@ -83,15 +83,15 @@ class AccountController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginVo,
+	public ResponseEntity<?> login(@RequestBody @Valid LoginDTO data,
 								   HttpServletRequest request,
 								   HttpServletResponse response) {
-		var account = repository.findByName(loginVo.getName());
+		var account = repository.findByName(data.name);
 
-		if (account == null || !account.checkLogin(loginVo.getPassword())) {
+		if (account == null || !account.checkLogin(data.password)) {
 			throw new RequestArgumentException("密码错误或用户不存在");
 		}
-		sessionService.putUser(request, response, account.getId(), loginVo.isRemember());
+		sessionService.putUser(request, response, account.getId(), data.remember);
 		return ResponseEntity.created(URI.create("/session/user")).build();
 	}
 }

@@ -67,7 +67,7 @@ class DiscussionController {
 	 * Qualifier, SortDefault, SortDefaults 可以改变一些默认的行为，SpringBoot 也提供了对参数名的配置。
 	 */
 	@GetMapping
-	public MappingListView<Integer, DiscussionVo> getList(@Valid DiscussionQuery query, Pageable pageable) {
+	public MappingListView<Integer, DiscussionVO> getList(@Valid DiscussionQuery query, Pageable pageable) {
 		query.setPageable(pageable);
 		verifyQuery(query);
 
@@ -79,9 +79,9 @@ class DiscussionController {
 	}
 
 	@PostMapping
-	public ResponseEntity<DiscussionVo> post(
+	public ResponseEntity<DiscussionVO> post(
 			HttpServletRequest request,
-			@Valid @RequestBody PublishInput input) {
+			@Valid @RequestBody PublishDTO input) {
 		if (options.disabled) {
 			throw new PermissionException("已禁止评论");
 		}
@@ -124,7 +124,7 @@ class DiscussionController {
 	@RequirePermission
 	@PatchMapping
 	@Transactional
-	public ResponseEntity<Void> patch(@RequestBody PatchInput input) {
+	public ResponseEntity<Void> patch(@RequestBody PatchDTO input) {
 		for (var id : input.ids) {
 			repository.updateState(id, input.state);
 		}

@@ -1,16 +1,14 @@
 package com.kaciras.blog.api.category;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(onConstructor_ = @JsonCreator)
-@Getter
-final class MoveInput {
+final class MoveDTO {
 
-	private final int id;
+	public final int id;
 
-	private final int parent;
+	public final int parent;
 
-	private final boolean treeMode;
+	public final boolean treeMode;
 }

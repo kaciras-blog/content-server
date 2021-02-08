@@ -20,41 +20,40 @@ abstract class CategoryMapper {
 	@Autowired
 	private CategoryManager categoryManager;
 
-	public AggregationVo aggregatedView(Category category) {
+	public AggregationVO aggregatedView(Category category) {
 		if (category == null) {
 			return null;
 		}
-		var vo = new AggregationVo();
+		var vo = new AggregationVO();
 		copyProps(vo, category);
-		vo.setChildren(categoryView(category.getChildren()));
+		vo.children = categoryView(category.getChildren());
 		return vo;
 	}
 
 	@Named("CategoryVo")
-	public CategoryVo categoryView(Category category) {
+	public CategoryVO categoryView(Category category) {
 		if (category == null) {
 			return null;
 		}
-		var vo = new CategoryVo();
+		var vo = new CategoryVO();
 		copyProps(vo, category);
 		return vo;
 	}
 
-	private void copyProps(CategoryVo vo, Category category) {
+	private void copyProps(CategoryVO vo, Category category) {
 		copyPropsInternal(vo, category);
 
 		var query = new ArticleListQuery();
 		query.setCategory(category.getId());
 		query.setRecursive(true);
-		vo.setArticleCount(articleRepository.count(query));
-
-		vo.setBanner(categoryManager.getBanner(category));
+		vo.articleCount = articleRepository.count(query);
+		vo.banner = categoryManager.getBanner(category);
 	}
 
-	abstract void copyPropsInternal(@MappingTarget CategoryVo aggregation, Category category);
+	abstract void copyPropsInternal(@MappingTarget CategoryVO aggregation, Category category);
 
 	@IterableMapping(qualifiedByName = "CategoryVo")
-	abstract List<CategoryVo> categoryView(List<Category> list);
+	abstract List<CategoryVO> categoryView(List<Category> list);
 
 	abstract Category toCategory(CategoryAttributes viewObject);
 

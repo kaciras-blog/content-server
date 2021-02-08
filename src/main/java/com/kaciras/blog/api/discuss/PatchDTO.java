@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RequiredArgsConstructor(onConstructor_ = @JsonCreator)
-final class PatchInput {
+final class PatchDTO {
 
 	public final List<Integer> ids;
 

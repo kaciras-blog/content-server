@@ -29,13 +29,13 @@ class DraftController {
 	private final ArticleRepository articleRepository;
 
 	@GetMapping
-	public ListQueryView<DraftVo> getList() {
+	public ListQueryView<DraftVO> getList() {
 		var items = repository.findByUser(SecurityContext.getUserId());
 		return new ListQueryView<>(items.size(), mapper.toDraftVo(items));
 	}
 
 	@GetMapping("/{id}")
-	public DraftVo get(@PathVariable int id) {
+	public DraftVO get(@PathVariable int id) {
 		return mapper.toDraftVo(repository.findById(id));
 	}
 
@@ -46,7 +46,7 @@ class DraftController {
 	 */
 	@Transactional
 	@PostMapping
-	public ResponseEntity<DraftVo> createDraft(@RequestParam(required = false) Integer article) {
+	public ResponseEntity<DraftVO> createDraft(@RequestParam(required = false) Integer article) {
 		var content = article != null
 				? mapper.fromArticle(articleRepository.findById(article))
 				: DraftContent.initial();

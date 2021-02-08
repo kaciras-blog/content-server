@@ -18,19 +18,19 @@ class CategoryController {
 	private final CategoryMapper mapper;
 
 	@GetMapping("/{id}")
-	public CategoryVo get(@PathVariable int id, @RequestParam(defaultValue = "false") boolean aggregate) {
+	public CategoryVO get(@PathVariable int id, @RequestParam(defaultValue = "false") boolean aggregate) {
 		var category = repository.get(id);
 		return aggregate ? mapper.aggregatedView(category) : mapper.categoryView(category);
 	}
 
 	@GetMapping("/{id}/children")
-	public List<CategoryVo> getChildren(@PathVariable int id) {
+	public List<CategoryVO> getChildren(@PathVariable int id) {
 		return mapper.categoryView(repository.get(id).getChildren());
 	}
 
 	@RequirePermission
 	@PostMapping
-	public ResponseEntity<CategoryVo> create(@RequestBody CategoryAttributes attrs, @RequestParam int parent) {
+	public ResponseEntity<CategoryVO> create(@RequestBody CategoryAttributes attrs, @RequestParam int parent) {
 		var category = mapper.toCategory(attrs);
 		repository.add(category, parent);
 
@@ -42,11 +42,11 @@ class CategoryController {
 	@RequirePermission
 	@Transactional
 	@PostMapping("/transfer")
-	public ResponseEntity<Void> move(@RequestBody MoveInput input) {
-		var category = repository.get(input.getId());
-		var newParent = repository.get(input.getParent());
+	public ResponseEntity<Void> move(@RequestBody MoveDTO dto) {
+		var category = repository.get(dto.id);
+		var newParent = repository.get(dto.parent);
 
-		if (input.isTreeMode()) {
+		if (dto.treeMode) {
 			category.moveTreeTo(newParent);
 		} else {
 			category.moveTo(newParent);
@@ -57,7 +57,7 @@ class CategoryController {
 
 	@RequirePermission
 	@PutMapping("/{id}")
-	public CategoryVo update(@PathVariable int id, @RequestBody CategoryAttributes attributes) {
+	public CategoryVO update(@PathVariable int id, @RequestBody CategoryAttributes attributes) {
 		var category = repository.get(id);
 		mapper.update(category, attributes);
 		repository.update(category);

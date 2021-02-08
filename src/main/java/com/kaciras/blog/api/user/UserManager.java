@@ -21,7 +21,7 @@ public class UserManager {
 	 * @param id 用户ID
 	 * @return 用户信息
 	 */
-	public UserVo getUser(int id) {
+	public UserVO getUser(int id) {
 		var user = repository.get(id);
 		if (user == null) {
 			throw new ResourceNotFoundException("User[id=" + id + "] 不存在");

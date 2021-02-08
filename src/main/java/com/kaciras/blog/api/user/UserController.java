@@ -14,7 +14,7 @@ class UserController {
 	private final UserManager userManager;
 
 	@GetMapping("/{id}")
-	public UserVo get(@PathVariable int id) {
+	public UserVO get(@PathVariable int id) {
 		return userManager.getUser(id);
 	}
 }

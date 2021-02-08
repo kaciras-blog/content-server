@@ -1,11 +1,11 @@
 package com.kaciras.blog.api.discuss;
 
-import com.kaciras.blog.api.user.UserVo;
+import com.kaciras.blog.api.user.UserVO;
 
 import java.time.Instant;
 import java.util.List;
 
-public final class DiscussionVo {
+public final class DiscussionVO {
 
 	public int id;
 
@@ -18,7 +18,7 @@ public final class DiscussionVo {
 	public int nestFloor;
 	public int nestSize;
 
-	public UserVo user;
+	public UserVO user;
 	public String nickname;
 	public String content;
 	public Instant time;

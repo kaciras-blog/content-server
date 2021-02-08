@@ -1,5 +1,6 @@
 package com.kaciras.blog.api.article;
 
+import com.kaciras.blog.infra.codec.ImageReference;
 import com.kaciras.blog.infra.exception.ResourceDeletedException;
 import com.kaciras.blog.infra.exception.ResourceStateException;
 import lombok.*;
@@ -8,13 +9,14 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.lang.NonNull;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @EqualsAndHashCode(of = "id", callSuper = false)
 @ToString(of = "id")
 @Data
 @Configurable
-public class Article extends ArticleContentBase {
+public class Article {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -30,6 +32,12 @@ public class Article extends ArticleContentBase {
 
 	private int id;
 	private int category;
+
+	private String title;
+	private ImageReference cover;
+	private List<String> keywords;
+	private String summary;
+	private String content;
 
 	/**
 	 * 显示在URL中的标题，有利于SEO，不要出现与URL中的特殊字符。
