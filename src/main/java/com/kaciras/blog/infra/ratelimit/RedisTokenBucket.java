@@ -10,9 +10,9 @@ import java.util.Arrays;
 import java.util.Collections;
 
 /**
- * 令牌桶算法的实现，使用Redis存储相关记录，该类里可以包含多个令牌桶。
- * 该类仅作为 Java 语言的接口，算法的实现在 Lua 脚本里，由 Redis 执行。
- * <p>
+ * 使用 Redis 存储的多级令牌桶，该类仅作为 Java 层的接口，算法的实现在 Lua 脚本里。
+ *
+ * <h3>关于 Redis 操作类</h3>
  * Spring Data Redis 里的 ScriptExecutor 跟 RedisTemplate 绑死了，很难直接基于 Connection 实现
  */
 public final class RedisTokenBucket implements RateLimiter {

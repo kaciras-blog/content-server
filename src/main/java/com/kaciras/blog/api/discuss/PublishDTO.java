@@ -1,13 +1,12 @@
 package com.kaciras.blog.api.discuss;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.kaciras.blog.infra.validate.NullOrNotBlank;
 import lombok.AllArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 
-@AllArgsConstructor(onConstructor_ = @JsonCreator)
+@AllArgsConstructor
 final class PublishDTO {
 
 	public final int objectId;

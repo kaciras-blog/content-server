@@ -1,13 +1,14 @@
 package com.kaciras.blog.api.account.local;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-@AllArgsConstructor(onConstructor_ = @JsonCreator)
+import javax.validation.constraints.Pattern;
+
+@AllArgsConstructor
 final class LoginDTO {
 
-	@Length(min = 1, max = 16)
+	@Pattern(regexp = "^[\\u4E00-\\u9FFFa-zA-Z0-9_]{1,16}$")
 	public final String name;
 
 	@Length(min = 8, max = 128)

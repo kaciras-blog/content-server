@@ -87,10 +87,10 @@ class ArticleController {
 	@Transactional
 	@RequirePermission
 	@PostMapping
-	public ResponseEntity<ArticleVO> post(@RequestBody @Valid PublishDTO request) {
-		var article = mapper.createArticle(request);
+	public ResponseEntity<ArticleVO> post(@RequestBody @Valid PublishDTO data) {
+		var article = mapper.createArticle(data);
 		repository.add(article);
-		updateDraft(article, request);
+		updateDraft(article, data);
 
 		return ResponseEntity
 				.created(URI.create("/articles/" + article.getId()))
@@ -101,12 +101,12 @@ class ArticleController {
 	@Transactional
 	@RequirePermission
 	@PutMapping("/{id}")
-	public ArticleVO update(@PathVariable int id, @RequestBody PublishDTO request) {
+	public ArticleVO update(@PathVariable int id, @RequestBody PublishDTO data) {
 		var article = repository.findById(id);
 
-		mapper.update(article, request);
+		mapper.update(article, data);
 		repository.update(article);
-		updateDraft(article, request);
+		updateDraft(article, data);
 
 		return mapper.toViewObject(article);
 	}
@@ -132,11 +132,11 @@ class ArticleController {
 
 	@RequirePermission
 	@PatchMapping("/{id}")
-	public ArticleVO patch(@PathVariable int id, @RequestBody PatchDTO patch) {
+	public ArticleVO patch(@PathVariable int id, @RequestBody UpdateDTO data) {
 		var article = repository.findById(id);
-		Optional.ofNullable(patch.category).ifPresent(article::updateCategory);
-		Optional.ofNullable(patch.deletion).ifPresent(article::updateDeleted);
-		Optional.ofNullable(patch.urlTitle).ifPresent(article::updateUrlTitle);
+		Optional.ofNullable(data.category).ifPresent(article::updateCategory);
+		Optional.ofNullable(data.deletion).ifPresent(article::updateDeleted);
+		Optional.ofNullable(data.urlTitle).ifPresent(article::updateUrlTitle);
 		return mapper.toViewObject(article);
 	}
 }

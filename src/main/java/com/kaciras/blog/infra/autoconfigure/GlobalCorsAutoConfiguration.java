@@ -21,7 +21,7 @@ import java.util.List;
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(CorsProperties.class)
 @RequiredArgsConstructor
-public class KxGlobalCorsAutoConfiguration {
+public class GlobalCorsAutoConfiguration {
 
 	// 尽量提早过滤掉无效的请求
 	private static final int FILTER_ORDER = Integer.MIN_VALUE + 10;

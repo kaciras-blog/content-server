@@ -1,6 +1,7 @@
 package com.kaciras.blog.api.article;
 
 import com.kaciras.blog.infra.codec.ImageReference;
+import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
@@ -10,21 +11,22 @@ import java.util.List;
  *
  * 【更新】发表后是否删除草稿应当由前端决定，比如显示一个选项让用户自己决定是否保留草稿。
  */
+@RequiredArgsConstructor
 final class PublishDTO {
 
-	public String title;
-	public ImageReference cover;
-	public List<String> keywords;
-	public String summary;
-	public String content;
+	public final String title;
+	public final ImageReference cover;
+	public final List<String> keywords;
+	public final String summary;
+	public final String content;
 
 	@NotEmpty
-	public String urlTitle;
+	public final String urlTitle;
 
-	public int category;
+	public final int category;
 
-	public int draftId;
+	public final int draftId;
 
 	/** 发表成功后是否删除草稿 */
-	public boolean destroy;
+	public final boolean destroy;
 }

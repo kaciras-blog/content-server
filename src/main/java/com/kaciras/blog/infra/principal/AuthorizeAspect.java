@@ -9,8 +9,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 
 /**
  * 对注解 RequirePrincipal 的方法或类中的方法在调用前进行鉴权。
- * 权限比较简单的时候，直接用注解来过滤更方便，但权限比较复杂时还是
- * 需要些更详细的手动鉴权。
+ * 权限比较简单的时候，直接用注解来过滤更方便，但权限比较复杂时还是需要些更详细的手动鉴权。
  */
 @Slf4j
 @Aspect

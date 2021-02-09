@@ -30,12 +30,12 @@ class SessionUserController {
 	}
 
 	@PatchMapping
-	public ResponseEntity<Void> patch(@RequestBody @Valid PatchDTO patch) {
+	public ResponseEntity<Void> patch(@RequestBody @Valid UpdateDTO data) {
 		SecurityContext.requireLogin();
 		var user = repository.get(SecurityContext.getUserId());
 
-		user.setName(patch.name);
-		user.setAvatar(patch.avatar);
+		user.setName(data.name);
+		user.setAvatar(data.avatar);
 		repository.update(user);
 
 		return ResponseEntity.noContent().build();

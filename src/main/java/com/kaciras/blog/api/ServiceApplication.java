@@ -34,7 +34,7 @@ import java.time.Clock;
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
 @Import({
-		KxGlobalCorsAutoConfiguration.class,
+		GlobalCorsAutoConfiguration.class,
 		KxWebUtilsAutoConfiguration.class,
 		KxSpringSessionAutoConfiguration.class,
 		BlogJsonAutoConfiguration.class,

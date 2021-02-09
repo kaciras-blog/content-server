@@ -124,9 +124,9 @@ class DiscussionController {
 	@RequirePermission
 	@PatchMapping
 	@Transactional
-	public ResponseEntity<Void> patch(@RequestBody PatchDTO input) {
-		for (var id : input.ids) {
-			repository.updateState(id, input.state);
+	public ResponseEntity<Void> patch(@RequestBody UpdateDTO data) {
+		for (var id : data.ids) {
+			repository.updateState(id, data.state);
 		}
 		return ResponseEntity.noContent().build();
 	}

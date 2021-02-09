@@ -9,12 +9,12 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-final class KxGlobalCorsAutoConfigurationTest {
+final class GlobalCorsAutoConfigurationTest {
 
 	private final CorsProperties config = new CorsProperties();
 
 	private Filter createFilter() {
-		return new KxGlobalCorsAutoConfiguration(config).corsFilter().getFilter();
+		return new GlobalCorsAutoConfiguration(config).corsFilter().getFilter();
 	}
 
 	@Test

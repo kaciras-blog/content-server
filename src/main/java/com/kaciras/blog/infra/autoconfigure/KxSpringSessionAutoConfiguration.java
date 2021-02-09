@@ -1,11 +1,12 @@
 package com.kaciras.blog.infra.autoconfigure;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.session.Session;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
@@ -21,7 +22,8 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
  * @see SessionAutoConfiguration
  */
 @EnableConfigurationProperties(SessionCookieProperties.class)
-@ConditionalOnClass(Session.class)
+@ConditionalOnClass(DefaultCookieSerializer.class)
+@ConditionalOnWebApplication(type = Type.SERVLET)
 @Configuration(proxyBeanMethods = false)
 public class KxSpringSessionAutoConfiguration {
 
@@ -34,7 +36,7 @@ public class KxSpringSessionAutoConfiguration {
 		serializer.setCookieMaxAge(options.getMaxAge());
 		serializer.setUseSecureCookie(options.isSecure());
 
-		// SpringSession默认使用UUID.toString()，没必要Base64，而且保持跟Webflux的一致.
+		// SpringSession 默认使用 UUID.toString()，没必要 Base64，而且保持跟 Webflux 一致.
 		serializer.setUseBase64Encoding(false);
 		return serializer;
 	}

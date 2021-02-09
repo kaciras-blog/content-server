@@ -17,7 +17,7 @@ public final class HttpClientProperties {
 	public final Duration timeout;
 
 	/**
-	 * 代理地址，格式 host:port，为 null 则不使用代理
+	 * 代理地址，格式 host:port，为 null 或空字符串则不使用代理
 	 */
 	public final String proxy;
 
