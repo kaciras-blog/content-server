@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.kaciras.blog.infra.TestHelper.getSubClassesInPackage;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,10 +18,12 @@ final class BlogMybatisAutoConfigurationTest {
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
 			.withUserConfiguration(BlogMybatisAutoConfiguration.class);
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Test
 	void defaults() {
-		var shouldRegistered = getSubClassesInPackage(TypeHandler.class, "com.kaciras.blog.infrastructure.codec");
+		var pkg = "com.kaciras.blog.infrastructure.codec";
+		var shouldRegistered = (List)getSubClassesInPackage(TypeHandler.class, pkg)
+				.collect(Collectors.toList());
 
 		contextRunner.run(context -> {
 			var customizer = context.getBean(ConfigurationCustomizer.class);

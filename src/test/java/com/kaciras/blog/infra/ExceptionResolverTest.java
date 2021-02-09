@@ -1,54 +1,102 @@
 package com.kaciras.blog.infra;
 
 import com.kaciras.blog.infra.exception.WebBusinessException;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import java.util.stream.Stream;
 
 import static com.kaciras.blog.infra.TestHelper.getSubClassesInPackage;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ContextConfiguration(classes = ExceptionResolverTest.TestConfiguration.class)
+@WebMvcTest
 final class ExceptionResolverTest {
 
-	@SuppressWarnings("unchecked")
-	private static final List<Class<? extends WebBusinessException>> EXCEPTIONS =
-			getSubClassesInPackage(WebBusinessException.class, "com.kaciras.blog.infra.exception");
+	@Configuration(proxyBeanMethods = false)
+	static class TestConfiguration {
 
-	@SuppressWarnings({"ConstantConditions", "rawtypes"})
-	@Test
-	void handleNotDebug() throws Exception {
-		var resolver = new ExceptionResolver(false);
+		@Bean
+		TestController controller(){
+			return new TestController();
+		}
 
-		for (var clazz : EXCEPTIONS) {
-			var exception = clazz.getConstructor().newInstance();
-			var response = resolver.handle(exception);
-			var body = (Map) response.getBody();
-
-			assertThat(response.getStatusCode().value()).isEqualTo(exception.statusCode());
-			assertThat(body.get("message")).isEqualTo(exception.getMessage());
+		@Bean
+		ExceptionResolver resolver(){
+			return new ExceptionResolver();
 		}
 	}
 
-	@Test
-	void throwUnhandlableException() {
-		var resolver = new ExceptionResolver(false);
-		var e = new IOException();
-		assertThatThrownBy(() -> resolver.handle(e)).isEqualTo(e);
+	@RestController
+	static final class TestController {
+
+		private WebBusinessException webException;
+
+		@GetMapping("/web")
+		void throwWebException() {
+			throw webException;
+		}
+
+		@GetMapping("/validate")
+		void validateException(@Valid TestParams params) {}
+	}
+
+	@RequiredArgsConstructor
+	private static class TestParams {
+
+		@Max(1)
+		public final int value;
+	}
+
+	@Autowired
+	private TestController controller;
+
+	@Autowired
+	private MockMvc mockMvc;
+
+	@SuppressWarnings({"unchecked"})
+	private static Stream<Arguments> webExceptions() {
+		var pkg = "com.kaciras.blog.infra.exception";
+		return getSubClassesInPackage(WebBusinessException.class, pkg).map(Arguments::of);
+	}
+
+	@MethodSource("webExceptions")
+	@ParameterizedTest
+	void handleNotDebug(Class<? extends WebBusinessException> clazz) throws Exception {
+		var e = clazz.getConstructor().newInstance();
+		controller.webException = e;
+
+		mockMvc.perform(get("/web"))
+				.andExpect(status().is(e.statusCode()))
+				.andExpect(jsonPath("$.message").value(e.getMessage()));
 	}
 
 	@Test
-	void respondErrorMessage() throws Exception {
-		var resolver = new ExceptionResolver(false);
+	void jsr303Exception() throws Exception {
+		mockMvc.perform(get("/validate").param("value", "2"))
+				.andExpect(status().is(400))
+				.andExpect(jsonPath("$.message").value(ExceptionResolver.DEFAULT_MESSAGE));
+	}
 
-		var e = new BindException(resolver, "debug");
-		var response = (ResponseEntity) resolver.handle(e);
-		var message = ((Map<String, String>) response.getBody()).get("message");
-
-		assertThat(message).isEqualTo(ExceptionResolver.DEFAULT_MESSAGE);
+	@Test
+	void typeMismatch() throws Exception {
+		mockMvc.perform(get("/validate").param("value", "str"))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value(ExceptionResolver.DEFAULT_MESSAGE));
 	}
 }

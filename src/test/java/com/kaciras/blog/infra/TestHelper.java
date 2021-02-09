@@ -3,8 +3,7 @@ package com.kaciras.blog.infra;
 import com.google.common.reflect.ClassPath;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class TestHelper {
 
@@ -16,7 +15,7 @@ public final class TestHelper {
 	 * @return 类列表，没有泛型因为调用方可能要转换
 	 */
 	@SuppressWarnings({"UnstableApiUsage", "rawtypes"})
-	public static <T> List getSubClassesInPackage(Class<T> clazz, String pkg) {
+	public static <T> Stream getSubClassesInPackage(Class<T> clazz, String pkg) {
 		try {
 			return ClassPath
 					.from(TestHelper.class.getClassLoader())
@@ -24,8 +23,7 @@ public final class TestHelper {
 					.stream()
 					.map(ClassPath.ClassInfo::load)
 					.filter(clazz::isAssignableFrom)
-					.filter(c -> !c.equals(clazz))
-					.collect(Collectors.toList());
+					.filter(c -> !c.equals(clazz));
 		} catch (IOException e) {
 			throw new Error("getSubClassesInPackage方法有BUG", e);
 		}

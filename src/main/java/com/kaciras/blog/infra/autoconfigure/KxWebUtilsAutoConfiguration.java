@@ -7,6 +7,8 @@ import org.apache.coyote.AbstractProtocol;
 import org.apache.coyote.http2.Http2Protocol;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -15,17 +17,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @EnableConfigurationProperties({
-		DevelopmentProperties.class,
 		ServerProperties.class,
 		AdditionalConnectorProperties.class,
 })
+@ConditionalOnWebApplication(type = Type.SERVLET)
 @RequiredArgsConstructor
 @Configuration(proxyBeanMethods = false)
 public class KxWebUtilsAutoConfiguration {
 
-	private final DevelopmentProperties developmentProperties;
 	private final ServerProperties serverProperties;
 	private final AdditionalConnectorProperties additionalConnectorProperties;
+
+	@Bean
+	public ExceptionResolver exceptionResolver() {
+		return new ExceptionResolver();
+	}
 
 	/**
 	 * 使Http服务器支持双端口连接，例如同时监听80和443，额外的端口由选项server.http-port指定。
@@ -66,10 +72,5 @@ public class KxWebUtilsAutoConfiguration {
 				factory.addConnectorCustomizers(connector -> connector.addUpgradeProtocol(new Http2Protocol()));
 			}
 		};
-	}
-
-	@Bean
-	public ExceptionResolver exceptionResolver() {
-		return new ExceptionResolver(developmentProperties.isDebugErrorMessage());
 	}
 }
