@@ -1,6 +1,5 @@
 package com.kaciras.blog.infra;
 
-import lombok.experimental.UtilityClass;
 import org.springframework.lang.NonNull;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,8 +7,9 @@ import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-@UtilityClass
 public final class RequestUtils {
+
+	private RequestUtils() {}
 
 	/**
 	 * 判断一个请求对象是否是不改变状态的安全请求。安全请求的定义见：

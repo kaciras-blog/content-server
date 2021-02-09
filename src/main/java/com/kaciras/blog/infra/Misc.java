@@ -1,6 +1,5 @@
 package com.kaciras.blog.infra;
 
-import lombok.experimental.UtilityClass;
 import sun.misc.Unsafe;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -11,13 +10,13 @@ import java.security.GeneralSecurityException;
 /**
  * 乱七八糟的只与 JAVA 自身相关的工具方法。
  *
- * <h2>关于 Lombok 的使用</h2>
- * Lombok 的 @UtilityClass 这里只用于生成私有构造方法，其它特性不使用。
+ * <h2>不使用 Lombok 的 @UtilityClass</h2>
  * 因为自动添加的 static 和 final 会混淆 Java 的语法降低可读性，
- * 而工具类的构造方法不会被使用，所以用 Lombok 来省略它是可以的。
+ * 同时自动生成的构造方法内部抛异常代码是多余的，我肯定不会调用，还干扰覆盖率统计。
  */
-@UtilityClass
 public final class Misc {
+
+	private Misc() {}
 
 	/**
 	 * 创建一个 SSLContext 对象，其接受所有证书不做任何检查。
