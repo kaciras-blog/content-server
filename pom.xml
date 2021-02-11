@@ -186,15 +186,21 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--
+				`add-opens` 选项用于关闭烦人的警告，没有也能正常运行。
+				https://stackoverflow.com/a/46671473
+			-->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<agents>${ltw.agent}</agents>
 					<jvmArguments>
+						-XX:+HeapDumpOnOutOfMemoryError
+						-Dspring.profiles.active=dev
 						-Djava.awt.headless=true
 						-noverify
-						-XX:+HeapDumpOnOutOfMemoryError
+						--add-opens java.base/java.lang=ALL-UNNAMED
 					</jvmArguments>
 				</configuration>
 			</plugin>

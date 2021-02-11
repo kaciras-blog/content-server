@@ -1,7 +1,6 @@
 package com.kaciras.blog.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.kaciras.blog.infra.Misc;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -24,20 +23,23 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.time.Clock;
 
 /**
- * 【注意】在配置文件里排除了一些配置，添加新功能时记得看下有没有需要的依赖被排除了。
+ * 应用的启动入口，也包括一些基本组件的创建代码。
+ *
+ * <h2>可能出现的问题</h2>
+ * 在配置文件里排除了一些配置，添加新功能时记得看下有没有需要的依赖被排除了。
+ *
+ * <h2>关于 proxyBeanMethods</h2>
+ * proxyBeanMethods 的作用是代理配置类中标记了@Bean的方法，使其在内部调用时也能
+ * 返回同一个单例（如果是单例bean），而不是在执行真正的方法创建一个。
+ *
+ * 由于我以前试的时候出了点问题，所以从来不在内部调用 @Bean 方法，刚好避开这种用法。
+ * 所以就可以把 proxyBeanMethods 设为 false 省掉代理的消耗。
  */
 @EnableScheduling
 @EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
-/*
- * proxyBeanMethods 的作用是代理配置类中标记了@Bean的方法，使其在内部调用时也能
- * 返回同一个单例（如果是单例bean），而不是在执行真正的方法创建一个。
- *
- * 由于我以前试的时候出了点问题，所以从来不在内部调用@Bean方法，依赖都通过参数获取，刚好避开这种用法。
- * 所以就可以把 proxyBeanMethods 设为 false 省掉代理的消耗。
- */
 @SpringBootApplication(proxyBeanMethods = false)
 public class ServiceApplication {
 
@@ -102,7 +104,6 @@ public class ServiceApplication {
 	}
 
 	public static void main(String... args) {
-		Misc.disableIllegalAccessWarning();
 		new SpringApplicationBuilder(ServiceApplication.class).listeners(new ApplicationPidFileWriter()).run(args);
 	}
 }

@@ -1,7 +1,5 @@
 package com.kaciras.blog.infra;
 
-import sun.misc.Unsafe;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -41,29 +39,5 @@ public final class Misc {
 		SSLContext.setDefault(sslc);
 		HttpsURLConnection.setDefaultSSLSocketFactory(sslc.getSocketFactory());
 		HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
-	}
-
-	/**
-	 * 从Java9开始的模块系统禁止了一些不合法的访问，而很多第三方库仍然依赖这些操作，不合法的
-	 * 访问在程序控制台中将输出几段警告信息，看着就烦，这里给禁止掉。
-	 * <p>
-	 * 具体做法是把 IllegalAccessLogger.logger 提前设置成 null，因为它是 OneShot 机制，只使用
-	 * 一次之后就被设置为 null 避免重复打印。
-	 * <p>
-	 * 该修改过程本身就属于非法访问，为了不触发警告，必须用 Unsafe 里的方法而不能用反射。
-	 */
-	public static void disableIllegalAccessWarning() {
-		try {
-			var theUnsafe = Class.forName("sun.misc.Unsafe").getDeclaredField("theUnsafe");
-			theUnsafe.setAccessible(true);
-			var u = (Unsafe) theUnsafe.get(null);
-
-			var cls = Class.forName("jdk.internal.module.IllegalAccessLogger");
-			var logger = cls.getDeclaredField("logger");
-			u.putObjectVolatile(cls, u.staticFieldOffset(logger), null);
-		} catch (ClassNotFoundException ignore) {
-		} catch (Exception e) {
-			throw new Error("An error occurred when disable illegal access warning", e);
-		}
 	}
 }
