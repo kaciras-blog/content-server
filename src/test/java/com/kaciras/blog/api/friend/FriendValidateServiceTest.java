@@ -2,16 +2,12 @@ package com.kaciras.blog.api.friend;
 
 import com.kaciras.blog.api.notice.ActivityType;
 import com.kaciras.blog.api.notice.NoticeService;
-import com.kaciras.blog.infra.autoconfigure.BlogJsonAutoConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,11 +25,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.noInteractions;
 
-@Import({
-		BlogJsonAutoConfiguration.class,
-		RedisAutoConfiguration.class,
-		JacksonAutoConfiguration.class,
-})
 @ActiveProfiles("test")
 @SpringBootTest(properties = "app.origin=https://blog.example.com")
 final class FriendValidateServiceTest {

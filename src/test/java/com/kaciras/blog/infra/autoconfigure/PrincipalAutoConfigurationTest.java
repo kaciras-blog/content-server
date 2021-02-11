@@ -8,10 +8,10 @@ import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-final class KxPrincipalAutoConfigurationTest {
+final class PrincipalAutoConfigurationTest {
 
 	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
-			.withUserConfiguration(KxPrincipalAutoConfiguration.class);
+			.withUserConfiguration(PrincipalAutoConfiguration.class);
 
 	// 没啥好测的，就启动一下算了
 	@Test

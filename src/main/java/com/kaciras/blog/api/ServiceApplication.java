@@ -2,7 +2,6 @@ package com.kaciras.blog.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.kaciras.blog.infra.Misc;
-import com.kaciras.blog.infra.autoconfigure.*;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -11,7 +10,6 @@ import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.boot.task.TaskSchedulerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -33,16 +31,6 @@ import java.time.Clock;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableLoadTimeWeaving
 @EnableSpringConfigured
-@Import({
-		GlobalCorsAutoConfiguration.class,
-		KxWebUtilsAutoConfiguration.class,
-		KxSpringSessionAutoConfiguration.class,
-		BlogJsonAutoConfiguration.class,
-		BlogMybatisAutoConfiguration.class,
-		KxPrincipalAutoConfiguration.class,
-		HttpClientAutoConfiguration.class,
-		RedisUtilsAutoConfiguration.class,
-})
 /*
  * proxyBeanMethods 的作用是代理配置类中标记了@Bean的方法，使其在内部调用时也能
  * 返回同一个单例（如果是单例bean），而不是在执行真正的方法创建一个。

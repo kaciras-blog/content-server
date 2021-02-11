@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties({AuthorizationProperties.class, SessionCookieProperties.class})
 @RequiredArgsConstructor
-public class KxPrincipalAutoConfiguration {
+public class PrincipalAutoConfiguration {
 
 	private final AuthorizationProperties authProps;
 	private final SessionCookieProperties sessionProps;
