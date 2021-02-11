@@ -1,2 +1,3 @@
+# 一些无须统计的代码，被排除的原因见它们里面的的注释。
 ignore:
   - "src/main/java/com/kaciras/blog/infra/X509TrustAllManager.java"

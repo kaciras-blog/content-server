@@ -187,6 +187,8 @@
 				</executions>
 			</plugin>
 			<!--
+				`noverify` 选项能加快一点启动速度，但会显示一条警告。
+
 				`add-opens` 选项用于关闭烦人的警告，没有也能正常运行。
 				https://stackoverflow.com/a/46671473
 			-->
