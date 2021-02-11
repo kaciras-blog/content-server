@@ -1,5 +1,9 @@
+<!--
+	-nowarn 选项禁止显示 javax.* 未织入的警告，来源见：
+	https://stackoverflow.com/a/60901596
+-->
 <aspectj>
-	<weaver options="">
+	<weaver options="-nowarn">
 		<include within="com.kaciras.blog.api..*"/>
 	</weaver>
 </aspectj>
