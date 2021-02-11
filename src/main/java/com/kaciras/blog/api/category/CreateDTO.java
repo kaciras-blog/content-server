@@ -1,12 +1,12 @@
 package com.kaciras.blog.api.category;
 
 import com.kaciras.blog.infra.codec.ImageReference;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 /**
  * 包含一个分类自身相关的属性，不包括id，parent 等用于关联的字段，或是其他一些统计数据。
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
 final class CreateDTO {
 
 	public final String name;

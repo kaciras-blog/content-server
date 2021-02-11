@@ -1,8 +1,8 @@
 package com.kaciras.blog.api.category;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 final class MoveDTO {
 
 	public final int id;

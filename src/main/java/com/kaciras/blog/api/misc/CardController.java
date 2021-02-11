@@ -28,7 +28,7 @@ class CardController {
 	private final ObjectMapper objectMapper;
 
 	@GetMapping
-	public List<Card> getPages() throws IOException {
+	public List<Card> getAll() throws IOException {
 		var json = redisTemplate.opsForValue().get(RedisKeys.CardList.value());
 		if (json == null) {
 			return Collections.emptyList();

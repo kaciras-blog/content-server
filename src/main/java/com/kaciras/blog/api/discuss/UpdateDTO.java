@@ -1,10 +1,10 @@
 package com.kaciras.blog.api.discuss;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 final class UpdateDTO {
 
 	public final List<Integer> ids;

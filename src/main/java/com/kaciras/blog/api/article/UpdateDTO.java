@@ -1,11 +1,11 @@
 package com.kaciras.blog.api.article;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
 /**
  * ArticleController 中 PATCH 方法的参数。
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
 final class UpdateDTO {
 
 	public final Integer category;
