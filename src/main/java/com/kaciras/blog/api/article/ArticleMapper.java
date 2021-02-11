@@ -63,8 +63,8 @@ abstract class ArticleMapper {
 			vo.content = article.getContent();
 		}
 
-		var categoryPath = categoryRepository.get(article.getCategory()).getPathTo(request.getCategory());
-		vo.categories = mapCategoryPath(categoryPath);
+		var path = categoryRepository.get(article.getCategory()).getPathTo(request.getCategory());
+		vo.categories = mapCategoryPath(path);
 
 		vo.discussionCount = discussionRepository.count(new DiscussionQuery().setObjectId(article.getId()).setType(1));
 		return vo;
@@ -82,20 +82,17 @@ abstract class ArticleMapper {
 	 * @param data 发表请求
 	 * @return 文章对象
 	 */
-	public final Article createArticle(PublishDTO data) {
-		var article = new Article();
-		update(article, data);
-		article.setUrlTitle(processUrlTitle(data.urlTitle));
-		return article;
-	}
+	@Mapping(target="urlTitle", source = "data")
+	public abstract Article createArticle(PublishDTO data);
 
 	/**
-	 * 处理一下 URL 标题，使其更适合显示在 URL 里。
+	 * 从发布请求创建文章时处理一下 URL 标题，使其更适合显示在 URL 里。
 	 *
-	 * @param value 原始 URL 标题
-	 * @return 处理后的字符串
+	 * @param data 发布请求
+	 * @return 处理后的 URL 标题
 	 */
-	final String processUrlTitle(String value) {
+	final String processUrlTitle(PublishDTO data) {
+		var value = data.urlTitle;
 		value = urlKeywords.matcher(value).replaceAll("-");
 		return StringUtils.trimTrailingCharacter(value, '-');
 	}
@@ -106,5 +103,7 @@ abstract class ArticleMapper {
 	 * @param article 文章
 	 * @param data 更新请求
 	 */
+	@Mapping(target="urlTitle", ignore = true)
+	@Mapping(target="category", ignore = true)
 	public abstract void update(@MappingTarget Article article, PublishDTO data);
 }
