@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * 测下Jackson对构造方法、公共字段赋值、setter三种注入方式的性能差别。
+ * 测下 Jackson 对构造方法、公共字段赋值、Setter 三种注入方式的性能差别。
  * <p>
  * 结果构造方法竟然比字段还快些……
  * <p>
@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Fork(1)
 @Measurement(iterations = 5, time = 10)
 @State(Scope.Benchmark)
-public class JacksonDeserializePerf {
+public class JacksonBindPerf {
 
 	@SuppressWarnings("unused")
 	public static final class PublicFields {
