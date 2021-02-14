@@ -5,20 +5,6 @@
 /*!40101 SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES = @@SQL_NOTES, SQL_NOTES = 0 */;
 
-CREATE TABLE IF NOT EXISTS `access_log`
-(
-    `ip`         binary(16)           NOT NULL,
-    `method`     tinytext         DEFAULT NULL,
-    `path`       text                 NOT NULL,
-    `params`     text             DEFAULT NULL,
-    `user_agent` tinytext         DEFAULT NULL,
-    `length`     int(10) unsigned DEFAULT NULL,
-    `status`     smallint(5) unsigned NOT NULL,
-    `time`       datetime(6)          NOT NULL,
-    `delay`      smallint(5) unsigned NOT NULL
-) ENGINE = Aria
-  DEFAULT CHARSET = utf8mb4 PAGE_CHECKSUM=1;
-
 CREATE TABLE IF NOT EXISTS `account`
 (
     `id`       int(10) unsigned NOT NULL,
