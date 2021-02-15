@@ -63,6 +63,8 @@ public final class SqlProvider {
 	/**
 	 * 向 SQL 语句中添加排序和分页，查询数量不使用该方法。
 	 *
+	 * TODO: MySQL 有个 ORDER BY + LIMIT 使用堆排序导致不稳定的问题，Mariadb 不知怎样，试了一下似乎没有。
+	 *
 	 * @see DiscussionRepository#findAll
 	 */
 	private void applyPageable(SQL sql, Pageable pageable) {

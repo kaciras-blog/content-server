@@ -20,17 +20,15 @@ import java.nio.file.Files;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 /**
- * 控制器返回的数据太复杂懒得一个个断言，所以就需要一个快照测试工具，
- * 我搜了一圈也没看到好用的快照测试库，只能自己写一个。
+ * 一些控制器返回的数据太复杂懒得一个个断言，所以就写了一个快照测试工具。
  * <p>
  * 快照保存在 src/test/resources/snapshots，属于测试代码的一部分，应当提交到版本控制系统。
  * <p>
- * 本类不支持并发，且对断言方法的调用的次数和顺序必须是固定的。
+ * 本类暂不支持并发（JUnit5 的并发测试仍处于试验阶段），且对断言方法的调用的次数和顺序必须是固定的。
  *
  * <h3>使用要求</h3>
  * 因为 JUnit 自己没有提供从外部获取当前测试名的方法，所以用了一个扩展来追踪当前测试名。
- * 请在测试类上加入：
- * {@code @ExtendWith(Snapshots.TestContextHolder.class)}
+ * 请在测试类上加入：{@code @ExtendWith(Snapshots.TestContextHolder.class)}
  */
 @Component
 public final class SnapshotAssertion {
@@ -42,7 +40,7 @@ public final class SnapshotAssertion {
 
 	private final ObjectMapper objectMapper;
 
-	// 快照和传入对象的 JSON 字符串，使用前先调用 createOrRead
+	// 快照和传入对象的 JSON 字符串，使用前先调用 createOrRead()
 	private String expect;
 	private String actual;
 
@@ -66,9 +64,11 @@ public final class SnapshotAssertion {
 	}
 
 	/**
-	 * 断言 MockHttpServletResponse 的响应体符合快照。
-	 * <p>
-	 * {@code mockMvc.perform(request).andExpect(snapshots.bodyToMatch())}
+	 * 断言 MockHttpServletResponse 的响应体符合快照，用法：
+	 * {@code mockMvc.perform(request).andExpect(snapshots.matchBody())}
+	 *
+	 * <h3>编码问题</h3>
+	 * MockHttpServletResponse 默认是 ISO-8859-1，Jackson 默认是 UTF8，所以用 getContentAsByteArray()。
 	 */
 	public ResultMatcher matchBody() {
 		return result -> assertMatch(objectMapper.readTree(result.getResponse().getContentAsByteArray()));
@@ -132,7 +132,7 @@ public final class SnapshotAssertion {
 	}
 
 	/**
-	 * 用来获取当前测试名字的 JUnit 扩展，使用了全局变量不支持并发测试。
+	 * 用来获取当前测试名字的 JUnit5 扩展，使用了全局变量不支持并发测试。
 	 * <p>
 	 * 要支持并发测试的话稍加改动应该是可行的，不过调用肯定会复杂些。
 	 */
@@ -151,7 +151,7 @@ public final class SnapshotAssertion {
 
 	private final class MockitoArgMatcher<T> implements ArgumentMatcher<T> {
 
-		// Mockito 在一次断言中可能多次调用 Matcher，但快照是有副作用的，所以要跳过重复的调用。
+		// Mockito 在一次断言中可能多次调用 Matcher，但快照断言是有副作用的，所以要跳过重复的调用。
 		private Boolean result;
 
 		@Override
