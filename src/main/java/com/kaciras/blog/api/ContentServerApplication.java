@@ -5,7 +5,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.boot.task.TaskSchedulerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
@@ -104,6 +103,6 @@ public class ContentServerApplication {
 	}
 
 	public static void main(String... args) {
-		new SpringApplicationBuilder(ServiceApplication.class).listeners(new ApplicationPidFileWriter()).run(args);
+		new SpringApplicationBuilder(ContentServerApplication.class).run(args);
 	}
 }
