@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @EnableLoadTimeWeaving
 @ActiveProfiles("test")
 @SpringBootTest
-@ExtendWith(SnapshotAssertion.TestContextHolder.class)
+@ExtendWith(SnapshotAssertion.ContextHolder.class)
 public abstract class AbstractControllerTest {
 
 	public static final WebPrincipal ADMIN = new WebPrincipal(WebPrincipal.ADMIN_ID);

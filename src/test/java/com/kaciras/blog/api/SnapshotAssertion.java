@@ -13,9 +13,11 @@ import org.mockito.ArgumentMatchers;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.ResultMatcher;
 
-import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -23,12 +25,14 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  * 一些控制器返回的数据太复杂懒得一个个断言，所以就写了一个快照测试工具。
  * <p>
  * 快照保存在 src/test/resources/snapshots，属于测试代码的一部分，应当提交到版本控制系统。
- * <p>
- * 本类暂不支持并发（JUnit5 的并发测试仍处于试验阶段），且对断言方法的调用的次数和顺序必须是固定的。
+ * 如果启动参数中设置了 {@code -DupdateSnapshot} 则强制更新快照。
  *
- * <h3>使用要求</h3>
+ * <h2>暂不支持并发测试</h2>
+ * JUnit5 的并发测试仍处于试验阶段，且对断言方法的调用的次数和顺序必须是固定的。
+ *
+ * <h2>使用要求</h2>
  * 因为 JUnit 自己没有提供从外部获取当前测试名的方法，所以用了一个扩展来追踪当前测试名。
- * 请在测试类上加入：{@code @ExtendWith(Snapshots.TestContextHolder.class)}
+ * 请在测试类上加入：{@code @ExtendWith(SnapshotAssertion.ContextHolder.class)}
  */
 @Component
 public final class SnapshotAssertion {
@@ -39,6 +43,7 @@ public final class SnapshotAssertion {
 	private static int calls;
 
 	private final ObjectMapper objectMapper;
+	private final boolean forceUpdate;
 
 	// 快照和传入对象的 JSON 字符串，使用前先调用 createOrRead()
 	private String expect;
@@ -61,6 +66,8 @@ public final class SnapshotAssertion {
 				.setDefaultPrettyPrinter(printer)
 				.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
 				.enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY);
+
+		this.forceUpdate = System.getProperty("updateSnapshot") != null;
 	}
 
 	/**
@@ -82,7 +89,7 @@ public final class SnapshotAssertion {
 	}
 
 	/**
-	 * 使用 AssertJ 来断言对象符合保存的快照。
+	 * 使用 AssertJ 来断言对象与保存的快照一致。
 	 * <p>
 	 * 这里没有自己实现 Diff 是因为 IDE 都支持对比差异，至于控制台的话……反正我从不用。
 	 */
@@ -93,24 +100,32 @@ public final class SnapshotAssertion {
 
 	/**
 	 * 读取快照，如果快照不存在则创建，使用 JSON 序列化将对象保存在快照文件中。
-	 * 如果启动参数中设置了 {@code -DupdateSnapshot} 则强制更新快照。
+	 * 序列化后的对象和快照分别赋值给 {@code actual} 和 {@code expect} 字段。
 	 *
-	 * @param object 对象
+	 * @param object 需要保存到快照的对象
 	 */
 	@SneakyThrows
 	private void createOrRead(Object object) {
 		actual = objectMapper.writeValueAsString(object);
-		var file = getSnapshotFile();
+		var file = getSnapshotPath();
 
-		if (file.exists() && System.getProperty("updateSnapshot") == null) {
-			expect = Files.readString(file.toPath());
-
-			// 重新格式化，避免无效内容的影响。
-			expect = objectMapper.writeValueAsString(objectMapper.readTree(expect));
-		} else {
+		if (!Files.exists(file) || forceUpdate) {
 			expect = actual;
-			Files.writeString(file.toPath(), actual);
+			Files.createDirectories(file.getParent());
+			Files.writeString(file, actual);
+		} else {
+			expect = reformat(Files.readString(file));
 		}
+	}
+
+	/**
+	 * 重新格式化 JSON 字符串，避免手动美化快照文件造成的影响。
+	 *
+	 * @param json 原始 JSON
+	 * @return 格式化后的字符串
+	 */
+	private String reformat(String json) throws IOException {
+		return objectMapper.writeValueAsString(objectMapper.readTree(json));
 	}
 
 	/**
@@ -121,14 +136,14 @@ public final class SnapshotAssertion {
 	 *
 	 * @return 当前断言对应的快照文件
 	 */
-	private File getSnapshotFile() {
+	private Path getSnapshotPath() {
 		if (clazz == null) {
-			throw new Error("必须把 TestContextHolder 注册到 JUnit 扩展");
+			throw new Error("必须把 ContextHolder 注册到 JUnit 扩展");
 		}
 		var template = "src/test/resources/snapshots/%s/%s-%d-%d.json";
 		var c = clazz.getSimpleName();
 		var m = method.getName();
-		return new File(String.format(template, c, m, index, calls++));
+		return Paths.get(String.format(template, c, m, index, calls++));
 	}
 
 	/**
@@ -136,7 +151,7 @@ public final class SnapshotAssertion {
 	 * <p>
 	 * 要支持并发测试的话稍加改动应该是可行的，不过调用肯定会复杂些。
 	 */
-	static final class TestContextHolder implements BeforeEachCallback {
+	static final class ContextHolder implements BeforeEachCallback {
 
 		@Override
 		public void beforeEach(ExtensionContext context) {
