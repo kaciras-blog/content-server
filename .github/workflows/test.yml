@@ -29,6 +29,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
       - name: Test
         run: mvn -B test
 
