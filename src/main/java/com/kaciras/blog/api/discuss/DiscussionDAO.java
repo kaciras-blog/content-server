@@ -28,7 +28,7 @@ interface DiscussionDAO {
 
 	@Lang(MybatisInlineScriptDriver.class)
 	@Select("SELECT * FROM discussion WHERE id IN (#{ids})")
-	List<Discussion> selectById(Collection<Integer> ids);
+	List<Discussion> selecListtById(Collection<Integer> ids);
 
 	/**
 	 * 获取符合查询条件的评论总数，分页属性将被忽略。
