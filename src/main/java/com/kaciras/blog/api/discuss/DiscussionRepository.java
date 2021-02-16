@@ -73,14 +73,17 @@ public class DiscussionRepository {
 		return dao.selectById(id);
 	}
 
+	/**
+	 * 根据 ID 集合查询评论列表，比起用单个 ID 循环性能好些。
+	 *
+	 * @param ids ID 的集合
+	 * @return 与 ID 对应的评论列表
+	 */
 	public List<Discussion> get(Collection<Integer> ids) {
-		if (ids.isEmpty()) {
-			return Collections.emptyList();
-		}
-		return dao.selectByIds(ids);
+		return ids.isEmpty() ? Collections.emptyList() : dao.selectById(ids);
 	}
 
-	public List<Discussion> findAll(@NonNull DiscussionQuery query) {
+	public List<Discussion> findAll(DiscussionQuery query) {
 		return dao.selectList(query);
 	}
 

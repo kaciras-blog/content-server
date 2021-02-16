@@ -1,5 +1,6 @@
 package com.kaciras.blog.api.discuss;
 
+import com.kaciras.blog.infra.MybatisInlineScriptDriver;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Collection;
@@ -25,7 +26,9 @@ interface DiscussionDAO {
 	@Select("SELECT * FROM discussion WHERE id=#{id}")
 	Optional<Discussion> selectById(int id);
 
-	List<Discussion> selectByIds(Collection<Integer> ids);
+	@Lang(MybatisInlineScriptDriver.class)
+	@Select("SELECT * FROM discussion WHERE id IN (#{ids})")
+	List<Discussion> selectById(Collection<Integer> ids);
 
 	/**
 	 * 获取符合查询条件的评论总数，分页属性将被忽略。
