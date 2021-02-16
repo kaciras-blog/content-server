@@ -1,9 +1,9 @@
 # Kaciras Blog content server
 
-[![Build Status](https://travis-ci.com/kaciras-blog/content-server.svg?branch=master)](https://travis-ci.com/kaciras-blog/content-server)
+![Test](https://github.com/kaciras-blog/content-server/workflows/Test/badge.svg)
 [![codecov](https://codecov.io/gh/kaciras-blog/content-server/branch/master/graph/badge.svg?token=TRY6P2X75U)](https://codecov.io/gh/kaciras-blog/content-server)
 
-Kaciras 博客的内容服务器，管理用户、文章、评论、分类等数据。
+Kaciras 博客的后端服务，管理文章、评论、分类等数据。
 
 # 启动
 
@@ -25,7 +25,7 @@ mvn test
 
 ```shell
 mvn -Dmaven.test.skip=true package
-java -javaagent:target/spring-instrument-5.3.3.jar -jar target/content-server-$VERSION.jar
+java -javaagent:target/spring-instrument-$SPRING_VERSION.jar -jar target/content-server-$VERSION.jar
 ```
 
 ## Microbenchmark
