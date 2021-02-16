@@ -1,13 +1,12 @@
 package com.kaciras.blog.api.discuss;
 
+import lombok.Cleanup;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,6 +26,8 @@ final class QueryCacheSession {
 	private final DiscussionRepository repository;
 	private final ViewModelMapper mapper;
 
+	private final Set<Integer> additional = new HashSet<>();
+
 	/**
 	 * 执行查询，返回评论的ID列表，用 {@code getObjects} 获取视图对象表。
 	 *
@@ -34,39 +35,17 @@ final class QueryCacheSession {
 	 * @return 评论的ID列表
 	 */
 	public List<Integer> execute(DiscussionQuery query) {
-		var stream = findAll(query);
+		@Cleanup var stream = findAll(query);
 
 		if (query.isIncludeParent()) {
-			stream = stream.peek(this::addParentToMap);
+			stream = stream.peek(this::addParentToAdditional);
 		}
 		if (query.getChildCount() > 0) {
 			var page = PageRequest.of(0, query.getChildCount());
 			stream = stream.peek(v -> attachChildren(v, page));
 		}
 
-		return collectId(stream);
-	}
-
-	/**
-	 * 引用模式，将每个结果的父评论加入到 objects 中。
-	 */
-	private void addParentToMap(DiscussionVO viewObject) {
-		var id = viewObject.parent;
-		if (id == 0 || objects.containsKey(id)) {
-			return;
-		}
-		var parent = repository.get(id).orElseThrow();
-		objects.put(id, mapper.toViewObject(parent));
-	}
-
-	/**
-	 * 楼中楼模式，将每个结果的下级评论加入到 objects 中，并把它们的 ID 保存到 replies 字段。
-	 */
-	private void attachChildren(DiscussionVO vo, Pageable pageable) {
-		var childrenQuery = new DiscussionQuery()
-				.setNestId(vo.id)
-				.setPageable(pageable);
-		vo.replies = collectId(findAll(childrenQuery));
+		return collectId(stream.onClose(this::attachAdditional));
 	}
 
 	/**
@@ -84,7 +63,31 @@ final class QueryCacheSession {
 				.peek(v -> objects.put(v.id, v));
 	}
 
+	/**
+	 * 引用模式，将每个结果的父评论加入到 objects 中。
+	 */
+	private void addParentToAdditional(DiscussionVO vo) {
+		var id = vo.parent;
+		if (id > 0 && !objects.containsKey(id)) {
+			additional.add(id);
+		}
+	}
+
+	/**
+	 * 楼中楼模式，将每个结果的下级评论加入到 objects 中，并把它们的 ID 保存到 replies 字段。
+	 */
+	private void attachChildren(DiscussionVO vo, Pageable pageable) {
+		var childrenQuery = new DiscussionQuery()
+				.setNestId(vo.id)
+				.setPageable(pageable);
+		vo.replies = collectId(findAll(childrenQuery));
+	}
+
 	private List<Integer> collectId(Stream<DiscussionVO> stream) {
-		return stream.map(v -> v.id).collect(Collectors.toList());
+		return stream.map(vo -> vo.id).collect(Collectors.toList());
+	}
+
+	private void attachAdditional() {
+		repository.get(additional).forEach(v -> objects.put(v.getId(), mapper.toViewObject(v)));
 	}
 }

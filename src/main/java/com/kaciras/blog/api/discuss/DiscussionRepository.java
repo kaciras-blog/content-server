@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,6 +71,13 @@ public class DiscussionRepository {
 
 	public Optional<Discussion> get(int id) {
 		return dao.selectById(id);
+	}
+
+	public List<Discussion> get(Collection<Integer> ids) {
+		if (ids.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return dao.selectByIds(ids);
 	}
 
 	public List<Discussion> findAll(@NonNull DiscussionQuery query) {

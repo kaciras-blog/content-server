@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -133,7 +134,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		);
 		when(repository.count(any())).thenReturn(4);
 		when(repository.findAll(any())).thenReturn(first);
-		when(repository.get(eq(4))).thenReturn(Optional.of(newItem(4, 0)));
+		when(repository.get(anyCollection())).thenReturn(List.of(newItem(4, 0)));
 
 		var request = get("/discussions")
 				.param("type", "0")
@@ -152,7 +153,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		verify(repository).findAll(refEq(firstQuery));
 		verify(repository).count(refEq(firstQuery));
 
-		verify(repository).get(eq(4));
+		verify(repository).get(eq(Set.of(4)));
 		verifyNoMoreInteractions(repository);
 	}
 

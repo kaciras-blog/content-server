@@ -3,13 +3,12 @@ package com.kaciras.blog.api.discuss;
 import com.kaciras.blog.AbstractSpringPerf;
 import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.api.user.UserVO;
-import com.kaciras.blog.infra.autoconfigure.BlogMybatisAutoConfiguration;
+import com.kaciras.blog.infra.autoconfigure.HttpClientAutoConfiguration;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,6 +23,8 @@ import java.util.concurrent.TimeUnit;
  * Benchmark                      Mode  Cnt  Score   Error  Units
  * DiscussionQueryPerf.nestMode   avgt   25  9.200 ± 0.167  ms/op
  * DiscussionQueryPerf.quoteMode  avgt   25  1.653 ± 0.056  ms/op
+ *
+ * DiscussionQueryPerf.quoteMode  avgt   25  1.001 ± 0.101  ms/op
  *
  * CTE + ROW_NUMBER() 方式 65.069 ± 26.782 ms/op 反而更慢。
  * 楼中楼单独一个方法查询能快 1ms 没啥意义。
@@ -87,8 +88,7 @@ public class DiscussionQueryPerf extends AbstractSpringPerf {
 	}
 
 	// 与 Configuration 不同，TestConfiguration 不会被自动扫描到而干扰其它测试
-	@Import(BlogMybatisAutoConfiguration.class)
-	@EnableAutoConfiguration
+	@EnableAutoConfiguration(exclude = HttpClientAutoConfiguration.class)
 	@TestConfiguration(proxyBeanMethods = false)
 	static class SpringConfig {
 
