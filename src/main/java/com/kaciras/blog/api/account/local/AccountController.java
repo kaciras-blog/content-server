@@ -52,7 +52,7 @@ class AccountController {
 	@Transactional
 	protected Account createAccount(RegisterDTO data, InetAddress ip) {
 		try {
-			var id = userManager.createNew(data.name, AuthType.Local, ip);
+			var id = userManager.createNew(data.name, AuthType.LOCAL, ip);
 			var account = Account.create(id, data.name, data.password);
 			repository.add(account);
 			return account;

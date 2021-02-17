@@ -37,8 +37,8 @@ public class FriendRepository {
 
 	FriendRepository(Clock clock, RedisOperationsBuilder redisBuilder) {
 		this.clock = clock;
-		friendMap = redisBuilder.bindHash(RedisKeys.Friends.of("map"), FriendLink.class);
-		hostList = redisBuilder.bindList(RedisKeys.Friends.of("list"), RedisSerializer.string());
+		friendMap = redisBuilder.bindHash(RedisKeys.FRIENDS.of("map"), FriendLink.class);
+		hostList = redisBuilder.bindList(RedisKeys.FRIENDS.of("list"), RedisSerializer.string());
 	}
 
 	/**

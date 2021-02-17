@@ -19,7 +19,7 @@ final class GlobalCorsAutoConfigurationTest {
 
 	@Test
 	void defaults() throws Exception {
-		config.setTemplate(CorsProperties.CorsTemplate.Default);
+		config.setTemplate(CorsProperties.CorsTemplate.DEFAULT);
 
 		var request = new MockHttpServletRequest();
 		request.setMethod("GET");
@@ -33,7 +33,7 @@ final class GlobalCorsAutoConfigurationTest {
 
 	@Test
 	void allowedMethods() throws Exception {
-		config.setTemplate(CorsProperties.CorsTemplate.Default);
+		config.setTemplate(CorsProperties.CorsTemplate.DEFAULT);
 		config.setAllowedMethods(List.of("POST"));
 
 		var request = new MockHttpServletRequest();
@@ -47,7 +47,7 @@ final class GlobalCorsAutoConfigurationTest {
 
 	@Test
 	void exposedHeaders() throws Exception {
-		config.setTemplate(CorsProperties.CorsTemplate.Default);
+		config.setTemplate(CorsProperties.CorsTemplate.DEFAULT);
 		config.setExposedHeaders(List.of("X-Custom"));
 
 		var request = new MockHttpServletRequest();
@@ -63,7 +63,7 @@ final class GlobalCorsAutoConfigurationTest {
 	// https://www.w3.org/TR/cors/#resource-preflight-requests
 	@Test
 	void preFlight() throws Exception {
-		config.setTemplate(CorsProperties.CorsTemplate.AllowAll);
+		config.setTemplate(CorsProperties.CorsTemplate.ALLOW_ALL);
 
 		var request = new MockHttpServletRequest();
 		request.setMethod("OPTIONS");
@@ -81,7 +81,7 @@ final class GlobalCorsAutoConfigurationTest {
 
 	@Test
 	void preFlightWithInvalidOrigin() throws Exception {
-		config.setTemplate(CorsProperties.CorsTemplate.AllowAll);
+		config.setTemplate(CorsProperties.CorsTemplate.ALLOW_ALL);
 		config.setAllowedOrigins(List.of("https://abc.com"));
 
 		var request = new MockHttpServletRequest();
@@ -96,7 +96,7 @@ final class GlobalCorsAutoConfigurationTest {
 
 	@Test
 	void preFlightWithInvalidHeader() throws Exception {
-		config.setTemplate(CorsProperties.CorsTemplate.AllowAll);
+		config.setTemplate(CorsProperties.CorsTemplate.ALLOW_ALL);
 		config.setAllowedHeaders(List.of("X-Custom"));
 
 		var request = new MockHttpServletRequest();

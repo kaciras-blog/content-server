@@ -2,7 +2,7 @@
 	"floor" : 2,
 	"nestFloor" : 3,
 	"preview" : "test content",
-	"state" : "Visible",
+	"state" : "VISIBLE",
 	"title" : "TestTopic",
 	"url" : "http://example.com"
 }

@@ -36,7 +36,7 @@ public final class GithubOAuth2Client implements OAuth2Client {
 
 	@Override
 	public AuthType authType() {
-		return AuthType.Github;
+		return AuthType.GITHUB;
 	}
 
 	@Override

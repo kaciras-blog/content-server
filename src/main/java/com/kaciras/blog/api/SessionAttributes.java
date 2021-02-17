@@ -3,7 +3,7 @@ package com.kaciras.blog.api;
 import lombok.experimental.UtilityClass;
 
 /**
- * 常量类，包含 HTTP 会话所有属性的名字。
+ * 常量类，包含本应用里定义的 HTTP 会话所有属性的名字。
  *
  * <h2>为何不用枚举</h2>
  * 如果用枚举，那么调用代码会是 {@code session.get(SessionAttributes.CAPTCHA.value())}

@@ -13,7 +13,7 @@ package com.kaciras.blog.infra.codec;
 public enum ImageType {
 
 	/** 内置的图片，文件名不是Hash值 */
-	Internal,
+	INTERNAL,
 
 	JPG, WEBP, PNG, GIF, SVG, BMP,
 }

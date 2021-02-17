@@ -44,7 +44,7 @@ final class ImageReferenceTypeHandlerTest extends AbstractTypeHandlerTest {
 
 	@Test
 	void encodeInvalidName() {
-		var image = new ImageReference(HASH_NAME + INTERNAL_NAME, ImageType.Internal);
+		var image = new ImageReference(HASH_NAME + INTERNAL_NAME, ImageType.INTERNAL);
 
 		assertThatThrownBy(() -> HANDLER.setParameter(preparedStatement, 1, image, JdbcType.BINARY))
 				.isInstanceOf(PersistenceException.class);

@@ -25,7 +25,7 @@ final class ImageReferenceJsonCodec {
 		public void serialize(ImageReference value,
 							  JsonGenerator gen,
 							  SerializerProvider serializers) throws IOException {
-			var directory = value.getType() == ImageType.Internal ? STATIC_IMAGES : IMAGE_SERVER;
+			var directory = value.getType() == ImageType.INTERNAL ? STATIC_IMAGES : IMAGE_SERVER;
 			gen.writeString(directory + value.toString());
 		}
 	}

@@ -37,7 +37,7 @@ public final class GoogleOAuth2Client implements OAuth2Client {
 
 	@Override
 	public AuthType authType() {
-		return AuthType.Google;
+		return AuthType.GOOGLE;
 	}
 
 	@Override

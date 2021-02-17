@@ -35,7 +35,7 @@ class NoticeControllerTest extends AbstractControllerTest {
 	@Test
 	void getAll() throws Exception {
 		var data = objectMapper.valueToTree(new TestActivity(666));
-		var notice = new Notice(ActivityType.Friend, Instant.EPOCH, data);
+		var notice = new Notice(ActivityType.FRIEND, Instant.EPOCH, data);
 		when(service.getAll()).thenReturn(List.of(notice, notice));
 
 		var request = get("/notifications").principal(ADMIN);

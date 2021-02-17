@@ -19,7 +19,7 @@ public final class DiscussionQuery {
 	private Integer nestId;
 
 	@NotNull
-	private DiscussionState state = DiscussionState.Visible;
+	private DiscussionState state = DiscussionState.VISIBLE;
 
 	private Pageable pageable;
 

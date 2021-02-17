@@ -29,7 +29,7 @@ class CardController {
 
 	@GetMapping
 	public List<Card> getAll() throws IOException {
-		var json = redisTemplate.opsForValue().get(RedisKeys.CardList.value());
+		var json = redisTemplate.opsForValue().get(RedisKeys.CARD_LIST.value());
 		if (json == null) {
 			return Collections.emptyList();
 		}
@@ -46,7 +46,7 @@ class CardController {
 	@RequirePermission
 	@PutMapping
 	public ResponseEntity<Void> update(@RequestBody @Valid List<Card> cards) throws Exception {
-		redisTemplate.opsForValue().set(RedisKeys.CardList.value(), objectMapper.writeValueAsBytes(cards));
+		redisTemplate.opsForValue().set(RedisKeys.CARD_LIST.value(), objectMapper.writeValueAsBytes(cards));
 		return ResponseEntity.noContent().build();
 	}
 }

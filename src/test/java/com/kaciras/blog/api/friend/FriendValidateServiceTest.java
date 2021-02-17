@@ -126,10 +126,10 @@ final class FriendValidateServiceTest {
 		verify(notification).notify(captor.capture());
 
 		var activity = captor.getValue();
-		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.Inaccessible);
+		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.LOST);
 		assertThat(activity.getUrl()).isEqualTo(friend.url);
 		assertThat(activity.getName()).isEqualTo(friend.name);
-		assertThat(activity.getActivityType()).isEqualTo(ActivityType.Friend);
+		assertThat(activity.getActivityType()).isEqualTo(ActivityType.FRIEND);
 	}
 
 	@Test
@@ -144,7 +144,7 @@ final class FriendValidateServiceTest {
 		verify(notification).notify(captor.capture());
 
 		var activity = captor.getValue();
-		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.Moved);
+		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.MOVED);
 		assertThat(activity.getUrl()).isEqualTo(friend.url);
 		assertThat(activity.getName()).isEqualTo(friend.name);
 		assertThat(activity.getNewUrl()).isEqualTo(newUrl);
@@ -161,7 +161,7 @@ final class FriendValidateServiceTest {
 		verify(notification).notify(captor.capture());
 
 		var activity = captor.getValue();
-		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.AbandonedMe);
+		assertThat(activity.getType()).isEqualTo(FriendAccident.Type.ABANDONED_ME);
 		assertThat(activity.getUrl()).isEqualTo(friend.url);
 		assertThat(activity.getName()).isEqualTo(friend.name);
 	}

@@ -33,7 +33,7 @@ final class ConfigRepositoryTest {
 	@Test
 	void loadInvalidData() {
 		var data = "123456";
-		redis.getConnection().set(RedisKeys.ConfigStore.of("test").getBytes(), data.getBytes());
+		redis.getConnection().set(RedisKeys.CONFIG_STORE.of("test").getBytes(), data.getBytes());
 
 		assertThatThrownBy(() -> repository.load("test", TestConfig.class))
 				.isInstanceOf(SerializationException.class);

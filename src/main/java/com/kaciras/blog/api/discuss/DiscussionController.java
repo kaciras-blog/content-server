@@ -48,7 +48,7 @@ class DiscussionController {
 		if (query.getNestId() == null && (query.getType() == null || query.getObjectId() == null)) {
 			SecurityContext.require("POWER_QUERY");
 		}
-		if (query.getState() != DiscussionState.Visible) {
+		if (query.getState() != DiscussionState.VISIBLE) {
 			SecurityContext.require("POWER_QUERY");
 		}
 
@@ -92,8 +92,8 @@ class DiscussionController {
 		var discussion = mapper.fromInput(input);
 		discussion.setUserId(SecurityContext.getUserId());
 		discussion.setState(options.moderation
-				? DiscussionState.Moderation
-				: DiscussionState.Visible);
+				? DiscussionState.MODERATION
+				: DiscussionState.VISIBLE);
 		discussion.setAddress(RequestUtils.addressFromRequest(request));
 
 		// 获取主题，同时检查是否存在

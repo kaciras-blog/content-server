@@ -29,9 +29,9 @@ public class GlobalCorsAutoConfiguration {
 	private final CorsProperties properties;
 
 	private void configure(CorsConfiguration config) {
-		if (properties.getTemplate() == CorsTemplate.Default) {
+		if (properties.getTemplate() == CorsTemplate.DEFAULT) {
 			config.applyPermitDefaultValues();
-		} else if (properties.getTemplate() == CorsTemplate.AllowAll) {
+		} else if (properties.getTemplate() == CorsTemplate.ALLOW_ALL) {
 			var all = List.of(CorsConfiguration.ALL);
 			config.setAllowedMethods(all);
 			config.setAllowedHeaders(all);

@@ -6,6 +6,6 @@ public class TestActivity2 implements Activity {
 
 	@Override
 	public ActivityType getActivityType() {
-		return ActivityType.Friend;
+		return ActivityType.FRIEND;
 	}
 }

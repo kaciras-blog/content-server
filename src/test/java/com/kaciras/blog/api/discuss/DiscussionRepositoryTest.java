@@ -45,14 +45,14 @@ class DiscussionRepositoryTest {
 
 	private static Discussion newDiscussion() {
 		var value = new Discussion();
-		value.setState(DiscussionState.Visible);
+		value.setState(DiscussionState.VISIBLE);
 		value.setContent("test content");
 		value.setAddress(InetAddress.getLoopbackAddress());
 		return value;
 	}
 
 	private Discussion addData(int parent) {
-		return addData(parent, DiscussionState.Visible);
+		return addData(parent, DiscussionState.VISIBLE);
 	}
 
 	private Discussion addData(int parent, DiscussionState state) {
@@ -110,7 +110,7 @@ class DiscussionRepositoryTest {
 	}
 
 	@Test
-	void brokenTopicKey(){
+	void brokenTopicKey() {
 		var query = new DiscussionQuery().setObjectId(7);
 		assertThatThrownBy(() -> repository.findAll(query)).isInstanceOf(RequestArgumentException.class);
 	}
@@ -126,7 +126,7 @@ class DiscussionRepositoryTest {
 	void findAll(DiscussionQuery query) {
 		var _1 = addData(0);
 		addData(_1.getId());
-		addData(_1.getId(), DiscussionState.Deleted);
+		addData(_1.getId(), DiscussionState.DELETED);
 
 		var list = repository.findAll(query);
 
@@ -153,23 +153,23 @@ class DiscussionRepositoryTest {
 		query.setPageable(PageRequest.of(0, 30, sort));
 		var list = repository.findAll(query);
 
-		assertThat(list.stream().map(Discussion::getId)).containsSequence(2,1,3);
+		assertThat(list.stream().map(Discussion::getId)).containsSequence(2, 1, 3);
 	}
 
 	@Test
 	void updateStateNonExists() {
-		assertThatThrownBy(() -> repository.updateState(777, DiscussionState.Deleted))
+		assertThatThrownBy(() -> repository.updateState(777, DiscussionState.DELETED))
 				.isInstanceOf(RequestArgumentException.class);
 	}
 
 	private static Stream<Arguments> stateChanges() {
 		return Stream.of(
-				Arguments.of(DiscussionState.Visible, DiscussionState.Visible, 1),
-				Arguments.of(DiscussionState.Visible, DiscussionState.Deleted, 0),
-				Arguments.of(DiscussionState.Deleted, DiscussionState.Deleted, 0),
-				Arguments.of(DiscussionState.Deleted, DiscussionState.Visible, 1),
-				Arguments.of(DiscussionState.Moderation, DiscussionState.Visible, 1),
-				Arguments.of(DiscussionState.Moderation, DiscussionState.Deleted, 0)
+				Arguments.of(DiscussionState.VISIBLE, DiscussionState.VISIBLE, 1),
+				Arguments.of(DiscussionState.VISIBLE, DiscussionState.DELETED, 0),
+				Arguments.of(DiscussionState.DELETED, DiscussionState.DELETED, 0),
+				Arguments.of(DiscussionState.DELETED, DiscussionState.VISIBLE, 1),
+				Arguments.of(DiscussionState.MODERATION, DiscussionState.VISIBLE, 1),
+				Arguments.of(DiscussionState.MODERATION, DiscussionState.DELETED, 0)
 		);
 	}
 
@@ -191,13 +191,13 @@ class DiscussionRepositoryTest {
 	@Test
 	void updateStateToVisible() {
 		var _1 = addData(0);
-		var _2 = addData(_1.getId(), DiscussionState.Moderation);
+		var _2 = addData(_1.getId(), DiscussionState.MODERATION);
 
-		repository.updateState(_2.getId(), DiscussionState.Visible);
+		repository.updateState(_2.getId(), DiscussionState.VISIBLE);
 
 		var discussion = repository.get(_2.getId());
 		assertThat(discussion).isPresent();
-		assertThat(discussion.get().getState()).isEqualTo(DiscussionState.Visible);
+		assertThat(discussion.get().getState()).isEqualTo(DiscussionState.VISIBLE);
 
 		var parent = repository.get(_1.getId());
 		assertThat(parent).isPresent();
@@ -223,7 +223,7 @@ class DiscussionRepositoryTest {
 		var value = returnValue.get();
 		assertThat(value.getType()).isEqualTo(3);
 		assertThat(value.getObjectId()).isEqualTo(7);
-		assertThat(value.getState()).isEqualTo(DiscussionState.Visible);
+		assertThat(value.getState()).isEqualTo(DiscussionState.VISIBLE);
 		assertThat(value.getTime()).isNotNull();
 		assertThat(value.getFloor()).isEqualTo(1);
 		assertThat(value.getNestFloor()).isEqualTo(1);

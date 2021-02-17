@@ -44,7 +44,7 @@ final class ImageReferenceJsonCodecTest {
 		ImageReference image = reader.readValue(json);
 
 		assertThat(image.getName()).isEqualTo("测试图片.webp");
-		assertThat(image.getType()).isEqualTo(ImageType.Internal);
+		assertThat(image.getType()).isEqualTo(ImageType.INTERNAL);
 		assertThat(image.toString()).isEqualTo(name);
 	}
 

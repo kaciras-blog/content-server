@@ -30,7 +30,7 @@ public class HttpSessionTable {
 	 * @param sessionId 会话ID
 	 */
 	public void add(int userId, String sessionId) {
-		redisTemplate.boundSetOps(RedisKeys.AccountSessions.of(userId)).add(sessionId);
+		redisTemplate.boundSetOps(RedisKeys.ACCOUNT_SESSIONS.of(userId)).add(sessionId);
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class HttpSessionTable {
 	 * @param userId 用户ID
 	 */
 	public void clearAll(int userId) {
-		var key = RedisKeys.AccountSessions.of(userId);
+		var key = RedisKeys.ACCOUNT_SESSIONS.of(userId);
 		var records = redisTemplate.opsForSet().members(key);
 
 		redisTemplate.unlink(key);
@@ -52,7 +52,7 @@ public class HttpSessionTable {
 	@Scheduled(fixedDelay = 24 * 60 * 60 * 1000)
 	void cleanAccountRecords() {
 		var options = ScanOptions.scanOptions()
-				.match(RedisKeys.AccountSessions.of("*"))
+				.match(RedisKeys.ACCOUNT_SESSIONS.of("*"))
 				.build();
 		var conn = redisTemplate.getRequiredConnectionFactory().getConnection();
 		var accounts = conn.scan(options);

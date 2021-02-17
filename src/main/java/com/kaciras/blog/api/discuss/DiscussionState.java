@@ -5,7 +5,7 @@ package com.kaciras.blog.api.discuss;
  */
 public enum DiscussionState {
 
-	Visible,	// 正常显示
-	Deleted,	// 已删除
-	Moderation, // 等待审核
+	VISIBLE,	// 正常显示
+	DELETED,	// 已删除
+	MODERATION, // 等待审核
 }

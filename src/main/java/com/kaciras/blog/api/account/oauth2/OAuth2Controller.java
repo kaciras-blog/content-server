@@ -154,7 +154,7 @@ class OAuth2Controller {
 	 * @param session OAuth2会话
 	 */
 	private void saveOAuthSession(HttpServletRequest request, OAuthSession session) throws IOException {
-		var key = RedisKeys.OAuthSession.of(request.getSession(true).getId());
+		var key = RedisKeys.OAUTH_SESSION.of(request.getSession(true).getId());
 		var value = objectMapper.writeValueAsBytes(session);
 		redisTemplate.opsForValue().set(key, value, Duration.ofMinutes(10));
 	}
@@ -169,7 +169,7 @@ class OAuth2Controller {
 	 * @throws PermissionException      如果存在安全问题
 	 */
 	private OAuthSession retrieveOAuthSession(HttpServletRequest request) throws IOException {
-		var key = RedisKeys.OAuthSession.of(request.getSession(true).getId());
+		var key = RedisKeys.OAUTH_SESSION.of(request.getSession(true).getId());
 		var record = redisTemplate.opsForValue().get(key);
 		if (record == null) {
 			throw new ResourceDeletedException("认证请求无效或已过期，请重新登录");

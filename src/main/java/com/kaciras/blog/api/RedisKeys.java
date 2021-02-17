@@ -3,28 +3,28 @@ package com.kaciras.blog.api;
 public enum RedisKeys {
 
 	/** 友情链接 */
-	Friends("friends:"),
+	FRIENDS("friends:"),
 
 	/** 推荐卡片列表 */
-	CardList("cards"),
+	CARD_LIST("cards"),
 
 	/** Oauth2登陆会话前缀 */
-	OAuthSession("oa:"),
+	OAUTH_SESSION("oa:"),
 
 	/** 一个账户所有会话的集合前缀 */
-	AccountSessions("ac:"),
+	ACCOUNT_SESSIONS("ac:"),
 
 	/** 通用限速器记录的前缀 */
-	RateLimit("rl:"),
+	RATE_LIMIT("rl:"),
 
 	/** 非安全请求限速器记录的前缀 */
-	EffectRate("er:"),
+	EFFECT_RATE("er:"),
 
 	/** 触发非安全请求封禁的记录前缀 */
-	EffectBlocking("eb:"),
+	EFFECT_BLOCKING("eb:"),
 
 	/** 动态配置信息的前缀 */
-	ConfigStore("cfg:"),
+	CONFIG_STORE("cfg:"),
 
 	; // <-- 分号是必须要有滴
 

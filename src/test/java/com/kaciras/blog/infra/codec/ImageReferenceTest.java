@@ -21,7 +21,7 @@ final class ImageReferenceTest {
 		var name = "picture.pcx";
 		var parse = ImageReference.parse(name);
 
-		assertThat(parse.getType()).isEqualTo(ImageType.Internal);
+		assertThat(parse.getType()).isEqualTo(ImageType.INTERNAL);
 		assertThat(parse.toString()).isEqualTo(name);
 	}
 
@@ -45,7 +45,7 @@ final class ImageReferenceTest {
 
 	@Test
 	void testEquality() {
-		var imageA = new ImageReference("test.webp", ImageType.Internal);
+		var imageA = new ImageReference("test.webp", ImageType.INTERNAL);
 		var imageB = ImageReference.parse("test.webp");
 
 		assertThat(imageA).isEqualTo(imageB);

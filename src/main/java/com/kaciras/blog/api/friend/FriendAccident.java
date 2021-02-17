@@ -18,9 +18,15 @@ import java.net.URI;
 final class FriendAccident implements Activity {
 
 	public enum Type {
-		Moved,
-		AbandonedMe,
-		Inaccessible,
+
+		/** 搬家了 */
+		MOVED,
+
+		/** 失联了 */
+		LOST,
+
+		/** 分手了 */
+		ABANDONED_ME,
 	}
 
 	private final Type type;
@@ -33,6 +39,6 @@ final class FriendAccident implements Activity {
 
 	@Override
 	public ActivityType getActivityType() {
-		return ActivityType.Friend;
+		return ActivityType.FRIEND;
 	}
 }

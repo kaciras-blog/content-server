@@ -1,13 +1,13 @@
 [
 	{
-		"type" : "Friend",
+		"type" : "FRIEND",
 		"time" : 0,
 		"data" : {
 			"intValue" : 666
 		}
 	},
 	{
-		"type" : "Friend",
+		"type" : "FRIEND",
 		"time" : 0,
 		"data" : {
 			"intValue" : 666

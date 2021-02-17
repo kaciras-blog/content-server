@@ -24,7 +24,7 @@ final class DiscussionActivity implements Activity, MailNotice {
 
 	@Override
 	public ActivityType getActivityType() {
-		return ActivityType.Discussion;
+		return ActivityType.DISCUSSION;
 	}
 
 	@Override

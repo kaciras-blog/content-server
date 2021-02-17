@@ -18,7 +18,7 @@
 			},
 			"content" : "评论内容，ID=1",
 			"time" : 0,
-			"state" : "Visible",
+			"state" : "VISIBLE",
 			"replies" : [
 				2,
 				3
@@ -38,7 +38,7 @@
 			},
 			"content" : "评论内容，ID=2",
 			"time" : 0,
-			"state" : "Visible"
+			"state" : "VISIBLE"
 		},
 		"3" : {
 			"id" : 3,
@@ -54,7 +54,7 @@
 			},
 			"content" : "评论内容，ID=3",
 			"time" : 0,
-			"state" : "Visible"
+			"state" : "VISIBLE"
 		}
 	}
 }

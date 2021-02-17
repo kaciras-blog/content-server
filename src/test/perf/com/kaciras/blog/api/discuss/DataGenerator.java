@@ -73,7 +73,7 @@ final class DataGenerator {
 		value.setType(1);
 		value.setTime(Instant.EPOCH);
 		value.setAddress(InetAddress.getLoopbackAddress());
-		value.setState(DiscussionState.Visible);
+		value.setState(DiscussionState.VISIBLE);
 
 		list.add(value);
 		value.setId(list.size());

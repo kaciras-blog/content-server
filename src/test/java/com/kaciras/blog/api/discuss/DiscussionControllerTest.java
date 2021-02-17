@@ -63,7 +63,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	private static Stream<Arguments> invalidQueries() {
 		return Stream.of(
 				Arguments.of(get("/discussions"), 403),
-				Arguments.of(get("/discussions").param("nestId", "0").param("state", "Moderation"), 403),
+				Arguments.of(get("/discussions").param("nestId", "0").param("state", "MODERATION"), 403),
 				Arguments.of(get("/discussions").param("objectId", "1"), 403),
 				Arguments.of(get("/discussions").param("type", "1"), 403),
 
@@ -85,7 +85,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		result.setType(1);
 		result.setObjectId(5);
 		result.setContent("评论内容，ID=" + id);
-		result.setState(DiscussionState.Visible);
+		result.setState(DiscussionState.VISIBLE);
 		result.setTime(Instant.EPOCH);
 		result.setAddress(InetAddress.getLoopbackAddress());
 		return result;
@@ -228,7 +228,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		assertThat(stored.getContent()).isEqualTo("test content");
 		assertThat(stored.getAddress()).isNotNull();
 		assertThat(stored.getUserId()).isEqualTo(0);
-		assertThat(stored.getState()).isEqualTo(DiscussionState.Visible);
+		assertThat(stored.getState()).isEqualTo(DiscussionState.VISIBLE);
 	}
 
 	@Test
@@ -277,12 +277,12 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 
 		var captor = ArgumentCaptor.forClass(Discussion.class);
 		verify(repository).add(captor.capture());
-		assertThat(captor.getValue().getState()).isEqualTo(DiscussionState.Moderation);
+		assertThat(captor.getValue().getState()).isEqualTo(DiscussionState.MODERATION);
 	}
 
 	@Test
 	void updateStateWithoutPermission() throws Exception {
-		var request = patch("/discussions").content("{ \"ids\": [1,2], \"state\": \"Visible\" }");
+		var request = patch("/discussions").content("{ \"ids\": [1,2], \"state\": \"VISIBLE\" }");
 		mockMvc.perform(request).andExpect(status().is(403));
 	}
 
@@ -290,12 +290,12 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	void updateState() throws Exception {
 		var request = patch("/discussions")
 				.principal(ADMIN)
-				.content("{ \"ids\": [1,2], \"state\": \"Visible\" }");
+				.content("{ \"ids\": [1,2], \"state\": \"VISIBLE\" }");
 
 		mockMvc.perform(request).andExpect(status().is(204));
 
-		verify(repository).updateState(eq(1), eq(DiscussionState.Visible));
-		verify(repository).updateState(eq(2), eq(DiscussionState.Visible));
+		verify(repository).updateState(eq(1), eq(DiscussionState.VISIBLE));
+		verify(repository).updateState(eq(2), eq(DiscussionState.VISIBLE));
 		verify(repository, noMoreInteractions()).updateState(anyInt(), any());
 	}
 }

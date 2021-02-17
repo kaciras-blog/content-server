@@ -43,7 +43,7 @@ public class FriendValidateService {
 	// 这导致实际的代码在 mock 测试中运行。
 	@Autowired
 	void setRedis(RedisOperationsBuilder builder) {
-		validateMap = new DefaultRedisMap<>(builder.bindHash(RedisKeys.Friends.of("validate"), ValidateRecord.class));
+		validateMap = new DefaultRedisMap<>(builder.bindHash(RedisKeys.FRIENDS.of("validate"), ValidateRecord.class));
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class FriendValidateService {
 			record.failed++;
 
 			if (record.failed > 3) {
-				report(FriendAccident.Type.Inaccessible, record, null);
+				report(FriendAccident.Type.LOST, record, null);
 				record.failed = 0;
 			}
 		} else {
@@ -124,12 +124,12 @@ public class FriendValidateService {
 
 			// 有重定向直接报告
 			if (page.getNewUrl() != null) {
-				report(FriendAccident.Type.Moved, record, page.getNewUrl());
+				report(FriendAccident.Type.MOVED, record, page.getNewUrl());
 			}
 
 			// 如果友链输入了互链检查地址则判断是否存在本站的链接
 			if (record.friendPage != null && !page.hasMyLink()) {
-				report(FriendAccident.Type.AbandonedMe, record, null);
+				report(FriendAccident.Type.ABANDONED_ME, record, null);
 			}
 		}
 

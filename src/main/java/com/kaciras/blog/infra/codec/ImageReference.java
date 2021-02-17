@@ -32,7 +32,7 @@ public final class ImageReference {
 	 * @return 文件名
 	 */
 	public String toString() {
-		return type == ImageType.Internal ? name : name + '.' + type.name().toLowerCase();
+		return type == ImageType.INTERNAL ? name : name + '.' + type.name().toLowerCase();
 	}
 
 	/**
@@ -49,7 +49,7 @@ public final class ImageReference {
 		if (reference != null) {
 			return reference;
 		}
-		return new ImageReference(name, ImageType.Internal);
+		return new ImageReference(name, ImageType.INTERNAL);
 	}
 
 	/**

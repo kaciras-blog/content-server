@@ -17,7 +17,7 @@ public class ConfigRepository {
 	private final RedisTemplate<String, byte[]> redisTemplate;
 	private final ObjectMapper objectMapper;
 
-	private final String namespace = RedisKeys.ConfigStore.value();
+	private final String namespace = RedisKeys.CONFIG_STORE.value();
 
 	public void save(String name, Object config) {
 		try {

@@ -39,12 +39,12 @@ public final class CorsProperties {
 		 *
 		 * @see CorsConfiguration#applyPermitDefaultValues()
 		 */
-		Default,
+		DEFAULT,
 
 		/**
 		 * 将CORS配置为允许所有（Origin，Allowed-Headers，Method...），这些属性都设为"*"
 		 * 注意 Exposed-Headers 不支持通配而必须手动设置
 		 */
-		AllowAll
+		ALLOW_ALL
 	}
 }

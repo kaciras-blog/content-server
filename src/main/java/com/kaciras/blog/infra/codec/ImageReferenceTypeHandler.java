@@ -39,7 +39,7 @@ public final class ImageReferenceTypeHandler extends BaseTypeHandler<ImageRefere
 		var buffer = ByteBuffer.allocate(HASH_SIZE + 1)
 				.put((byte) image.getType().ordinal());
 
-		if (image.getType() != ImageType.Internal) {
+		if (image.getType() != ImageType.INTERNAL) {
 			var hash = CodecUtils.decodeHex(image.getName());
 			if (hash.length != HASH_SIZE) {
 				throw new IllegalArgumentException("图片名的Hash长度必须为32字节");
@@ -62,7 +62,7 @@ public final class ImageReferenceTypeHandler extends BaseTypeHandler<ImageRefere
 		}
 		try {
 			var type = ImageType.values()[bytes[0]];
-			if (type == ImageType.Internal) {
+			if (type == ImageType.INTERNAL) {
 				var name = new String(bytes, 2, bytes[1], StandardCharsets.UTF_8);
 				return new ImageReference(name, type);
 			} else {

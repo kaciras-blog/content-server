@@ -50,7 +50,7 @@ public class DiscussionRepository {
 				discussion.setNestId(parent.getNestId());
 			}
 
-			if (discussion.getState() == DiscussionState.Visible) {
+			if (discussion.getState() == DiscussionState.VISIBLE) {
 				dao.addNestSize(pid, 1);
 			}
 
@@ -99,8 +99,8 @@ public class DiscussionRepository {
 		dao.updateState(id, state);
 
 		// 从可见变为不可见，或反过来时需要更新父评论的回复数
-		var ov = discussion.getState() == DiscussionState.Visible;
-		var nv = state == DiscussionState.Visible;
+		var ov = discussion.getState() == DiscussionState.VISIBLE;
+		var nv = state == DiscussionState.VISIBLE;
 		if (ov && !nv) {
 			dao.addNestSize(discussion.getParent(), -1);
 		} else if (!ov && nv) {

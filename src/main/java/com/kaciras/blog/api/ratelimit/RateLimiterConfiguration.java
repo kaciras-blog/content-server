@@ -46,7 +46,7 @@ public class RateLimiterConfiguration {
 	@Bean
 	RateLimitChecker genericRateChecker() {
 		var bucket = properties.generic;
-		var limiter = new RedisTokenBucket(RedisKeys.RateLimit.value(), redis, clock);
+		var limiter = new RedisTokenBucket(RedisKeys.RATE_LIMIT.value(), redis, clock);
 		limiter.addBucket(bucket.size, bucket.rate);
 
 		return (ip, request) -> limiter.acquire(ip.toString(), 1);
@@ -56,14 +56,14 @@ public class RateLimiterConfiguration {
 	@Bean
 	EffectRateChecker effectRateChecker() {
 		var config = properties.effective;
-		var inner = new RedisTokenBucket(RedisKeys.EffectRate.value(), redis, clock);
+		var inner = new RedisTokenBucket(RedisKeys.EFFECT_RATE.value(), redis, clock);
 
 		for (var limit : config.limits) {
 			var rate = limit.permits / (double) limit.time.toSeconds();
 			inner.addBucket(limit.permits, rate);
 		}
 
-		var wrapper = new RedisBlockingLimiter(RedisKeys.EffectBlocking.value(), inner, factory, clock);
+		var wrapper = new RedisBlockingLimiter(RedisKeys.EFFECT_BLOCKING.value(), inner, factory, clock);
 		wrapper.setBlockTimes(config.blockTimes);
 		wrapper.setRefreshOnReject(config.refreshOnReject);
 
