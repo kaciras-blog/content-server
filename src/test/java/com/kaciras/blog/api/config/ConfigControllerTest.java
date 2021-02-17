@@ -72,7 +72,7 @@ final class ConfigControllerTest {
 		webClient.perform(get("/config/test.config"))
 				.andExpect(status().is(200))
 				.andExpect(jsonPath("$.intValue").value(33))
-				.andExpect(jsonPath("$.enumValue").value("FIELD"));
+				.andExpect(jsonPath("$.enumValue").value(1));
 	}
 
 	@Test

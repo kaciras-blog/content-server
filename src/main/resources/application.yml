@@ -68,6 +68,7 @@ spring:
     serialization:
       write-date-timestamps-as-nanoseconds: false
       write-dates-as-timestamps: true
+      write-enums-using-index: true
 
     deserialization:
       read-date-timestamps-as-nanoseconds: false

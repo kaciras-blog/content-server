@@ -20,7 +20,7 @@
 			},
 			"content" : "评论内容，ID=1",
 			"time" : 0,
-			"state" : "VISIBLE"
+			"state" : 0
 		},
 		"2" : {
 			"id" : 2,
@@ -36,7 +36,7 @@
 			},
 			"content" : "评论内容，ID=2",
 			"time" : 0,
-			"state" : "VISIBLE"
+			"state" : 0
 		},
 		"3" : {
 			"id" : 3,
@@ -52,7 +52,7 @@
 			},
 			"content" : "评论内容，ID=3",
 			"time" : 0,
-			"state" : "VISIBLE"
+			"state" : 0
 		},
 		"4" : {
 			"id" : 4,
@@ -68,7 +68,7 @@
 			},
 			"content" : "评论内容，ID=4",
 			"time" : 0,
-			"state" : "VISIBLE"
+			"state" : 0
 		}
 	}
 }
