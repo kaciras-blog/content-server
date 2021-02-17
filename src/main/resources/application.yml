@@ -59,11 +59,16 @@ spring:
     redis:
       namespace: kx
 
-  # java.time 里的时间全部序列化为毫秒
   jackson:
+
+    # 过滤掉为 null 的属性，可以减小体积并隐藏完整的格式
+    default-property-inclusion: non_null
+
+    # java.time 里的时间全部序列化为毫秒
     serialization:
       write-date-timestamps-as-nanoseconds: false
       write-dates-as-timestamps: true
+
     deserialization:
       read-date-timestamps-as-nanoseconds: false
 
