@@ -37,9 +37,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Component
 public final class SnapshotAssertion {
 
-	private static Class<?> clazz;
+	/** 当前测试的方法 */
 	private static Method method;
+
+	/** 当前测试运行到第几个参数，不是参数测试则为0 */
 	private static int index;
+
+	/** 在测试中第几次执行断言 */
 	private static int calls;
 
 	private final ObjectMapper objectMapper;
@@ -137,11 +141,11 @@ public final class SnapshotAssertion {
 	 * @return 当前断言对应的快照文件
 	 */
 	private Path getSnapshotPath() {
-		if (clazz == null) {
+		if (method == null) {
 			throw new Error("必须把 ContextHolder 注册到 JUnit 扩展");
 		}
 		var template = "src/test/resources/snapshots/%s/%s-%d-%d.json";
-		var c = clazz.getSimpleName();
+		var c = method.getDeclaringClass().getSimpleName();
 		var m = method.getName();
 		return Paths.get(String.format(template, c, m, index, calls++));
 	}
@@ -156,11 +160,9 @@ public final class SnapshotAssertion {
 		@Override
 		public void beforeEach(ExtensionContext context) {
 			var latestMethod = method;
-			var latestClass = clazz;
 			calls = 0;
 			method = context.getRequiredTestMethod();
-			clazz = context.getRequiredTestClass();
-			index = (method == latestMethod && clazz == latestClass) ? index + 1 : 0;
+			index = method == latestMethod ? index + 1 : 0;
 		}
 	}
 
