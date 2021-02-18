@@ -15,6 +15,4 @@ public final class UserVO {
 	public AuthType auth;
 
 	public Instant createTime;
-
-	// IP 地址仅用于批量处理，不在前端显示
 }

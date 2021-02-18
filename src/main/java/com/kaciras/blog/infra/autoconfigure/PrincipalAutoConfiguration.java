@@ -1,9 +1,9 @@
 package com.kaciras.blog.infra.autoconfigure;
 
 import com.kaciras.blog.infra.principal.AuthorizeAspect;
+import com.kaciras.blog.infra.principal.PrincipalFilter;
 import com.kaciras.blog.infra.principal.RequirePermission;
-import com.kaciras.blog.infra.principal.ServletPrincipalFilter;
-import com.kaciras.blog.infra.principal.ServletSecurityContextFilter;
+import com.kaciras.blog.infra.principal.SecurityContextFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +21,8 @@ public class PrincipalAutoConfiguration {
 	private final SessionCookieProperties sessionProps;
 
 	@Bean
-	public ServletPrincipalFilter servletPrincipalFilter() {
-		var filter = new ServletPrincipalFilter(authProps.isAdminPrincipal());
+	public PrincipalFilter servletPrincipalFilter() {
+		var filter = new PrincipalFilter(authProps.isAdminPrincipal());
 		filter.setDomain(sessionProps.getDomain());
 
 		var csrfConfig = authProps.getCsrf();
@@ -46,7 +46,7 @@ public class PrincipalAutoConfiguration {
 	}
 
 	@Bean
-	public ServletSecurityContextFilter securityContextFilter() {
-		return new ServletSecurityContextFilter();
+	public SecurityContextFilter securityContextFilter() {
+		return new SecurityContextFilter();
 	}
 }

@@ -51,7 +51,7 @@ class ArticleController {
 			var nativeRequest = request.getNativeRequest(HttpServletRequest.class);
 
 			@SuppressWarnings("ConstantConditions")
-			var remote = RequestUtils.addressFromRequest(nativeRequest);
+			var remote = RequestUtils.addressFrom(nativeRequest);
 
 			if (RequestUtils.isLocalNetwork(remote)) {
 				var lastModified = repository.lastUpdate().toEpochMilli();

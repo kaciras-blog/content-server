@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -34,7 +35,7 @@ class CategoryController {
 
 	@RequirePermission
 	@PostMapping
-	public ResponseEntity<CategoryVO> create(@RequestBody CreateDTO data, @RequestParam int parent) {
+	public ResponseEntity<CategoryVO> create(@RequestParam int parent, @RequestBody @Valid CreateDTO data) {
 		var category = new Category();
 		mapper.update(category, data);
 		repository.add(category, parent);
@@ -62,7 +63,7 @@ class CategoryController {
 
 	@RequirePermission
 	@PutMapping("/{id}")
-	public CategoryVO update(@PathVariable int id, @RequestBody CreateDTO data) {
+	public CategoryVO update(@PathVariable int id, @RequestBody @Valid CreateDTO data) {
 		var category = repository.get(id);
 		mapper.update(category, data);
 		repository.update(category);

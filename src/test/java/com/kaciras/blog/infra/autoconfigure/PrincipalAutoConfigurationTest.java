@@ -1,8 +1,8 @@
 package com.kaciras.blog.infra.autoconfigure;
 
 import com.kaciras.blog.infra.principal.AuthorizeAspect;
-import com.kaciras.blog.infra.principal.ServletPrincipalFilter;
-import com.kaciras.blog.infra.principal.ServletSecurityContextFilter;
+import com.kaciras.blog.infra.principal.PrincipalFilter;
+import com.kaciras.blog.infra.principal.SecurityContextFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 
@@ -17,8 +17,8 @@ final class PrincipalAutoConfigurationTest {
 	@Test
 	void defaults() {
 		contextRunner.run(context -> {
-			assertThat(context).hasSingleBean(ServletPrincipalFilter.class);
-			assertThat(context).hasSingleBean(ServletSecurityContextFilter.class);
+			assertThat(context).hasSingleBean(PrincipalFilter.class);
+			assertThat(context).hasSingleBean(SecurityContextFilter.class);
 			assertThat(context).hasSingleBean(AuthorizeAspect.class);
 		});
 	}

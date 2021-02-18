@@ -207,7 +207,7 @@ class OAuth2Controller {
 		user.setName(profile.name());
 		user.setEmail(profile.email());
 		user.setAuth(authType);
-		user.setCreateIP(RequestUtils.addressFromRequest(request));
+		user.setCreateIP(RequestUtils.addressFrom(request));
 
 		userRepository.add(user);
 		oAuth2DAO.insert(profile.id(), authType, user.getId());

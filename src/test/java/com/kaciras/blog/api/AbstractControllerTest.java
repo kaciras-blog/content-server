@@ -1,7 +1,7 @@
 package com.kaciras.blog.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kaciras.blog.infra.principal.ServletSecurityContextFilter;
+import com.kaciras.blog.infra.principal.SecurityContextFilter;
 import com.kaciras.blog.infra.principal.WebPrincipal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +47,7 @@ public abstract class AbstractControllerTest {
 
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac)
 				.defaultRequest(requestTemplate)
-				.addFilter(new ServletSecurityContextFilter())
+				.addFilter(new SecurityContextFilter())
 				.build();
 	}
 }

@@ -20,16 +20,16 @@ final class RequestUtilsTest {
 	void addressFromRequest() {
 		var request = new MockHttpServletRequest();
 
-		var address = RequestUtils.addressFromRequest(request);
+		var address = RequestUtils.addressFrom(request);
 		assertThat(request.getRemoteAddr()).isNotNull();
 		assertThat(address.isLoopbackAddress()).isTrue();
 
 		request.setRemoteAddr("1234::5678");
-		address = RequestUtils.addressFromRequest(request);
+		address = RequestUtils.addressFrom(request);
 		assertThat(address).isInstanceOf(Inet6Address.class);
 
 		request.setRemoteAddr(null);
-		address = RequestUtils.addressFromRequest(request);
+		address = RequestUtils.addressFrom(request);
 		assertThat(address.isLoopbackAddress()).isTrue();
 	}
 
@@ -37,7 +37,7 @@ final class RequestUtilsTest {
 	void addressFromRequestUnknownHost() {
 		var request = new MockHttpServletRequest();
 		request.setRemoteAddr("invalid");
-		assertThatThrownBy(() -> RequestUtils.addressFromRequest(request)).isInstanceOf(UncheckedIOException.class);
+		assertThatThrownBy(() -> RequestUtils.addressFrom(request)).isInstanceOf(UncheckedIOException.class);
 	}
 
 	private static Stream<Arguments> addressAndType() {

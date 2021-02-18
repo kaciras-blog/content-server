@@ -37,7 +37,7 @@ final class RateLimitFilter extends HttpFilter {
 	protected void doFilter(HttpServletRequest request,
 							HttpServletResponse response,
 							FilterChain chain) throws IOException, ServletException {
-		var ip = RequestUtils.addressFromRequest(request);
+		var ip = RequestUtils.addressFrom(request);
 
 		if (RequestUtils.isLocalNetwork(ip)) {
 			chain.doFilter(request, response);

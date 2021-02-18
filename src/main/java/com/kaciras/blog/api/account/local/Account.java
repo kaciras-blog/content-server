@@ -40,7 +40,7 @@ public final class Account {
 	private byte[] salt;
 
 	/**
-	 * 修改密码，修改成功后所有与该用户相关的会话将注销。
+	 * 修改密码，成功后所有与该用户相关的会话将注销。
 	 *
 	 * @param password 新密码
 	 */

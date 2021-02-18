@@ -19,7 +19,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @Setter
-public final class ServletPrincipalFilter extends HttpFilter {
+public final class PrincipalFilter extends HttpFilter {
 
 	private final boolean debugAdmin;
 

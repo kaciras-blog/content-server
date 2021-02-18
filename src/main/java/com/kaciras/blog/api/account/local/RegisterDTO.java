@@ -12,7 +12,7 @@ final class RegisterDTO {
 	@Pattern(regexp = "^[\\u4E00-\\u9FFFa-zA-Z0-9_]{1,16}$")
 	public final String name;
 
-	// 128 位以上的密码超出了哈希输出的位数，没意义
+	// 128 位可见 ASCII 已经超出了 HASH 的长度，更长也没意义
 	@Length(min = 8, max = 128)
 	public final String password;
 

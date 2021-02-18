@@ -11,7 +11,7 @@ import javax.servlet.http.Cookie;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-final class ServletPrincipalFilterTest {
+final class PrincipalFilterTest {
 
 	private static final String COOKIE_NAME = "CSRF-Token";
 	private static final String HEADER_NAME = "X-CSRF-Token";
@@ -19,7 +19,7 @@ final class ServletPrincipalFilterTest {
 
 	private final MockHttpServletRequest request = new MockHttpServletRequest();
 
-	private ServletPrincipalFilter filter;
+	private PrincipalFilter filter;
 
 	/**
 	 * 默认的请求和过滤器实例，大部分测试都是用它们。
@@ -27,7 +27,7 @@ final class ServletPrincipalFilterTest {
 	 */
 	@BeforeEach
 	void setUp() {
-		filter = new ServletPrincipalFilter(false);
+		filter = new PrincipalFilter(false);
 		var session = new MockHttpSession();
 		request.setSession(session);
 		session.setAttribute("UserId", 666);
@@ -150,7 +150,7 @@ final class ServletPrincipalFilterTest {
 
 	@Test
 	void debugAdmin() throws Exception {
-		filter = new ServletPrincipalFilter(true);
+		filter = new PrincipalFilter(true);
 		filter.setCookieName(COOKIE_NAME);
 
 		var result = FilterChainCapture.doFilter(filter, new MockHttpServletRequest());

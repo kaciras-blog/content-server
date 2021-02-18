@@ -5,8 +5,7 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 interface AccountDAO {
 
-	@Insert("INSERT INTO account(id, name, password, salt) " +
-			"VALUES(#{id}, #{name}, #{password}, #{salt})")
+	@Insert("INSERT INTO account (id, name, password, salt) VALUES (#{id}, #{name}, #{password}, #{salt})")
 	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Account account);
 

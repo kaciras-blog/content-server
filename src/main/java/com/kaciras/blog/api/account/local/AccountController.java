@@ -44,13 +44,14 @@ class AccountController {
 									 HttpServletResponse response) {
 		checkCaptcha(request.getSession(true), data.captcha);
 
-		var account = createAccount(data, RequestUtils.addressFromRequest(request));
+		var account = createAccount(data, RequestUtils.addressFrom(request));
 		sessionService.putUser(request, response, account.getId(), true);
+
 		return ResponseEntity.created(URI.create("/accounts/" + account.getId())).build();
 	}
 
 	@Transactional
-	protected Account createAccount(RegisterDTO data, InetAddress ip) {
+	Account createAccount(RegisterDTO data, InetAddress ip) {
 		try {
 			var id = userManager.createNew(data.name, AuthType.LOCAL, ip);
 			var account = Account.create(id, data.name, data.password);
@@ -62,8 +63,7 @@ class AccountController {
 	}
 
 	/**
-	 * 检查用户输入的验证码是否正确且在有效期内。
-	 * 【注意】会话中的验证码是一次性的，在该方法里会被移除。
+	 * 检查用户输入的验证码是否正确且在有效期内。验证码是一次性的，在该方法里会被移除。
 	 *
 	 * @param session 会话
 	 * @param value   用户输入的验证码

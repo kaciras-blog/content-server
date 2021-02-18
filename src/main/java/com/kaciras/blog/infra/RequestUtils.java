@@ -39,7 +39,7 @@ public final class RequestUtils {
 	 * @return IP 地址，不会为 null
 	 */
 	@NonNull
-	public static InetAddress addressFromRequest(HttpServletRequest request) {
+	public static InetAddress addressFrom(HttpServletRequest request) {
 		var address = request.getRemoteAddr();
 		try {
 			return InetAddress.getByName(address);
