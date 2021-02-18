@@ -18,7 +18,7 @@ import java.util.stream.Stream;
  * 另外这里的代码接近一百行，写在控制器里不好看，所以单独提取到一个类。
  */
 @RequiredArgsConstructor
-final class QueryCacheSession {
+final class QueryWorker {
 
 	@Getter
 	private final Map<Integer, DiscussionVO> objects = new HashMap<>();
@@ -26,7 +26,10 @@ final class QueryCacheSession {
 	private final DiscussionRepository repository;
 	private final ViewModelMapper mapper;
 
-	private final Set<Integer> additional = new HashSet<>();
+	/**
+	 * 用于收集评论的 ID 然后一次性从数据库里查出，解决 1 + N 问题。
+	 */
+	private Set<Integer> additional;
 
 	/**
 	 * 执行查询，返回评论的ID列表，用 {@code getObjects} 获取视图对象表。
@@ -38,14 +41,18 @@ final class QueryCacheSession {
 		@Cleanup var stream = findAll(query);
 
 		if (query.isIncludeParent()) {
-			stream = stream.peek(this::addParentToAdditional);
+			additional = new HashSet<>();
+			stream = stream
+					.peek(this::addParentToAdditional)
+					.onClose(this::attachAdditional);
 		}
+
 		if (query.getChildCount() > 0) {
 			var page = PageRequest.of(0, query.getChildCount());
 			stream = stream.peek(v -> attachChildren(v, page));
 		}
 
-		return collectId(stream.onClose(this::attachAdditional));
+		return collectId(stream);
 	}
 
 	/**
@@ -64,7 +71,7 @@ final class QueryCacheSession {
 	}
 
 	/**
-	 * 引用模式，将每个结果的父评论加入到 objects 中。
+	 * 引用模式，将每个结果的父评论加入到附加查询集合中。
 	 */
 	private void addParentToAdditional(DiscussionVO vo) {
 		var id = vo.parent;
@@ -87,6 +94,7 @@ final class QueryCacheSession {
 		return stream.map(vo -> vo.id).collect(Collectors.toList());
 	}
 
+	// 有点长写在 lambda 里不好看所以拿出来了。
 	private void attachAdditional() {
 		repository.get(additional).forEach(v -> objects.put(v.getId(), mapper.toViewObject(v)));
 	}

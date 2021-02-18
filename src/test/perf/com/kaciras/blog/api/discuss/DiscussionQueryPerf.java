@@ -21,12 +21,15 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark                      Mode  Cnt  Score   Error  Units
- * DiscussionQueryPerf.nestMode   avgt   25  9.200 ± 0.167  ms/op
+ * DiscussionQueryPerf.nestMode   avgt   25  10.435 ± 0.998  ms/op
+ * DiscussionQueryPerf.quoteMode  avgt   25   0.939 ± 0.056  ms/op
+ *
+ * <h3>循环查询父评论性能比 WHERE IN 差</h3>
  * DiscussionQueryPerf.quoteMode  avgt   25  1.653 ± 0.056  ms/op
  *
- * DiscussionQueryPerf.quoteMode  avgt   25  1.001 ± 0.101  ms/op
- *
- * CTE + ROW_NUMBER() 方式 65.069 ± 26.782 ms/op 反而更慢。
+ * <h3>CTE + ROW_NUMBER() 方式反而更慢</h3>
+ * DiscussionQueryPerf.nestMode   avgt   25  65.069 ± 26.782 ms/op
+ * <p>
  * 楼中楼单独一个方法查询能快 1ms 没啥意义。
  */
 @ContextConfiguration(classes = DiscussionQueryPerf.SpringConfig.class)
@@ -79,12 +82,12 @@ public class DiscussionQueryPerf extends AbstractSpringPerf {
 
 	@Benchmark
 	public Object quoteMode() {
-		return new QueryCacheSession(repository, mapper).execute(qmode);
+		return new QueryWorker(repository, mapper).execute(qmode);
 	}
 
 	@Benchmark
 	public Object nestMode() {
-		return new QueryCacheSession(repository, mapper).execute(nmode);
+		return new QueryWorker(repository, mapper).execute(nmode);
 	}
 
 	// 与 Configuration 不同，TestConfiguration 不会被自动扫描到而干扰其它测试
