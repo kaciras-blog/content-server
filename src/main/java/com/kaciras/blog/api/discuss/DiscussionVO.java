@@ -24,7 +24,8 @@ public final class DiscussionVO {
 	public Instant time;
 	public DiscussionState state;
 
-	// ========== 下面是可选的聚合属性 ==========
+	// 下面是可选的聚合属性
 
+	public Topic topic;
 	public List<Integer> replies;
 }

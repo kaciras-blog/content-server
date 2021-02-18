@@ -71,7 +71,7 @@ class DiscussionController {
 		query.setPageable(pageable);
 		verifyQuery(query);
 
-		var session = new QueryCacheSession(repository, mapper);
+		var session = new QueryWorker(repository, topics, mapper);
 		var items = session.execute(query);
 		var total = repository.count(query);
 
@@ -94,7 +94,7 @@ class DiscussionController {
 		discussion.setState(options.moderation
 				? DiscussionState.MODERATION
 				: DiscussionState.VISIBLE);
-		discussion.setAddress(RequestUtils.addressFromRequest(request));
+		discussion.setAddress(RequestUtils.addressFrom(request));
 
 		// 获取主题，同时检查是否存在
 		Topic topic;

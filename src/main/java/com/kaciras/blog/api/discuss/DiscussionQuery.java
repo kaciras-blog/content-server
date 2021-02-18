@@ -25,6 +25,8 @@ public final class DiscussionQuery {
 
 	// ======== 下面的字段不在 SQL 中使用 ========
 
+	private boolean includeTopic;
+
 	/**
 	 * 在结果中包含每个评论的子评论数量，默认为零。
 	 */

@@ -24,6 +24,7 @@ final class QueryWorker {
 	private final Map<Integer, DiscussionVO> objects = new HashMap<>();
 
 	private final DiscussionRepository repository;
+	private final TopicRegistration topics;
 	private final ViewModelMapper mapper;
 
 	/**
@@ -39,6 +40,10 @@ final class QueryWorker {
 	 */
 	public List<Integer> execute(DiscussionQuery query) {
 		@Cleanup var stream = findAll(query);
+
+		if (query.isIncludeTopic()) {
+			stream = stream.peek(v -> v.topic = topics.get(v.type, v.objectId));
+		}
 
 		if (query.isIncludeParent()) {
 			additional = new HashSet<>();

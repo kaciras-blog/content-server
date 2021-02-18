@@ -82,12 +82,12 @@ public class DiscussionQueryPerf extends AbstractSpringPerf {
 
 	@Benchmark
 	public Object quoteMode() {
-		return new QueryWorker(repository, mapper).execute(qmode);
+		return new QueryWorker(repository, null, mapper).execute(qmode);
 	}
 
 	@Benchmark
 	public Object nestMode() {
-		return new QueryWorker(repository, mapper).execute(nmode);
+		return new QueryWorker(repository, null, mapper).execute(nmode);
 	}
 
 	// 与 Configuration 不同，TestConfiguration 不会被自动扫描到而干扰其它测试
