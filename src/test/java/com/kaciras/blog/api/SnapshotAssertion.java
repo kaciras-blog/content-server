@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -13,13 +14,12 @@ import org.mockito.ArgumentMatchers;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.ResultMatcher;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 一些控制器返回的数据太复杂懒得一个个断言，所以就写了一个快照测试工具。
@@ -28,7 +28,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  * 如果启动参数中设置了 {@code -DupdateSnapshot} 则强制更新快照。
  *
  * <h2>暂不支持并发测试</h2>
- * JUnit5 的并发测试仍处于试验阶段，且对断言方法的调用的次数和顺序必须是固定的。
+ * 因为使用了全局字段所以不支持并发，JUnit5 的并发测试仍处于试验阶段，暂未研究。
  *
  * <h2>使用要求</h2>
  * 因为 JUnit 自己没有提供从外部获取当前测试名的方法，所以用了一个扩展来追踪当前测试名。
@@ -48,10 +48,6 @@ public final class SnapshotAssertion {
 
 	private final ObjectMapper objectMapper;
 	private final boolean forceUpdate;
-
-	// 快照和传入对象的 JSON 字符串，使用前先调用 createOrRead()
-	private String expect;
-	private String actual;
 
 	/**
 	 * 因为用户可能使用自定义的 ObjectMapper，所以这里需要传入以便使配置一致。
@@ -76,7 +72,7 @@ public final class SnapshotAssertion {
 
 	/**
 	 * 断言 MockHttpServletResponse 的响应体符合快照，用法：
-	 * {@code mockMvc.perform(request).andExpect(snapshots.matchBody())}
+	 * {@code mockMvc.perform(request).andExpect(snapshots.matchBody());}
 	 *
 	 * <h3>编码问题</h3>
 	 * MockHttpServletResponse 默认是 ISO-8859-1，Jackson 默认是 UTF8，所以用 getContentAsByteArray()。
@@ -86,7 +82,8 @@ public final class SnapshotAssertion {
 	}
 
 	/**
-	 * 断言 Mock 对象的方法调用参数。
+	 * 断言 Mockito 的 Mock 对象的方法调用参数符合快照，用法：
+	 * {@code verify(mock).someMethod(snapshots.matchArg());}
 	 */
 	public <T> T matchArg() {
 		return ArgumentMatchers.argThat(new MockitoArgMatcher<>());
@@ -98,8 +95,7 @@ public final class SnapshotAssertion {
 	 * 这里没有自己实现 Diff 是因为 IDE 都支持对比差异，至于控制台的话……反正我从不用。
 	 */
 	public void assertMatch(Object object) {
-		createOrRead(object);
-		assertThat(actual).isEqualTo(expect);
+		createOrLoad(object).assertEquals();
 	}
 
 	/**
@@ -109,36 +105,31 @@ public final class SnapshotAssertion {
 	 * @param object 需要保存到快照的对象
 	 */
 	@SneakyThrows
-	private void createOrRead(Object object) {
-		actual = objectMapper.writeValueAsString(object);
-		var file = getSnapshotPath();
+	private Matching createOrLoad(Object object) {
+		var actual = objectMapper.writeValueAsString(object);
+		var expect = actual;
+		var path = getSnapshotPath();
 
-		if (!Files.exists(file) || forceUpdate) {
-			expect = actual;
-			Files.createDirectories(file.getParent());
-			Files.writeString(file, actual);
+		if (!Files.exists(path) || forceUpdate) {
+			Files.createDirectories(path.getParent());
+			Files.writeString(path, actual);
 		} else {
-			expect = reformat(Files.readString(file));
+			// 重新格式化，避免手动美化快照文件造成的影响。
+			var tree = objectMapper.readTree(Files.newInputStream(path));
+			expect = objectMapper.writeValueAsString(tree);
 		}
+
+		return new Matching(expect, actual);
 	}
 
 	/**
-	 * 重新格式化 JSON 字符串，避免手动美化快照文件造成的影响。
-	 *
-	 * @param json 原始 JSON
-	 * @return 格式化后的字符串
-	 */
-	private String reformat(String json) throws IOException {
-		return objectMapper.writeValueAsString(objectMapper.readTree(json));
-	}
-
-	/**
-	 * 获取当前断言对应的快照文件，每个测试中每一次调用都会返回不同的结果。
+	 * 获取当前断言对应的快照文件路径。
 	 *
 	 * <h2>测试名的获取</h2>
-	 * 比起通过调用栈查找测试方法，BeforeEachCallback.beforeEach 更方便，而且不受嵌套调用的影响。
+	 * 比起通过调用栈查找测试方法，BeforeEachCallback 更方便，而且不受嵌套调用的影响。
+	 * 这里不区分参数化测试，普通测试方法的参数索引为0.
 	 *
-	 * @return 当前断言对应的快照文件
+	 * @return 快照文件的路径
 	 */
 	private Path getSnapshotPath() {
 		if (method == null) {
@@ -155,29 +146,46 @@ public final class SnapshotAssertion {
 	 * <p>
 	 * 要支持并发测试的话稍加改动应该是可行的，不过调用肯定会复杂些。
 	 */
-	static final class ContextHolder implements BeforeEachCallback {
+	public static final class ContextHolder implements BeforeEachCallback {
 
 		@Override
 		public void beforeEach(ExtensionContext context) {
 			var latestMethod = method;
-			calls = 0;
 			method = context.getRequiredTestMethod();
+			calls = 0;
 			index = method == latestMethod ? index + 1 : 0;
+		}
+	}
+
+	/**
+	 * 一次快照匹配过程，包含了从对象序列化来的和从快照读取的 JSON 字符串。
+	 */
+	@RequiredArgsConstructor
+	private static final class Matching {
+
+		private final String expect;
+		private final String actual;
+
+		public boolean isEquals() {
+			return actual.equals(expect);
+		}
+
+		public void assertEquals() {
+			assertThat(actual).isEqualTo(expect);
 		}
 	}
 
 	private final class MockitoArgMatcher<T> implements ArgumentMatcher<T> {
 
-		// Mockito 在一次断言中可能多次调用 Matcher，但快照断言是有副作用的，所以要跳过重复的调用。
-		private Boolean result;
+		// 测试中发现一次断言可能多次调用 matches，但创建快照有副作用，所以要跳过重复的调用。
+		private Matching matching;
 
 		@Override
 		public boolean matches(T argument) {
-			if (result != null) {
-				return result;
+			if (matching == null) {
+				matching = createOrLoad(argument);
 			}
-			createOrRead(argument);
-			return result = expect.equals(actual);
+			return matching.isEquals();
 		}
 	}
 }
