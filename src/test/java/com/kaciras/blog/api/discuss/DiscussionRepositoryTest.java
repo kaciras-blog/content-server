@@ -1,7 +1,6 @@
 package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.infra.exception.RequestArgumentException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,16 +11,16 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.net.InetAddress;
-import java.sql.SQLException;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Sql(statements = "ALTER TABLE discussion AUTO_INCREMENT = 1")
 @ActiveProfiles("test")
 @Transactional
 @SpringBootTest
@@ -29,19 +28,6 @@ class DiscussionRepositoryTest {
 
 	@Autowired
 	private DiscussionRepository repository;
-
-	@Autowired
-	private DataSource dataSource;
-
-	/**
-	 * Mariadb 和 MySQL 的事务不能回滚自增值，导致新加的行 ID 无法预测，必须手动重置下。
-	 */
-	@BeforeEach
-	void resetAutoIncrement() throws SQLException {
-		try (var conn = dataSource.getConnection()) {
-			conn.createStatement().execute("ALTER TABLE discussion AUTO_INCREMENT = 1");
-		}
-	}
 
 	private static Discussion newDiscussion() {
 		var value = new Discussion();

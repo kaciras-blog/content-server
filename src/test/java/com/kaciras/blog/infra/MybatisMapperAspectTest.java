@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 })
 @ActiveProfiles("test")
 @SpringBootTest
-@SpringBootConfiguration
+@SpringBootConfiguration(proxyBeanMethods = false)
 public class MybatisMapperAspectTest {
 
 	@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
