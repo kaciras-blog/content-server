@@ -16,7 +16,6 @@ import java.time.Instant;
 @Setter
 public final class User {
 
-	// 数据库里也有适配
 	public static final User GUEST = new User(0, "(游客)", ImageReference.parse("akalin.jpg"));
 
 	private int id;

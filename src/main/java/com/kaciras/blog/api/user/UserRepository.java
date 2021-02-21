@@ -8,7 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Clock;
 
-// 未提供删除方法
+/**
+ * 用户存储，也没啥复杂的逻辑就是增改查，连删都没有，
+ * 因为用户好删除，其它地方都在用，删了很难保证完整性。
+ */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
 public class UserRepository {

@@ -28,7 +28,7 @@ import java.time.Clock;
  * <h2>关于 proxyBeanMethods</h2>
  * proxyBeanMethods 的作用是代理配置类中标记了@Bean的方法，使其在内部调用时也能
  * 返回同一个单例（如果是单例bean），而不是在执行真正的方法创建一个。
- *
+ * <p>
  * 由于我以前试的时候出了点问题，所以从来不在内部调用 @Bean 方法，刚好避开这种用法。
  * 所以就可以把 proxyBeanMethods 设为 false 省掉代理的消耗。
  */
@@ -84,7 +84,13 @@ public class ContentServerApplication {
 	}
 
 	/**
-	 * 使用 JAVA8 的新 API 代替 System.currentTimeMillis()，Clock 具有更好的语义并且便于 Mock 测试。
+	 * 使用 JAVA8 的新 API 代替 System.currentTimeMillis()。
+	 *
+	 * <h2>为什么不在 Mariadb 里生成时间</h2>
+	 * 在测试中 Clock 能够 Mock，而数据库生成不可控，若测试使用真实数据库则 Clock 更好。
+	 * <p>
+	 * 并非所有数据库都能设置时间，Redis 就不行，所以应用里必须要用 Clock，
+	 * 如果数据库里也设置则存在两个时间源，增加系统的复杂度。
 	 */
 	@Bean
 	Clock clock() {
