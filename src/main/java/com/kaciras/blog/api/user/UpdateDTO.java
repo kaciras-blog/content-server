@@ -3,6 +3,7 @@ package com.kaciras.blog.api.user;
 import com.kaciras.blog.infra.codec.ImageReference;
 import lombok.AllArgsConstructor;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -14,4 +15,7 @@ final class UpdateDTO {
 
 	@NotNull
 	public final ImageReference avatar;
+
+	@Email
+	public final String email;
 }

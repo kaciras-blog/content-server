@@ -6,14 +6,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
+import java.time.Clock;
+
 // 未提供删除方法
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Repository
 public class UserRepository {
 
 	private final UserDAO userDAO;
+	private final Clock clock;
 
 	public void add(@NonNull User user) {
+		user.setCreateTime(clock.instant());
 		userDAO.insert(user);
 	}
 
