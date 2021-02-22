@@ -84,7 +84,7 @@ public final class Account {
 			sha3.update(salt);
 			return sha3.digest();
 		} catch (NoSuchAlgorithmException ex) {
-			throw new Error("Your java version do not support SHA3");
+			throw new Error("Your java do not support SHA3");
 		}
 	}
 

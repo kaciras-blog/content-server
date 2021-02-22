@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-public final class SessionService {
+public class SessionService {
 
 	private static final String CSRF_COOKIE_NAME = "CSRF-Token";
 

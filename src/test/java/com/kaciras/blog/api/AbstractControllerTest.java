@@ -1,5 +1,6 @@
 package com.kaciras.blog.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.infra.principal.SecurityContextFilter;
 import com.kaciras.blog.infra.principal.WebPrincipal;
@@ -43,11 +44,22 @@ public abstract class AbstractControllerTest {
 		var requestTemplate = get("/")
 				.principal(ANONYMOUS)
 				.contentType(MediaType.APPLICATION_JSON)
-				.characterEncoding("utf-8");
+				.characterEncoding("UTF-8");
 
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac)
 				.defaultRequest(requestTemplate)
 				.addFilter(new SecurityContextFilter())
+				.alwaysDo(r ->r.getResponse().setCharacterEncoding("UTF-8"))
 				.build();
+	}
+
+	/**
+	 * 把对象序列化为 JSON 字符串，因为比较长所以提取单独一个方法。
+	 *
+	 * @param value 对象
+	 * @return JSON 字符串
+	 */
+	protected String toJson(Object value) throws JsonProcessingException {
+		return objectMapper.writeValueAsString(value);
 	}
 }

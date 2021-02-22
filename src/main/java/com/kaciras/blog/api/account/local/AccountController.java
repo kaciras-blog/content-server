@@ -7,6 +7,7 @@ import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.infra.RequestUtils;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,6 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.net.InetAddress;
 import java.net.URI;
-import java.sql.SQLException;
 import java.time.Clock;
 
 @RequiredArgsConstructor
@@ -39,9 +39,9 @@ class AccountController {
 	private final UserManager userManager;
 
 	@PostMapping
-	public ResponseEntity<Void> post(@Valid @RequestBody RegisterDTO data,
-									 HttpServletRequest request,
-									 HttpServletResponse response) {
+	public ResponseEntity<Void> signup(@Valid @RequestBody SignupDTO data,
+									   HttpServletRequest request,
+									   HttpServletResponse response) {
 		checkCaptcha(request.getSession(true), data.captcha);
 
 		var account = createAccount(data, RequestUtils.addressFrom(request));
@@ -51,13 +51,13 @@ class AccountController {
 	}
 
 	@Transactional
-	Account createAccount(RegisterDTO data, InetAddress ip) {
+	Account createAccount(SignupDTO data, InetAddress ip) {
 		try {
 			var id = userManager.createNew(data.name, AuthType.LOCAL, ip);
 			var account = Account.create(id, data.name, data.password);
 			repository.add(account);
 			return account;
-		} catch (SQLException e) {
+		} catch (DuplicateKeyException e) {
 			throw new RequestArgumentException("用户名已被使用");
 		}
 	}
@@ -72,6 +72,7 @@ class AccountController {
 	private void checkCaptcha(HttpSession session, @NonNull String value) {
 		var except = session.getAttribute(SessionAttributes.CAPTCHA);
 		session.removeAttribute(SessionAttributes.CAPTCHA);
+
 		if (!value.equals(except)) {
 			throw new RequestArgumentException("验证码错误");
 		}

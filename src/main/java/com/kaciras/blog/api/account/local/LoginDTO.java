@@ -3,15 +3,17 @@ package com.kaciras.blog.api.account.local;
 import lombok.AllArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 final class LoginDTO {
 
-	@Pattern(regexp = "^[\\u4E00-\\u9FFFa-zA-Z0-9_]{1,16}$")
+	@NotNull
 	public final String name;
 
+	// 密码要 HASH，所以限制一下长度
 	@Length(min = 8, max = 128)
+	@NotNull
 	public final String password;
 
 	public final boolean remember;
