@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `user`
     `email`       tinytext                     DEFAULT NULL,
     `deleted`     bit(1)              NOT NULL DEFAULT b'0',
     `auth`        tinyint(3) unsigned NOT NULL,
-    `create_time` datetime(6)         NOT NULL DEFAULT current_timestamp(6),
+    `create_time` datetime(6)         NOT NULL,
     `create_ip`   binary(16)          NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = Aria

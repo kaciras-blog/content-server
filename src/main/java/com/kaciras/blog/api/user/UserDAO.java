@@ -5,8 +5,8 @@ import org.apache.ibatis.annotations.*;
 @Mapper
 interface UserDAO {
 
-	@Insert("INSERT INTO `user`(id, `name`, avatar, email, auth, create_time, create_ip) " +
-			"VALUES(#{id}, #{name}, #{avatar}, #{email}, #{auth}, #{createTime}, #{createIP})")
+	@Insert("INSERT INTO `user`(`name`, avatar, email, auth, create_time, create_ip) " +
+			"VALUES(#{name}, #{avatar}, #{email}, #{auth}, #{createTime}, #{createIP})")
 	@Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
 	void insert(User user);
 
