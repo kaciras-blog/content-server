@@ -7,13 +7,16 @@ import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+/**
+ * 工具类，包含与 HTTP 请求对象相关的静态方法。
+ */
 public final class RequestUtils {
 
 	private RequestUtils() {}
 
 	/**
-	 * 判断一个请求对象是否是不改变状态的安全请求。安全请求的定义见：
-	 * https://tools.ietf.org/html/rfc7231#section-4.2.1
+	 * 判断一个请求对象是否是不改变状态的安全请求。安全请求的定义见
+	 * <a href="https://tools.ietf.org/html/rfc7231#section-4.2.1">RFC7231</a>
 	 * <p>
 	 * 这里去掉了 TRACE 方法，因为我用不到它，而且它的功能还有些安全隐患。
 	 *

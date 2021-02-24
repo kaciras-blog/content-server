@@ -36,5 +36,4 @@ public final class FunctionUtils {
 	public static <T, U, R> BiFunction<T, U, R> uncheckedFn(UncheckedBiFunction<T, U, R> function) {
 		return function;
 	}
-
 }

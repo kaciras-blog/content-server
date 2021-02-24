@@ -24,7 +24,7 @@ public class MailService {
 	private final String adminAddress;
 
 	/**
-	 * 发送一个邮件给博主，如果博主没有设置自己的邮件地址则什么也不做。
+	 * 发送一封邮件给博主，如果博主没有设置自己的邮件地址则什么也不做。
 	 *
 	 * @param title 标题
 	 * @param html  内容，HTML格式
@@ -36,7 +36,7 @@ public class MailService {
 	}
 
 	/**
-	 * 发送邮件。
+	 * 向指定的邮箱发送一封邮件。
 	 *
 	 * @param to    邮件发到哪
 	 * @param title 标题

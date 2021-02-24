@@ -8,13 +8,13 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import java.util.Collections;
 
 /**
- * 实现了仅当HASH中存在该键的时候才修改值的命令。
- * <p>
- * 【吐槽】
+ * 实现了仅当 HASH 中存在该键的时候才修改值的命令。
+ *
+ * <h2>吐槽</h2>
  * 为什么 Redis 有 HSETNX 却没有对称的 HSETX，还非得拿 Lua 来做。
  * <p>
- * Redis作者说可以用事务实现，但是 CAS 需要重试代码多，完全不如内置一个命令好。
- * https://github.com/redis/redis/issues/441
+ * <a href="https://github.com/redis/redis/issues/441">Redis 作者说可以用事务实现</a>
+ * 但是 CAS 需要重试代码多，完全不如内置一个命令好。
  */
 public final class RedisExtensions {
 

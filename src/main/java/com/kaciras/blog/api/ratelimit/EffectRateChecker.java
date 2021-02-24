@@ -8,10 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 
 /**
- * Effect 指有副作用的请求，如提交评论等
+ * Effect 指有副作用的请求，如提交评论等。
+ * 这类请求使用比安全请求更严格的限制规则。
  */
 @RequiredArgsConstructor
-public final class EffectRateChecker implements RateLimitChecker {
+final class EffectRateChecker implements RateLimitChecker {
 
 	private final RateLimiter rateLimiter;
 

@@ -40,16 +40,20 @@ public class Article {
 	private String content;
 
 	/**
-	 * 显示在URL中的标题，有利于SEO，不要出现与URL中的特殊字符。
+	 * 显示在 URL 中的标题，有利于SEO，不要出现 URL 中的特殊字符。
+	 * <p>
 	 * 为什么要单独定义此字段而不是使用原始标题：
-	 * 1.原始标题中如果存在URL关键字，如 `?`,`/` 等，需要转换或删除。
-	 * 2.原始标题能够被修改，而URL经常更改不利于SEO。
-	 * 3.部分搜索引擎对非ASCII字符不友好，可能需要将标题转换成其它形式，比如英语。
+	 * <ol>
+	 *     <li>原始标题中如果存在URL关键字，如 `?`,`/` 等，需要转换或删除。</li>
+	 *     <li>原始标题能够被修改，而URL经常更改不利于SEO。</li>
+	 *     <li>部分搜索引擎对非 ASCII 字符不友好，可能需要将转换一下。</li>
+	 * </ol>
 	 */
 	private String urlTitle;
 
 	private Instant create;
 	private Instant update;
+
 	private int viewCount;
 	private boolean deleted;
 

@@ -10,7 +10,7 @@ import java.security.GeneralSecurityException;
  *
  * <h2>不使用 Lombok 的 @UtilityClass</h2>
  * 因为自动添加的 static 和 final 会混淆 Java 的语法降低可读性，
- * 同时自动生成的构造方法内部抛异常代码是多余的，我肯定不会调用，还干扰覆盖率统计。
+ * 同时生成的构造方法内部抛异常的代码是多余的，我肯定不会调用，还干扰覆盖率统计。
  */
 public final class Misc {
 
@@ -29,8 +29,10 @@ public final class Misc {
 	}
 
 	/**
-	 * 屏蔽 HttpsURLConnection 和 HttpClient(Java11) 默认的证书检查。
-	 * 该方法直接修改全局设置，可能会产生副作用，使用须谨慎。
+	 * 关闭 HttpsURLConnection 和 HttpClient(Java11) 默认的证书检查。
+	 *
+	 * <h2>谨慎使用</h2>
+	 * 该方法直接修改全局设置，可能会产生意外的副作用。
 	 *
 	 * @throws GeneralSecurityException 如果发生了错误
 	 */

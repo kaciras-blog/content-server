@@ -18,7 +18,9 @@ import java.util.Arrays;
 @Configurable
 public final class Account {
 
-	/** 使用 SHA3-512 处理密码 */
+	/**
+	 * 使用 SHA3-512 处理密码，当然 SHA-512 也没有安全问题但我赶个时髦。
+	 */
 	private static final int HASH_SIZE = 512;
 
 	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
@@ -33,7 +35,12 @@ public final class Account {
 	@Setter(AccessLevel.NONE)
 	private HttpSessionTable httpSessionTable;
 
+	/**
+	 * 为了省事，账号的 ID 等于用户的 ID。
+	 * 因为用户可以用其他方式登录，所以这里的 ID 不是连续的。
+	 */
 	private int id;
+
 	private String name;
 
 	private byte[] password;
@@ -41,6 +48,7 @@ public final class Account {
 
 	/**
 	 * 修改密码，成功后所有与该用户相关的会话将注销。
+	 * 不要使用 setPassword() 来修改，那个方法只是给 Mybatis 用的。
 	 *
 	 * @param password 新密码
 	 */
@@ -60,6 +68,11 @@ public final class Account {
 		return Arrays.equals(password, encryptPassword(passText, salt));
 	}
 
+	/**
+	 * 对密码使用 HASH 加密，使用生成随机的盐值。
+	 *
+	 * @param password 明文密码
+	 */
 	private void encryptPassword(String password) {
 		this.salt = new byte[HASH_SIZE >> 3];
 		SECURE_RANDOM.nextBytes(salt);
@@ -67,13 +80,13 @@ public final class Account {
 	}
 
 	/**
-	 * 生成盐值，并对密码进行 Hash 加密。
+	 * 使用指定的盐值与密码混合，并进行 HASH 加密。
 	 *
 	 * <h2>HAMC</h2>
 	 * SHA3 不需要采用 HMAC 来加盐，直接跟密码连一起即可。
 	 * <a href="https://crypto.stackexchange.com/a/17928">参考</a>
 	 *
-	 * @param password 原始密码文本
+	 * @param password 明文密码
 	 * @param salt     盐值
 	 * @return 加密后的密码
 	 */
