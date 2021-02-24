@@ -1,7 +1,7 @@
 package com.kaciras.blog.api.account.local;
 
 import com.kaciras.blog.api.AbstractControllerTest;
-import com.kaciras.blog.api.SessionAttributes;
+import com.kaciras.blog.api.SessionValue;
 import com.kaciras.blog.api.account.SessionService;
 import com.kaciras.blog.api.user.UserManager;
 import org.junit.jupiter.api.Test;
@@ -56,8 +56,8 @@ final class AccountControllerTest extends AbstractControllerTest {
 	@ParameterizedTest
 	void invalidSignupRequest(SignupDTO dto) throws Exception {
 		var session = new MockHttpSession();
-		session.setAttribute(SessionAttributes.CAPTCHA, "6666");
-		session.setAttribute(SessionAttributes.CAPTCHA_TIME, Instant.now());
+		SessionValue.CAPTCHA.setTo(session, "6666");
+		SessionValue.CAPTCHA_TIME.setTo(session, Instant.now());
 
 		mockMvc.perform(post("/accounts").content(toJson(dto)).session(session))
 				.andExpect(status().is(400));
@@ -75,8 +75,8 @@ final class AccountControllerTest extends AbstractControllerTest {
 	void wrongCaptcha() throws Exception {
 		var dto = new SignupDTO("alice", "foobar2000", "6666");
 		var session = new MockHttpSession();
-		session.setAttribute(SessionAttributes.CAPTCHA, "6666");
-		session.setAttribute(SessionAttributes.CAPTCHA_TIME, Instant.EPOCH);
+		SessionValue.CAPTCHA.setTo(session, "6666");
+		SessionValue.CAPTCHA_TIME.setTo(session, Instant.EPOCH);
 
 		mockMvc.perform(post("/accounts").content(toJson(dto)).session(session))
 				.andExpect(status().is(400))
@@ -89,8 +89,8 @@ final class AccountControllerTest extends AbstractControllerTest {
 
 		var dto = new SignupDTO("alice", "foobar2000", "6666");
 		var session = new MockHttpSession();
-		session.setAttribute(SessionAttributes.CAPTCHA, "6666");
-		session.setAttribute(SessionAttributes.CAPTCHA_TIME, Instant.now());
+		SessionValue.CAPTCHA.setTo(session, "6666");
+		SessionValue.CAPTCHA_TIME.setTo(session, Instant.now());
 
 		mockMvc.perform(post("/accounts").content(toJson(dto)).session(session))
 				.andExpect(status().is(400));
@@ -102,8 +102,8 @@ final class AccountControllerTest extends AbstractControllerTest {
 
 		var dto = new SignupDTO("alice", "foobar2000", "6666");
 		var session = new MockHttpSession();
-		session.setAttribute(SessionAttributes.CAPTCHA, "6666");
-		session.setAttribute(SessionAttributes.CAPTCHA_TIME, Instant.now());
+		SessionValue.CAPTCHA.setTo(session, "6666");
+		SessionValue.CAPTCHA_TIME.setTo(session, Instant.now());
 
 		mockMvc.perform(post("/accounts").content(toJson(dto)).session(session))
 				.andExpect(status().is(201));

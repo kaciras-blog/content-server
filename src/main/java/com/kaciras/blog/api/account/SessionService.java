@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.account;
 
-import com.kaciras.blog.api.SessionAttributes;
+import com.kaciras.blog.api.SessionValue;
 import com.kaciras.blog.infra.autoconfigure.SessionCookieProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class SessionService {
 
 	public void putUser(HttpServletRequest request, HttpServletResponse response, int id, boolean remember) {
 		var session = request.getSession(true);
-		session.setAttribute(SessionAttributes.USER_ID, id);
+		SessionValue.USER_ID.setTo(session, id);
 
 		sessionTable.add(id, session.getId());
 

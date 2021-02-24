@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.account.local;
 
-import com.kaciras.blog.api.SessionAttributes;
+import com.kaciras.blog.api.SessionValue;
 import com.kaciras.blog.api.account.AuthType;
 import com.kaciras.blog.api.account.SessionService;
 import com.kaciras.blog.api.user.UserManager;
@@ -24,7 +24,6 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
 
 @RequiredArgsConstructor
 @RestController
@@ -72,14 +71,14 @@ class AccountController {
 	 * @throws RequestArgumentException 如果检查出错误
 	 */
 	private void checkCaptcha(HttpSession session, @NonNull String value) {
-		var except = session.getAttribute(SessionAttributes.CAPTCHA);
-		session.removeAttribute(SessionAttributes.CAPTCHA);
+		var except = SessionValue.CAPTCHA.getFrom(session);
+		SessionValue.CAPTCHA.removeFrom(session);
 
 		if (!value.equals(except)) {
 			throw new RequestArgumentException("验证码错误");
 		}
 
-		var time = (Instant) session.getAttribute(SessionAttributes.CAPTCHA_TIME);
+		var time = SessionValue.CAPTCHA_TIME.getFrom(session);
 		var expireAt = time.plus(CAPTCHA_EXPIRE);
 		if (clock.instant().isAfter(expireAt)) {
 			throw new RequestArgumentException("验证码已过期，请重试");

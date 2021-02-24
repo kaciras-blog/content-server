@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.misc;
 
-import com.kaciras.blog.api.SessionAttributes;
+import com.kaciras.blog.api.SessionValue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +43,7 @@ public class CaptchaController {
 		resp.setDateHeader("Expires", 0);
 
 		var captcha = generator.generate(resp.getOutputStream());
-		session.setAttribute(SessionAttributes.CAPTCHA, captcha);
-		session.setAttribute(SessionAttributes.CAPTCHA_TIME, clock.instant());
+		SessionValue.CAPTCHA.setTo(session, captcha);
+		SessionValue.CAPTCHA_TIME.setTo(session, clock.instant());
 	}
 }

@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.user;
 
-import com.kaciras.blog.api.SessionAttributes;
+import com.kaciras.blog.api.SessionValue;
 import com.kaciras.blog.infra.principal.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ class SessionUserController {
 
 	@DeleteMapping
 	public ResponseEntity<Void> logout(HttpSession session) {
-		session.removeAttribute(SessionAttributes.USER_ID);
+		SessionValue.USER_ID.removeFrom(session);
 		return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
 	}
 
