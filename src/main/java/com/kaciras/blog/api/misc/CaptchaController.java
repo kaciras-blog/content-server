@@ -44,6 +44,6 @@ public class CaptchaController {
 
 		var captcha = generator.generate(resp.getOutputStream());
 		session.setAttribute(SessionAttributes.CAPTCHA, captcha);
-		session.setAttribute(SessionAttributes.CAPTCHA_TIME, clock.millis());
+		session.setAttribute(SessionAttributes.CAPTCHA_TIME, clock.instant());
 	}
 }

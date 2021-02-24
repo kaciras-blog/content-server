@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.mock.web.MockHttpSession;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
@@ -56,7 +57,7 @@ final class AccountControllerTest extends AbstractControllerTest {
 	void invalidSignupRequest(SignupDTO dto) throws Exception {
 		var session = new MockHttpSession();
 		session.setAttribute(SessionAttributes.CAPTCHA, "6666");
-		session.setAttribute(SessionAttributes.CAPTCHA_TIME, System.currentTimeMillis());
+		session.setAttribute(SessionAttributes.CAPTCHA_TIME, Instant.now());
 
 		mockMvc.perform(post("/accounts").content(toJson(dto)).session(session))
 				.andExpect(status().is(400));
@@ -75,7 +76,7 @@ final class AccountControllerTest extends AbstractControllerTest {
 		var dto = new SignupDTO("alice", "foobar2000", "6666");
 		var session = new MockHttpSession();
 		session.setAttribute(SessionAttributes.CAPTCHA, "6666");
-		session.setAttribute(SessionAttributes.CAPTCHA_TIME, 0L);
+		session.setAttribute(SessionAttributes.CAPTCHA_TIME, Instant.EPOCH);
 
 		mockMvc.perform(post("/accounts").content(toJson(dto)).session(session))
 				.andExpect(status().is(400))
@@ -89,7 +90,7 @@ final class AccountControllerTest extends AbstractControllerTest {
 		var dto = new SignupDTO("alice", "foobar2000", "6666");
 		var session = new MockHttpSession();
 		session.setAttribute(SessionAttributes.CAPTCHA, "6666");
-		session.setAttribute(SessionAttributes.CAPTCHA_TIME, System.currentTimeMillis());
+		session.setAttribute(SessionAttributes.CAPTCHA_TIME, Instant.now());
 
 		mockMvc.perform(post("/accounts").content(toJson(dto)).session(session))
 				.andExpect(status().is(400));
@@ -102,7 +103,7 @@ final class AccountControllerTest extends AbstractControllerTest {
 		var dto = new SignupDTO("alice", "foobar2000", "6666");
 		var session = new MockHttpSession();
 		session.setAttribute(SessionAttributes.CAPTCHA, "6666");
-		session.setAttribute(SessionAttributes.CAPTCHA_TIME, System.currentTimeMillis());
+		session.setAttribute(SessionAttributes.CAPTCHA_TIME, Instant.now());
 
 		mockMvc.perform(post("/accounts").content(toJson(dto)).session(session))
 				.andExpect(status().is(201));

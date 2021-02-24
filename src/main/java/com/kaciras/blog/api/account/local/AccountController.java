@@ -23,14 +23,16 @@ import javax.validation.Valid;
 import java.net.InetAddress;
 import java.net.URI;
 import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/accounts")
 class AccountController {
 
-	/** 验证码过期时间（毫秒） */
-	private static final long CAPTCHA_EXPIRE = 5 * 60 * 1000;
+	/** 验证码过期时间 */
+	private final Duration CAPTCHA_EXPIRE = Duration.ofMinutes(5);
 
 	private final Clock clock;
 
@@ -77,8 +79,9 @@ class AccountController {
 			throw new RequestArgumentException("验证码错误");
 		}
 
-		var time = (long) session.getAttribute(SessionAttributes.CAPTCHA_TIME);
-		if (clock.millis() - time > CAPTCHA_EXPIRE) {
+		var time = (Instant) session.getAttribute(SessionAttributes.CAPTCHA_TIME);
+		var expireAt = time.plus(CAPTCHA_EXPIRE);
+		if (clock.instant().isAfter(expireAt)) {
 			throw new RequestArgumentException("验证码已过期，请重试");
 		}
 	}
