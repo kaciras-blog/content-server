@@ -50,6 +50,8 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	@Autowired
 	private DiscussionController controller;
 
+	private final PublishDTO publishDTO = new PublishDTO(0, 0, 0, null, "test content");
+
 	@BeforeEach
 	void setUp() {
 		controller.setOptions(new DiscussionOptions());
@@ -95,7 +97,10 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	@Test
 	void getListWithChildren() throws Exception {
 		var top = List.of(newItem(1, 0));
-		var children = List.of(newItem(2, 1), newItem(3, 1));
+		var children = List.of(
+				newItem(2, 1),
+				newItem(3, 1)
+		);
 		when(repository.count(any())).thenReturn(top.size());
 		when(repository.findAll(any())).thenReturn(top, children);
 
@@ -161,27 +166,21 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		var longText = new char[16384];
 		Arrays.fill(longText, '蛤');
 		return Stream.of(
-				Arguments.of("{ \"content\": \" \" }"),
-				Arguments.of("{ \"content\": \"" + new String(longText) + "\" }"),
-				Arguments.of("{}"),
-				Arguments.of("{ \"content\": \"test\", \"nickname\": \"12345678901234567\" }"),
-				Arguments.of("{ \"content\": \"test\", \"nickname\": \"\" }"),
-				Arguments.of("{ \"content\": \"test\", \"nickname\": \"  \" }")
+				Arguments.of("content", new String(longText)),
+				Arguments.of("content", null),
+				Arguments.of("content", ""),
+
+				Arguments.of("nickname", "12345678901234567"),
+				Arguments.of("nickname", ""),
+				Arguments.of("nickname", "	   	")
 		);
 	}
 
 	@MethodSource("invalidPostRequests")
 	@ParameterizedTest
-	void invalidPublish(String body) throws Exception {
+	void invalidPublish(String field, Object value) throws Exception {
+		var body = toJson(mutate(publishDTO, field, value));
 		mockMvc.perform(post("/discussions").content(body)).andExpect(status().is(400));
-	}
-
-	/**
-	 * 测试用的 POST 请求体，因为多处使用所以提取出来了。
-	 */
-	private String getPostBody() throws Exception {
-		var input = new PublishDTO(0, 0, 0, null, "test content");
-		return objectMapper.writeValueAsString(input);
 	}
 
 	@Test
@@ -189,18 +188,16 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		// 对与 spy 的对象，且方法内会抛异常，必须使用 doXX.when(obj).call 方式而不是 when(obj.call).thenXX
 		doThrow(new RequestArgumentException()).when(topics).get(anyInt(), anyInt());
 
-		mockMvc.perform(post("/discussions").content(getPostBody()))
-				.andExpect(status().is(400));
+		mockMvc.perform(post("/discussions").content(toJson(publishDTO))).andExpect(status().is(400));
 		verify(repository, noInteractions()).add(any());
 	}
 
 	@Test
 	void publishToNonExistsParent() throws Exception {
 		when(repository.get(anyInt())).thenReturn(Optional.empty());
+		var dto = mutate(publishDTO, "parent", 1);
 
-		var input = new PublishDTO(0, 0, 1, null, "test");
-		var body = objectMapper.writeValueAsString(input);
-		mockMvc.perform(post("/discussions").content(body)).andExpect(status().is(400));
+		mockMvc.perform(post("/discussions").content(toJson(dto))).andExpect(status().is(400));
 	}
 
 	@Test
@@ -208,18 +205,15 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		when(repository.get(anyInt())).thenReturn(Optional.of(newItem(1, 0)));
 		doThrow(new RequestArgumentException()).when(topics).get(anyInt(), anyInt());
 
-		var input = new PublishDTO(0, 0, 1, null, "test");
-		var body = objectMapper.writeValueAsString(input);
+		var dto = mutate(publishDTO, "parent", 1);
 
-		mockMvc.perform(post("/discussions").content(body))
-				.andExpect(status().is(400));
-
+		mockMvc.perform(post("/discussions").content(toJson(dto))).andExpect(status().is(400));
 		verify(repository, never()).add(any());
 	}
 
 	@Test
 	void publish() throws Exception {
-		mockMvc.perform(post("/discussions").content(getPostBody())).andExpect(status().is(201));
+		mockMvc.perform(post("/discussions").content(toJson(publishDTO))).andExpect(status().is(201));
 
 		var captor = ArgumentCaptor.forClass(Discussion.class);
 		verify(repository).add(captor.capture());
@@ -242,7 +236,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		};
 		doAnswer(mockAdd).when(repository).add(any());
 
-		mockMvc.perform(post("/discussions").content(getPostBody()));
+		mockMvc.perform(post("/discussions").content(toJson(publishDTO)));
 
 		verify(notification).notify(snapshot.matchArg());
 	}
@@ -253,7 +247,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		options.disabled = true;
 		controller.setOptions(options);
 
-		mockMvc.perform(post("/discussions").content(getPostBody())).andExpect(status().is(403));
+		mockMvc.perform(post("/discussions").content(toJson(publishDTO))).andExpect(status().is(403));
 	}
 
 	@Test
@@ -262,7 +256,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		options.loginRequired = true;
 		controller.setOptions(options);
 
-		var request = post("/discussions").content(getPostBody());
+		var request = post("/discussions").content(toJson(publishDTO));
 		mockMvc.perform(request).andExpect(status().is(403));
 		mockMvc.perform(request.principal(LOGINED)).andExpect(status().is(201));
 	}
@@ -273,7 +267,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 		options.moderation = true;
 		controller.setOptions(options);
 
-		mockMvc.perform(post("/discussions").content(getPostBody())).andExpect(status().is(201));
+		mockMvc.perform(post("/discussions").content(toJson(publishDTO))).andExpect(status().is(201));
 
 		var captor = ArgumentCaptor.forClass(Discussion.class);
 		verify(repository).add(captor.capture());
@@ -282,7 +276,8 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 
 	@Test
 	void updateStateWithoutPermission() throws Exception {
-		var request = patch("/discussions").content("{ \"ids\": [1,2], \"state\": \"VISIBLE\" }");
+		var request = patch("/discussions")
+				.content("{ \"ids\": [1,2], \"state\": \"VISIBLE\" }");
 		mockMvc.perform(request).andExpect(status().is(403));
 	}
 

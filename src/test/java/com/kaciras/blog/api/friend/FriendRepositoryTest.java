@@ -30,16 +30,16 @@ final class FriendRepositoryTest {
 	@Test
 	void addRepeat() {
 		var friend = createFriend("example.com");
-		assertThat(repository.addFriend(friend)).isTrue();
-		assertThat(repository.addFriend(friend)).isFalse();
+		assertThat(repository.add(friend)).isTrue();
+		assertThat(repository.add(friend)).isFalse();
 	}
 
 	@Test
 	void add() {
 		var friend = createFriend("example.com");
-		repository.addFriend(friend);
+		repository.add(friend);
 
-		var rv = repository.getFriends()[0];
+		var rv = repository.getAll()[0];
 		assertThat(friend.createTime).isNotNull();
 
 		// 忽略 Json 序列化精度问题，下同
@@ -49,7 +49,7 @@ final class FriendRepositoryTest {
 	@Test
 	void findByHost() {
 		var friend = createFriend("example.com");
-		repository.addFriend(friend);
+		repository.add(friend);
 
 		assertThat(repository.findByHost("non.exists")).isNull();
 
@@ -65,13 +65,13 @@ final class FriendRepositoryTest {
 
 	@Test
 	void remove() {
-		repository.addFriend(createFriend("A"));
-		repository.addFriend(createFriend("B"));
-		repository.addFriend(createFriend("C"));
+		repository.add(createFriend("A"));
+		repository.add(createFriend("B"));
+		repository.add(createFriend("C"));
 
 		assertThat(repository.remove("B")).isTrue();
 
-		var friends = repository.getFriends();
+		var friends = repository.getAll();
 		assertThat(friends).hasSize(2);
 		assertThat(friends[0].name).isEqualTo("A");
 		assertThat(friends[1].name).isEqualTo("C");
@@ -79,21 +79,21 @@ final class FriendRepositoryTest {
 
 	@Test
 	void updateNonExists() {
-		var success = repository.updateFriend("no-exists", createFriend("test"));
+		var success = repository.update("no-exists", createFriend("test"));
 		assertThat(success).isFalse();
 	}
 
 	@Test
 	void update() {
 		var old = createFriend("A", "foo", null);
-		repository.addFriend(old);
-		repository.addFriend(createFriend("B"));
-		repository.addFriend(createFriend("C"));
+		repository.add(old);
+		repository.add(createFriend("B"));
+		repository.add(createFriend("C"));
 
-		var success = repository.updateFriend("A", createFriend("A", "bar", null));
+		var success = repository.update("A", createFriend("A", "bar", null));
 		assertThat(success).isTrue();
 
-		var friends = repository.getFriends();
+		var friends = repository.getAll();
 		assertThat(friends).hasSize(3);
 		assertThat(friends[0].url).isEqualTo(old.url);
 		assertThat(friends[0].friendPage).isEqualTo(URI.create("bar"));
@@ -104,14 +104,14 @@ final class FriendRepositoryTest {
 		var old = createFriend("A", "foo", null);
 		var new_ = createFriend("xx", "bar", null);
 
-		repository.addFriend(old);
-		repository.addFriend(createFriend("B"));
-		repository.addFriend(createFriend("C"));
+		repository.add(old);
+		repository.add(createFriend("B"));
+		repository.add(createFriend("C"));
 
-		var success = repository.updateFriend("A", new_);
+		var success = repository.update("A", new_);
 		assertThat(success).isTrue();
 
-		var friends = repository.getFriends();
+		var friends = repository.getAll();
 		assertThat(friends).hasSize(3);
 		assertThat(friends[0].url).isEqualTo(new_.url);
 		assertThat(friends[0].name).isEqualTo("xx");
@@ -120,13 +120,13 @@ final class FriendRepositoryTest {
 
 	@Test
 	void sort() {
-		repository.addFriend(createFriend("A"));
-		repository.addFriend(createFriend("B"));
-		repository.addFriend(createFriend("C"));
+		repository.add(createFriend("A"));
+		repository.add(createFriend("B"));
+		repository.add(createFriend("C"));
 
 		repository.updateSort(new String[]{"C", "A", "B"});
 
-		var friends = repository.getFriends();
+		var friends = repository.getAll();
 		assertThat(friends).hasSize(3);
 		assertThat(friends[0].name).isEqualTo("C");
 		assertThat(friends[1].name).isEqualTo("A");
@@ -136,12 +136,12 @@ final class FriendRepositoryTest {
 	/** 更新两遍，确认幂等性（BoundKeyOperations.rename 的坑） */
 	@Test
 	void sortIdempotence() {
-		repository.addFriend(createFriend("A"));
-		repository.addFriend(createFriend("B"));
+		repository.add(createFriend("A"));
+		repository.add(createFriend("B"));
 
 		repository.updateSort(new String[]{"B", "A"});
 		repository.updateSort(new String[]{"B", "A"});
 
-		assertThat(repository.getFriends()).hasSize(2);
+		assertThat(repository.getAll()).hasSize(2);
 	}
 }

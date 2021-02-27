@@ -39,11 +39,4 @@ public final class FilterChainCapture implements FilterChain {
 		outRequest = (HttpServletRequest) request;
 		outResponse = (HttpServletResponse) response;
 	}
-
-	/** 断言请求被拦截，没有传递到后续处理链 */
-	public void assertIntercepted() {
-		if (outRequest != null) {
-			throw new AssertionError("请求应当被拦截，但是却调用了 chain.doFilter(...)");
-		}
-	}
 }

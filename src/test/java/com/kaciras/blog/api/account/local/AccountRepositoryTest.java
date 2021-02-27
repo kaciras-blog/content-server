@@ -6,20 +6,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Transactional
 @SpringBootTest
-final class AccountRepositoryTest {
+class AccountRepositoryTest {
 
 	@Autowired
 	private AccountRepository repository;
 
 	@Test
-	void nameConflict() throws SQLException {
+	void nameConflict() {
 		var a0 = Account.create(3, "alice", "foobar2000");
 		var a1 = Account.create(4, "alice", "foobar2000");
 		repository.add(a0);
@@ -27,7 +25,7 @@ final class AccountRepositoryTest {
 	}
 
 	@Test
-	void findByName(){
+	void findByName() {
 		var account = Account.create(3, "alice", "foobar2000");
 		repository.add(account);
 

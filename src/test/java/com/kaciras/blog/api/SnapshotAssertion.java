@@ -33,6 +33,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * <h2>使用要求</h2>
  * 因为 JUnit 自己没有提供从外部获取当前测试名的方法，所以用了一个扩展来追踪当前测试名。
  * 请在测试类上加入：{@code @ExtendWith(SnapshotAssertion.ContextHolder.class)}
+ *
+ * @see <a href="https://blog.kaciras.com/article/21/implement-a-java-snapshot-matcher">设计思路详解</a>
  */
 @Component
 public final class SnapshotAssertion {

@@ -2,7 +2,6 @@ package com.kaciras.blog.api.friend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.AbstractControllerTest;
-import com.kaciras.blog.infra.codec.ImageReference;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -40,7 +39,7 @@ final class FriendControllerTest extends AbstractControllerTest {
 				createFriend("B"),
 				createFriend("C"),
 		};
-		when(repository.getFriends()).thenReturn(result);
+		when(repository.getAll()).thenReturn(result);
 
 		var exchange = mockMvc.perform(get("/friends"))
 				.andExpect(status().is(200))
@@ -55,50 +54,52 @@ final class FriendControllerTest extends AbstractControllerTest {
 		assertThat(list.get(2)).usingRecursiveComparison().isEqualTo(result[2]);
 	}
 
-	private static Stream<Arguments> invalidFriends() {
-		var url = URI.create("https://example.com");
-		var image = ImageReference.parse("test.png");
+	private static Stream<Arguments> invalidFields() {
 		return Stream.of(
-				Arguments.of(new FriendLink(null, "test", image, image, null, null)),
-				Arguments.of(new FriendLink(URI.create(""), "test", image, image, null, null)),
-				Arguments.of(new FriendLink(URI.create("ftp://test"), "test", image, image, null, null)),
-				Arguments.of(new FriendLink(url, null, image, image, null, null)),
-				Arguments.of(new FriendLink(url, "", image, image, null, null)),
-				Arguments.of(new FriendLink(url, "123456789123456789", image, image, null, null)),
-				Arguments.of(new FriendLink(url, "test", null, image, null, null)),
-				Arguments.of(new FriendLink(url, "test", image, null, null, null))
+				Arguments.of("url", null),
+				Arguments.of("url", URI.create("ftp://test")),
+				Arguments.of("url", URI.create("")),
+
+				Arguments.of("name", null),
+				Arguments.of("name", ""),
+				Arguments.of("name", "toooooooooooooooolong"),
+
+				Arguments.of("favicon", null),
+				Arguments.of("background", null)
 		);
 	}
 
-	@MethodSource("invalidFriends")
+	@MethodSource("invalidFields")
 	@ParameterizedTest
-	void invalidFriendLink(FriendLink value) throws Exception {
-		var request = post("/friends").content(objectMapper.writeValueAsBytes(value));
+	void addInvalid(String field, Object value) throws Exception {
+		var friend = mutate(createFriend("example.com"), field, value);
+		var request = post("/friends").content(toJson(friend));
 		mockMvc.perform(request).andExpect(status().is(400));
 	}
 
 	@Test
 	void add() throws Exception {
-		when(repository.addFriend(any())).thenReturn(true);
+		when(repository.add(any())).thenReturn(true);
 
 		var request = post("/friends")
 				.principal(ADMIN)
-				.content(objectMapper.writeValueAsString(createFriend("example.com")));
+				.content(toJson(createFriend("example.com")));
+
 		mockMvc.perform(request)
 				.andExpect(status().is(201))
 				.andExpect(header().string("Location", "/friends/example.com"));
 
-		verify(repository).addFriend(any());
+		verify(repository).add(any());
 		verify(validateService).addForValidate(any());
 	}
 
 	@Test
 	void repeatAdd() throws Exception {
-		when(repository.addFriend(any())).thenReturn(false);
+		when(repository.add(any())).thenReturn(false);
 
 		var request = post("/friends")
 				.principal(ADMIN)
-				.content(objectMapper.writeValueAsString(createFriend("example.com")));
+				.content(toJson(createFriend("example.com")));
 		mockMvc.perform(request)
 				.andExpect(status().is(409));
 
@@ -126,9 +127,9 @@ final class FriendControllerTest extends AbstractControllerTest {
 
 	@Test
 	void update() throws Exception {
-		when(repository.updateFriend(any(), any())).thenReturn(true);
+		when(repository.update(any(), any())).thenReturn(true);
 
-		var friend = objectMapper.writeValueAsString(createFriend("test"));
+		var friend = toJson(createFriend("example.com"));
 		mockMvc.perform(put("/friends/example.com")
 				.content(friend)
 				.principal(ADMIN))
@@ -137,9 +138,9 @@ final class FriendControllerTest extends AbstractControllerTest {
 
 	@Test
 	void updateNonExists() throws Exception {
-		when(repository.updateFriend(any(), any())).thenReturn(false);
+		when(repository.update(any(), any())).thenReturn(false);
 
-		var friend = objectMapper.writeValueAsString(createFriend("test"));
+		var friend = toJson(createFriend("example.com"));
 		mockMvc.perform(put("/friends/example.com")
 				.content(friend)
 				.principal(ADMIN))
@@ -153,7 +154,7 @@ final class FriendControllerTest extends AbstractControllerTest {
 	void sort() throws Exception {
 		mockMvc.perform(put("/friends")
 				.principal(ADMIN)
-				.content(objectMapper.writeValueAsBytes(new String[]{"C", "A", "B"})))
+				.content(toJson(new String[]{"C", "A", "B"})))
 				.andExpect(status().is(200));
 
 		verify(repository).updateSort(new String[]{"C", "A", "B"});

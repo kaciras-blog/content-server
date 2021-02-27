@@ -1,7 +1,6 @@
 package com.kaciras.blog.api.account.local;
 
 import com.kaciras.blog.api.AbstractControllerTest;
-import com.kaciras.blog.api.MutateFactory;
 import com.kaciras.blog.api.SessionValue;
 import com.kaciras.blog.api.account.SessionService;
 import com.kaciras.blog.api.user.UserManager;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.mock.web.MockHttpSession;
@@ -37,9 +35,6 @@ final class AccountControllerTest extends AbstractControllerTest {
 	@MockBean
 	private SessionService sessionService;
 
-	@Autowired
-	private MutateFactory mutateFactory;
-
 	private final MockHttpSession session = new MockHttpSession();
 	private final SignupDTO signupDTO = new SignupDTO("alice", "foobar2000", "6666");
 	private final LoginDTO loginDTO = new LoginDTO("alice", "foobar2000", false);
@@ -50,10 +45,11 @@ final class AccountControllerTest extends AbstractControllerTest {
 		SessionValue.CAPTCHA_TIME.setTo(session, Instant.now());
 	}
 
-	private static Stream<Arguments> invalidRegisterDTOs() {
+	private static Stream<Arguments> invalidSignupFields() {
 		var chs = new char[2000];
 		Arrays.fill(chs, 'p');
 		var longText = new String(chs);
+
 		return Stream.of(
 				Arguments.of("name", null),
 				Arguments.of("password", null),
@@ -68,12 +64,12 @@ final class AccountControllerTest extends AbstractControllerTest {
 		);
 	}
 
-	@MethodSource("invalidRegisterDTOs")
+	@MethodSource("invalidSignupFields")
 	@ParameterizedTest
 	void invalidSignupRequest(String field, Object value) throws Exception {
-		var body = mutateFactory.from(signupDTO).mutate(field, value).json();
+		var body = mutate(signupDTO, field, value);
 
-		mockMvc.perform(post("/accounts").content(body).session(session)).andExpect(status().is(400));
+		mockMvc.perform(post("/accounts").content(toJson(body)).session(session)).andExpect(status().is(400));
 	}
 
 	@Test

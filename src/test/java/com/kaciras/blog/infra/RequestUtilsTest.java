@@ -40,7 +40,7 @@ final class RequestUtilsTest {
 		assertThatThrownBy(() -> RequestUtils.addressFrom(request)).isInstanceOf(UncheckedIOException.class);
 	}
 
-	private static Stream<Arguments> addressAndType() {
+	private static Stream<Arguments> addressAndIsLocal() {
 		return Stream.of(
 				Arguments.of("127.0.0.1", true),
 				Arguments.of("192.168.0.1", true),
@@ -51,7 +51,7 @@ final class RequestUtilsTest {
 		);
 	}
 
-	@MethodSource("addressAndType")
+	@MethodSource("addressAndIsLocal")
 	@ParameterizedTest
 	void isLocalNetwork(String host, boolean expect) throws Exception {
 		var address = InetAddress.getByName(host);
