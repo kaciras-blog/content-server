@@ -3,6 +3,7 @@ package com.kaciras.blog.api.notice;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
@@ -22,6 +23,9 @@ public class MailService {
 	private final JavaMailSender mailSender;
 	private final String from;
 	private final String adminAddress;
+
+	@Value("${app.name}")
+	private String name;
 
 	/**
 	 * 发送一封邮件给博主，如果博主没有设置自己的邮件地址则什么也不做。
@@ -47,7 +51,7 @@ public class MailService {
 		var helper = new MimeMessageHelper(message);
 
 		try {
-			helper.setFrom(from, "KacirasBlog");
+			helper.setFrom(from, name);
 			helper.setTo(to);
 			helper.setSubject(title);
 
@@ -65,7 +69,7 @@ public class MailService {
 
 			mailSender.send(message);
 		} catch (IOException | MessagingException e) {
-			logger.error("邮件发送失败", e);
+			logger.error("邮件发送失败，To = {}，Title = {}", to, title, e);
 		}
 	}
 }

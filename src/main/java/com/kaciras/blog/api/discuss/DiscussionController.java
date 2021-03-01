@@ -8,7 +8,6 @@ import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.principal.RequirePermission;
 import com.kaciras.blog.infra.principal.SecurityContext;
-import com.kaciras.blog.infra.principal.WebPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.domain.Pageable;
@@ -97,21 +96,21 @@ class DiscussionController {
 		discussion.setAddress(RequestUtils.addressFrom(request));
 
 		// 获取主题，同时检查是否存在
+		Discussion parent;
 		Topic topic;
 		var pid = discussion.getParent();
 		if (pid != 0) {
-			var parent = repository.get(pid).orElseThrow(RequestArgumentException::new);
+			parent = repository.get(pid).orElseThrow(RequestArgumentException::new);
 			topic = topics.get(parent);
 		} else {
+			parent = null;
 			topic = topics.get(discussion);
 		}
 
 		repository.add(discussion);
 
 		// 发送通知提醒，自己的评论就不用了
-		if (discussion.getUserId() != WebPrincipal.ADMIN_ID) {
-			noticeService.notify(mapper.toActivity(discussion, topic));
-		}
+		noticeService.notify(mapper.toActivity(discussion, topic, parent));
 
 		return ResponseEntity
 				.created(URI.create("/discussions/" + discussion.getId()))

@@ -29,7 +29,7 @@ final class NoticeConfigurationTest {
 	static final class TestConfiguration {}
 
 	@Test
-	void mailDisabled() {
+	void defaults() {
 		runner.run(context -> {
 			assertThat(context).doesNotHaveBean(MailService.class);
 			assertThat(context).hasSingleBean(NoticeService.class);
@@ -38,7 +38,7 @@ final class NoticeConfigurationTest {
 
 	@Test
 	void mailService() {
-		runner.withPropertyValues("app.mail-notify.from=alice@example.com").run(context -> {
+		runner.withPropertyValues("app.notice.mail.from=alice@example.com").run(context -> {
 			var noticeService = context.getBean(NoticeService.class);
 			var mailService = context.getBean(MailService.class);
 			assertThat(noticeService).hasFieldOrPropertyWithValue("mailService", mailService);

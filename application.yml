@@ -42,6 +42,9 @@ spring:
 
 app:
 
+  # 给应用起个名，用于邮件发送者部分
+  name: KacirasBlog
+
   # 网站（前端页面）的协议和域名
   origin: http://localhost
 

@@ -19,7 +19,7 @@ class NoticeConfiguration {
 
 	private final MailNotifyProperties properties;
 
-	@ConditionalOnProperty(prefix = "app.mail-notify", name = "from")
+	@ConditionalOnProperty(prefix = "app.notice.mail", name = "from")
 	@Bean
 	public MailService mailService(JavaMailSender mailSender) {
 		return new MailService(mailSender, properties.from, properties.admin);

@@ -1,11 +1,17 @@
 package com.kaciras.blog.api.discuss;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kaciras.blog.api.notice.Activity;
 import com.kaciras.blog.api.notice.ActivityType;
 import com.kaciras.blog.api.notice.MailNotice;
 import com.kaciras.blog.api.notice.MailService;
+import com.kaciras.blog.api.user.User;
+import com.kaciras.blog.infra.principal.WebPrincipal;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Optional;
+import java.util.function.Consumer;
 
 @Getter
 @Setter
@@ -22,6 +28,13 @@ final class DiscussionActivity implements Activity, MailNotice {
 	/** 内容预览 */
 	private String preview;
 
+	@JsonIgnore
+	private User user;
+
+	// 仅当顶层评论时为 null
+	@JsonIgnore
+	private User parentUser;
+
 	@Override
 	public ActivityType getActivityType() {
 		return ActivityType.DISCUSSION;
@@ -29,11 +42,23 @@ final class DiscussionActivity implements Activity, MailNotice {
 
 	@Override
 	public void sendMail(boolean clear, MailService sender) {
-		if (!clear) {
-			return;
+		// 仅提示有新回复，具体内容去后台看
+		if (clear && user.getId() != WebPrincipal.ADMIN_ID) {
+			var html = "<p>详情请前往控制台查看哦</p><p>如果还要接收邮件，请清除全部评论通知</p>";
+			sender.sendToAdmin("博客有新评论", html);
 		}
-		// 邮件仅提示有新回复，具体内容去网站看
-		var html = "<p>详情请前往控制台查看哦</p><p>如果还要接收邮件，请清除全部评论通知</p>";
-		sender.sendToAdmin("博客有新评论", html);
+
+		Consumer<String> sendReplyMail = email -> {
+			var html = """
+					<p>您在 <a href="%s">%s</a> 下的评论有新回复</p>
+					<blockquote><pre>%s</pre></blockquote>
+					""";
+			sender.send(email, "新回复", String.format(html, url, title, preview));
+		};
+
+		Optional.ofNullable(parentUser)
+				.filter(u -> u.getId() != WebPrincipal.ADMIN_ID) // 给自己的就不用发了
+				.map(User::getEmail)
+				.ifPresent(sendReplyMail);
 	}
 }
