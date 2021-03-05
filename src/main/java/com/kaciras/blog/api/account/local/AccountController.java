@@ -95,6 +95,6 @@ class AccountController {
 			throw new RequestArgumentException("密码错误或用户不存在");
 		}
 		sessionService.putUser(request, response, account.getId(), data.remember);
-		return ResponseEntity.created(URI.create("/session/user")).build();
+		return ResponseEntity.created(URI.create("/user")).build();
 	}
 }

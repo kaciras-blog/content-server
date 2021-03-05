@@ -10,17 +10,22 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+/**
+ * 当前登录的用户控制器，路径以简洁为主使用 /user 而不是 /session/user 之类的，跟 GitHub 一样。
+ * <p>
+ * 这里有注销但没有登录和注册，这俩功能见 account 包。
+ */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/session/user")
-class SessionUserController {
+@RequestMapping("/user")
+class SelfController {
 
 	private final UserRepository repository;
-	private final UserMapper userMapper;
+	private final UserMapper mapper;
 
 	@GetMapping
 	public UserVO get() {
-		return userMapper.toUserVo(repository.get(SecurityContext.getUserId()));
+		return mapper.toUserVo(repository.get(SecurityContext.getUserId()));
 	}
 
 	@DeleteMapping
@@ -30,14 +35,12 @@ class SessionUserController {
 	}
 
 	@PatchMapping
-	public ResponseEntity<Void> patch(@RequestBody @Valid UpdateDTO data) {
+	public ResponseEntity<Void> update(@RequestBody @Valid UpdateDTO data) {
 		SecurityContext.requireLogin();
 		var user = repository.get(SecurityContext.getUserId());
 
-		user.setName(data.name);
-		user.setAvatar(data.avatar);
+		mapper.populate(user, data);
 		repository.update(user);
-
 		return ResponseEntity.noContent().build();
 	}
 }
