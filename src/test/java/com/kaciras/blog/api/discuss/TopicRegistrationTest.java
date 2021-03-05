@@ -33,7 +33,7 @@ final class TopicRegistrationTest {
 		article.setId(666);
 		article.setTitle("Title of the article");
 		article.setUrlTitle("url-title");
-		when(articleRepository.findById(1)).thenReturn(article);
+		when(articleRepository.get(1)).thenReturn(article);
 
 		var topic = registration.get(1, 1);
 		assertThat(topic.getName()).isEqualTo("Title of the article");

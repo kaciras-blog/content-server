@@ -28,7 +28,7 @@ final class ArticleControllerTest extends AbstractControllerTest {
 	@BeforeEach
 	void setUp() {
 		article.setId(5);
-		when(repository.findById(5)).thenReturn(article);
+		when(repository.get(5)).thenReturn(article);
 	}
 
 	@Test

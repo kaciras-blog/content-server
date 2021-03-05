@@ -50,7 +50,7 @@ public class DraftRepository {
 
 	@Transactional
 	@NonNull
-	public Draft findById(int id) {
+	public Draft get(int id) {
 		Utils.checkPositive(id, "id");
 		return draftDAO.selectById(id).orElseThrow(ResourceNotFoundException::new);
 	}

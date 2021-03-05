@@ -36,7 +36,7 @@ class DraftController {
 
 	@GetMapping("/{id}")
 	public DraftVO get(@PathVariable int id) {
-		return mapper.toDraftVo(repository.findById(id));
+		return mapper.toDraftVo(repository.get(id));
 	}
 
 	/**
@@ -48,7 +48,7 @@ class DraftController {
 	@PostMapping
 	public ResponseEntity<DraftVO> createDraft(@RequestParam(required = false) Integer article) {
 		var content = article != null
-				? mapper.fromArticle(articleRepository.findById(article))
+				? mapper.fromArticle(articleRepository.get(article))
 				: DraftContent.initial();
 
 		var draft = new Draft();

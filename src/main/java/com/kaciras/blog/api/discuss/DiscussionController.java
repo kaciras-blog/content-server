@@ -78,7 +78,7 @@ class DiscussionController {
 	}
 
 	@PostMapping
-	public ResponseEntity<DiscussionVO> post(
+	public ResponseEntity<DiscussionVO> publish(
 			HttpServletRequest request,
 			@Valid @RequestBody PublishDTO input) {
 		if (options.disabled) {
@@ -123,7 +123,7 @@ class DiscussionController {
 	@RequirePermission
 	@PatchMapping
 	@Transactional
-	public ResponseEntity<Void> patch(@RequestBody UpdateDTO data) {
+	public ResponseEntity<Void> update(@RequestBody UpdateDTO data) {
 		for (var id : data.ids) {
 			repository.updateState(id, data.state);
 		}

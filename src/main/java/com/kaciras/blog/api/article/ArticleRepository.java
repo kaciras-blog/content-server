@@ -29,7 +29,7 @@ public class ArticleRepository {
 	 * @throws ResourceNotFoundException 如果指定ID的文章不存在
 	 */
 	@NonNull
-	public Article findById(int id) {
+	public Article get(int id) {
 		return articleDAO.selectById(id).orElseThrow(ResourceNotFoundException::new);
 	}
 

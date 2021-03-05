@@ -30,7 +30,7 @@ class FriendController {
 	 */
 	@GetMapping
 	public FriendLink[] getFriends() {
-		return repository.getFriends();
+		return repository.getAll();
 	}
 
 	/**
@@ -44,7 +44,7 @@ class FriendController {
 	@RequirePermission
 	@PostMapping
 	public synchronized ResponseEntity<FriendLink> makeFriend(@RequestBody @Valid FriendLink friend) {
-		if (!repository.addFriend(friend)) {
+		if (!repository.add(friend)) {
 			throw new ResourceStateException("该站点的友链已存在");
 		}
 		validateService.addForValidate(friend);
@@ -68,13 +68,13 @@ class FriendController {
 	/**
 	 * 无论变成什么样子，你都还是我的朋友哦~
 	 *
-	 * @param host 旧域名
+	 * @param host   旧域名
 	 * @param friend 新的样子~
 	 */
 	@RequirePermission
 	@PutMapping("/{host}")
-	public synchronized void updateFriend(@PathVariable String host, @RequestBody @Valid FriendLink friend) {
-		if(!repository.updateFriend(host, friend)) {
+	public synchronized void update(@PathVariable String host, @RequestBody @Valid FriendLink friend) {
+		if (!repository.update(host, friend)) {
 			throw new ResourceNotFoundException();
 		}
 		validateService.removeFromValidate(host);

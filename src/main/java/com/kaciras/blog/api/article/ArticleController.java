@@ -76,7 +76,7 @@ class ArticleController {
 
 	@GetMapping("/{id}")
 	public ArticleVO get(@PathVariable int id) {
-		var article = repository.findById(id);
+		var article = repository.get(id);
 		if (article.isDeleted()) {
 			throw new ResourceDeletedException();
 		}
@@ -87,7 +87,7 @@ class ArticleController {
 	@Transactional
 	@RequirePermission
 	@PostMapping
-	public ResponseEntity<ArticleVO> post(@RequestBody @Valid PublishDTO data) {
+	public ResponseEntity<ArticleVO> publish(@RequestBody @Valid PublishDTO data) {
 		var article = mapper.createArticle(data);
 		repository.add(article);
 		updateDraft(article, data);
@@ -102,7 +102,7 @@ class ArticleController {
 	@RequirePermission
 	@PutMapping("/{id}")
 	public ArticleVO update(@PathVariable int id, @RequestBody PublishDTO data) {
-		var article = repository.findById(id);
+		var article = repository.get(id);
 
 		mapper.update(article, data);
 		repository.update(article);
@@ -116,7 +116,7 @@ class ArticleController {
 		if (data.destroy) {
 			draftRepository.remove(data.draftId);
 		} else {
-			var draft = draftRepository.findById(data.draftId);
+			var draft = draftRepository.get(data.draftId);
 			draft.setArticleId(article.getId());
 			draftRepository.update(draft);
 
@@ -133,7 +133,7 @@ class ArticleController {
 	@RequirePermission
 	@PatchMapping("/{id}")
 	public ArticleVO patch(@PathVariable int id, @RequestBody UpdateDTO data) {
-		var article = repository.findById(id);
+		var article = repository.get(id);
 		Optional.ofNullable(data.category).ifPresent(article::updateCategory);
 		Optional.ofNullable(data.deletion).ifPresent(article::updateDeleted);
 		Optional.ofNullable(data.urlTitle).ifPresent(article::updateUrlTitle);

@@ -58,7 +58,7 @@ public class FriendRepository {
 	 *
 	 * @return 友链列表
 	 */
-	public FriendLink[] getFriends() {
+	public FriendLink[] getAll() {
 		return cache;
 	}
 
@@ -79,7 +79,7 @@ public class FriendRepository {
 	 * @param friend 友链
 	 * @return 如果重复添加则为false，成功为true
 	 */
-	public boolean addFriend(FriendLink friend) {
+	public boolean add(FriendLink friend) {
 		var host = friend.url.getHost();
 		friend.createTime = clock.instant();
 
@@ -96,9 +96,9 @@ public class FriendRepository {
 	 *
 	 * @param host   原域名
 	 * @param friend 新友链
-	 * @return false表示指定的原域名不存在，成功更新则为true
+	 * @return false 表示指定的原域名不存在，成功更新则为 true
 	 */
-	public boolean updateFriend(String host, FriendLink friend) {
+	public boolean update(String host, FriendLink friend) {
 		var old = friendMap.get(host);
 		if (old == null) {
 			return false;

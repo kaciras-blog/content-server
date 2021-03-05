@@ -54,7 +54,7 @@ public class TopicRegistration {
 	@NonNull
 	public Topic get(int type, int objectId) {
 		if (type == 1) {
-			var article = articleRepository.findById(objectId);
+			var article = articleRepository.get(objectId);
 			var url = String.format("%s/article/%d/%s", origin, article.getId(), article.getUrlTitle());
 			return new Topic(article.getTitle(), url);
 		}
