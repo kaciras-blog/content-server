@@ -1,6 +1,6 @@
 package com.kaciras.blog.infra.exception;
 
-public class PermissionException extends WebBusinessException {
+public final class PermissionException extends WebBusinessException {
 
 	public PermissionException() { this("你没有权限执行这个操作"); }
 

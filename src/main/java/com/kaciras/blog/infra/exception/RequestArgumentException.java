@@ -1,6 +1,6 @@
 package com.kaciras.blog.infra.exception;
 
-public class RequestArgumentException extends WebBusinessException {
+public final class RequestArgumentException extends WebBusinessException {
 
 	public RequestArgumentException() {
 		this("请求中含有不合法的数据");

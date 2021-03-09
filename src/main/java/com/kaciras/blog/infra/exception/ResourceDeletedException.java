@@ -1,6 +1,6 @@
 package com.kaciras.blog.infra.exception;
 
-public class ResourceDeletedException extends WebBusinessException {
+public final class ResourceDeletedException extends WebBusinessException {
 
 	public ResourceDeletedException() {
 		this("请求的资源已经被删除");

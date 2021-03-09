@@ -1,6 +1,6 @@
 package com.kaciras.blog.infra.exception;
 
-public class RequestFrequencyException extends WebBusinessException {
+public final class RequestFrequencyException extends WebBusinessException {
 
 	public RequestFrequencyException() { this("操作频率过高，请稍后再试"); }
 

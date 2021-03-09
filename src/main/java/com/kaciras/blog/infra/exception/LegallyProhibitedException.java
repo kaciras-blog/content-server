@@ -1,6 +1,6 @@
 package com.kaciras.blog.infra.exception;
 
-public class LegallyProhibitedException extends WebBusinessException {
+public final class LegallyProhibitedException extends WebBusinessException {
 
 	public LegallyProhibitedException() {
 		this("请求的操作被和谐了");
