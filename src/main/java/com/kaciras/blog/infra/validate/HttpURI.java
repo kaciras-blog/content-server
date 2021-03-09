@@ -11,9 +11,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * 验证URI是有效的HTTP地址，即包含HTTP协议和域名两部分。
- * <p>
- * 【为什么要自己实现】
- * javax.validate 内置的 @URL 仅支持字符串，我也没找到别的注解能用在URI上的，只能自己写咯。
+ *
+ * <h2>为什么要自己实现</h2>
+ * org.hibernate.validator.constraints.URL 仅支持字符串，我也没找到能用在 URI 上的注解，只能自己写咯。
  */
 @Constraint(validatedBy = HttpURIValidator.class)
 @Documented

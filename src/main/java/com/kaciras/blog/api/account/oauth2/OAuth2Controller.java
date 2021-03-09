@@ -1,6 +1,5 @@
 package com.kaciras.blog.api.account.oauth2;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.api.account.AuthType;
@@ -10,6 +9,7 @@ import com.kaciras.blog.api.user.UserRepository;
 import com.kaciras.blog.infra.RequestUtils;
 import com.kaciras.blog.infra.codec.ImageReference;
 import com.kaciras.blog.infra.exception.PermissionException;
+import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.exception.ResourceDeletedException;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +47,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/oauth2")
 class OAuth2Controller {
 
+	/** 登录会话的过期时间 */
+	private static final Duration TIMEOUT = Duration.ofMinutes(10);
+
 	private final SessionService sessionService;
 	private final OAuth2DAO oAuth2DAO;
 	private final UserRepository userRepository;
@@ -61,7 +64,7 @@ class OAuth2Controller {
 
 	// 没有 bean 时注入 null 而不是空集合？
 	@Autowired(required = false)
-	private void initClientMap(Collection<OAuth2Client> beans) {
+	void initClientMap(Collection<OAuth2Client> beans) {
 		clientMap = beans.stream()
 				.collect(Collectors.toMap(b -> b.authType().name().toLowerCase(), Function.identity()));
 	}
@@ -121,7 +124,6 @@ class OAuth2Controller {
 										 @RequestParam String state,
 										 HttpServletRequest request,
 										 HttpServletResponse response) throws Exception {
-		// 获取会话，并检查 state 字段
 		var authSession = retrieveOAuthSession(request);
 		var client = clientMap.get(authSession.provider);
 
@@ -156,7 +158,7 @@ class OAuth2Controller {
 	private void saveOAuthSession(HttpServletRequest request, OAuthSession session) throws IOException {
 		var key = RedisKeys.OAUTH_SESSION.of(request.getSession(true).getId());
 		var value = objectMapper.writeValueAsBytes(session);
-		redisTemplate.opsForValue().set(key, value, Duration.ofMinutes(10));
+		redisTemplate.opsForValue().set(key, value, TIMEOUT);
 	}
 
 	/**
@@ -170,21 +172,21 @@ class OAuth2Controller {
 	 */
 	private OAuthSession retrieveOAuthSession(HttpServletRequest request) throws IOException {
 		var key = RedisKeys.OAUTH_SESSION.of(request.getSession(true).getId());
-		var record = redisTemplate.opsForValue().get(key);
-		if (record == null) {
-			throw new ResourceDeletedException("认证请求无效或已过期，请重新登录");
+		var data = redisTemplate.opsForValue().get(key);
+		if (data == null) {
+			throw new PermissionException("认证请求无效或已过期，请重新登录");
 		}
 
 		// 会话是一次性的，使用后立即删除。
 		redisTemplate.unlink(key);
-		var oAuthSession = objectMapper.readValue(record, OAuthSession.class);
+		var oAuthSession = objectMapper.readValue(data, OAuthSession.class);
 
 		// 检查请求中的 state 字段与会话中的是否一致，不同则终止并返回错误信息。
 		var state = request.getParameter("state");
 		if (oAuthSession.state.equals(state)) {
 			return oAuthSession;
 		}
-		throw new PermissionException("参数错误，您可能点击了不安全的链接，或遭到了钓鱼攻击");
+		throw new RequestArgumentException("参数错误，您可能点击了不安全的链接，或遭到了钓鱼攻击");
 	}
 
 	/**
@@ -214,7 +216,7 @@ class OAuth2Controller {
 		return user.getId();
 	}
 
-	@AllArgsConstructor(onConstructor_ = @JsonCreator)
+	@AllArgsConstructor
 	private static final class OAuthSession {
 		public final String provider;
 		public final String state;
