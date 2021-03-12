@@ -24,6 +24,9 @@ import java.time.Instant;
  * <h2>为何不用枚举</h2>
  * 枚举不支持泛型，曾经有个提案但是被否决了，相关讨论见
  * <a href="https://bugs.openjdk.java.net/browse/JDK-8170351">JDK-8170351</a>
+ *
+ * <h2>局限性</h2>
+ * 如果类型不是 public 的，那么就无法在这里访问，不过这也意味着只能在同一个包内使用，没必要写在此处。
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SessionValue<T> {
