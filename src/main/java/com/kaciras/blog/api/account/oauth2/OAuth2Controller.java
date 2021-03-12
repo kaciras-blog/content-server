@@ -1,7 +1,5 @@
 package com.kaciras.blog.api.account.oauth2;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.api.account.AuthType;
 import com.kaciras.blog.api.account.SessionService;
 import com.kaciras.blog.api.user.User;
@@ -11,11 +9,9 @@ import com.kaciras.blog.infra.codec.ImageReference;
 import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.exception.ResourceDeletedException;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +19,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.net.URI;
+import java.time.Clock;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,6 +37,7 @@ import java.util.stream.Collectors;
  * 虽然 Spring 有这功能，但因为 OAuth2 流程很简单所以自己写一遍学习一下。
  *
  * @see <a href="https://tools.ietf.org/html/rfc6749#section-4.1">RFC6749</a>
+ * @see org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter
  */
 @RequiredArgsConstructor
 @RestController
@@ -50,12 +47,13 @@ class OAuth2Controller {
 	/** 登录会话的过期时间 */
 	private static final Duration TIMEOUT = Duration.ofMinutes(10);
 
+	private static final String SESSION_KEY = "OA";
+
 	private final SessionService sessionService;
 	private final OAuth2DAO oAuth2DAO;
 	private final UserRepository userRepository;
 
-	private final RedisTemplate<String, byte[]> redisTemplate;
-	private final ObjectMapper objectMapper;
+	private final Clock clock;
 
 	private Map<String, OAuth2Client> clientMap = Collections.emptyMap();
 
@@ -76,7 +74,7 @@ class OAuth2Controller {
 	 * @param request 请求对象
 	 */
 	@GetMapping("/connect/{type}")
-	public ResponseEntity<Void> redirect(HttpServletRequest request, @PathVariable String type) throws Exception {
+	public ResponseEntity<Void> redirect(HttpServletRequest request, @PathVariable String type) {
 		var client = clientMap.get(type);
 		if (client == null) {
 			return ResponseEntity.notFound().build();
@@ -95,8 +93,9 @@ class OAuth2Controller {
 		 * 所以他的 state 与受害者没有关联（查询不到），这样可以验证登录跳转是否是同一人。
 		 */
 		var state = UUID.randomUUID().toString();
-		var authSession = new OAuthSession(type, state, request.getParameter("ret"));
-		saveOAuthSession(request, authSession);
+		var returnUrl = request.getParameter("ret");
+		var authSession = new OAuth2Session(type, state, returnUrl, clock.instant());
+		request.getSession(true).setAttribute(SESSION_KEY, authSession);
 
 		// request.getRequestURL() 不包含参数和 hash 部分
 		var redirect = UriComponentsBuilder
@@ -150,18 +149,6 @@ class OAuth2Controller {
 	}
 
 	/**
-	 * 保存临时的 OAuth2 会话，会话有一个较短的过期时间。
-	 *
-	 * @param request 请求对象
-	 * @param session OAuth2会话
-	 */
-	private void saveOAuthSession(HttpServletRequest request, OAuthSession session) throws IOException {
-		var key = RedisKeys.OAUTH_SESSION.of(request.getSession(true).getId());
-		var value = objectMapper.writeValueAsBytes(session);
-		redisTemplate.opsForValue().set(key, value, TIMEOUT);
-	}
-
-	/**
 	 * 获取请求用户保存的 OAuth2 会话，同时会做必要的安全检查。
 	 * 会话是一次性的，一旦获取就会从存储中删除。
 	 *
@@ -170,23 +157,24 @@ class OAuth2Controller {
 	 * @throws ResourceDeletedException 如果认证会话过期了
 	 * @throws PermissionException      如果存在安全问题
 	 */
-	private OAuthSession retrieveOAuthSession(HttpServletRequest request) throws IOException {
-		var key = RedisKeys.OAUTH_SESSION.of(request.getSession(true).getId());
-		var data = redisTemplate.opsForValue().get(key);
-		if (data == null) {
+	private OAuth2Session retrieveOAuthSession(HttpServletRequest request) {
+		var httpSession = request.getSession(true);
+		var data = (OAuth2Session) httpSession.getAttribute(SESSION_KEY);
+		var valid = clock.instant().minus(TIMEOUT);
+
+		if (data == null || data.time.isBefore(valid)) {
 			throw new PermissionException("认证请求无效或已过期，请重新登录");
 		}
 
 		// 会话是一次性的，使用后立即删除。
-		redisTemplate.unlink(key);
-		var oAuthSession = objectMapper.readValue(data, OAuthSession.class);
+		httpSession.removeAttribute(SESSION_KEY);
 
 		// 检查请求中的 state 字段与会话中的是否一致，不同则终止并返回错误信息。
 		var state = request.getParameter("state");
-		if (oAuthSession.state.equals(state)) {
-			return oAuthSession;
+		if (data.state.equals(state)) {
+			return data;
 		}
-		throw new RequestArgumentException("参数错误，您可能点击了不安全的链接，或遭到了钓鱼攻击");
+		throw new RequestArgumentException("参数错误，您可能点击了不安全的链接");
 	}
 
 	/**
@@ -214,12 +202,5 @@ class OAuth2Controller {
 		userRepository.add(user);
 		oAuth2DAO.insert(profile.id(), authType, user.getId());
 		return user.getId();
-	}
-
-	@AllArgsConstructor
-	private static final class OAuthSession {
-		public final String provider;
-		public final String state;
-		public final String returnUri;
 	}
 }

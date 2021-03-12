@@ -8,9 +8,6 @@ public enum RedisKeys {
 	/** 推荐卡片列表 */
 	CARD_LIST("cards"),
 
-	/** Oauth2登陆会话前缀 */
-	OAUTH_SESSION("oa:"),
-
 	/** 一个账户所有会话的集合前缀 */
 	ACCOUNT_SESSIONS("ac:"),
 
