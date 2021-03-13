@@ -49,7 +49,7 @@ public final class GithubOAuth2Client implements OAuth2Client {
 	}
 
 	@Override
-	public UserProfile getUserInfo(OAuth2Context context) throws Exception {
+	public UserProfile authorize(AuthorizeRequest context) throws Exception {
 		var authUri = UriComponentsBuilder
 				.fromUriString("https://github.com/login/oauth/access_token")
 				.queryParam("client_id", clientId)

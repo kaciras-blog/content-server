@@ -41,7 +41,7 @@ final class OAuth2ControllerTest extends AbstractControllerTest {
 		}
 
 		@Override
-		public UserProfile getUserInfo(OAuth2Context context) {
+		public UserProfile authorize(AuthorizeRequest context) {
 			return new ProfileStub();
 		}
 	}
@@ -123,11 +123,11 @@ final class OAuth2ControllerTest extends AbstractControllerTest {
 
 		assertThat(session).isNotNull();
 
-		var data = (OAuth2Session) session.getAttribute("OA");
-		assertThat(data.time).isEqualTo(Instant.EPOCH);
-		assertThat(data.state).isNotEmpty();
-		assertThat(data.provider).isEqualTo("github");
-		assertThat(data.returnUri).isEqualTo("/foobar");
+		var ctx = (OAuth2Context) session.getAttribute("OA");
+		assertThat(ctx.time).isEqualTo(Instant.EPOCH);
+		assertThat(ctx.state).isNotEmpty();
+		assertThat(ctx.provider).isEqualTo("github");
+		assertThat(ctx.returnUri).isEqualTo("/foobar");
 	}
 
 	@Test
@@ -140,7 +140,7 @@ final class OAuth2ControllerTest extends AbstractControllerTest {
 
 	@Test
 	void invalidState() throws Exception {
-		var data = new OAuth2Session("github", "bar", "eee", Instant.EPOCH);
+		var data = new OAuth2Context("github", "bar", "eee", Instant.EPOCH);
 		var session = new MockHttpSession();
 		session.setAttribute("OA", data);
 
@@ -155,7 +155,7 @@ final class OAuth2ControllerTest extends AbstractControllerTest {
 
 	@Test
 	void callback() throws Exception {
-		var data = new OAuth2Session("github", "bar", null, Instant.EPOCH);
+		var data = new OAuth2Context("github", "bar", null, Instant.EPOCH);
 		var session = new MockHttpSession();
 		session.setAttribute("OA", data);
 
@@ -170,7 +170,7 @@ final class OAuth2ControllerTest extends AbstractControllerTest {
 
 	@Test
 	void returnToPreviousPage() throws Exception {
-		var data = new OAuth2Session("github", "bar", "/foobar", Instant.EPOCH);
+		var data = new OAuth2Context("github", "bar", "/foobar", Instant.EPOCH);
 		var session = new MockHttpSession();
 		session.setAttribute("OA", data);
 
@@ -187,7 +187,7 @@ final class OAuth2ControllerTest extends AbstractControllerTest {
 
 	@Test
 	void createNewUser() throws Exception {
-		var data = new OAuth2Session("github", "bar", "/foobar", Instant.EPOCH);
+		var data = new OAuth2Context("github", "bar", "/foobar", Instant.EPOCH);
 		var session = new MockHttpSession();
 		session.setAttribute("OA", data);
 

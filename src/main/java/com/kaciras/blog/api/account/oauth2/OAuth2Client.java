@@ -24,8 +24,8 @@ public interface OAuth2Client {
 	/**
 	 * OAuth2 最后一步，使用用户传递的授权码去第三方系统获取数据。
 	 *
-	 * @param context 一些必要的信息
+	 * @param request 一些必要的信息
 	 * @return 第三方系统中的用户数据
 	 */
-	UserProfile getUserInfo(OAuth2Context context) throws Exception;
+	UserProfile authorize(AuthorizeRequest request) throws Exception;
 }

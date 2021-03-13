@@ -52,12 +52,12 @@ public final class GoogleOAuth2Client implements OAuth2Client {
 
 	@SuppressWarnings("ConstantConditions")
 	@Override
-	public UserProfile getUserInfo(OAuth2Context context) throws Exception {
+	public UserProfile authorize(AuthorizeRequest context) throws Exception {
 		var formParams = UriComponentsBuilder.newInstance()
 				.queryParam("client_id", clientId)
 				.queryParam("client_secret", clientSecret)
 				.queryParam("code", context.getCode())
-				.queryParam("redirect_uri", context.getCurrentUri())
+				.queryParam("redirect_uri", context.getRedirectUri())
 				.queryParam("grant_type", "authorization_code");
 
 		var request = HttpRequest

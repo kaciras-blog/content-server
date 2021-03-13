@@ -1,20 +1,33 @@
 package com.kaciras.blog.api.account.oauth2;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+
+import java.io.Serializable;
+import java.time.Instant;
 
 /**
- * 打包获取 AccessToken 时，各种不同的提供者可能需要的信息。
- * Github 可以再次发送 state、google 需要再传一次 callback 的 URI。
+ * OAuth2 验证码模式中，存储重定向和回调之间信息的对象。
  */
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-@Getter
-public final class OAuth2Context {
+@AllArgsConstructor
+final class OAuth2Context implements Serializable {
 
-	private final String code;
+	/**
+	 * 第三方的名字。
+	 */
+	public final String provider;
 
-	private final String currentUri;
+	/**
+	 * 请求中的状态字段。
+	 */
+	public final String state;
 
-	private final String state;
+	/**
+	 * 登录完成后返回的地址。
+	 */
+	public final String returnUri;
+
+	/**
+	 * 登录开始的时间。
+	 */
+	public final Instant time;
 }

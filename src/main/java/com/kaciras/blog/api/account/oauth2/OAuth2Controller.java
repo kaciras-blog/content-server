@@ -94,8 +94,8 @@ class OAuth2Controller {
 		 */
 		var state = UUID.randomUUID().toString();
 		var returnUrl = request.getParameter("ret");
-		var authSession = new OAuth2Session(type, state, returnUrl, clock.instant());
-		request.getSession(true).setAttribute(SESSION_KEY, authSession);
+		var ctx = new OAuth2Context(type, state, returnUrl, clock.instant());
+		request.getSession(true).setAttribute(SESSION_KEY, ctx);
 
 		// request.getRequestURL() 不包含参数和 hash 部分
 		var redirect = UriComponentsBuilder
@@ -103,7 +103,7 @@ class OAuth2Controller {
 				.replacePath("/oauth2/callback");
 
 		var authUri = client.uriTemplate()
-				.queryParam("state", authSession.state)
+				.queryParam("state", ctx.state)
 				.queryParam("redirect_uri", redirect.toUriString())
 				.build();
 
@@ -126,9 +126,9 @@ class OAuth2Controller {
 		var authSession = retrieveOAuthSession(request);
 		var client = clientMap.get(authSession.provider);
 
-		// 从第三方服务读取用户信息
-		var context = new OAuth2Context(code, request.getRequestURL().toString(), state);
-		var info = client.getUserInfo(context);
+		// 从第三方读取用户信息
+		var authorization = new AuthorizeRequest(code, state, request.getRequestURL().toString());
+		var info = client.authorize(authorization);
 
 		// 查询出在本系统里对应的用户，并设置会话属性（登录）
 		var localId = getLocalId(info, request, client.authType());
@@ -157,22 +157,22 @@ class OAuth2Controller {
 	 * @throws ResourceDeletedException 如果认证会话过期了
 	 * @throws PermissionException      如果存在安全问题
 	 */
-	private OAuth2Session retrieveOAuthSession(HttpServletRequest request) {
-		var httpSession = request.getSession(true);
-		var data = (OAuth2Session) httpSession.getAttribute(SESSION_KEY);
+	private OAuth2Context retrieveOAuthSession(HttpServletRequest request) {
+		var session = request.getSession(true);
+		var ctx = (OAuth2Context) session.getAttribute(SESSION_KEY);
 		var valid = clock.instant().minus(TIMEOUT);
 
-		if (data == null || data.time.isBefore(valid)) {
+		if (ctx == null || ctx.time.isBefore(valid)) {
 			throw new PermissionException("认证请求无效或已过期，请重新登录");
 		}
 
 		// 会话是一次性的，使用后立即删除。
-		httpSession.removeAttribute(SESSION_KEY);
+		session.removeAttribute(SESSION_KEY);
 
 		// 检查请求中的 state 字段与会话中的是否一致，不同则终止并返回错误信息。
 		var state = request.getParameter("state");
-		if (data.state.equals(state)) {
-			return data;
+		if (ctx.state.equals(state)) {
+			return ctx;
 		}
 		throw new RequestArgumentException("参数错误，您可能点击了不安全的链接");
 	}
