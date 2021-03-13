@@ -36,7 +36,7 @@ final class OAuth2ControllerTest extends AbstractControllerTest {
 		}
 
 		@Override
-		public UriComponentsBuilder uriTemplate() {
+		public UriComponentsBuilder authenticateUri() {
 			return UriComponentsBuilder.fromUriString("https://example.com");
 		}
 
@@ -114,7 +114,7 @@ final class OAuth2ControllerTest extends AbstractControllerTest {
 	}
 
 	@Test
-	void createOauth2Session() throws Exception {
+	void createOAuth2Context() throws Exception {
 		var session = mockMvc.perform(get("/oauth2/connect/github").param("ret", "/foobar"))
 				.andExpect(status().isFound())
 				.andReturn()
@@ -133,23 +133,39 @@ final class OAuth2ControllerTest extends AbstractControllerTest {
 	@Test
 	void invalidSession() throws Exception {
 		var request = get("/oauth2/callback")
-				.param("state", "TODO")
+				.param("state", "bar")
 				.param("code", "123456");
 		mockMvc.perform(request).andExpect(status().isForbidden());
 	}
 
 	@Test
-	void invalidState() throws Exception {
-		var data = new OAuth2Context("github", "bar", "eee", Instant.EPOCH);
+	void expire() throws Exception {
+		var ctx = new OAuth2Context("github", "bar", "eee", Instant.EPOCH);
 		var session = new MockHttpSession();
-		session.setAttribute("OA", data);
+		session.setAttribute("OA", ctx);
+
+		when(clock.instant()).thenReturn(Instant.ofEpochSecond(1000));
+
+		var request = get("/oauth2/callback")
+				.session(session)
+				.param("state", "bar")
+				.param("code", "123456");
+		mockMvc.perform(request).andExpect(status().isForbidden());
+	}
+
+	@SuppressWarnings("ConstantConditions")
+	@Test
+	void invalidState() throws Exception {
+		var ctx = new OAuth2Context("github", "bar", "eee", Instant.EPOCH);
+		var session = new MockHttpSession();
+		session.setAttribute("OA", ctx);
 
 		var request = get("/oauth2/callback")
 				.session(session)
 				.param("state", "invalid")
 				.param("code", "123456");
-
 		mockMvc.perform(request).andExpect(status().isBadRequest());
+
 		assertThat(session.getAttribute("OA")).isNull();
 	}
 

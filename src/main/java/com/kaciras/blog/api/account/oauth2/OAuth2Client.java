@@ -19,7 +19,7 @@ public interface OAuth2Client {
 	/**
 	 * OAuth2 第一步，获取第三方系统授权页面的 URL 模板。
 	 */
-	UriComponentsBuilder uriTemplate();
+	UriComponentsBuilder authenticateUri();
 
 	/**
 	 * OAuth2 最后一步，使用用户传递的授权码去第三方系统获取数据。

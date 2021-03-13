@@ -47,6 +47,7 @@ class OAuth2Controller {
 	/** 登录会话的过期时间 */
 	private static final Duration TIMEOUT = Duration.ofMinutes(10);
 
+	/** OAuth2 上下文存储在 HttpSession 的这个属性里 */
 	private static final String SESSION_KEY = "OA";
 
 	private final SessionService sessionService;
@@ -102,7 +103,7 @@ class OAuth2Controller {
 				.fromUriString(request.getRequestURL().toString())
 				.replacePath("/oauth2/callback");
 
-		var authUri = client.uriTemplate()
+		var authUri = client.authenticateUri()
 				.queryParam("state", ctx.state)
 				.queryParam("redirect_uri", redirect.toUriString())
 				.build();

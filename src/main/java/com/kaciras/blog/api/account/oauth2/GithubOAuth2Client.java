@@ -40,7 +40,7 @@ public final class GithubOAuth2Client implements OAuth2Client {
 	}
 
 	@Override
-	public UriComponentsBuilder uriTemplate() {
+	public UriComponentsBuilder authenticateUri() {
 		return UriComponentsBuilder
 				.fromUriString("https://github.com/login/oauth/authorize")
 				.queryParam("client_id", clientId)
