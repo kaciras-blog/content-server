@@ -3,7 +3,6 @@ package com.kaciras.blog.infra;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.SelfSignedCertificate;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,8 +34,9 @@ final class MiscTest {
 		((Logger) LoggerFactory.getLogger("io.netty")).setLevel(Level.OFF);
 		((Logger) LoggerFactory.getLogger("reactor")).setLevel(Level.OFF);
 
-		var cert = new SelfSignedCertificate();
-		var sslContextBuilder = SslContextBuilder.forServer(cert.key(), cert.cert());
+		var cert = MiscTest.class.getClassLoader().getResourceAsStream("localhost.pem");
+		var key = MiscTest.class.getClassLoader().getResourceAsStream("localhost.pvk");
+		var sslContextBuilder = SslContextBuilder.forServer(cert, key);
 
 		server = HttpServer.create()
 				.secure(spec -> spec.sslContext(sslContextBuilder))

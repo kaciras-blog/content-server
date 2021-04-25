@@ -19,12 +19,30 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>15</java.version>
+		<java.version>16</java.version>
 		<org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
+		<aspectj.version>1.9.7.BUILD-SNAPSHOT</aspectj.version>
 		<ltw.agent>
 			${settings.localRepository}/org/springframework/spring-instrument/${spring-framework.version}/spring-instrument-${spring-framework.version}.jar
 		</ltw.agent>
 	</properties>
+
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>ignore</checksumPolicy>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<id>scrum-master</id>
+			<name>AspectJ artifacts on Scrum-Master.de</name>
+			<url>https://scrum-master.de/maven2</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<!-- 编译期依赖，以及开发时才需要的库 -->
@@ -49,6 +67,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<scope>provided</scope>
+		</dependency>
+
+		<!-- 临时使用开发中的新版本 AspectJ -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${aspectj.version}</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<!-- SpringBoot 全家桶 -->
