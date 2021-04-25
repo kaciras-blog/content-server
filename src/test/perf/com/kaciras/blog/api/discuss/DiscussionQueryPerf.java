@@ -14,8 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.time.Clock;
 import java.util.concurrent.TimeUnit;
 
@@ -52,7 +50,7 @@ public class DiscussionQueryPerf extends AbstractSpringPerf {
 	private DiscussionQuery qmode;
 
 	@Setup
-	public void setup() throws SQLException, IOException {
+	public void setup() {
 		nmode = new DiscussionQuery()
 				.setChildCount(5)
 				.setType(1)

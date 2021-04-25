@@ -12,7 +12,7 @@ import org.springframework.lang.Nullable;
 import java.time.Instant;
 import java.util.List;
 
-@EqualsAndHashCode(of = "id", callSuper = false)
+@EqualsAndHashCode(of = "id")
 @ToString(of = "id")
 @Data
 @Configurable

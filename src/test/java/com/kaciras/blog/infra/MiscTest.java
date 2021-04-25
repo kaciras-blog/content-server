@@ -2,7 +2,6 @@ package com.kaciras.blog.infra;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import io.netty.handler.ssl.SslContextBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -11,6 +10,7 @@ import reactor.core.publisher.Mono;
 import reactor.netty.DisposableServer;
 import reactor.netty.http.HttpProtocol;
 import reactor.netty.http.server.HttpServer;
+import reactor.netty.tcp.DefaultSslContextSpec;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -30,16 +30,16 @@ final class MiscTest {
 	private static URI serverUri;
 
 	@BeforeAll
-	static void startServer() throws Exception {
+	static void startServer() {
 		((Logger) LoggerFactory.getLogger("io.netty")).setLevel(Level.OFF);
 		((Logger) LoggerFactory.getLogger("reactor")).setLevel(Level.OFF);
 
 		var cert = MiscTest.class.getClassLoader().getResourceAsStream("localhost.pem");
 		var key = MiscTest.class.getClassLoader().getResourceAsStream("localhost.pvk");
-		var sslContextBuilder = SslContextBuilder.forServer(cert, key);
+		var sslContextSpec = DefaultSslContextSpec.forServer(cert, key);
 
 		server = HttpServer.create()
-				.secure(spec -> spec.sslContext(sslContextBuilder))
+				.secure(spec -> spec.sslContext(sslContextSpec))
 				.protocol(HttpProtocol.HTTP11, HttpProtocol.H2)
 				.handle((inbound, outbound) -> outbound.sendString(Mono.just("Hello")))
 				.bindNow();

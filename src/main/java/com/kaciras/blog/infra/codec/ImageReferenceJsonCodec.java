@@ -26,7 +26,7 @@ final class ImageReferenceJsonCodec {
 							  JsonGenerator gen,
 							  SerializerProvider serializers) throws IOException {
 			var directory = value.getType() == ImageType.INTERNAL ? STATIC_IMAGES : IMAGE_SERVER;
-			gen.writeString(directory + value.toString());
+			gen.writeString(directory + value);
 		}
 	}
 

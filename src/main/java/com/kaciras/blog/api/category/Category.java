@@ -10,7 +10,7 @@ import org.springframework.lang.NonNull;
 import java.util.List;
 
 @ToString(of = "id")
-@EqualsAndHashCode(of = "id", callSuper = false)
+@EqualsAndHashCode(of = "id")
 @Data
 @Configurable
 public class Category {
