@@ -32,14 +32,13 @@
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>ignore</checksumPolicy>
 			</snapshots>
 			<releases>
 				<enabled>false</enabled>
 			</releases>
-			<id>scrum-master</id>
-			<name>AspectJ artifacts on Scrum-Master.de</name>
-			<url>https://scrum-master.de/maven2</url>
+			<id>aspectj-dev</id>
+			<name>AspectJ artifacts on aspectj.dev</name>
+			<url>https://aspectj.dev/maven</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>
