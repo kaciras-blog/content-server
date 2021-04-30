@@ -23,7 +23,7 @@ public final class DiscussionQuery {
 
 	private Pageable pageable;
 
-	// ======== 下面的字段不在 SQL 中使用 ========
+	// 以下字段不直接在 SQL 中使用
 
 	private boolean includeTopic;
 

@@ -1,6 +1,6 @@
 package com.kaciras.blog.infra;
 
-import com.kaciras.blog.infra.exception.WebBusinessException;
+import com.kaciras.blog.infra.exception.HttpStatusException;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,7 +45,7 @@ final class ExceptionResolverTest {
 	@RestController
 	static final class TestController {
 
-		private WebBusinessException webException;
+		private HttpStatusException webException;
 
 		@GetMapping("/web")
 		void throwWebException() {
@@ -72,12 +72,12 @@ final class ExceptionResolverTest {
 	@SuppressWarnings({"unchecked"})
 	private static Stream<Arguments> webExceptions() {
 		var pkg = "com.kaciras.blog.infra.exception";
-		return getSubClassesInPackage(WebBusinessException.class, pkg).map(Arguments::of);
+		return getSubClassesInPackage(HttpStatusException.class, pkg).map(Arguments::of);
 	}
 
 	@MethodSource("webExceptions")
 	@ParameterizedTest
-	void handleNotDebug(Class<? extends WebBusinessException> clazz) throws Exception {
+	void handleNotDebug(Class<? extends HttpStatusException> clazz) throws Exception {
 		var e = clazz.getConstructor().newInstance();
 		controller.webException = e;
 

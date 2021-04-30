@@ -15,6 +15,7 @@ import java.util.stream.Stream;
  * <p>
  * 因为要返回 ID 与对象分离的结果，比起用每次查询都要传参 HashMap，
  * 还是把 objects 保存为字段更舒服一些。
+ * <p>
  * 另外这里的代码接近一百行，写在控制器里不好看，所以单独提取到一个类。
  */
 @RequiredArgsConstructor
@@ -36,7 +37,7 @@ final class QueryWorker {
 	 * 执行查询，返回评论的ID列表，用 {@code getObjects} 获取视图对象表。
 	 *
 	 * @param query 查询条件
-	 * @return 评论的ID列表
+	 * @return 评论的 ID 列表
 	 */
 	public List<Integer> execute(DiscussionQuery query) {
 		@Cleanup var stream = findAll(query);
@@ -57,7 +58,7 @@ final class QueryWorker {
 			stream = stream.peek(v -> attachChildren(v, page));
 		}
 
-		return collectId(stream);
+		return collectIdList(stream);
 	}
 
 	/**
@@ -92,14 +93,18 @@ final class QueryWorker {
 		var childrenQuery = new DiscussionQuery()
 				.setNestId(vo.id)
 				.setPageable(pageable);
-		vo.replies = collectId(findAll(childrenQuery));
+		vo.replies = collectIdList(findAll(childrenQuery));
 	}
 
-	private List<Integer> collectId(Stream<DiscussionVO> stream) {
+	private List<Integer> collectIdList(Stream<DiscussionVO> stream) {
 		return stream.map(vo -> vo.id).collect(Collectors.toList());
 	}
 
-	// 有点长写在 lambda 里不好看所以拿出来了。
+	/**
+	 * 执行附加对象的查询，并将结果加入 objects。
+	 * <p>
+	 * 代码有点长写在 lambda 里不好看所以拿出来了。
+	 */
 	private void attachAdditional() {
 		repository.get(additional).forEach(v -> objects.put(v.getId(), mapper.toViewObject(v)));
 	}

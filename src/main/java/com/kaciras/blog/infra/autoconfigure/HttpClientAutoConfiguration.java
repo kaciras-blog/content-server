@@ -15,7 +15,7 @@ import java.util.concurrent.Executor;
 /**
  * 创建 JAVA 11 的 HttpClient，并做一些基本的配置。
  * <p>
- * 虽然 Spring 的 RestTemplate 也不错，但我还是喜欢原生的，纯天然无污染。
+ * 虽然 Spring 的 RestTemplate 也不错，但我还是喜欢原生的，纯天然无污染(*≧▽≦)
  */
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(HttpClientProperties.class)

@@ -10,8 +10,6 @@ import java.net.URI;
 
 /**
  * 友链相关的通知，用 Accident 是不是不太好……
- * <p>
- * 错误的友链多放一会也没啥问题，所以就不用邮件通知了。
  */
 @RequiredArgsConstructor
 @Getter

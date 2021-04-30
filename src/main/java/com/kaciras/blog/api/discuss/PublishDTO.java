@@ -12,7 +12,7 @@ final class PublishDTO {
 	public final int objectId;
 	public final int type;
 
-	// 回复不需要 objectId 和 type，只需要被回复者的 ID 即可。
+	// 回复不需要 objectId 和 type，只需要被回复的 ID 即可。
 	public final int parent;
 
 	@Length(max = 10)

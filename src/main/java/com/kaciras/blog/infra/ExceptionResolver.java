@@ -1,6 +1,6 @@
 package com.kaciras.blog.infra;
 
-import com.kaciras.blog.infra.exception.WebBusinessException;
+import com.kaciras.blog.infra.exception.HttpStatusException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -27,8 +27,8 @@ public final class ExceptionResolver {
 	static final String DEFAULT_MESSAGE = "请求参数或内容不合法";
 
 	// 直接对应 4xx 响应码的异常
-	@ExceptionHandler(WebBusinessException.class)
-	public ResponseEntity<?> handle(WebBusinessException e) {
+	@ExceptionHandler(HttpStatusException.class)
+	public ResponseEntity<?> handle(HttpStatusException e) {
 		logger.debug(e.getMessage(), e);
 		return ResponseEntity
 				.status(e.statusCode())

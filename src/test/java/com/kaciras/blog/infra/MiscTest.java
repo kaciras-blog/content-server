@@ -34,8 +34,10 @@ final class MiscTest {
 		((Logger) LoggerFactory.getLogger("io.netty")).setLevel(Level.OFF);
 		((Logger) LoggerFactory.getLogger("reactor")).setLevel(Level.OFF);
 
-		var cert = MiscTest.class.getClassLoader().getResourceAsStream("localhost.pem");
-		var key = MiscTest.class.getClassLoader().getResourceAsStream("localhost.pvk");
+		// SelfSignedCertificate 用了底层功能兼容性不太好，所以还是用预先生成好的证书。
+		var loader = MiscTest.class.getClassLoader();
+		var cert = loader.getResourceAsStream("localhost.pem");
+		var key = loader.getResourceAsStream("localhost.pvk");
 		var sslContextSpec = DefaultSslContextSpec.forServer(cert, key);
 
 		server = HttpServer.create()

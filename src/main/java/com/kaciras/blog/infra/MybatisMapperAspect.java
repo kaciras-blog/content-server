@@ -1,6 +1,6 @@
 package com.kaciras.blog.infra;
 
-import com.kaciras.blog.infra.exception.WebBusinessException;
+import com.kaciras.blog.infra.exception.HttpStatusException;
 import org.apache.ibatis.builder.BuilderException;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
@@ -38,7 +38,7 @@ public final class MybatisMapperAspect {
 				.filter(x -> x instanceof BuilderException)
 				.map(Throwable::getCause)
 				.map(Throwable::getCause)
-				.filter(x -> x instanceof WebBusinessException)
+				.filter(x -> x instanceof HttpStatusException)
 				.orElse(e);
 	}
 }

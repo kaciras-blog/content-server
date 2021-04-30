@@ -23,9 +23,9 @@ public final class Misc {
 	 * @throws GeneralSecurityException 如果发生了错误
 	 */
 	public static SSLContext createTrustAllSSLContext() throws GeneralSecurityException {
-		var sslc = SSLContext.getInstance("TLS");
-		sslc.init(null, new TrustManager[]{new X509TrustAllManager()}, null);
-		return sslc;
+		var context = SSLContext.getInstance("TLS");
+		context.init(null, new TrustManager[]{new X509TrustAllManager()}, null);
+		return context;
 	}
 
 	/**
@@ -37,9 +37,9 @@ public final class Misc {
 	 * @throws GeneralSecurityException 如果发生了错误
 	 */
 	public static void disableHttpClientCertificateVerify() throws GeneralSecurityException {
-		var sslc = createTrustAllSSLContext();
-		SSLContext.setDefault(sslc);
-		HttpsURLConnection.setDefaultSSLSocketFactory(sslc.getSocketFactory());
+		var context = createTrustAllSSLContext();
+		SSLContext.setDefault(context);
+		HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
 		HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
 	}
 }

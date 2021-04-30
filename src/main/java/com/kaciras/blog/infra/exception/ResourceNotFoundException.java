@@ -1,6 +1,6 @@
 package com.kaciras.blog.infra.exception;
 
-public final class ResourceNotFoundException extends WebBusinessException {
+public final class ResourceNotFoundException extends HttpStatusException {
 
 	public ResourceNotFoundException() {
 		this("找不到所请求的资源");

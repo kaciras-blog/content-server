@@ -1,6 +1,6 @@
 package com.kaciras.blog.infra.exception;
 
-public final class DataTooBigException extends WebBusinessException {
+public final class DataTooBigException extends HttpStatusException {
 
 	public DataTooBigException() { this("请求所带的数据过长"); }
 

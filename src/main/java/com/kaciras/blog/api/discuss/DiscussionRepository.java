@@ -80,7 +80,7 @@ public class DiscussionRepository {
 	 * @return 与 ID 对应的评论列表
 	 */
 	public List<Discussion> get(Collection<Integer> ids) {
-		return ids.isEmpty() ? Collections.emptyList() : dao.selecListtById(ids);
+		return ids.isEmpty() ? Collections.emptyList() : dao.selectListById(ids);
 	}
 
 	public List<Discussion> findAll(DiscussionQuery query) {

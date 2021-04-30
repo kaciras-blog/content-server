@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
  * 新增的规则会将 (#{xxx}) 这样的字符串将其转换为 foreach 块。
  *
  * <a href="https://stackoverflow.com/a/29076097">参考</a>
+ *
+ * @see org.apache.ibatis.annotations.Lang
  */
 public final class MybatisInlineScriptDriver extends XMLLanguageDriver {
 

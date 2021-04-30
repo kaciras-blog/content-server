@@ -28,7 +28,7 @@ public class TopicRegistration {
 	 * 获取评论所在的主题，使用评论的 objectId 和 type。
 	 *
 	 * @param discussion 评论
-	 * @return 主题
+	 * @return 主题对象
 	 */
 	public Topic get(Discussion discussion) {
 		return get(discussion.getType(), discussion.getObjectId());
@@ -38,7 +38,7 @@ public class TopicRegistration {
 	 * 查询一个评论主题的基本信息，如果主题不存在则抛出异常。
 	 *
 	 * <h2>ID 的起始值</h2>
-	 * 作为数字类型的默认值，零应当保留作为特殊意义比如未设置或无效，在某些情况下可以避免不必要的麻烦。
+	 * 作为数字类型的默认值，零作为特殊标识比如未设置或无效，可以避免很多不必要的麻烦。
 	 * 所以 type 和 objectId 都是从 1 开始。
 	 *
 	 * <h2>URL 的问题</h2>

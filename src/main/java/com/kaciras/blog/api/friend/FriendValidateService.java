@@ -22,6 +22,8 @@ import java.util.Queue;
  * 要启用检查，请将 app.validate-friend 设置为 true。
  * <p>
  * 即使不检查也要注册该 Bean，因为要保存记录以便以后启用。
+ * <p>
+ * 错误的友链多放一会也没啥问题，所以就不用邮件通知了。
  *
  * <h2>安全性</h2>
  * 发送请求可能暴露服务器的地址，这种情况下可以通过 app.http-client.proxy 设置代理。

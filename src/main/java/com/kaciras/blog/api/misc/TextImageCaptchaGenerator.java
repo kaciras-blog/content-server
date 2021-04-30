@@ -14,8 +14,10 @@ import java.util.stream.IntStream;
 
 /**
  * 验证码生成工具，使用AWT绘制字符验证码，并能够添加噪点，干扰线，扭曲，随机颜色等干扰。
- * <p>
- * 这里使用了 AWT 会启动一个 java2d Disposer 线程。
+ * 找不到这段代码从哪抄的了……
+ *
+ * <h2>资源消耗</h2>
+ * 为统一不同系统而自带了一个字体，另外由于用了 AWT 会启动一个 java2d Disposer 线程。
  */
 @Component
 public final class TextImageCaptchaGenerator {

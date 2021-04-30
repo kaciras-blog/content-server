@@ -28,6 +28,7 @@ public final class AuthorizeAspect {
 	 * @throws Exception 如果鉴权失败则抛出异常。
 	 */
 	@Before("clazz() && !method() && execution(!private * *(..))")
+	@SuppressWarnings("unchecked")
 	public void beforeClass(JoinPoint joinPoint) throws Exception {
 		var annotation = (RequirePermission) joinPoint.getSignature()
 				.getDeclaringType()
