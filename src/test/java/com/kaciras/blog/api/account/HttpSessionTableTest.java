@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.session.SessionRepository;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -25,11 +25,11 @@ final class HttpSessionTableTest {
 	private HttpSessionTable table;
 
 	@Autowired
-	private RedisConnectionFactory redis;
+	private RedisTemplate<String, String> redis;
 
 	@BeforeEach
 	void flushDb() {
-		redis.getConnection().flushDb();
+		redis.getRequiredConnectionFactory().getConnection().flushDb();
 	}
 
 	@Test
@@ -63,6 +63,6 @@ final class HttpSessionTableTest {
 		repository.deleteById(session.getId());
 		table.cleanAccountRecords();
 
-		assertThat(redis.getConnection().dbSize()).isEqualTo(3);
+		assertThat(redis.keys("*")).hasSize(2);
 	}
 }
