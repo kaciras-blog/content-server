@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.3</version>
+		<version>2.5.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -75,7 +75,7 @@
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
-			<version>2.1.4</version>
+			<version>2.2.0</version>
 		</dependency>
 
 		<!-- 没有 Boot 的 Spring 库 -->
@@ -112,7 +112,7 @@
 		<dependency>
 			<groupId>org.openjdk.jmh</groupId>
 			<artifactId>jmh-generator-annprocess</artifactId>
-			<version>1.31</version>
+			<version>1.33</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
