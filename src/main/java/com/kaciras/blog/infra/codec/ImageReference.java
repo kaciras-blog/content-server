@@ -20,8 +20,8 @@ import lombok.Data;
 @Data
 public final class ImageReference {
 
-	/** 上传的图片文件名是32字节的摘要 */
-	static final int HASH_SIZE = 32;
+	/** 上传的图片文件名是 15 字节的摘要 */
+	static final int HASH_SIZE = 15;
 
 	private final String name;
 	private final ImageType type;
@@ -32,7 +32,7 @@ public final class ImageReference {
 	 * @return 文件名
 	 */
 	public String toString() {
-		return type == ImageType.INTERNAL ? name : name + '.' + type.name().toLowerCase();
+		return name + '.' + type.name().toLowerCase();
 	}
 
 	/**
@@ -43,13 +43,9 @@ public final class ImageReference {
 	 */
 	public static ImageReference parse(String name) {
 		if (name.isEmpty()) {
-			throw new IllegalArgumentException("无效的图片文件名");
+			throw new IllegalArgumentException("无效的图片文件名：" + name);
 		}
-		var reference = parseHex(name);
-		if (reference != null) {
-			return reference;
-		}
-		return new ImageReference(name, ImageType.INTERNAL);
+		return parseHex(name);
 	}
 
 	/**
@@ -73,12 +69,12 @@ public final class ImageReference {
 			if (CodecUtils.isHexDigit(ch)) {
 				hexChars++;
 			} else if (ch == '/' || ch == '\\') {
-				throw new IllegalArgumentException("文件名中存在路径分隔符：" + name);
+				throw new IllegalArgumentException("文件名中存在分隔符：" + name);
 			}
 		}
 
 		if (hexChars != HASH_SIZE << 1) {
-			return null;
+			throw new IllegalArgumentException("无效的图片文件名：" + name);
 		}
 
 		try {

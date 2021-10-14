@@ -8,6 +8,8 @@ package com.kaciras.blog.infra.exception;
  * ResponseStatusException 可以替代本类，但它是 WebFlux 技术栈的跟项目不合，怕以后会有不兼容更改。
  * HttpStatusCodeException 是客户端的，也感觉不适合这里。
  *
+ * @see org.springframework.web.server.ResponseStatusException
+ * @see org.springframework.web.client.HttpStatusCodeException
  * @see com.kaciras.blog.infra.ExceptionResolver
  */
 public abstract class HttpStatusException extends RuntimeException {

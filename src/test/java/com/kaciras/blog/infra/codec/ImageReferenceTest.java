@@ -17,15 +17,6 @@ final class ImageReferenceTest {
 	}
 
 	@Test
-	void parseInternal() {
-		var name = "picture.pcx";
-		var parse = ImageReference.parse(name);
-
-		assertThat(parse.getType()).isEqualTo(ImageType.INTERNAL);
-		assertThat(parse.toString()).isEqualTo(name);
-	}
-
-	@Test
 	void parseInvalidName() {
 		assertThatThrownBy(() -> ImageReference.parse("../any_system_file.sys"))
 				.isInstanceOf(IllegalArgumentException.class);

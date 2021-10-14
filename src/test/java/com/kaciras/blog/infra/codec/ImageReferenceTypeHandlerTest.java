@@ -18,18 +18,10 @@ final class ImageReferenceTypeHandlerTest extends AbstractTypeHandlerTest {
 
 	private static final TypeHandler<ImageReference> HANDLER = new ImageReferenceTypeHandler();
 
-	private static final String INTERNAL_NAME = "picture.png";
-	private static final byte[] INTERNAL_DATA;
-
 	private static final String HASH_NAME = "4c21ffdf38ae94a4108ed27d3c650d55fce4798438795d42be4991d0333c0208";
 	private static final byte[] HASH_DATA;
 
 	static {
-		INTERNAL_DATA = ByteBuffer.allocate(33)
-				.put((byte) 0)
-				.put((byte) INTERNAL_NAME.length())
-				.put(INTERNAL_NAME.getBytes()).array();
-
 		HASH_DATA = ByteBuffer.allocate(33)
 				.put((byte) 2)
 				.put(CodecUtils.decodeHex(HASH_NAME)).array();
