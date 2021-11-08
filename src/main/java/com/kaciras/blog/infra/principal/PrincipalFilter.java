@@ -1,20 +1,25 @@
 package com.kaciras.blog.infra.principal;
 
-import com.kaciras.blog.infra.RequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.util.WebUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpFilter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Optional;
-import java.util.UUID;
 
+/**
+ * <h2>关于 CSRF 的问题</h2>
+ * 现代的浏览器都支持 CORS，只要靠它拦截即可，无需再自己设计 CSRF token 机制。
+ * 不支持 CORS 一律视为自己的浏览器不安全，本项目不管，也不再做额外的检查。
+ */
 @Order(10_000)
 @Slf4j
 @RequiredArgsConstructor
@@ -23,43 +28,17 @@ public final class PrincipalFilter extends HttpFilter {
 
 	private final boolean debugAdmin;
 
-	private String domain;
-	private boolean dynamicToken;
-
-	private boolean skipSafe;
-
-	private String cookieName;
-	private String headerName;
-	private String parameterName;
-
 	@Override
-	protected void doFilter(HttpServletRequest rawRequest,
+	protected void doFilter(HttpServletRequest request,
 							HttpServletResponse response,
-							FilterChain chain) throws IOException, ServletException {
-
-		var request = new PrincipalRequestWrapper(rawRequest);
-		chain.doFilter(request, response);
-
-		// TODO: 用户登录后的初始Token是否也能搞到这里
-		if (dynamicToken) {
-			Optional.ofNullable(request.getSession(false))
-					.map(session -> session.getAttribute("UserId"))
-					.filter(__ -> !RequestUtils.isSafeRequest(request))
-					.ifPresent(__ -> changeCsrfCookie(request, response));
-		}
+							FilterChain chain
+	) throws IOException, ServletException {
+		chain.doFilter(new Wrapper(request), response);
 	}
 
-	private void changeCsrfCookie(HttpServletRequest request, HttpServletResponse response) {
-		var cookie = new Cookie(cookieName, UUID.randomUUID().toString());
-		cookie.setDomain(domain);
-		cookie.setPath("/");
-		cookie.setMaxAge(request.getSession().getMaxInactiveInterval());
-		response.addCookie(cookie);
-	}
+	private class Wrapper extends HttpServletRequestWrapper {
 
-	private class PrincipalRequestWrapper extends HttpServletRequestWrapper {
-
-		private PrincipalRequestWrapper(HttpServletRequest request) {
+		private Wrapper(HttpServletRequest request) {
 			super(request);
 		}
 
@@ -69,32 +48,13 @@ public final class PrincipalFilter extends HttpFilter {
 				return new WebPrincipal(WebPrincipal.ADMIN_ID);
 			}
 
-			// 会话不一定存在，比如内部调用，如果没有就创建则会产生大量无用的会话，故create参数设为false
-			var userId = Optional.ofNullable(getSession(false))
-					.map(session -> session.getAttribute("UserId"));
-
-			if (!(skipSafe && RequestUtils.isSafeRequest(this))) {
-				userId = userId.filter((__) -> checkCSRF());
-			}
-
-			return userId.map((id) -> new WebPrincipal((Integer) id)).orElse(WebPrincipal.ANONYMOUS);
-		}
-
-		private boolean checkCSRF() {
-			if (cookieName == null) {
-				return true;
-			}
-			var nullable = Optional
-					.ofNullable(WebUtils.getCookie(this, cookieName))
-					.map(Cookie::getValue);
-
-			if (headerName != null) {
-				nullable = nullable.filter(token -> token.equals(getHeader(headerName)));
-			}
-			if (parameterName != null) {
-				nullable = nullable.filter(token -> token.equals(getParameter(parameterName)));
-			}
-			return nullable.isPresent();
+			// 会话不一定存在，比如内部调用，如果没有就创建则会产生大量无用的会话
+			// TODO: UserId 这一信息属于 infra 层吗？
+			return Optional
+					.ofNullable(getSession(false))
+					.map(s -> s.getAttribute("UserId"))
+					.map(id -> new WebPrincipal((Integer) id))
+					.orElse(WebPrincipal.ANONYMOUS);
 		}
 	}
 }

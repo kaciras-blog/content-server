@@ -18,20 +18,10 @@ import org.springframework.context.annotation.Configuration;
 public class PrincipalAutoConfiguration {
 
 	private final AuthorizationProperties authProps;
-	private final SessionCookieProperties sessionProps;
 
 	@Bean
 	public PrincipalFilter servletPrincipalFilter() {
-		var filter = new PrincipalFilter(authProps.isAdminPrincipal());
-		filter.setDomain(sessionProps.getDomain());
-
-		var csrfConfig = authProps.getCsrf();
-		filter.setSkipSafe(csrfConfig.isSkipSafe());
-		filter.setDynamicToken(csrfConfig.isDynamicCookie());
-		filter.setCookieName(csrfConfig.getCookieName());
-		filter.setHeaderName(csrfConfig.getHeaderName());
-		filter.setParameterName(csrfConfig.getParameterName());
-		return filter;
+		return new PrincipalFilter(authProps.isAdminPrincipal());
 	}
 
 	/**
