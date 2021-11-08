@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 /**
  * 测试判断一个字符串（可以是null）是否是多个字符串其中之一的几种方法的性能。
  * <p>
- * Misc.isSafeRequest() 就是这样的需求，虽然几种方法内存占用不一样，但时间才是需要在意的。
+ * RequestUtils.isSafeRequest() 就是这样的需求，虽然几种方法内存占用不一样，但时间才是需要在意的。
  * <p>
  * Benchmark                        Mode  Cnt    Score    Error   Units
  * StringMatchPerf.hashSet         thrpt    5  168.980 ±  9.778  ops/us
