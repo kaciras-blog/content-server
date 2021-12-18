@@ -16,7 +16,7 @@ import java.time.Instant;
 @Setter
 public final class User {
 
-	public static final User GUEST = new User(0, "(游客)", ImageReference.parse("akalin.jpg"));
+	public static final User GUEST = new User(0, "(游客)", null);
 
 	private int id;
 

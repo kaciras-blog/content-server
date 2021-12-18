@@ -5,7 +5,6 @@ import com.kaciras.blog.api.account.SessionService;
 import com.kaciras.blog.api.user.User;
 import com.kaciras.blog.api.user.UserRepository;
 import com.kaciras.blog.infra.RequestUtils;
-import com.kaciras.blog.infra.codec.ImageReference;
 import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.exception.ResourceDeletedException;
@@ -194,7 +193,6 @@ class OAuth2Controller {
 		}
 
 		var user = new User();
-		user.setAvatar(ImageReference.parse("akalin.jpg"));
 		user.setName(profile.name());
 		user.setEmail(profile.email());
 		user.setAuth(authType);

@@ -33,7 +33,7 @@ class UserRepositoryTest {
 		user.setCreateIP(InetAddress.getLoopbackAddress());
 		user.setAuth(AuthType.LOCAL);
 		user.setName("alice");
-		user.setAvatar(ImageReference.parse("foo.png"));
+		user.setAvatar(ImageReference.parse("3IeQaaHXqjt8kQ675nCT.svg"));
 		return user;
 	}
 
@@ -75,7 +75,7 @@ class UserRepositoryTest {
 		repository.add(user);
 
 		user.setName("bob");
-		user.setAvatar(ImageReference.parse("bar.png"));
+		user.setAvatar(null);
 		user.setEmail("bob@example.com");
 		repository.update(user);
 

@@ -1,15 +1,30 @@
 package com.kaciras.blog.infra.codec;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 final class ImageReferenceTest {
 
+	@ValueSource(strings = {
+			"A53RqvF4tbcDUqwe783hje3rmkjsH.png",
+			"ZBLARqvF4/+cDUmPkjsH.png",
+			"ZBLARqvF4-_cDUmPkjsH",
+			"..\\ZBLARqvF4-_cDUmPkjsH.png",
+			"",
+			"ZBLARqvF4-_cDUmPkjsH.abc",
+	})
+	@ParameterizedTest
+	void parseInvalid(String value) {
+		assertThatThrownBy(() -> ImageReference.parse(value)).isInstanceOf(IllegalArgumentException.class);
+	}
+
 	@Test
 	void parseHash() {
-		var name = "0FC3697B8E7787B53A76738016EB9355D812005CE6CFD354A3D6DBC812345678.png";
+		var name = "ZBLARqvF4-_cDUmPkjsH.png";
 		var parse = ImageReference.parse(name);
 
 		assertThat(parse.getType()).isEqualTo(ImageType.PNG);
@@ -17,27 +32,9 @@ final class ImageReferenceTest {
 	}
 
 	@Test
-	void parseInvalidName() {
-		assertThatThrownBy(() -> ImageReference.parse("../any_system_file.sys"))
-				.isInstanceOf(IllegalArgumentException.class);
-
-		assertThatThrownBy(() -> ImageReference.parse("..\\any_system_file.sys"))
-				.isInstanceOf(IllegalArgumentException.class);
-
-		assertThatThrownBy(() -> ImageReference.parse(""))
-				.isInstanceOf(IllegalArgumentException.class);
-
-		assertThatThrownBy(() -> ImageReference.parse("toooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooolong"))
-				.isInstanceOf(IllegalArgumentException.class);
-
-		assertThatThrownBy(() -> ImageReference.parse("0FC3697B8E7787B53A76738016EB9355D812005CE6CFD354A3D6DBC812345678.abc"))
-				.isInstanceOf(IllegalArgumentException.class);
-	}
-
-	@Test
 	void testEquality() {
-		var imageA = new ImageReference("test.webp", ImageType.INTERNAL);
-		var imageB = ImageReference.parse("test.webp");
+		var imageA = new ImageReference("ZBLARqvF4-_cDUmPkjsH", ImageType.WEBP);
+		var imageB = ImageReference.parse("ZBLARqvF4-_cDUmPkjsH.webp");
 
 		assertThat(imageA).isEqualTo(imageB);
 		assertThat(imageA.hashCode()).isEqualTo(imageB.hashCode());

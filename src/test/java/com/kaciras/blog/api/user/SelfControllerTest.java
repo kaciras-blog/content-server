@@ -39,21 +39,21 @@ final class SelfControllerTest extends AbstractControllerTest {
 
 	@Test
 	void updateNonExists() throws Exception {
-		var data = new UpdateDTO("bob", ImageReference.parse("bob.png"), "bob@example.com");
+		var data = new UpdateDTO("bob", null, "bob@example.com");
 		mockMvc.perform(patch("/user").content(toJson(data))).andExpect(status().is(403));
 	}
 
 	@Test
 	void update() throws Exception {
 		var userStub = new User();
-		userStub.setName("alice");
-		userStub.setAvatar(ImageReference.parse("alice.png"));
 		userStub.setAuth(AuthType.LOCAL);
+		userStub.setName("alice");
 		userStub.setCreateTime(Instant.EPOCH);
 
 		when(repository.get(eq(666))).thenReturn(userStub);
 
-		var data = new UpdateDTO("bob", ImageReference.parse("bob.png"), "bob@example.com");
+		var avatar = ImageReference.parse("3IeQaaHXqjt8kQ675nCT.svg");
+		var data = new UpdateDTO("bob", avatar, "bob@example.com");
 		var request = patch("/user")
 				.principal(new WebPrincipal(666))
 				.content(toJson(data));
@@ -61,7 +61,7 @@ final class SelfControllerTest extends AbstractControllerTest {
 
 		verify(repository).update(eq(userStub));
 		assertThat(userStub.getName()).isEqualTo("bob");
-		assertThat(userStub.getAvatar()).isEqualTo(ImageReference.parse("bob.png"));
+		assertThat(userStub.getAvatar()).isEqualTo(avatar);
 		assertThat(userStub.getEmail()).isEqualTo("bob@example.com");
 	}
 }

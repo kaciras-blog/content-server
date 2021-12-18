@@ -24,19 +24,19 @@ final class ImageReferenceJsonCodecTest {
 
 	@Test
 	void serializeImageServer() throws Exception {
-		var image = ImageReference.parse("0FC3697B8E7787B53A76738016EB9355D812005CE6CFD354A3D6DBC812345678.png");
+		var image = ImageReference.parse("3IeQaaHXqjt8kQ675nCT.svg");
 		var json = writer.writeValueAsString(image);
-		assertThat(json).isEqualTo("\"/image/0FC3697B8E7787B53A76738016EB9355D812005CE6CFD354A3D6DBC812345678.png\"");
+		assertThat(json).isEqualTo("\"/image/3IeQaaHXqjt8kQ675nCT.svg\"");
 	}
 
 	@Test
 	void deserializeImageServer() throws Exception {
-		var name = "0FC3697B8E7787B53A76738016EB9355D812005CE6CFD354A3D6DBC812345678.png";
+		var name = "3IeQaaHXqjt8kQ675nCT.svg";
 		var json = "\"/image/" + name + "\"";
 		ImageReference image = reader.readValue(json);
 
-		assertThat(image.getName()).isEqualTo("0FC3697B8E7787B53A76738016EB9355D812005CE6CFD354A3D6DBC812345678");
-		assertThat(image.getType()).isEqualTo(ImageType.PNG);
+		assertThat(image.getName()).isEqualTo("3IeQaaHXqjt8kQ675nCT");
+		assertThat(image.getType()).isEqualTo(ImageType.SVG);
 		assertThat(image.toString()).isEqualTo(name);
 	}
 

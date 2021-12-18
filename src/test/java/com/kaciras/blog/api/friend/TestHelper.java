@@ -7,7 +7,7 @@ import java.time.Instant;
 
 final class TestHelper {
 
-	private static final ImageReference image = ImageReference.parse("test.png");
+	private static final ImageReference image = ImageReference.parse("3IeQaaHXqjt8kQ675nCT.svg");
 
 	public static FriendLink createFriend(String domain) {
 		return createFriend(domain, null, null);
