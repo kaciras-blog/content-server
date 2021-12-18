@@ -22,10 +22,10 @@ CREATE TABLE IF NOT EXISTS `article`
     `category`    smallint(5) unsigned NOT NULL DEFAULT 0,
     `title`       tinytext             NOT NULL,
     `url_title`   tinytext             NOT NULL,
-    `cover`       binary(33)           NOT NULL,
+    `cover`       binary(16)                    DEFAULT NULL,
     `summary`     tinytext             NOT NULL DEFAULT '',
     `deleted`     bit(1)               NOT NULL DEFAULT b'0',
-    `update_time` datetime(6)          NOT NULL DEFAULT current_timestamp(6) COMMENT '不要自动更新',
+    `update_time` datetime(6)          NOT NULL DEFAULT current_timestamp(6),
     `create_time` datetime(6)          NOT NULL DEFAULT current_timestamp(6),
     `view_count`  int(10) unsigned     NOT NULL DEFAULT 0,
     `content`     mediumtext           NOT NULL,
@@ -38,9 +38,9 @@ CREATE TABLE IF NOT EXISTS `category`
 (
     `id`          smallint(5) unsigned NOT NULL AUTO_INCREMENT,
     `name`        varchar(32)          NOT NULL,
-    `cover`       binary(33)                    DEFAULT NULL,
+    `cover`       binary(16)                    DEFAULT NULL,
     `description` text                 NOT NULL,
-    `background`  binary(33)                    DEFAULT NULL,
+    `background`  binary(16)                    DEFAULT NULL,
     `theme`       tinyint(4)           NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     UNIQUE KEY `name` (`name`)
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `discussion`
     `time`       datetime(6)         NOT NULL,
     `address`    binary(16)          NOT NULL,
     PRIMARY KEY (`id`),
-    KEY `type_object_id` (`type`, `object_id`) USING BTREE,
+    KEY `type_object_id` (`type`, `object_id`),
     KEY `nest_id` (`nest_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4;
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `draft_history`
     `save_count` int(10) unsigned NOT NULL,
     `title`      tinytext         NOT NULL DEFAULT '',
     `summary`    text             NOT NULL DEFAULT '',
-    `cover`      binary(33)                DEFAULT NULL,
+    `cover`      binary(16)                DEFAULT NULL,
     `keywords`   tinytext         NOT NULL DEFAULT '',
     `content`    mediumtext       NOT NULL DEFAULT '',
     `time`       datetime(6)      NOT NULL DEFAULT current_timestamp(6) ON UPDATE current_timestamp(6),
@@ -122,14 +122,14 @@ CREATE TABLE IF NOT EXISTS `oauth`
 
 CREATE TABLE IF NOT EXISTS `user`
 (
-    `id`          int(10) unsigned    NOT NULL AUTO_INCREMENT,
-    `name`        varchar(16)         NOT NULL COMMENT '显示名可以重复',
-    `avatar`      binary(33)          NOT NULL,
-    `email`       tinytext                     DEFAULT NULL,
-    `deleted`     bit(1)              NOT NULL DEFAULT b'0',
-    `auth`        tinyint(3) unsigned NOT NULL,
-    `create_time` datetime(6)         NOT NULL,
-    `create_ip`   binary(16)          NOT NULL,
+    `id`          int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `name`        varchar(16)      NOT NULL COMMENT '显示名可以重复',
+    `avatar`      binary(16)                DEFAULT NULL,
+    `email`       tinytext                  DEFAULT NULL,
+    `deleted`     bit(1)           NOT NULL DEFAULT b'0',
+    `auth`        tinyint(3)       NOT NULL,
+    `create_time` datetime(6)      NOT NULL,
+    `create_ip`   binary(16)       NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE = Aria
   DEFAULT CHARSET = utf8mb4 PAGE_CHECKSUM=1;
