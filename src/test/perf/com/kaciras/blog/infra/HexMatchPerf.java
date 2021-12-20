@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
- * 对比几种检查字符串是否是HEX的方式的性能。
+ * 对比几种检查字符串是否是 HEX 的方式的性能。
  * <p>
  * f1894c00ba-default-非英文字符:
  * Benchmark                         Mode    Cnt   Score   Error   Units

@@ -11,6 +11,9 @@ import java.sql.*;
  * 将 InetAddress 转换成长度为 16 的字节数组(IPv6)存储在数据库中。
  * IPv4 将使用 IPv4 Mapped IPv6 Address 格式。
  *
+ * <h2>内置类型</h2>
+ * 某些数据库比如 Postgres 自带 inet 类型，无需使用本类。
+ *
  * @see <a href="https://blog.kaciras.com/article/7/how-to-store-ip-address-in-database">设计原理</a>
  */
 public final class InetAddressTypeHandler extends BaseTypeHandler<InetAddress> {

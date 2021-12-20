@@ -10,12 +10,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 final class ImageReferenceTest {
 
 	@ValueSource(strings = {
-			"A53RqvF4tbcDUqwe783hje3rmkjsH.png",
+			"toooooooooooooooooooooooolong.png",
+			"short.png",
+			"",
 			"ZBLARqvF4/+cDUmPkjsH.png",
 			"ZBLARqvF4-_cDUmPkjsH",
-			"..\\ZBLARqvF4-_cDUmPkjsH.png",
-			"",
 			"ZBLARqvF4-_cDUmPkjsH.abc",
+			"..\\ZBLARqvF4-_cDUmPkjsH.png",
 	})
 	@ParameterizedTest
 	void parseInvalid(String value) {
@@ -23,7 +24,7 @@ final class ImageReferenceTest {
 	}
 
 	@Test
-	void parseHash() {
+	void parse() {
 		var name = "ZBLARqvF4-_cDUmPkjsH.png";
 		var parse = ImageReference.parse(name);
 
@@ -32,7 +33,7 @@ final class ImageReferenceTest {
 	}
 
 	@Test
-	void testEquality() {
+	void equality() {
 		var imageA = new ImageReference("ZBLARqvF4-_cDUmPkjsH", ImageType.WEBP);
 		var imageB = ImageReference.parse("ZBLARqvF4-_cDUmPkjsH.webp");
 

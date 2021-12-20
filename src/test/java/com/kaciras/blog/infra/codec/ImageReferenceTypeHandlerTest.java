@@ -17,10 +17,12 @@ import static org.mockito.Mockito.when;
 
 final class ImageReferenceTypeHandlerTest extends AbstractTypeHandlerTest {
 
-	private static final TypeHandler<ImageReference> HANDLER = new ImageReferenceTypeHandler();
-
 	private static final String HASH_NAME = "ZBLARqvF4-_cDUmPkjsH";
 	private static final byte[] HASH_DATA;
+
+	private static final ImageReference IMAGE = new ImageReference(HASH_NAME, ImageType.WEBP);
+
+	private final TypeHandler<ImageReference> handler = new ImageReferenceTypeHandler();
 
 	static {
 		HASH_DATA = ByteBuffer.allocate(16)
@@ -31,23 +33,14 @@ final class ImageReferenceTypeHandlerTest extends AbstractTypeHandlerTest {
 	@Override
 	@Test
 	void setParameter() throws Exception {
-		var image = new ImageReference(HASH_NAME, ImageType.WEBP);
-		HANDLER.setParameter(preparedStatement, 1, image, JdbcType.BINARY);
+		handler.setParameter(preparedStatement, 1, IMAGE, JdbcType.BINARY);
 		Mockito.verify(preparedStatement).setBytes(1, HASH_DATA);
 	}
-
-//	@Test
-//	void encodeInvalidName() {
-//		var image = new ImageReference(, ImageType.PNG);
-//
-//		assertThatThrownBy(() -> HANDLER.setParameter(preparedStatement, 1, image, JdbcType.BINARY))
-//				.isInstanceOf(PersistenceException.class);
-//	}
 
 	@Test
 	void encodeNonInternal() throws Exception {
 		var image = new ImageReference(HASH_NAME, ImageType.WEBP);
-		HANDLER.setParameter(preparedStatement, 1, image, JdbcType.BINARY);
+		handler.setParameter(preparedStatement, 1, image, JdbcType.BINARY);
 
 		Mockito.verify(preparedStatement).setBytes(1, HASH_DATA);
 	}
@@ -56,45 +49,42 @@ final class ImageReferenceTypeHandlerTest extends AbstractTypeHandlerTest {
 	void encodeInvalidHashName() {
 		var image = new ImageReference(HASH_NAME + "12", ImageType.WEBP);
 
-		assertThatThrownBy(() -> HANDLER.setParameter(preparedStatement, 1, image, JdbcType.BINARY))
+		assertThatThrownBy(() -> handler.setParameter(preparedStatement, 1, image, JdbcType.BINARY))
 				.isInstanceOf(PersistenceException.class);
 	}
 
 	@Override
 	@Test
 	void getResultFromResultSetByName() throws Exception {
-//		when(resultSet.getBytes("column")).thenReturn(INTERNAL_DATA);
-//		assertThat(HANDLER.getResult(resultSet, "column"))
-//				.isEqualTo(ImageReference.parse(INTERNAL_NAME));
+		when(resultSet.getBytes("column")).thenReturn(HASH_DATA);
+		assertThat(handler.getResult(resultSet, "column")).isEqualTo(IMAGE);
 	}
 
 	@Override
 	@Test
 	void getResultFromResultSetByPosition() throws Exception {
-//		when(resultSet.getBytes(1)).thenReturn(INTERNAL_DATA);
-//		assertThat(HANDLER.getResult(resultSet, 1))
-//				.isEqualTo(ImageReference.parse(INTERNAL_NAME));
+		when(resultSet.getBytes(1)).thenReturn(HASH_DATA);
+		assertThat(handler.getResult(resultSet, 1)).isEqualTo(IMAGE);
 	}
 
 	@Override
 	@Test
 	void getResultFromCallableStatement() throws Exception {
-//		when(callableStatement.getBytes(1)).thenReturn(INTERNAL_DATA);
-//		assertThat(HANDLER.getResult(callableStatement, 1))
-//				.isEqualTo(ImageReference.parse(INTERNAL_NAME));
+		when(callableStatement.getBytes(1)).thenReturn(HASH_DATA);
+		assertThat(handler.getResult(callableStatement, 1)).isEqualTo(IMAGE);
 	}
 
 	@Test
 	void getResultNull() throws Exception {
 		when(resultSet.getBytes(1)).thenReturn(null);
-		assertThat(HANDLER.getResult(resultSet, 1)).isNull();
+		assertThat(handler.getResult(resultSet, 1)).isNull();
 	}
 
 	@Test
 	void hexName() throws SQLException {
 		when(resultSet.getBytes(1)).thenReturn(HASH_DATA);
 
-		assertThat(HANDLER.getResult(resultSet, 1))
+		assertThat(handler.getResult(resultSet, 1))
 				.isEqualTo(new ImageReference(HASH_NAME, ImageType.WEBP));
 	}
 
@@ -102,7 +92,7 @@ final class ImageReferenceTypeHandlerTest extends AbstractTypeHandlerTest {
 	void decodeInvalidValue() throws SQLException {
 		when(resultSet.getBytes(1)).thenReturn("invalid".getBytes());
 
-		assertThatThrownBy(() -> HANDLER.getResult(resultSet, 1))
+		assertThatThrownBy(() -> handler.getResult(resultSet, 1))
 				.isInstanceOf(ResultMapException.class)
 				.hasCauseInstanceOf(SQLException.class);
 	}
