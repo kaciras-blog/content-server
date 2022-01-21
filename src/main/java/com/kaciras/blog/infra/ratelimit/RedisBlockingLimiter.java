@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisConnectionUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -66,7 +65,8 @@ public final class RedisBlockingLimiter implements RateLimiter {
 	}
 
 	/*
-	 * 【更新】之前版本使用了异步化机制，将对内层限流器的调用和设置封禁记录这两操作放在其他线程中，
+	 * 【更新】
+	 * 之前版本使用了异步化机制，将对内层限流器的调用和设置封禁记录这两操作放在其他线程中，
 	 * 可以减少请求的执行时间。后来移除了，因为并非所有的限流算法都耗时较大，对于个别需要的算法可
 	 * 以在其内部自己实现，或是做个异步装饰器类。
 	 */
@@ -75,20 +75,15 @@ public final class RedisBlockingLimiter implements RateLimiter {
 		if (blockTimes.isEmpty()) {
 			return inner.acquire(id, permits);
 		}
-
-		// Why RedisConnection not implements AutoClosable? Is it reminds user to call RedisConnectionUtils?
-		var connection = redisFactory.getConnection();
-		try {
+		try (var connection = redisFactory.getConnection()) {
 			return doAcquire(connection, id, permits);
-		} finally {
-			RedisConnectionUtils.releaseConnection(connection, redisFactory);
 		}
 	}
 
 	/*
 	 * 【记录的一致性】
 	 * 这里的流程是 读取 -> 判断 -> 修改，存在与多线程 intValue++ 类似的异步问题。
-	 * 麻烦的是 inner.acquire 不能撤销或是做两段提交，整个流程无法重试，也就意味着没法做CAS。
+	 * 麻烦的是 inner.acquire 不能撤销或是做两段提交，整个流程无法重试，也就意味着没法做 CAS。
 	 *
 	 * 目前因为没什么访问量不要紧，所以没有解决此问题。
 	 */
