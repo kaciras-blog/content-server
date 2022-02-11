@@ -66,7 +66,7 @@ final class ConfigControllerTest {
 	}
 
 	@Test
-	void testGet() throws Exception {
+	void getProperties() throws Exception {
 		when(configBindingManager.get("test.config")).thenReturn(new TestBindingConfig());
 
 		webClient.perform(get("/config/test.config"))
@@ -76,13 +76,13 @@ final class ConfigControllerTest {
 	}
 
 	@Test
-	void testGetNonExistent() throws Exception {
+	void getNonExistent() throws Exception {
 		when(configBindingManager.get("non.existent")).thenReturn(null);
 		webClient.perform(get("/config/non.existent")).andExpect(status().is(404));
 	}
 
 	@Test
-	void testPatch() throws Exception {
+	void setProperties() throws Exception {
 		when(configBindingManager.get("test.config")).thenReturn(new TestBindingConfig());
 
 		var content = "{ \"enumValue\": \"METHOD\" }";
@@ -103,14 +103,23 @@ final class ConfigControllerTest {
 	}
 
 	@Test
-	void testPatchNonExistent() throws Exception {
+	void setNonExistent() throws Exception {
 		when(configBindingManager.get("non.existent")).thenReturn(null);
 		webClient.perform(patch("/config/non.existent")).andExpect(status().is(404));
 	}
 
 	@Test
-	void testPatchPermission() throws Exception {
+	void setWithoutPermission() throws Exception {
 		SecurityContext.setPrincipal(new WebPrincipal(WebPrincipal.ANONYMOUS_ID));
 		webClient.perform(patch("/config/test.config")).andExpect(status().is(403));
+	}
+
+	@Test
+	void setWithBadData() throws Exception {
+		when(configBindingManager.get("test.config")).thenReturn(new TestBindingConfig());
+
+		var content = "{ \"intValue\": [123] }";
+		webClient.perform(patch("/config/test.config").content(content))
+				.andExpect(status().is(400));
 	}
 }
