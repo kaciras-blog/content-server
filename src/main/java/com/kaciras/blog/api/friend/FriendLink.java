@@ -21,7 +21,7 @@ public final class FriendLink {
 	@Length(min = 1, max = 16)
 	public String name;
 
-	@NotNull
+	/** 网站可能没有图标，此时前端可以显示个默认图 */
 	public ImageReference favicon;
 
 	@NotNull

@@ -64,7 +64,6 @@ final class FriendControllerTest extends AbstractControllerTest {
 				Arguments.of("name", ""),
 				Arguments.of("name", "toooooooooooooooolong"),
 
-				Arguments.of("favicon", null),
 				Arguments.of("background", null)
 		);
 	}
