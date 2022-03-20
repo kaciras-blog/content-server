@@ -1,7 +1,9 @@
 package com.kaciras.blog.api;
 
+import com.kaciras.blog.api.account.SessionService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.session.DefaultCookieSerializerCustomizer;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.task.TaskSchedulerCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -95,6 +97,14 @@ public class ContentServerApplication {
 	@Bean
 	Clock clock() {
 		return Clock.systemUTC();
+	}
+
+	@Bean
+	DefaultCookieSerializerCustomizer customCookie() {
+		return serializer -> {
+			serializer.setUseBase64Encoding(false);
+			serializer.setRememberMeRequestAttribute(SessionService.REMEMBER_ME_ATTR);
+		};
 	}
 
 	public static void main(String... args) {

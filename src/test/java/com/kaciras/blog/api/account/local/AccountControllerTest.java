@@ -111,7 +111,7 @@ final class AccountControllerTest extends AbstractControllerTest {
 		mockMvc.perform(post("/accounts").content(toJson(signupDTO)).session(session))
 				.andExpect(status().is(201));
 
-		verify(sessionService).putUser(notNull(), notNull(), eq(1), eq(true));
+		verify(sessionService).putUser(notNull(), eq(1), eq(true));
 	}
 
 	@Test
@@ -141,6 +141,6 @@ final class AccountControllerTest extends AbstractControllerTest {
 		mockMvc.perform(post("/accounts/login").content(toJson(loginDTO)))
 				.andExpect(status().is(201));
 
-		verify(sessionService).putUser(notNull(), notNull(), eq(1), eq(false));
+		verify(sessionService).putUser(notNull(), eq(1), eq(false));
 	}
 }

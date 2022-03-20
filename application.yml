@@ -11,7 +11,7 @@ server:
   # 如果服务器前面有反代，则取消注释此行以获取真实IP
 #  forward-headers-strategy: native
 
-  # 默认就是 Lax，Secure 取决于是否使用 HTTPS
+  # SameSite 默认就是 Lax，Secure 取决于是否使用 HTTPS
   servlet:
     session:
       cookie:

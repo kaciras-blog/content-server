@@ -18,6 +18,11 @@ final class ImageReferenceJsonCodec {
 
 	private static final String IMAGE_SERVER = "/image/";
 
+	/**
+	 * 该类仅用于将两个子类放到一个文件中。
+	 */
+	private ImageReferenceJsonCodec() {}
+
 	static final class Serializer extends JsonSerializer<ImageReference> {
 
 		@Override

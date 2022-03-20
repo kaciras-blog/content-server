@@ -46,7 +46,7 @@ class AccountController {
 		checkCaptcha(request.getSession(true), data.captcha);
 
 		var account = createAccount(data, RequestUtils.addressFrom(request));
-		sessionService.putUser(request, response, account.getId(), true);
+		sessionService.putUser(request, account.getId(), true);
 
 		return ResponseEntity.created(URI.create("/accounts/" + account.getId())).build();
 	}
@@ -94,7 +94,7 @@ class AccountController {
 		if (account == null || !account.checkLogin(data.password)) {
 			throw new RequestArgumentException("密码错误或用户不存在");
 		}
-		sessionService.putUser(request, response, account.getId(), data.remember);
+		sessionService.putUser(request, account.getId(), data.remember);
 		return ResponseEntity.created(URI.create("/user")).build();
 	}
 }

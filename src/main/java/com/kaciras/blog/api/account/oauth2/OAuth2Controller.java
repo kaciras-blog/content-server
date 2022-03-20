@@ -132,7 +132,7 @@ class OAuth2Controller {
 
 		// 查询出在本系统里对应的用户，并设置会话属性（登录）
 		var localId = getLocalId(info, request, client.authType());
-		sessionService.putUser(request, response, localId, true);
+		sessionService.putUser(request, localId, true);
 
 		// 没有跳转，可能不是从页面过来的请求，但也算正常请求
 		if (authSession.returnUri == null) {

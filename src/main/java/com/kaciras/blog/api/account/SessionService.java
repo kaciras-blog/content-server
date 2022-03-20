@@ -15,7 +15,7 @@ public class SessionService {
 
 	private final HttpSessionTable sessionTable;
 
-	public void putUser(HttpServletRequest request, HttpServletResponse response, int id, boolean remember) {
+	public void putUser(HttpServletRequest request, int id, boolean remember) {
 		var session = request.getSession(true);
 		SessionValue.USER_ID.setTo(session, id);
 		sessionTable.add(id, session.getId());
