@@ -73,9 +73,10 @@ spring:
     deserialization:
       read-date-timestamps-as-nanoseconds: false
 
-  datasource:
-    initialization-mode: always
-    continue-on-error: true
+  sql:
+    init:
+      mode: always
+      continue-on-error: true
 
 mybatis:
 
@@ -87,14 +88,6 @@ mybatis:
     map-underscore-to-camel-case: true
 
 app:
-
-  authorization:
-    csrf:
-      skip-safe: false
-
-  session:
-    cookie:
-      secure: true
 
   cors:
     allow-credentials: true
