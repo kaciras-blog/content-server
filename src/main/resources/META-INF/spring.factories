@@ -2,7 +2,6 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.kaciras.blog.infra.autoconfigure.BlogJsonAutoConfiguration,\
   com.kaciras.blog.infra.autoconfigure.BlogMybatisAutoConfiguration,\
   com.kaciras.blog.infra.autoconfigure.HttpClientAutoConfiguration,\
-  com.kaciras.blog.infra.autoconfigure.KxSpringSessionAutoConfiguration,\
   com.kaciras.blog.infra.autoconfigure.PrincipalAutoConfiguration,\
   com.kaciras.blog.infra.autoconfigure.KxWebUtilsAutoConfiguration,\
   com.kaciras.blog.infra.autoconfigure.RedisUtilsAutoConfiguration,\

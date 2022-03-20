@@ -11,6 +11,12 @@ server:
   # 如果服务器前面有反代，则取消注释此行以获取真实IP
 #  forward-headers-strategy: native
 
+  # 默认就是 Lax，Secure 取决于是否使用 HTTPS
+  servlet:
+    session:
+      cookie:
+        domain: localhost
+
 spring:
 
   # 你需要先创建数据库，SpringBoot 会自动建表。
@@ -50,10 +56,6 @@ app:
 
   # 是否启用友链（存活和互友）自动检查
   validate-friend: false
-
-  session:
-    cookie:
-      domain: localhost
 
   # 是否禁用权限拦截，true 表示所有 API 都不需要管理员权限
   authorization:

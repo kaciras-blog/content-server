@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * 配置身份与权限功能，从 Session 中读取用户并检查 CSRF，设置 principal 和 SecurityContext，以及 AOP 权限拦截。
  */
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties({AuthorizationProperties.class, SessionCookieProperties.class})
+@EnableConfigurationProperties({AuthorizationProperties.class})
 @RequiredArgsConstructor
 public class PrincipalAutoConfiguration {
 
