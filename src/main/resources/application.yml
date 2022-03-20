@@ -55,6 +55,8 @@ spring:
 
   session:
     store-type: redis
+
+    # 用户多久不访问则登录失效，注意这跟 Cookie 的有效期不是一回事。
     timeout: 30d
     redis:
       namespace: kx
@@ -92,7 +94,7 @@ app:
   cors:
     allow-credentials: true
     allowed-methods: "*"
-    allowed-headers: [ X-CSRF-Token, X-Requested-With, Content-Type ]
+    allowed-headers: [ X-Requested-With, Content-Type ]
     exposed-headers: [ Location, X-RateLimit-Wait ]
 
   http-client:

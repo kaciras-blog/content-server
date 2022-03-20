@@ -99,6 +99,10 @@ public class ContentServerApplication {
 		return Clock.systemUTC();
 	}
 
+	/**
+	 * 优化 Session Cookie 存储，因为值已经是 UUID 所以无需再 base64。
+	 * 启用保持登录功能，本项目没用 Spring Security 所以要手动设置下。
+	 */
 	@Bean
 	DefaultCookieSerializerCustomizer customCookie() {
 		return serializer -> {

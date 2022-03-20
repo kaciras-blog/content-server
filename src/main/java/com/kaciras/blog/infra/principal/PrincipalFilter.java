@@ -17,8 +17,8 @@ import java.util.Optional;
 
 /**
  * <h2>关于 CSRF 的问题</h2>
- * 现代的浏览器都支持 CORS，只要靠它拦截即可，无需再自己设计 CSRF token 机制。
- * 不支持 CORS 一律视为自己的浏览器不安全，本项目不管，也不再做额外的检查。
+ * 现代的浏览器都支持 SameSite Cookie，无需再自己设计 CSRF token 机制。
+ * 不支持 SameSite 一律视为自己的浏览器不安全，本项目不管。
  */
 @Order(10_000)
 @Slf4j
