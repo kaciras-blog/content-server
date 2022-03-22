@@ -42,7 +42,7 @@ public class GlobalCorsAutoConfiguration {
 		if (properties.getAllowedOrigins() != null) {
 			config.setAllowedOrigins(properties.getAllowedOrigins());
 		}
-		if (properties.getAllowedOrigins() != null) {
+		if (properties.getAllowedOriginPatterns() != null) {
 			config.setAllowedOriginPatterns(properties.getAllowedOriginPatterns());
 		}
 

@@ -18,6 +18,14 @@ public final class CorsProperties {
 	@Nullable
 	private CorsTemplate template;
 
+	/*
+	 * Origins 指定源列表，OriginPatterns 允许在其中使用通配符。
+	 *
+	 * 【全通配的区别】
+	 * 这两个都可以使用 "*" 作为值，表示允许所有源，但响应头上有区别：
+	 * Origins 如果使用 "*"，则响应的 Allow-Origins 也是 "*"；
+	 * OriginPatterns 的话会返回请求的 Origin，这允许 Allow-Credentials。
+	 */
 	private List<String> allowedOrigins;
 	private List<String> allowedOriginPatterns;
 

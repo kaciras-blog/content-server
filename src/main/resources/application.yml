@@ -94,7 +94,7 @@ app:
   cors:
     allow-credentials: true
     allowed-methods: "*"
-    allowed-headers: [ X-Requested-With, Content-Type ]
+    allowed-headers: "*"
     exposed-headers: [ Location, X-RateLimit-Wait ]
 
   http-client:

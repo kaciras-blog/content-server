@@ -82,7 +82,7 @@ final class GlobalCorsAutoConfigurationTest {
 	@Test
 	void preFlightWithInvalidOrigin() throws Exception {
 		config.setTemplate(CorsProperties.CorsTemplate.ALLOW_ALL);
-		config.setAllowedOrigins(List.of("https://abc.com"));
+		config.setAllowedOriginPatterns(List.of("https://abc.com"));
 
 		var request = new MockHttpServletRequest();
 		request.setMethod("OPTIONS");
