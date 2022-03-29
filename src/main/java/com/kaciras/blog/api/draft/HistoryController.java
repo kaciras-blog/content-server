@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -29,15 +30,21 @@ class HistoryController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> saveNew(@PathVariable int id, @RequestBody DraftContent request) {
+	public ResponseEntity<Void> saveNew(
+			@PathVariable int id,
+			@RequestBody @Valid DraftContent request
+	) {
 		var saveCount = repository.get(id).getHistoryList().add(request);
 		var location = "/drafts/" + id + "/histories/" + saveCount;
 		return ResponseEntity.created(URI.create(location)).build();
 	}
 
-	// saveCount 没用着，目前只更新最后一次历史
+	// TODO: saveCount 没用着，目前只更新最后一次历史
 	@PutMapping("/{saveCount}")
-	public ResponseEntity<Void> save(@PathVariable int id, @RequestBody DraftContent request) {
+	public ResponseEntity<Void> save(
+			@PathVariable int id,
+			@RequestBody @Valid DraftContent request
+	) {
 		repository.get(id).getHistoryList().update(request);
 		return ResponseEntity.noContent().build();
 	}

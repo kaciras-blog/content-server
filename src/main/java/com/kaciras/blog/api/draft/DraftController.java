@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 /**
@@ -50,7 +51,7 @@ class DraftController {
 	@PostMapping
 	public ResponseEntity<DraftVO> createDraft(
 			@RequestParam(required = false) Integer article,
-			@RequestBody(required = false) DraftContent content
+			@RequestBody(required = false) @Valid DraftContent content
 	) {
 		if (article != null) {
 			content = mapper.fromArticle(articleRepository.get(article));
