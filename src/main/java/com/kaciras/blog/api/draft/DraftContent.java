@@ -27,18 +27,4 @@ public class DraftContent {
 
 	@NotNull
 	private String content;
-
-	/**
-	 * 创建一个新的草稿内容，所有字段设置为默认值。
-	 *
-	 * @return 草稿内容对象
-	 */
-	public static DraftContent initial() {
-		var content = new DraftContent();
-		content.setTitle("新文章");
-		content.setSummary("");
-		content.setKeywords("");
-		content.setContent("");
-		return content;
-	}
 }

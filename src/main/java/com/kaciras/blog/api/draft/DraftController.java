@@ -2,6 +2,7 @@ package com.kaciras.blog.api.draft;
 
 import com.kaciras.blog.api.ListQueryView;
 import com.kaciras.blog.api.article.ArticleRepository;
+import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.principal.RequirePermission;
 import com.kaciras.blog.infra.principal.SecurityContext;
 import lombok.RequiredArgsConstructor;
@@ -42,14 +43,20 @@ class DraftController {
 	/**
 	 * 创建一个新的草稿，其内容可能是默认内容或从指定的文章生成。
 	 *
-	 * @param article 文章ID，如果不为null则从文章生成草稿
+	 * @param article 文章 ID，如果不为 null 则从文章生成草稿
+	 * @param content 初始内容，当指定了文章 ID 时可以为 null。
 	 */
 	@Transactional
 	@PostMapping
-	public ResponseEntity<DraftVO> createDraft(@RequestParam(required = false) Integer article) {
-		var content = article != null
-				? mapper.fromArticle(articleRepository.get(article))
-				: DraftContent.initial();
+	public ResponseEntity<DraftVO> createDraft(
+			@RequestParam(required = false) Integer article,
+			@RequestBody(required = false) DraftContent content
+	) {
+		if (article != null) {
+			content = mapper.fromArticle(articleRepository.get(article));
+		} else if (content == null) {
+			throw new RequestArgumentException("需要有初始内容");
+		}
 
 		var draft = new Draft();
 		draft.setUserId(SecurityContext.getUserId());
