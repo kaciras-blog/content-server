@@ -14,8 +14,10 @@ public class DraftContent {
 	@NotEmpty
 	private String title;
 
-	@NotNull
+	/** 封面可以没有 */
 	private ImageReference cover;
+
+	// 下面三个不能为 null，但可以为空串。
 
 	@NotNull
 	private String keywords;
@@ -37,7 +39,6 @@ public class DraftContent {
 		content.setSummary("");
 		content.setKeywords("");
 		content.setContent("");
-		content.setCover(ImageReference.parse("placeholder.png"));
 		return content;
 	}
 }

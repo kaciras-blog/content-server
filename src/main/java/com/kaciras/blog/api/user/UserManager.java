@@ -1,7 +1,6 @@
 package com.kaciras.blog.api.user;
 
 import com.kaciras.blog.api.account.AuthType;
-import com.kaciras.blog.infra.codec.ImageReference;
 import com.kaciras.blog.infra.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,6 @@ public class UserManager {
 	public int createNew(String name, AuthType authType, InetAddress ip) {
 		var user = new User();
 		user.setName(name);
-		user.setAvatar(ImageReference.parse("akalin.jpg"));
 		user.setAuth(authType);
 		user.setCreateIP(ip);
 
