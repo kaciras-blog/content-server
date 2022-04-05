@@ -9,6 +9,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.concurrent.Callable;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,6 +27,9 @@ final class NoticeServiceTest {
 	private ThreadPoolTaskScheduler executor;
 
 	@MockBean
+	private Clock clock;
+
+	@MockBean
 	private MailService mailService;
 
 	@Autowired
@@ -33,30 +38,40 @@ final class NoticeServiceTest {
 	@Autowired
 	private RedisConnectionFactory redis;
 
+	// TODO: 每次测试都加载全部 bean 很烦人，要重构下
 	@BeforeEach
 	void setUp() {
 		redis.getConnection().flushDb();
+		clearInvocations(executor);
+
+		when(clock.instant()).thenReturn(Instant.EPOCH);
 		when(executor.submit(any(Callable.class))).then(i -> i.<Callable>getArgument(0).call());
 	}
 
 	@Test
 	void asyncReport() {
-		clearInvocations(executor); // TODO: 每次测试都加载全部bean很烦人，要重构下
-
 		service.notify(new TestActivity(666));
 		verify(executor).submit(any(Callable.class));
 	}
 
 	@Test
-	void sendMail() {
-		clearInvocations(executor);
-
-		service.notify(new TestActivity2());
+	void mailAdmin() {
 		service.notify(new TestActivity(666));
+		service.notify(new TestActivity2());
 		service.notify(new TestActivity(666));
 
 		verify(mailService).sendToAdmin(eq("title"), eq("content"));
 		verify(mailService, noMoreInteractions()).sendToAdmin(any(), any());
+	}
+
+	@Test
+	void mailAdminAfterSilentDuration(){
+		service.notify(new TestActivity(666));
+
+		when(clock.instant()).thenReturn(Instant.now());
+		service.notify(new TestActivity(666));
+
+		verify(mailService, times(2)).sendToAdmin(anyString(), anyString());
 	}
 
 	@Test

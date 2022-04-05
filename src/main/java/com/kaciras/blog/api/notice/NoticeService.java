@@ -9,6 +9,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -49,25 +52,31 @@ public class NoticeService {
 	@Async
 	public void notify(Activity activity) {
 		var data = objectMapper.valueToTree(activity);
-		var notice = new Notice(activity.getActivityType(), clock.instant(), data);
-		redis.rightPush(notice);
+		var now = clock.instant();
+		var notice = new Notice(activity.getActivityType(), now, data);
 
 		/*
 		 * 因为邮件仅通知有新回复即可，完整的通知列表在网页端，所以不需要每次都发。
 		 * 发送一个邮件即表明已经通知。
 		 *
 		 * 在控制台里清空所有通知表示全部处理完等待新消息，此时可以发送邮件。
+		 * 另外为防止漏看，7 天之后也能再次邮件提醒。
 		 * 这里查看一下同类消息的数量来判断是否清空过，相当于 SQL 的 SELECT COUNT(*) WHERE type=?。
 		 *
 		 * 【其它方案】
 		 * 把这个逻辑转移到前端，发送完邮件设置一个标识阻止再发，前端看完所以消息后发一个请求重置该标识。
 		 */
-		var typeCount = getAll().stream()
+		var mailAdmin = getAll().stream()
 				.filter(n -> n.getType() == notice.getType())
-				.count();
+				.map(Notice::getTime)
+				.max(Comparator.naturalOrder())
+				.orElse(Instant.MIN)
+				.isBefore(now.minus(Duration.ofDays(7)));
+
+		redis.rightPush(notice);
 
 		if (mailService != null && activity instanceof MailNotice) {
-			((MailNotice) activity).sendMail(typeCount <= 1, mailService);
+			((MailNotice) activity).sendMail(mailAdmin, mailService);
 		}
 	}
 }
