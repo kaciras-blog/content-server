@@ -49,15 +49,17 @@ final class DiscussionActivity implements Activity, MailNotice {
 		}
 
 		Consumer<String> sendReplyMail = email -> {
-			var html = """
+			var template = """
 					<p>您在 <a href="%s">%s</a> 下的评论有新回复</p>
 					<blockquote><pre>%s</pre></blockquote>
 					""";
-			sender.send(email, "新回复", String.format(html, url, title, preview));
+			var html =  String.format(template, url, title, preview);
+			sender.send(email, "新回复 - Kaciras Blog", html);
 		};
 
+		// 给被回复者发邮件，如果它登录了且填了邮箱。
 		Optional.ofNullable(parentUser)
-				.filter(u -> u.getId() != WebPrincipal.ADMIN_ID) // 给自己的就不用发了
+				.filter(u -> u.getId() != user.getId())
 				.map(User::getEmail)
 				.ifPresent(sendReplyMail);
 	}
