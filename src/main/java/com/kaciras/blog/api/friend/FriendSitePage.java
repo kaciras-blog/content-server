@@ -13,20 +13,19 @@ import java.util.function.Predicate;
 final class FriendSitePage {
 
 	/**
-	 * 该网站能否正常访问
+	 * 该网站能否正常访问。
 	 */
 	@Getter
 	private final boolean alive;
 
 	/**
-	 * 该网站迁移到的新的地址，如果没有迁移则为null。
+	 * 该网站迁移到的新的地址，如果没有迁移则为 null。
 	 */
 	@Nullable
 	@Getter
 	private final URI newUrl;
 
 	private final String myOrigin;
-
 	private final String html;
 
 	/**

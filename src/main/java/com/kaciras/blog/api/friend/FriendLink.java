@@ -21,16 +21,25 @@ public final class FriendLink {
 	@Length(min = 1, max = 16)
 	public String name;
 
-	/** 网站可能没有图标，此时前端可以显示个默认图 */
+	/**
+	 * 网站可能没有图标，此时前端可以显示个默认图。
+	 */
 	public ImageReference favicon;
 
+	/**
+	 * 背景必须要有，通常是对方网站的截图。
+	 */
 	@NotNull
 	public ImageReference background;
 
-	/** 用于验证对方是否加本站为友链的页面，为 null 则不验证 */
+	/**
+	 * 用于验证对方是否加本站为友链的页面，null 则不验证。
+	 */
 	@HttpURI
 	public URI friendPage;
 
-	/** 成为朋友的时间，在保存时设置 */
+	/**
+	 * 成为朋友的时间，仅在服务端保存时设置。
+	 */
 	public Instant createTime;
 }

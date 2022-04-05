@@ -29,7 +29,7 @@ class FriendValidator {
 	}
 
 	/**
-	 * 检查一个友链站点。
+	 * 检查一个友链站点，会发送请求下载目标页面。
 	 *
 	 * @param uri 地址
 	 * @return 检查结果

@@ -2,7 +2,6 @@ package com.kaciras.blog.api.user;
 
 import com.kaciras.blog.api.account.AuthType;
 import com.kaciras.blog.infra.codec.ImageReference;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +10,6 @@ import java.net.InetAddress;
 import java.time.Instant;
 
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
 @Getter
 @Setter
 public final class User {

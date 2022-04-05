@@ -41,7 +41,7 @@ public class FriendValidateService {
 
 	private RedisMap<String, ValidateRecord> validateMap;
 
-	// 该方法不能是 private，因为私有方法隐含 final，导致无法被 mock，而 Autowired 又让它被测试容器调用，
+	// 该方法不能是 private，因为私有方法隐含 final 无法被 mock，而 Autowired 又让它被测试容器调用，
 	// 这导致实际的代码在 mock 测试中运行。
 	@Autowired
 	void setRedis(RedisOperationsBuilder builder) {
@@ -50,11 +50,11 @@ public class FriendValidateService {
 
 	/**
 	 * 将一个友链加入验证列表中。
-	 * <p>
-	 * 【初次验证时间】
+	 *
+	 * <h2>初次验证时间</h2>
 	 * 友链的最后有效时间以调用此方法的时间为准，不使用友链创建时间，避免友链域名更新后立即检查。
 	 *
-	 * @param friend 友链
+	 * @param friend 友链对象
 	 */
 	public void addForValidate(FriendLink friend) {
 		var url = friend.url;
@@ -112,7 +112,7 @@ public class FriendValidateService {
 	private void handleResponse(ValidateRecord record, FriendSitePage page) {
 		record.validate = clock.instant();
 
-		// 如果访问失败则7天后再次检测，连续4次（一个月）都失败的视为无法访问
+		// 如果访问失败则7天后再次检测，连续4次（一个月）都失败的视为无法访问。
 		if (!page.isAlive()) {
 			record.failed++;
 
@@ -121,15 +121,15 @@ public class FriendValidateService {
 				record.failed = 0;
 			}
 		} else {
-			// 一旦访问成功就把失败次数归零
+			// 一旦访问成功就把失败次数归零。
 			record.failed = 0;
 
-			// 有重定向直接报告
+			// 有重定向直接报告。
 			if (page.getNewUrl() != null) {
 				report(FriendAccident.Type.MOVED, record, page.getNewUrl());
 			}
 
-			// 如果友链输入了互链检查地址则判断是否存在本站的链接
+			// 如果友链输入了互链检查地址则判断是否存在本站的链接。
 			if (record.friendPage != null && !page.hasMyLink()) {
 				report(FriendAccident.Type.ABANDONED_ME, record, null);
 			}
@@ -148,6 +148,7 @@ public class FriendValidateService {
 
 	/**
 	 * 更新友链的检查记录。
+	 *
 	 * 用了 Lua 脚本来实现 putIfExists，确保不会添加已删除的记录。
 	 *
 	 * @param record 新的记录

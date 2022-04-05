@@ -7,9 +7,7 @@ import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
- * 从草稿创建文章的请求。
- *
- * 【更新】发表后是否删除草稿应当由前端决定，比如显示一个选项让用户自己决定是否保留草稿。
+ * 从草稿创建文章的请求，属性仍由前端传递。
  */
 @AllArgsConstructor
 final class PublishDTO {
