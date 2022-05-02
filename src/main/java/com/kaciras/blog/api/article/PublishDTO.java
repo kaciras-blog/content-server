@@ -3,7 +3,8 @@ package com.kaciras.blog.api.article;
 import com.kaciras.blog.infra.codec.ImageReference;
 import lombok.AllArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -12,13 +13,17 @@ import java.util.List;
 @AllArgsConstructor
 final class PublishDTO {
 
+	/** 文章的标题是必须要有的啦 */
+	@NotBlank
 	public final String title;
+
 	public final ImageReference cover;
 	public final List<String> keywords;
 	public final String summary;
 	public final String content;
 
-	@NotEmpty
+	/** 如果懒得填则使用空字符串 */
+	@NotNull
 	public final String urlTitle;
 
 	public final int category;

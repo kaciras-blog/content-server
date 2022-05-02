@@ -60,7 +60,7 @@ class ArticleController {
 				}
 			} else {
 				query.setContent(false);
-				logger.warn("来自非内部网络的请求使用了RSS专用的API，{}", remote);
+				logger.warn("来自 {} 的请求使用了 RSS 专用的 API，", remote);
 			}
 		}
 
