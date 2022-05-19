@@ -1,12 +1,14 @@
 package com.kaciras.blog.api.account.local;
 
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 interface AccountDAO {
 
 	@Insert("INSERT INTO account (id, name, password, salt) VALUES (#{id}, #{name}, #{password}, #{salt})")
-	@Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
 	void insert(Account account);
 
 	@Select("SELECT id,name FROM account WHERE id=#{id}")

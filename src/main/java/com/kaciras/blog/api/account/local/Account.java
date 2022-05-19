@@ -11,6 +11,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
+/**
+ * 在本系统中创建的账户，不同于第三方登录，帐户名和密码都保存在本地。
+ */
 @EqualsAndHashCode(of = "id")
 @ToString(of = {"id", "name"})
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
@@ -36,8 +39,8 @@ public final class Account {
 	private HttpSessionTable httpSessionTable;
 
 	/**
-	 * 为了省事，账号的 ID 等于用户的 ID。
-	 * 因为用户可以用其他方式登录，所以这里的 ID 不是连续的。
+	 * 为了省事，账号的 ID 等于用户的 ID，在用户创建时生成。
+	 * 因为用户可以用其他方式登录，所以不是连续的。
 	 */
 	private int id;
 
