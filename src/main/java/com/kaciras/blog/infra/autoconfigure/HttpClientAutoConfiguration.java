@@ -2,9 +2,9 @@ package com.kaciras.blog.infra.autoconfigure;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 import java.net.InetSocketAddress;
@@ -17,8 +17,8 @@ import java.util.concurrent.Executor;
  * <p>
  * 虽然 Spring 的 RestTemplate 也不错，但我还是喜欢原生的，纯天然无污染(*≧▽≦)
  */
-@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(HttpClientProperties.class)
+@AutoConfiguration
 @RequiredArgsConstructor
 public class HttpClientAutoConfiguration {
 

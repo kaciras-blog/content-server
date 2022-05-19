@@ -2,10 +2,10 @@ package com.kaciras.blog.infra.autoconfigure;
 
 import com.kaciras.blog.infra.autoconfigure.CorsProperties.CorsTemplate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -18,8 +18,8 @@ import java.util.List;
  *
  * TODO: CORS 并不是经常改变或是具有通用设置的东西，搞这个类是否多余？
  */
-@Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(CorsProperties.class)
+@AutoConfiguration
 @RequiredArgsConstructor
 public class GlobalCorsAutoConfiguration {
 
