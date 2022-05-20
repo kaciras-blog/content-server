@@ -16,6 +16,7 @@ public interface Activity {
 	/**
 	 * 该消息是否要显示在管理员的消息列表中，默认 true 表示需要显示。
 	 */
+	@JsonIgnore
 	default boolean isAdminMessage() { return true; }
 
 	/**
