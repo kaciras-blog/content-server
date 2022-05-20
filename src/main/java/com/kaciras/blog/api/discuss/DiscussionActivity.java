@@ -3,7 +3,6 @@ package com.kaciras.blog.api.discuss;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kaciras.blog.api.notice.Activity;
 import com.kaciras.blog.api.notice.ActivityType;
-import com.kaciras.blog.api.notice.MailNotice;
 import com.kaciras.blog.api.notice.MailService;
 import com.kaciras.blog.api.user.User;
 import com.kaciras.blog.infra.principal.WebPrincipal;
@@ -15,7 +14,7 @@ import java.util.function.Consumer;
 
 @Getter
 @Setter
-final class DiscussionActivity implements Activity, MailNotice {
+final class DiscussionActivity implements Activity {
 
 	/** 评论所在的页面地址和标题 */
 	private String url;
@@ -41,6 +40,11 @@ final class DiscussionActivity implements Activity, MailNotice {
 	}
 
 	@Override
+	public boolean isAdminMessage() {
+		return user.getId() != WebPrincipal.ADMIN_ID;
+	}
+
+	@Override
 	public void sendMail(boolean clear, MailService sender) {
 		// 仅提示有新回复，具体内容去后台看
 		if (clear && user.getId() != WebPrincipal.ADMIN_ID) {
@@ -53,7 +57,7 @@ final class DiscussionActivity implements Activity, MailNotice {
 					<p>您在 <a href="%s">%s</a> 下的评论有新回复</p>
 					<blockquote><pre>%s</pre></blockquote>
 					""";
-			var html =  String.format(template, url, title, preview);
+			var html = String.format(template, url, title, preview);
 			sender.send(email, "新回复 - Kaciras Blog", html);
 		};
 

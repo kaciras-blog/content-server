@@ -3,7 +3,7 @@ package com.kaciras.blog.api.notice;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-final class TestActivity implements Activity, MailNotice {
+final class TestActivity implements Activity {
 
 	public int intValue;
 

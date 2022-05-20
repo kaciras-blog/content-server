@@ -3,6 +3,7 @@ package com.kaciras.blog.api.discuss;
 import com.kaciras.blog.api.MappingListView;
 import com.kaciras.blog.api.config.BindConfig;
 import com.kaciras.blog.api.notice.NoticeService;
+import com.kaciras.blog.api.user.UserRepository;
 import com.kaciras.blog.infra.RequestUtils;
 import com.kaciras.blog.infra.exception.PermissionException;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
@@ -32,6 +33,8 @@ class DiscussionController {
 	private final ViewModelMapper mapper;
 
 	private final NoticeService noticeService;
+
+	private final UserRepository userRepository;
 
 	@BindConfig("discussion")
 	@Setter
@@ -109,8 +112,13 @@ class DiscussionController {
 
 		repository.add(discussion);
 
-		// 发送通知提醒，自己的评论就不用了
-		noticeService.notify(mapper.toActivity(discussion, topic, parent));
+		// 发送通知提醒
+		var activity = mapper.createActivity(discussion, topic);
+		activity.setUser(userRepository.get(discussion.getUserId()));
+		if (parent != null) {
+			activity.setParentUser(userRepository.get(parent.getUserId()));
+		}
+		noticeService.notify(activity);
 
 		return ResponseEntity
 				.created(URI.create("/discussions/" + discussion.getId()))

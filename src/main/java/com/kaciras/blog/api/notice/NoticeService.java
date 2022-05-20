@@ -64,7 +64,7 @@ public class NoticeService {
 		 * 这里查看一下同类消息的数量来判断是否清空过，相当于 SQL 的 SELECT COUNT(*) WHERE type=?。
 		 *
 		 * 【其它方案】
-		 * 把这个逻辑转移到前端，发送完邮件设置一个标识阻止再发，前端看完所以消息后发一个请求重置该标识。
+		 * 把这个逻辑转移到前端，发送完邮件设置一个标识阻止再发，清空后发一个请求重置该标识。
 		 */
 		var mailAdmin = getAll().stream()
 				.filter(n -> n.getType() == notice.getType())
@@ -73,10 +73,12 @@ public class NoticeService {
 				.orElse(Instant.MIN)
 				.isBefore(now.minus(Duration.ofDays(7)));
 
-		redis.rightPush(notice);
+		if (activity.isAdminMessage()) {
+			redis.rightPush(notice);
+		}
 
-		if (mailService != null && activity instanceof MailNotice) {
-			((MailNotice) activity).sendMail(mailAdmin, mailService);
+		if (mailService != null) {
+			activity.sendMail(mailAdmin, mailService);
 		}
 	}
 }

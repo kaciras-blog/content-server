@@ -94,4 +94,10 @@ final class NoticeServiceTest {
 
 		assertThat(service.getAll()).isEmpty();
 	}
+
+	@Test
+	void messageAdmin() {
+		service.notify(new TestActivity2());
+		assertThat(service.getAll()).isEmpty();
+	}
 }
