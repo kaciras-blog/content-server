@@ -96,6 +96,17 @@ class DiscussionRepositoryTest {
 	}
 
 	@Test
+	void increaseNestSizeByDeepReply() {
+		var top = addData(0);
+		var reply1 = addData(top.getId());
+		addData(reply1.getId());
+
+		var got = repository.get(top.getId());
+		assertThat(got).isPresent();
+		assertThat(got.get().getNestSize()).isEqualTo(2);
+	}
+
+	@Test
 	void brokenTopicKey() {
 		var query = new DiscussionQuery().setObjectId(7);
 		assertThatThrownBy(() -> repository.findAll(query)).isInstanceOf(RequestArgumentException.class);

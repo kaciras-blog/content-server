@@ -51,7 +51,7 @@ public class DiscussionRepository {
 			}
 
 			if (discussion.getState() == DiscussionState.VISIBLE) {
-				dao.addNestSize(pid, 1);
+				dao.addNestSize(discussion.getNestId(), 1);
 			}
 
 			// parent.getReplies() 返回的是可见的回复数，这里需要的是总数
