@@ -7,7 +7,13 @@
 	<!-- ExceptionResolver 默认会记录一个警告，给他去掉 -->
 	<logger name="org.springframework.web.servlet.mvc.method" level="ERROR"/>
 
-	<!-- Spring 和 Tomcat引擎 的日志没啥看头 -->
+	<!-- Spring 和 Tomcat 的日志没啥看头 -->
 	<logger name="org.springframework" level="WARN"/>
 	<logger name="org.apache.catalina" level="WARN"/>
+
+	<!--
+		MariaDB 驱动在语句执行失败时会打日志，但这种情况可能是预期的。
+		即使关闭这个日志也没问题，上层会有必要的处理。
+	-->
+	<logger name="org.mariadb.jdbc.message.server.ErrorPacket" level="ERROR"/>
 </configuration>

@@ -51,7 +51,7 @@ final class RateLimitFilter extends HttpFilter {
 				chain.doFilter(request, response);
 			} else {
 				var waitTime = wait.get();
-				logger.warn("{}被限流{}秒", ip, waitTime);
+				logger.warn("{} 被限流 {} 秒", ip, waitTime);
 				response.setStatus(429);
 				response.setHeader(RATE_LIMIT_HEADER, Long.toString(waitTime));
 			}

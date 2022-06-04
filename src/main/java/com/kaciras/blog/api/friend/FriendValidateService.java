@@ -80,7 +80,7 @@ public class FriendValidateService {
 		records.stream().filter(this::shouldValidate).forEach(queue::addFirst);
 
 		if (!queue.isEmpty()) {
-			logger.info("共有{}个友链，本次检测{}个", records.size(), queue.size());
+			logger.info("共有 {} 个友链，本次检测 {} 个", records.size(), queue.size());
 		}
 
 		validateFriendsAsync(queue);
