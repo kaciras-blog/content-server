@@ -1,6 +1,7 @@
 package com.kaciras.blog.api.article;
 
 import com.kaciras.blog.api.category.Banner;
+import com.kaciras.blog.infra.codec.ImageReference;
 
 import java.time.Instant;
 import java.util.List;
@@ -13,6 +14,9 @@ final class ArticleVO {
 	public boolean deleted;
 
 	public String title;
+
+	public ImageReference cover;
+
 	public List<String> keywords;
 	public String summary;
 	public String content;
@@ -21,6 +25,7 @@ final class ArticleVO {
 	public Instant update;
 
 	public int viewCount;
+
 	public int discussionCount;
 
 	public Banner banner;
