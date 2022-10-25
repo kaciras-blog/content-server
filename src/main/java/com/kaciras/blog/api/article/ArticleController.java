@@ -5,9 +5,11 @@ import com.kaciras.blog.api.ListQueryView;
 import com.kaciras.blog.api.draft.DraftContent;
 import com.kaciras.blog.api.draft.DraftRepository;
 import com.kaciras.blog.infra.RequestUtils;
+import com.kaciras.blog.infra.exception.RequestArgumentException;
 import com.kaciras.blog.infra.exception.ResourceDeletedException;
 import com.kaciras.blog.infra.principal.RequirePermission;
 import com.kaciras.blog.infra.principal.SecurityContext;
+import com.kaciras.blog.infra.principal.WebPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 class ArticleController {
 
+	private static final int MAX_PAGE_SIZE = 20;
+
 	private final ArticleRepository repository;
 	private final ArticleMapper mapper;
 
@@ -36,6 +40,11 @@ class ArticleController {
 	@GetMapping
 	public Object getList(ServletWebRequest request, ArticleListQuery query, Pageable pageable) {
 		query.setPageable(pageable);
+
+		if (pageable.getPageSize() > MAX_PAGE_SIZE
+				&& SecurityContext.isNot(WebPrincipal.ADMIN_ID)) {
+			throw new RequestArgumentException("The count parameter is too large");
+		}
 
 		/*
 		 * 专门给RSS使用的缓存机制，另外如果非内部客户端请求带了content参数则发出警告。

@@ -9,7 +9,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 final class ArticleControllerTest extends AbstractControllerTest {
@@ -29,6 +31,14 @@ final class ArticleControllerTest extends AbstractControllerTest {
 	void setUp() {
 		article.setId(5);
 		when(repository.get(5)).thenReturn(article);
+	}
+
+	@Test
+	void pageSizeLimit() throws Exception {
+		var request = get("/articles").param("count", "99999").principal(ANONYMOUS);
+		mockMvc.perform(request)
+				.andExpect(status().is(400))
+				.andExpect(jsonPath("message").value("The count parameter is too large"));
 	}
 
 	@Test

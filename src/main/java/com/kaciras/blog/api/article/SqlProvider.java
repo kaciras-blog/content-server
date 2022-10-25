@@ -52,7 +52,7 @@ public final class SqlProvider {
 		applySorts(sql, pageable.getSort());
 
 		// Mariadb 的 OFFSET-LIMIT 语句必须是 LIMIT 在前，另外也能用 LIMIT x,x 的形式
-		return sql.OFFSET(pageable.getPageNumber()).LIMIT(Math.min(pageable.getPageSize(), 20)).toString();
+		return sql.OFFSET(pageable.getPageNumber()).LIMIT(pageable.getPageSize()).toString();
 	}
 
 	public String selectCount(ArticleListQuery query) {
