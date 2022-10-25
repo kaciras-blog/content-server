@@ -117,6 +117,7 @@ class DiscussionController {
 		activity.setUser(userRepository.get(discussion.getUserId()));
 		if (parent != null) {
 			activity.setParentUser(userRepository.get(parent.getUserId()));
+			activity.setParentEmail(parent.getEmail());
 		}
 		noticeService.notify(activity);
 

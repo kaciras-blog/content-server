@@ -9,9 +9,6 @@ import com.kaciras.blog.infra.principal.WebPrincipal;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Optional;
-import java.util.function.Consumer;
-
 @Getter
 @Setter
 final class DiscussionActivity implements Activity {
@@ -34,6 +31,15 @@ final class DiscussionActivity implements Activity {
 	@JsonIgnore
 	private User parentUser;
 
+	@JsonIgnore
+	private String email;
+
+	/**
+	 * 父评论者填写的邮箱
+	 */
+	@JsonIgnore
+	private String parentEmail;
+
 	@Override
 	public ActivityType getActivityType() {
 		return ActivityType.DISCUSSION;
@@ -46,25 +52,31 @@ final class DiscussionActivity implements Activity {
 
 	@Override
 	public void sendMail(boolean clear, MailService sender) {
-		// 仅提示有新回复，具体内容去后台看
+		// 给站长的邮件，仅提示有新回复，具体内容去后台看。
 		if (clear && user.getId() != WebPrincipal.ADMIN_ID) {
 			var html = "<p>详情请前往控制台查看哦</p><p>如果还要接收邮件，请清除全部评论通知</p>";
-			sender.sendToAdmin("博客有新评论", html);
+			sender.sendToAdmin("博客有新评论啦", html);
 		}
 
-		Consumer<String> sendReplyMail = email -> {
-			var template = """
-					<p>您在 <a href="%s">%s</a> 下的评论有新回复</p>
-					<blockquote><pre>%s</pre></blockquote>
-					""";
-			var html = String.format(template, url, title, preview);
-			sender.send(email, "新回复 - Kaciras Blog", html);
-		};
+		// 登录了就不支持匿名邮箱，因为本来就是为了第三方验证才搞得登录。
+		var receiver = parentEmail;
+		if (parentUser != null) {
+			receiver = parentUser.getEmail();
+		}
+		var senderEmail = email;
+		if (user != null) {
+			senderEmail = user.getEmail();
+		}
 
-		// 给被回复者发邮件，如果它登录了且填了邮箱。
-		Optional.ofNullable(parentUser)
-				.filter(u -> u.getId() != user.getId())
-				.map(User::getEmail)
-				.ifPresent(sendReplyMail);
+		if (receiver == null || receiver.equals(senderEmail)) {
+			return; // 邮件地址相同视为回复自己，不发送通知。
+		}
+
+		var template = """
+				<p>您在 <a href="%s">%s</a> 下的评论有新回复</p>
+				<blockquote><pre>%s</pre></blockquote>
+				""";
+		var html = String.format(template, url, title, preview);
+		sender.send(receiver, "新回复 - Kaciras Blog", html);
 	}
 }

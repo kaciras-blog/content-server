@@ -1,12 +1,16 @@
 package com.kaciras.blog.api.discuss;
 
+import com.kaciras.blog.api.SnapshotAssertion;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -15,19 +19,34 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.InetAddress;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.when;
 
 @Sql(statements = "ALTER TABLE discussion AUTO_INCREMENT = 1")
 @ActiveProfiles("test")
 @Transactional
 @SpringBootTest
+@ExtendWith(SnapshotAssertion.ContextHolder.class)
 class DiscussionRepositoryTest {
 
 	@Autowired
+	private SnapshotAssertion snapshot;
+
+	@MockBean
+	private Clock clock;
+
+	@Autowired
 	private DiscussionRepository repository;
+
+	@BeforeEach
+	void setUp() {
+		when(clock.instant()).thenReturn(Instant.ofEpochSecond(1234));
+	}
 
 	private static Discussion newDiscussion() {
 		var value = new Discussion();
@@ -212,20 +231,11 @@ class DiscussionRepositoryTest {
 		expected.setNickname("niconiconi");
 		expected.setType(3);
 		expected.setObjectId(7);
+		expected.setEmail("alice@example.com");
 		repository.add(expected);
 
-		var returnValue = repository.get(expected.getId());
-		assertThat(returnValue).isPresent();
+		var got = repository.get(expected.getId());
 
-		var value = returnValue.get();
-		assertThat(value.getType()).isEqualTo(3);
-		assertThat(value.getObjectId()).isEqualTo(7);
-		assertThat(value.getState()).isEqualTo(DiscussionState.VISIBLE);
-		assertThat(value.getTime()).isNotNull();
-		assertThat(value.getFloor()).isEqualTo(1);
-		assertThat(value.getNestFloor()).isEqualTo(1);
-		assertThat(value.getContent()).isEqualTo(expected.getContent());
-		assertThat(value.getAddress()).isNotNull();
-		assertThat(value.getNickname()).isEqualTo("niconiconi");
+		snapshot.assertMatch(got);
 	}
 }

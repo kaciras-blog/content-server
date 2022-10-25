@@ -1,0 +1,17 @@
+{
+	"address" : "127.0.0.1",
+	"content" : "test content",
+	"email" : "alice@example.com",
+	"floor" : 1,
+	"id" : 1,
+	"nestFloor" : 1,
+	"nestId" : 0,
+	"nestSize" : 0,
+	"nickname" : "niconiconi",
+	"objectId" : 7,
+	"parent" : 0,
+	"state" : 0,
+	"time" : 1234000,
+	"type" : 3,
+	"userId" : 0
+}

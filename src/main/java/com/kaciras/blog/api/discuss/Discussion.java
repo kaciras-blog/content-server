@@ -87,6 +87,11 @@ public final class Discussion {
 	private String nickname;
 
 	/**
+	 * 用于接收通知的邮箱，可以为 null。
+	 */
+	private String email;
+
+	/**
 	 * 评论的内容，长度限制由其它地方决定。
 	 */
 	private String content;

@@ -50,7 +50,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	@Autowired
 	private DiscussionController controller;
 
-	private final PublishDTO publishDTO = new PublishDTO(0, 0, 0, null, "test content");
+	private final PublishDTO publishDTO = new PublishDTO(0, 0, 0, null,  null,"test content");
 
 	@BeforeEach
 	void setUp() {
@@ -163,16 +163,21 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 	}
 
 	private static Stream<Arguments> invalidPostRequests() {
-		var longText = new char[16384];
-		Arrays.fill(longText, '蛤');
+		var buf = new char[16384];
+		Arrays.fill(buf, 'x');
+		var longText = new String(buf);
+
 		return Stream.of(
-				Arguments.of("content", new String(longText)),
+				Arguments.of("content", longText),
 				Arguments.of("content", null),
 				Arguments.of("content", ""),
 
 				Arguments.of("nickname", "12345678901234567"),
 				Arguments.of("nickname", ""),
-				Arguments.of("nickname", "	   	")
+				Arguments.of("nickname", "	   	"),
+
+				Arguments.of("email", longText + "@qq.com"),
+				Arguments.of("email", "NotAnEmailAddress")
 		);
 	}
 
