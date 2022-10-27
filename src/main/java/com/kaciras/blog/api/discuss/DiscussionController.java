@@ -116,6 +116,8 @@ class DiscussionController {
 		var activity = mapper.createActivity(discussion, topic);
 		activity.setUser(userRepository.get(discussion.getUserId()));
 		if (parent != null) {
+			var nestRoot = repository.get(discussion.getNestId()).orElseThrow();
+			activity.setNestRoot(nestRoot);
 			activity.setParentUser(userRepository.get(parent.getUserId()));
 			activity.setParentEmail(parent.getEmail());
 		}

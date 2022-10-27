@@ -9,6 +9,8 @@ import com.kaciras.blog.infra.principal.WebPrincipal;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
+
 @Getter
 @Setter
 final class DiscussionActivity implements Activity {
@@ -23,6 +25,9 @@ final class DiscussionActivity implements Activity {
 
 	/** 内容预览 */
 	private String preview;
+
+	@JsonIgnore
+	private Discussion nestRoot;
 
 	@JsonIgnore
 	private User user;
@@ -59,24 +64,28 @@ final class DiscussionActivity implements Activity {
 		}
 
 		// 登录了就不支持匿名邮箱，因为本来就是为了第三方验证才搞得登录。
-		var receiver = parentEmail;
-		if (parentUser != null) {
-			receiver = parentUser.getEmail();
-		}
 		var senderEmail = email;
-		if (user != null) {
+		if (user.getId() != WebPrincipal.ANONYMOUS_ID) {
 			senderEmail = user.getEmail();
+		}
+		var receiver = parentEmail;
+		if (parentUser.getId() != WebPrincipal.ANONYMOUS_ID) {
+			receiver = parentUser.getEmail();
 		}
 
 		if (receiver == null || receiver.equals(senderEmail)) {
 			return; // 邮件地址相同视为回复自己，不发送通知。
 		}
 
-		var template = """
-				<p>您在 <a href="%s">%s</a> 下的评论有新回复</p>
-				<blockquote><pre>%s</pre></blockquote>
-				""";
-		var html = String.format(template, url, title, preview);
+		var model = new HashMap<String, Object>();
+		model.put("title", title);
+		model.put("url", url);
+		model.put("content", preview);
+		model.put("floor", floor);
+		model.put("nest", nestRoot.getNestFloor());
+		model.put("nestFloor", nestFloor);
+
+		var html = sender.template("ReplyToast.html", model);
 		sender.send(receiver, "新回复 - Kaciras Blog", html);
 	}
 }

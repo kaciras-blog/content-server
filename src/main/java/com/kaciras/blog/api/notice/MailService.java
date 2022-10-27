@@ -2,13 +2,19 @@ package com.kaciras.blog.api.notice;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * 可选的发邮件服务，如果没有配置邮件则该 Bean 不存在。
@@ -20,12 +26,22 @@ import java.io.IOException;
 @Slf4j
 public class MailService {
 
+	private final Pattern regex = Pattern.compile("%(\\w+)%");
+
 	private final JavaMailSender mailSender;
 	private final String from;
 	private final String adminAddress;
 
 	@Value("${app.name}")
 	private String name;
+
+	@SneakyThrows
+	public String template(String name, Map<String, Object> model) {
+		var res = new ClassPathResource("mail/" + name);
+		var template = Files.readString(Path.of(res.getURI()));
+		return regex.matcher(template)
+				.replaceAll(m -> model.get(m.group(1)).toString());
+	}
 
 	/**
 	 * 发送一封邮件给博主，如果博主没有设置自己的邮件地址则什么也不做。

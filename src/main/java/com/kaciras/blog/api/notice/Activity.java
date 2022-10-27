@@ -21,7 +21,6 @@ public interface Activity {
 
 	/**
 	 * 表示通知需要发送邮件的接口，默认的实现是空方法不发送邮件。
-	 *
 	 * 邮件属于 MVC 里的 View，是面向邮件客户端的视图，使用 HTML 格式。
 	 */
 	default void sendMail(boolean clear, MailService sender) {}
