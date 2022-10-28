@@ -1,6 +1,7 @@
 package com.kaciras.blog.api.notice;
 
 import lombok.AccessLevel;
+import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +12,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -42,14 +41,20 @@ public class MailService {
 	 * <h2>未来的想法</h2>
 	 * 如果用 Node 做同构应用，这玩意也能用 SSR 生成。
 	 *
-	 * @param name 模板名，位于 resources/mail 下，扩展名省略。
+	 * @param name  模板名，位于 resources/mail 下，扩展名省略。
 	 * @param model 填充参数
 	 * @return 填充后的 HTML，可作为邮件内容。
 	 */
 	@SneakyThrows
 	public String interpolate(String name, Map<String, Object> model) {
-		var res = new ClassPathResource("mail/" + name + ".html");
-		var template = Files.readString(Path.of(res.getURI()));
+		var resource = new ClassPathResource("mail/" + name + ".html");
+
+		/*
+		 * 不能用 Files.readString(Path.of(...))，否则打包后运行出错。
+		 * https://stackoverflow.com/a/25033217/7065321
+		 */
+		@Cleanup var stream = resource.getInputStream();
+		var template = new String(stream.readAllBytes());
 		return placeholder.matcher(template)
 				.replaceAll(m -> model.get(m.group(1)).toString());
 	}
