@@ -9,7 +9,7 @@ import com.kaciras.blog.infra.principal.WebPrincipal;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -21,13 +21,12 @@ final class DiscussionActivity implements Activity {
 
 	private DiscussionState state;
 	private int floor;
+
+	private int topicFloor;
 	private int nestFloor;
 
 	/** 内容预览 */
 	private String preview;
-
-	@JsonIgnore
-	private Discussion nestRoot;
 
 	@JsonIgnore
 	private User user;
@@ -59,8 +58,8 @@ final class DiscussionActivity implements Activity {
 	public void sendMail(boolean clear, MailService sender) {
 		// 给站长的邮件，仅提示有新回复，具体内容去后台看。
 		if (clear && user.getId() != WebPrincipal.ADMIN_ID) {
-			var html = "<p>详情请前往控制台查看哦</p><p>如果还要接收邮件，请清除全部评论通知</p>";
-			sender.sendToAdmin("博客有新评论啦", html);
+			sender.sendToAdmin("有新评论啦",
+					sender.interpolate("NewDiscussion.html", Map.of()));
 		}
 
 		// 登录了就不支持匿名邮箱，因为本来就是为了第三方验证才搞得登录。
@@ -77,15 +76,14 @@ final class DiscussionActivity implements Activity {
 			return; // 邮件地址相同视为回复自己，不发送通知。
 		}
 
-		var model = new HashMap<String, Object>();
-		model.put("title", title);
-		model.put("url", url);
-		model.put("content", preview);
-		model.put("floor", floor);
-		model.put("nest", nestRoot.getNestFloor());
-		model.put("nestFloor", nestFloor);
-
-		var html = sender.template("ReplyToast.html", model);
-		sender.send(receiver, "新回复 - Kaciras Blog", html);
+		var html = sender.interpolate("ReplyToast.html", Map.of(
+				"title", title,
+				"url", url,
+				"content", preview,
+				"floor", floor,
+				"nest", topicFloor,
+				"nestFloor", nestFloor
+		));
+		sender.send(receiver, "新回复", html);
 	}
 }

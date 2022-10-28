@@ -16,7 +16,7 @@ final class PublishDTO {
 	// 回复不需要 objectId 和 type，只需要被回复的 ID 即可。
 	public final int parent;
 
-	@Length(max = 10)
+	@Length(max = 16)
 	@NullOrNotBlank
 	public final String nickname;
 

@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 @Slf4j
 public class MailService {
 
-	private final Pattern regex = Pattern.compile("%(\\w+)%");
+	private final Pattern placeholder = Pattern.compile("%(\\w+)%");
 
 	private final JavaMailSender mailSender;
 	private final String from;
@@ -35,11 +35,18 @@ public class MailService {
 	@Value("${app.name}")
 	private String name;
 
+	/**
+	 * 通过填充模板来生成 HTML，目前的邮件都比较简单，就不上专门的模板引擎了。
+	 *
+	 * @param name 模板文件名，位于 resources/mail 下。
+	 * @param model 填充参数
+	 * @return 填充后的 HTML，可作为邮件内容。
+	 */
 	@SneakyThrows
-	public String template(String name, Map<String, Object> model) {
+	public String interpolate(String name, Map<String, Object> model) {
 		var res = new ClassPathResource("mail/" + name);
 		var template = Files.readString(Path.of(res.getURI()));
-		return regex.matcher(template)
+		return placeholder.matcher(template)
 				.replaceAll(m -> model.get(m.group(1)).toString());
 	}
 
@@ -69,7 +76,7 @@ public class MailService {
 		try {
 			helper.setFrom(from, name);
 			helper.setTo(to);
-			helper.setSubject(title);
+			helper.setSubject(title + " - " + name);
 
 			/*
 			 * 邮件内容也属于前端视图，但它由后端发送，所以只能选个后端模板库用了。
