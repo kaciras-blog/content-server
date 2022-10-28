@@ -49,7 +49,7 @@ spring:
 app:
 
   # 给应用起个名，用于邮件发送者部分
-  name: KacirasBlog
+  name: Kaciras Blog
 
   # 网站（前端页面）的协议和域名
   origin: http://localhost
@@ -67,7 +67,10 @@ app:
 
 #  notice:
 #    mail:
+       # 发送邮件的邮箱，如果未设置则邮件功能不可用。
 #      from: Sender@example.com
+
+       # 站长的邮箱，用于接收各种通知。
 #      admin: YourMail@example.com
 
   # 限流器相关配置，如果不设置将不限流

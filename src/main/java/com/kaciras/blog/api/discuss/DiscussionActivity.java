@@ -59,7 +59,7 @@ final class DiscussionActivity implements Activity {
 		// 给站长的邮件，仅提示有新回复，具体内容去后台看。
 		if (clear && user.getId() != WebPrincipal.ADMIN_ID) {
 			sender.sendToAdmin("有新评论啦",
-					sender.interpolate("NewDiscussion.html", Map.of()));
+					sender.interpolate("NewDiscussion", Map.of()));
 		}
 
 		// 登录了就不支持匿名邮箱，因为本来就是为了第三方验证才搞得登录。
@@ -76,7 +76,7 @@ final class DiscussionActivity implements Activity {
 			return; // 邮件地址相同视为回复自己，不发送通知。
 		}
 
-		var html = sender.interpolate("ReplyToast.html", Map.of(
+		var html = sender.interpolate("ReplyToast", Map.of(
 				"title", title,
 				"url", url,
 				"content", preview,

@@ -112,11 +112,13 @@ class DiscussionController {
 
 		repository.add(discussion);
 
-		// 发送通知提醒
 		var activity = mapper.createActivity(discussion, topic);
 		activity.setUser(userRepository.get(discussion.getUserId()));
 		if (parent != null) {
-			var nestRoot = repository.get(discussion.getNestId()).orElseThrow();
+			// 父评论存在，则 Nest 一定不为 null。
+			var nestRoot = repository
+					.get(discussion.getNestId())
+					.orElseThrow();
 			activity.setTopicFloor(nestRoot.getNestFloor());
 			activity.setParentUser(userRepository.get(parent.getUserId()));
 			activity.setParentEmail(parent.getEmail());

@@ -37,14 +37,18 @@ public class MailService {
 
 	/**
 	 * 通过填充模板来生成 HTML，目前的邮件都比较简单，就不上专门的模板引擎了。
+	 * ……好像简单的 if 功能也挺有用的。
 	 *
-	 * @param name 模板文件名，位于 resources/mail 下。
+	 * <h2>未来的想法</h2>
+	 * 如果用 Node 做同构应用，这玩意也能用 SSR 生成。
+	 *
+	 * @param name 模板名，位于 resources/mail 下，扩展名省略。
 	 * @param model 填充参数
 	 * @return 填充后的 HTML，可作为邮件内容。
 	 */
 	@SneakyThrows
 	public String interpolate(String name, Map<String, Object> model) {
-		var res = new ClassPathResource("mail/" + name);
+		var res = new ClassPathResource("mail/" + name + ".html");
 		var template = Files.readString(Path.of(res.getURI()));
 		return placeholder.matcher(template)
 				.replaceAll(m -> model.get(m.group(1)).toString());
@@ -77,17 +81,6 @@ public class MailService {
 			helper.setFrom(from, name);
 			helper.setTo(to);
 			helper.setSubject(title + " - " + name);
-
-			/*
-			 * 邮件内容也属于前端视图，但它由后端发送，所以只能选个后端模板库用了。
-			 * 而且邮件环境不同于浏览器，没法复用前端项目代码。
-			 *
-			 * 可否用模板生成 Markdown，然后再渲染成 HTML？这样做好像仍然需要模板引擎。
-			 *
-			 * 【最简化邮件内容】
-			 * 因为不给第三方发邮件，自己的话可以在控制台里看到全部消息通知，
-			 * 完全没必在再邮件里写内容，只需提个醒去控制台看即可，故移除后端模板。
-			 */
 			helper.setText(html, true);
 
 			mailSender.send(message);
