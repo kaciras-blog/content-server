@@ -9,6 +9,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,8 +28,14 @@ final class MailServiceTest {
 	}
 
 	@Test
-	void exception() {
+	void invalidAddress() {
 		service.send("", "<- 地址为空会抛出异常", "异常直接处理了不会跑到外层");
+	}
+
+	@Test
+	void interpolate() {
+		var html = service.interpolate("Template", Map.of("name", "Kaciras"));
+		assertThat(html).isEqualTo("<div>Hello Kaciras</div>");
 	}
 
 	@Test

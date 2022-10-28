@@ -4,5 +4,6 @@
 	"preview" : "test content",
 	"state" : 0,
 	"title" : "TestTopic",
+	"topicFloor" : 0,
 	"url" : "http://example.com"
 }
