@@ -177,6 +177,7 @@ final class DiscussionControllerTest extends AbstractControllerTest {
 				Arguments.of("nickname", "	   	"),
 
 				Arguments.of("email", longText + "@qq.com"),
+				Arguments.of("email", ""),
 				Arguments.of("email", "NotAnEmailAddress")
 		);
 	}

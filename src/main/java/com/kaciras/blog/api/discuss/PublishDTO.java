@@ -20,7 +20,8 @@ final class PublishDTO {
 	@NullOrNotBlank
 	public final String nickname;
 
-	@Email
+	// Email 默认允许空串，需要额外用正则检查一下。
+	@Email(regexp = ".+")
 	public final String email;
 
 	// 数据库使用 TEXT 类型，一个字最多 4 字节，所以限制是 16383 字。
