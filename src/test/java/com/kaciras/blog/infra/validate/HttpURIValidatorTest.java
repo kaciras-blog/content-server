@@ -1,12 +1,12 @@
 package com.kaciras.blog.infra.validate;
 
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.net.URI;
 
 import static com.google.common.collect.Iterables.getLast;

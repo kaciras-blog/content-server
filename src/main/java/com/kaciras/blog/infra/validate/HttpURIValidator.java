@@ -1,7 +1,8 @@
 package com.kaciras.blog.infra.validate;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
 import java.net.URI;
 
 public final class HttpURIValidator implements ConstraintValidator<HttpURI, URI> {

@@ -2,13 +2,13 @@ package com.kaciras.blog.api.friend;
 
 import com.kaciras.blog.api.RedisKeys;
 import com.kaciras.blog.infra.RedisOperationsBuilder;
+import jakarta.annotation.PostConstruct;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import java.time.Clock;
 
 /**

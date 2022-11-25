@@ -1,11 +1,11 @@
 package com.kaciras.blog.api.draft;
 
 import com.kaciras.blog.infra.principal.RequirePermission;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 

@@ -1,11 +1,11 @@
 package com.kaciras.blog.api.friend;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
 
-import javax.annotation.PostConstruct;
 import java.time.Duration;
 
 @Configuration(proxyBeanMethods = false)

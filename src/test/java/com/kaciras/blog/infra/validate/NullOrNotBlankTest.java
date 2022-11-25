@@ -1,10 +1,9 @@
 package com.kaciras.blog.infra.validate;
 
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
-
-import javax.validation.Validation;
-import javax.validation.Validator;
 
 import static com.google.common.collect.Iterables.getLast;
 import static org.assertj.core.api.Assertions.assertThat;

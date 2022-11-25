@@ -1,10 +1,10 @@
 package com.kaciras.blog.api.article;
 
 import com.kaciras.blog.infra.codec.ImageReference;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**

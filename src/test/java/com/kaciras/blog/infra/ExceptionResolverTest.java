@@ -1,6 +1,8 @@
 package com.kaciras.blog.infra;
 
 import com.kaciras.blog.infra.exception.HttpStatusException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,8 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
 import java.util.stream.Stream;
 
 import static com.kaciras.blog.infra.TestHelper.getSubClassesInPackage;

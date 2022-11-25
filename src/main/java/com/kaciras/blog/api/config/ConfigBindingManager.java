@@ -1,15 +1,15 @@
 package com.kaciras.blog.api.config;
 
 import com.kaciras.blog.infra.func.UncheckedConsumer;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
+import jakarta.validation.Validator;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
-import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
-import javax.validation.Validator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

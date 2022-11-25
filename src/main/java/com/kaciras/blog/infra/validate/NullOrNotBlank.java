@@ -1,12 +1,12 @@
 package com.kaciras.blog.infra.validate;
 
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
+import jakarta.validation.ReportAsSingleViolation;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Null;
 import org.hibernate.validator.constraints.ConstraintComposition;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import javax.validation.ReportAsSingleViolation;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Null;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 

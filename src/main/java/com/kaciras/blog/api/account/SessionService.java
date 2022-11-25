@@ -1,10 +1,9 @@
 package com.kaciras.blog.api.account;
 
 import com.kaciras.blog.api.SessionValue;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
 @Service

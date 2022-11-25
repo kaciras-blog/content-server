@@ -1,9 +1,8 @@
 package com.kaciras.blog.api.account.local;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-
-import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 final class LoginDTO {

@@ -1,8 +1,8 @@
 package com.kaciras.blog.infra;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.lang.NonNull;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;

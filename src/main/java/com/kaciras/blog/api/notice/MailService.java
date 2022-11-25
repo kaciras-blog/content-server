@@ -1,5 +1,6 @@
 package com.kaciras.blog.api.notice;
 
+import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Pattern;

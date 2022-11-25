@@ -2,13 +2,12 @@ package com.kaciras.blog.api.user;
 
 import com.kaciras.blog.api.SessionValue;
 import com.kaciras.blog.infra.principal.SecurityContext;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
 /**
  * 当前登录的用户控制器，路径以简洁为主使用 /user 而不是 /session/user 之类的，跟 GitHub 一样。

@@ -1,10 +1,9 @@
 package com.kaciras.blog.api.user;
 
 import com.kaciras.blog.infra.codec.ImageReference;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
 
 @AllArgsConstructor
 final class UpdateDTO {

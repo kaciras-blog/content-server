@@ -2,9 +2,9 @@ package com.kaciras.blog.api.ratelimit;
 
 import com.kaciras.blog.infra.RequestUtils;
 import com.kaciras.blog.infra.ratelimit.RateLimiter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 
 /**

@@ -1,12 +1,11 @@
 package com.kaciras.blog.api.discuss;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.data.domain.Pageable;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
 
 @Accessors(chain = true)
 @Getter

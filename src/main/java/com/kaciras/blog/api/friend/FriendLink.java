@@ -2,10 +2,10 @@ package com.kaciras.blog.api.friend;
 
 import com.kaciras.blog.infra.codec.ImageReference;
 import com.kaciras.blog.infra.validate.HttpURI;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.time.Instant;
 

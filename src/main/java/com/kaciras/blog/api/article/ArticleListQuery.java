@@ -1,12 +1,11 @@
 package com.kaciras.blog.api.article;
 
 import com.kaciras.blog.api.DeletedState;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.domain.Pageable;
-
-import javax.validation.constraints.NotNull;
 
 @NoArgsConstructor
 @Getter

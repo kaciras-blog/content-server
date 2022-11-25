@@ -3,11 +3,11 @@ package com.kaciras.blog.api.friend;
 import com.kaciras.blog.infra.exception.ResourceNotFoundException;
 import com.kaciras.blog.infra.exception.ResourceStateException;
 import com.kaciras.blog.infra.principal.RequirePermission;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.net.URI;
 
 /**

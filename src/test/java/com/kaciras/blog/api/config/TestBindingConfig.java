@@ -1,10 +1,10 @@
 package com.kaciras.blog.api.config;
 
+import jakarta.validation.ValidationException;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.ValidationException;
-import javax.validation.constraints.NotNull;
 import java.lang.annotation.ElementType;
 
 @Setter

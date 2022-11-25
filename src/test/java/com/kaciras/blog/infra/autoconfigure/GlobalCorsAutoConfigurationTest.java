@@ -1,10 +1,10 @@
 package com.kaciras.blog.infra.autoconfigure;
 
 import com.kaciras.blog.infra.FilterChainCapture;
+import jakarta.servlet.Filter;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import javax.servlet.Filter;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

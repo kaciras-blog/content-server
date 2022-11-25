@@ -1,9 +1,9 @@
 package com.kaciras.blog.api;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-import javax.servlet.http.HttpSession;
 import java.time.Instant;
 
 /**

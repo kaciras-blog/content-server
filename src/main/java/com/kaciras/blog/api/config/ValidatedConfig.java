@@ -1,6 +1,6 @@
 package com.kaciras.blog.api.config;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 
 /**
  * 配置类实现该接口，表示其需要在被使用前校验。
