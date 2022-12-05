@@ -2,7 +2,9 @@ package com.kaciras.blog.infra.validate;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import lombok.AllArgsConstructor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.collect.Iterables.getLast;
@@ -18,7 +20,13 @@ public class NullOrNotBlankTest {
 		private final String value;
 	}
 
-	private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+	private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+	private final Validator validator = factory.getValidator();
+
+	@AfterEach
+	void cleanUp() {
+		factory.close();
+	}
 
 	@Test
 	void allowNull() {

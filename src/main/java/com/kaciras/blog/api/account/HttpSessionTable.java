@@ -1,6 +1,7 @@
 package com.kaciras.blog.api.account;
 
 import com.kaciras.blog.api.RedisKeys;
+import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
@@ -54,8 +55,9 @@ public class HttpSessionTable {
 		var options = ScanOptions.scanOptions()
 				.match(RedisKeys.ACCOUNT_SESSIONS.of("*"))
 				.build();
-		var conn = redisTemplate.getRequiredConnectionFactory().getConnection();
-		var accounts = conn.scan(options);
+
+		@Cleanup var conn = redisTemplate.getRequiredConnectionFactory().getConnection();
+		@Cleanup var accounts = conn.keyCommands().scan(options);
 
 		while (accounts.hasNext()) {
 			var recordSet = new String(accounts.next());
