@@ -41,7 +41,7 @@ final class NoticeServiceTest {
 	// TODO: 每次测试都加载全部 bean 很烦人，要重构下
 	@BeforeEach
 	void setUp() {
-		redis.getConnection().flushDb();
+		redis.getConnection().serverCommands().flushDb();
 		clearInvocations(executor);
 
 		when(clock.instant()).thenReturn(Instant.EPOCH);

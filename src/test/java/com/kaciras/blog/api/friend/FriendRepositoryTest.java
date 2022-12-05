@@ -24,7 +24,7 @@ final class FriendRepositoryTest {
 
 	@BeforeEach
 	void flushDb() {
-		redis.getConnection().flushDb();
+		redis.getConnection().serverCommands().flushDb();
 	}
 
 	@Test

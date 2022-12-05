@@ -14,7 +14,7 @@ public final class TestHelper {
 	 * @param pkg   包名
 	 * @return 类列表，没有泛型因为调用方可能要转换
 	 */
-	@SuppressWarnings({"UnstableApiUsage", "rawtypes"})
+	@SuppressWarnings({"rawtypes"})
 	public static <T> Stream getSubClassesInPackage(Class<T> clazz, String pkg) {
 		try {
 			return ClassPath

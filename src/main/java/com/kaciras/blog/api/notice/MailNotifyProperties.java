@@ -2,11 +2,9 @@ package com.kaciras.blog.api.notice;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 
 @RequiredArgsConstructor
 @ConfigurationProperties("app.notice.mail")
-@ConstructorBinding
 public final class MailNotifyProperties {
 
 	/**

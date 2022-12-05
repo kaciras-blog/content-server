@@ -2,11 +2,9 @@ package com.kaciras.blog.infra.autoconfigure;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 
 import java.time.Duration;
 
-@ConstructorBinding
 @ConfigurationProperties("app.http-client")
 @RequiredArgsConstructor
 public final class HttpClientProperties {

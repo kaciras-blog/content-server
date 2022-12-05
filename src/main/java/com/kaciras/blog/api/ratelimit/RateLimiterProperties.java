@@ -2,12 +2,10 @@ package com.kaciras.blog.api.ratelimit;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
 
 import java.time.Duration;
 import java.util.List;
 
-@ConstructorBinding
 @ConfigurationProperties("app.rate-limiter")
 @RequiredArgsConstructor
 public final class RateLimiterProperties {

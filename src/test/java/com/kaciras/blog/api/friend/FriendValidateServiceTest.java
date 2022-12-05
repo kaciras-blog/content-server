@@ -49,7 +49,7 @@ final class FriendValidateServiceTest {
 
 	@BeforeEach
 	void flushDb() {
-		redis.getConnection().flushDb();
+		redis.getConnection().serverCommands().flushDb();
 	}
 
 	/**

@@ -27,13 +27,14 @@ final class ConfigRepositoryTest {
 
 	@BeforeEach
 	void flushDb() {
-		redis.getConnection().flushDb();
+		redis.getConnection().serverCommands().flushDb();
 	}
 
 	@Test
 	void loadInvalidData() {
 		var data = "123456";
-		redis.getConnection().set(RedisKeys.CONFIG_STORE.of("test").getBytes(), data.getBytes());
+		redis.getConnection().stringCommands()
+				.set(RedisKeys.CONFIG_STORE.of("test").getBytes(), data.getBytes());
 
 		assertThatThrownBy(() -> repository.load("test", TestConfig.class))
 				.isInstanceOf(SerializationException.class);

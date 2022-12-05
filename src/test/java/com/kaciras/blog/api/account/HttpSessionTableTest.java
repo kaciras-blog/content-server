@@ -29,7 +29,7 @@ final class HttpSessionTableTest {
 
 	@BeforeEach
 	void flushDb() {
-		redis.getRequiredConnectionFactory().getConnection().flushDb();
+		redis.getRequiredConnectionFactory().getConnection().serverCommands().flushDb();
 	}
 
 	@Test
@@ -63,6 +63,6 @@ final class HttpSessionTableTest {
 		repository.deleteById(session.getId());
 		table.cleanAccountRecords();
 
-		assertThat(redis.keys("*")).hasSize(2);
+		assertThat(redis.keys("*")).hasSize(0);
 	}
 }

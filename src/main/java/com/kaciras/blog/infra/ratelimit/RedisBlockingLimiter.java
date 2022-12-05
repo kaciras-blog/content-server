@@ -93,7 +93,7 @@ public final class RedisBlockingLimiter implements RateLimiter {
 		var now = (int) clock.instant().getEpochSecond();
 
 		var blockKey = (namespace + id).getBytes(StandardCharsets.UTF_8);
-		var record = deserialize(connection.get(blockKey));
+		var record = deserialize(connection.stringCommands().get(blockKey));
 
 		if (record != null) {
 			var bTime = record.getBlockingTime();
@@ -103,7 +103,7 @@ public final class RedisBlockingLimiter implements RateLimiter {
 				if (refreshOnReject) {
 					record.beginTime = now;
 					waitTime = bTime;
-					connection.setEx(blockKey, bTime, record.serialize());
+					connection.stringCommands().setEx(blockKey, bTime, record.serialize());
 				}
 				return waitTime;
 			}
@@ -119,7 +119,7 @@ public final class RedisBlockingLimiter implements RateLimiter {
 			record.increaseLevel(now);
 		}
 
-		connection.setEx(blockKey, record.getObservationPeriod(), record.serialize());
+		connection.stringCommands().setEx(blockKey, record.getObservationPeriod(), record.serialize());
 		return record.getBlockingTime();
 	}
 

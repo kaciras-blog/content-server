@@ -20,9 +20,7 @@ public final class RedisOperationsBuilder {
 	private final ObjectMapper objectMapper;
 
 	private <T> Jackson2JsonRedisSerializer<T> jsonSerializer(Class<T> type) {
-		var serializer = new Jackson2JsonRedisSerializer<>(type);
-		serializer.setObjectMapper(objectMapper);
-		return serializer;
+		return new Jackson2JsonRedisSerializer<>(objectMapper, type);
 	}
 
 	private <V> RedisTemplate<String, V> newTemplate() {
@@ -35,9 +33,9 @@ public final class RedisOperationsBuilder {
 	/**
 	 * 创建一个 HASH 类型的存储，使用字符串作为 HASH 的键，值使用 JSON 序列化。
 	 *
-	 * @param key 存储名
+	 * @param key  存储名
 	 * @param type HASH 值的类型
-	 * @param <V> HASH 值的类型
+	 * @param <V>  HASH 值的类型
 	 */
 	public <V> BoundHashOperations<String, String, V> bindHash(String key, Class<V> type) {
 		var template = this.<V>newTemplate();
@@ -49,9 +47,9 @@ public final class RedisOperationsBuilder {
 	/**
 	 * 创建一个 LIST 类型的存储，其中的元素使用 JSON 序列化。
 	 *
-	 * @param key 存储名
+	 * @param key  存储名
 	 * @param type 元素的类型
-	 * @param <V> 元素的类型
+	 * @param <V>  元素的类型
 	 */
 	public <V> BoundListOperations<String, V> bindList(String key, Class<V> type) {
 		return bindList(key, jsonSerializer(type));
@@ -60,9 +58,9 @@ public final class RedisOperationsBuilder {
 	/**
 	 * 创建一个 LIST 类型的存储，其中的元素使用指定的序列化方式。
 	 *
-	 * @param key 存储名
+	 * @param key        存储名
 	 * @param serializer 序列化方式
-	 * @param <V> 元素的类型
+	 * @param <V>        元素的类型
 	 */
 	public <V> BoundListOperations<String, V> bindList(String key, RedisSerializer<V> serializer) {
 		var template = this.<V>newTemplate();
