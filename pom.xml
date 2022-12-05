@@ -7,7 +7,6 @@
 	<groupId>com.kaciras.blog</groupId>
 	<artifactId>content-server</artifactId>
 	<version>2.1.0</version>
-	<packaging>jar</packaging>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -75,7 +74,7 @@
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
-			<version>2.2.2</version>
+			<version>3.0.0</version>
 		</dependency>
 
 		<!-- 没有 Boot 的 Spring 库 -->
@@ -210,6 +209,12 @@
 						-noverify
 						--add-opens java.base/java.lang=ALL-UNNAMED
 					</jvmArguments>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>
