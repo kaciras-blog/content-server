@@ -25,7 +25,7 @@ final class ArticleControllerTest extends AbstractControllerTest {
 	@MockBean
 	private ArticleMapper articleMapper;
 
-	private final Article article = Mockito.spy(new Article());
+	private final Article article = Mockito.mock(Article.class);
 
 	@BeforeEach
 	void setUp() {

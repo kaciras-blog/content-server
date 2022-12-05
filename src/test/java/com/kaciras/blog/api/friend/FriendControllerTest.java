@@ -1,12 +1,10 @@
 package com.kaciras.blog.api.friend;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kaciras.blog.api.AbstractControllerTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.net.URI;
@@ -28,9 +26,6 @@ final class FriendControllerTest extends AbstractControllerTest {
 
 	@MockBean
 	private FriendValidateService validateService;
-
-	@Autowired
-	private ObjectMapper objectMapper;
 
 	@Test
 	void getFriends() throws Exception {

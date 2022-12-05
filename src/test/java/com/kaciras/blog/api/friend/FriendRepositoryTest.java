@@ -1,9 +1,12 @@
 package com.kaciras.blog.api.friend;
 
+import com.kaciras.blog.infra.autoconfigure.RedisUtilsAutoConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -13,14 +16,16 @@ import static com.kaciras.blog.api.friend.TestHelper.createFriend;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
-@SpringBootTest
+@Import({RedisUtilsAutoConfiguration.class, FriendRepository.class})
+@AutoConfigureJson
+@DataRedisTest
 final class FriendRepositoryTest {
 
 	@Autowired
-	private RedisConnectionFactory redis;
+	private FriendRepository repository;
 
 	@Autowired
-	private FriendRepository repository;
+	private RedisConnectionFactory redis;
 
 	@BeforeEach
 	void flushDb() {
@@ -133,7 +138,9 @@ final class FriendRepositoryTest {
 		assertThat(friends[2].name).isEqualTo("B");
 	}
 
-	/** 更新两遍，确认幂等性（BoundKeyOperations.rename 的坑） */
+	/**
+	 * 更新两遍，确认幂等性（BoundKeyOperations.rename 的坑）
+	 */
 	@Test
 	void sortIdempotence() {
 		repository.add(createFriend("A"));

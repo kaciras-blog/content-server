@@ -1,10 +1,13 @@
 package com.kaciras.blog.api.notice;
 
+import com.kaciras.blog.infra.autoconfigure.RedisUtilsAutoConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.test.context.ActiveProfiles;
@@ -20,7 +23,13 @@ import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.noMoreInteractions;
 
 @ActiveProfiles("test")
-@SpringBootTest
+@Import({
+		RedisUtilsAutoConfiguration.class,
+		NoticeService.class,
+		NoticeConfiguration.class
+})
+@AutoConfigureJson
+@DataRedisTest
 final class NoticeServiceTest {
 
 	@MockBean
@@ -65,7 +74,7 @@ final class NoticeServiceTest {
 	}
 
 	@Test
-	void mailAdminAfterSilentDuration(){
+	void mailAdminAfterSilentDuration() {
 		service.notify(new TestActivity(666));
 
 		when(clock.instant()).thenReturn(Instant.now());
