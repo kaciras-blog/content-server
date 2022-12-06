@@ -1,15 +1,15 @@
 package com.kaciras.blog.infra.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.ErrorResponseException;
+import org.springframework.web.server.ResponseStatusException;
 
-public final class RequestFrequencyException extends ErrorResponseException {
+public final class RequestFrequencyException extends ResponseStatusException {
 
-	public RequestFrequencyException() { this("操作频率过高，请稍后再试"); }
-
-	public RequestFrequencyException(String message) {
+	public RequestFrequencyException() {
 		super(HttpStatus.TOO_MANY_REQUESTS);
-		super.getBody().setDetail(message);
-		super.getBody().setTitle("操作频率过高，请稍后再试");
+	}
+
+	public RequestFrequencyException(String detail) {
+		super(HttpStatus.TOO_MANY_REQUESTS, detail, null, null, null);
 	}
 }

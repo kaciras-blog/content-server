@@ -1,17 +1,15 @@
 package com.kaciras.blog.infra.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.ErrorResponseException;
+import org.springframework.web.server.ResponseStatusException;
 
-public final class LegallyProhibitedException extends ErrorResponseException {
+public final class LegallyProhibitedException extends ResponseStatusException {
 
 	public LegallyProhibitedException() {
 		super(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS);
-		super.getBody().setTitle("请求的操作被和谐了");
 	}
 
-	public LegallyProhibitedException(String message) {
-		this();
-		super.getBody().setDetail(message);
+	public LegallyProhibitedException(String detail) {
+		super(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS, detail, null, null, null);
 	}
 }

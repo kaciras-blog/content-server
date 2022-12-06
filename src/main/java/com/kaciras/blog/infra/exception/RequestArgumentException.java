@@ -1,17 +1,15 @@
 package com.kaciras.blog.infra.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.ErrorResponseException;
+import org.springframework.web.server.ResponseStatusException;
 
-public final class RequestArgumentException extends ErrorResponseException {
+public final class RequestArgumentException extends ResponseStatusException {
 
 	public RequestArgumentException() {
-		this(null);
+		super(HttpStatus.BAD_REQUEST);
 	}
 
-	public RequestArgumentException(String message) {
-		super(HttpStatus.BAD_REQUEST);
-		super.getBody().setDetail(message);
-		super.getBody().setTitle("请求参数错误");
+	public RequestArgumentException(String detail) {
+		super(HttpStatus.BAD_REQUEST, detail, null, null, null);
 	}
 }

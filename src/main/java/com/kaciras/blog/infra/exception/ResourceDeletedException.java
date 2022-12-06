@@ -1,17 +1,15 @@
 package com.kaciras.blog.infra.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.ErrorResponseException;
+import org.springframework.web.server.ResponseStatusException;
 
-public final class ResourceDeletedException extends ErrorResponseException {
+public final class ResourceDeletedException extends ResponseStatusException {
 
 	public ResourceDeletedException() {
-		this(null);
+		super(HttpStatus.GONE);
 	}
 
-	public ResourceDeletedException(String message) {
-		super(HttpStatus.GONE);
-		super.getBody().setDetail(message);
-		super.getBody().setTitle("请求的资源已经被删除");
+	public ResourceDeletedException(String detail) {
+		super(HttpStatus.GONE, detail, null, null, null);
 	}
 }
