@@ -1,6 +1,5 @@
 package com.kaciras.blog.infra.autoconfigure;
 
-import com.kaciras.blog.infra.ExceptionResolver;
 import com.kaciras.blog.infra.codec.DualEnumConverterFactory;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.connector.Connector;
@@ -34,11 +33,6 @@ public class KxWebUtilsAutoConfiguration implements WebMvcConfigurer {
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		registry.addConverterFactory(new DualEnumConverterFactory());
-	}
-
-	@Bean
-	public ExceptionResolver exceptionResolver() {
-		return new ExceptionResolver();
 	}
 
 	/**

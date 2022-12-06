@@ -1,6 +1,5 @@
 package com.kaciras.blog.infra.autoconfigure;
 
-import com.kaciras.blog.infra.ExceptionResolver;
 import com.kaciras.blog.infra.func.UncheckedBiConsumer;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -77,7 +76,6 @@ final class KxWebUtilsAutoConfigurationTest {
 		runWithServer(contextRunner, ((context, connectors) -> {
 			assertThat(context).doesNotHaveBean("additionalConnectorCustomizer");
 			assertThat(context).doesNotHaveBean("springH2CCustomizer");
-			assertThat(context).hasSingleBean(ExceptionResolver.class);
 
 			var resp = request("http://localhost:" + connectors[0].getLocalPort());
 			assertThat(resp.version()).isEqualTo(HttpClient.Version.HTTP_1_1);

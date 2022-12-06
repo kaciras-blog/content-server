@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 final class ArticleControllerTest extends AbstractControllerTest {
@@ -38,7 +37,7 @@ final class ArticleControllerTest extends AbstractControllerTest {
 		var request = get("/articles").param("count", "99999").principal(ANONYMOUS);
 		mockMvc.perform(request)
 				.andExpect(status().is(400))
-				.andExpect(jsonPath("message").value("The count parameter is too large"));
+				.andExpect(snapshot.matchBody());
 	}
 
 	@Test

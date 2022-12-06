@@ -41,6 +41,9 @@ spring:
     lazy-initialization: false
 
   mvc:
+    # ResponseEntityExceptionHandler 需要设置下才会注册
+    problemdetails:
+      enabled: true
     servlet:
       load-on-startup: 0
 

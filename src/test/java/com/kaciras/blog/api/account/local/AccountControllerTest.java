@@ -69,14 +69,15 @@ final class AccountControllerTest extends AbstractControllerTest {
 	void invalidSignupRequest(String field, Object value) throws Exception {
 		var body = mutate(signupDTO, field, value);
 
-		mockMvc.perform(post("/accounts").content(toJson(body)).session(session)).andExpect(status().is(400));
+		mockMvc.perform(post("/accounts").content(toJson(body)).session(session))
+				.andExpect(status().is(400));
 	}
 
 	@Test
 	void signupWithoutCaptcha() throws Exception {
 		mockMvc.perform(post("/accounts").content(toJson(signupDTO)))
 				.andExpect(status().is(400))
-				.andExpect(jsonPath("$.message").value("验证码错误"));
+				.andExpect(jsonPath("$.detail").value("验证码错误"));
 	}
 
 	@Test
@@ -85,7 +86,7 @@ final class AccountControllerTest extends AbstractControllerTest {
 
 		mockMvc.perform(post("/accounts").content(toJson(signupDTO)).session(session))
 				.andExpect(status().is(400))
-				.andExpect(jsonPath("$.message").value("验证码错误"));
+				.andExpect(jsonPath("$.detail").value("验证码错误"));
 	}
 
 	@Test
@@ -94,14 +95,15 @@ final class AccountControllerTest extends AbstractControllerTest {
 
 		mockMvc.perform(post("/accounts").content(toJson(signupDTO)).session(session))
 				.andExpect(status().is(400))
-				.andExpect(jsonPath("$.message").value("验证码已过期，请重试"));
+				.andExpect(jsonPath("$.detail").value("验证码已过期，请重试"));
 	}
 
 	@Test
 	void nameConflict() throws Exception {
 		when(userManager.createNew(any(), any(), any())).thenThrow(new DuplicateKeyException(""));
 
-		mockMvc.perform(post("/accounts").content(toJson(signupDTO)).session(session)).andExpect(status().is(400));
+		mockMvc.perform(post("/accounts").content(toJson(signupDTO)).session(session))
+				.andExpect(status().is(400));
 	}
 
 	@Test
@@ -120,7 +122,7 @@ final class AccountControllerTest extends AbstractControllerTest {
 
 		mockMvc.perform(post("/accounts/login").content(toJson(loginDTO)))
 				.andExpect(status().is(400))
-				.andExpect(jsonPath("$.message").value("密码错误或用户不存在"));
+				.andExpect(jsonPath("$.detail").value("密码错误或用户不存在"));
 	}
 
 	@Test
@@ -130,7 +132,7 @@ final class AccountControllerTest extends AbstractControllerTest {
 
 		mockMvc.perform(post("/accounts/login").content(toJson(loginDTO)))
 				.andExpect(status().is(400))
-				.andExpect(jsonPath("$.message").value("密码错误或用户不存在"));
+				.andExpect(jsonPath("$.detail").value("密码错误或用户不存在"));
 	}
 
 	@Test

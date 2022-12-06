@@ -1,7 +1,7 @@
 package com.kaciras.blog.infra.principal;
 
-import com.kaciras.blog.infra.exception.DataTooBigException;
 import com.kaciras.blog.infra.exception.PermissionException;
+import com.kaciras.blog.infra.exception.RequestFrequencyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ class AuthorizeAspectTest {
 
 		void requireAuth() {}
 
-		@RequirePermission(error = DataTooBigException.class)
+		@RequirePermission(error = RequestFrequencyException.class)
 		void customException() {}
 	}
 
@@ -79,7 +79,7 @@ class AuthorizeAspectTest {
 
 	@Test
 	void customException() {
-		assertThatThrownBy(() -> classAopBean.customException()).isInstanceOf(DataTooBigException.class);
+		assertThatThrownBy(() -> classAopBean.customException()).isInstanceOf(RequestFrequencyException.class);
 	}
 
 	/**

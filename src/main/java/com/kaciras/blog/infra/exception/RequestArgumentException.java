@@ -1,17 +1,17 @@
 package com.kaciras.blog.infra.exception;
 
-public final class RequestArgumentException extends HttpStatusException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.ErrorResponseException;
+
+public final class RequestArgumentException extends ErrorResponseException {
 
 	public RequestArgumentException() {
-		this("请求中含有不合法的数据");
+		this(null);
 	}
 
 	public RequestArgumentException(String message) {
-		super(message);
-	}
-
-	@Override
-	public int statusCode() {
-		return 400;
+		super(HttpStatus.BAD_REQUEST);
+		super.getBody().setDetail(message);
+		super.getBody().setTitle("请求参数错误");
 	}
 }
