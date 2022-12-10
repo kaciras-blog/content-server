@@ -9,9 +9,6 @@ import org.springframework.boot.task.TaskSchedulerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -49,16 +46,6 @@ public class ContentServerApplication {
 	@SuppressWarnings("unused")
 	ContentServerApplication(LoadTimeWeaver loadTimeWeaver) {}
 
-	@Bean
-	RedisTemplate<String, Object> jsonRedisTemplate(RedisConnectionFactory factory) {
-		var template = new RedisTemplate<String, Object>();
-		template.setConnectionFactory(factory);
-		template.setDefaultSerializer(RedisSerializer.json());
-		template.setKeySerializer(RedisSerializer.string());
-		template.setHashKeySerializer(RedisSerializer.string());
-		return template;
-	}
-
 	/**
 	 * TaskSchedulingAutoConfiguration.taskScheduler 因为 RedisHttpSessionConfiguration 实现了
 	 * SchedulingConfigurer 来加入一个清理过期会话的任务而不被启用。
@@ -89,7 +76,7 @@ public class ContentServerApplication {
 	 * 使用 JAVA8 的新 API 代替 System.currentTimeMillis()。
 	 *
 	 * <h2>为什么不在 Mariadb 里生成时间</h2>
-	 * 在测试中 Clock 能够 Mock，而数据库生成不可控，若测试使用真实数据库则 Clock 更好。
+	 * 在测试中 Clock 能够 Mock，若使用真实数据库则 Clock 更好。
 	 * <p>
 	 * 并非所有数据库都能设置时间，Redis 就不行，所以应用里必须要用 Clock，
 	 * 如果数据库里也设置则存在两个时间源，增加系统的复杂度。
