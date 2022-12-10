@@ -1,19 +1,15 @@
 package com.kaciras.blog.api;
 
 import com.kaciras.blog.api.account.SessionService;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.session.DefaultCookieSerializerCustomizer;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.task.TaskSchedulerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.time.Clock;
@@ -45,32 +41,6 @@ public class ContentServerApplication {
 	 */
 	@SuppressWarnings("unused")
 	ContentServerApplication(LoadTimeWeaver loadTimeWeaver) {}
-
-	/**
-	 * TaskSchedulingAutoConfiguration.taskScheduler 因为 RedisHttpSessionConfiguration 实现了
-	 * SchedulingConfigurer 来加入一个清理过期会话的任务而不被启用。
-	 * <p>
-	 * 我猜是因为 SchedulingConfigurer 功能过大可以修改 ScheduledTaskRegistrar 的调度器，
-	 * 保守起见禁止了默认的调度器Bean。
-	 * <p>
-	 * 虽然本应用中的 RedisHttpSessionConfiguration 并不会修改调度器，但 TaskSchedulingAutoConfiguration
-	 * 却是废了，故直接在这里创建调度器。
-	 * <p>
-	 * 与 TaskSchedulingAutoConfiguration 相比，这里创建不支持配置文件(spring.task.scheduling)，如果要用回自动
-	 * 配置的话，需要将 application.yml 中 spring.autoconfigure.exclude 相关项去掉
-	 *
-	 * @see org.springframework.scheduling.config.ScheduledTaskRegistrar
-	 * @see RedisHttpSessionConfiguration.SessionCleanupConfiguration#configureTasks
-	 * @see org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration
-	 */
-	@Bean
-	ThreadPoolTaskScheduler taskScheduler(ObjectProvider<TaskSchedulerCustomizer> customizers) {
-		var taskScheduler = new ThreadPoolTaskScheduler();
-		taskScheduler.setPoolSize(2);
-		taskScheduler.setThreadNamePrefix("SharedPool-");
-		customizers.forEach(customizer -> customizer.customize(taskScheduler));
-		return taskScheduler;
-	}
 
 	/**
 	 * 使用 JAVA8 的新 API 代替 System.currentTimeMillis()。
