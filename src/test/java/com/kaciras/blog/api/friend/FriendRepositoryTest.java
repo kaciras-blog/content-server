@@ -1,36 +1,21 @@
 package com.kaciras.blog.api.friend;
 
-import com.kaciras.blog.infra.autoconfigure.RedisUtilsAutoConfiguration;
-import org.junit.jupiter.api.BeforeEach;
+import com.kaciras.blog.api.BlogRedisTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.net.URI;
 
 import static com.kaciras.blog.api.friend.TestHelper.createFriend;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
-@Import({RedisUtilsAutoConfiguration.class, FriendRepository.class})
-@AutoConfigureJson
-@DataRedisTest
+@Import(FriendRepository.class)
+@BlogRedisTest
 final class FriendRepositoryTest {
 
 	@Autowired
 	private FriendRepository repository;
-
-	@Autowired
-	private RedisConnectionFactory redis;
-
-	@BeforeEach
-	void flushDb() {
-		redis.getConnection().serverCommands().flushDb();
-	}
 
 	@Test
 	void addRepeat() {
