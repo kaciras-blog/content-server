@@ -1,7 +1,10 @@
 package com.kaciras.blog.api.account.oauth2;
 
 import com.kaciras.blog.api.AbstractControllerTest;
+import com.kaciras.blog.api.UseBlogRedis;
 import com.kaciras.blog.api.account.AuthType;
+import com.kaciras.blog.api.account.HttpSessionTable;
+import com.kaciras.blog.api.account.SessionService;
 import com.kaciras.blog.api.user.User;
 import com.kaciras.blog.api.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,6 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Import({OAuth2Controller.class, SessionService.class, HttpSessionTable.class})
+@UseBlogRedis
 @ContextConfiguration(classes = OAuth2ControllerTest.TestConfig.class)
 final class OAuth2ControllerTest extends AbstractControllerTest {
 

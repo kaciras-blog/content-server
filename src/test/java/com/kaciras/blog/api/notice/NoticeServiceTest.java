@@ -1,16 +1,14 @@
 package com.kaciras.blog.api.notice;
 
-import com.kaciras.blog.infra.autoconfigure.RedisUtilsAutoConfiguration;
+import com.kaciras.blog.api.MinimumSpringTest;
+import com.kaciras.blog.api.UseBlogRedis;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -22,14 +20,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.noMoreInteractions;
 
-@ActiveProfiles("test")
-@Import({
-		RedisUtilsAutoConfiguration.class,
-		NoticeService.class,
-		NoticeConfiguration.class
-})
-@AutoConfigureJson
-@DataRedisTest
+@Import({NoticeService.class, NoticeConfiguration.class})
+@UseBlogRedis
+@MinimumSpringTest
 final class NoticeServiceTest {
 
 	@MockBean

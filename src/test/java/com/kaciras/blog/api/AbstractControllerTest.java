@@ -7,8 +7,10 @@ import com.kaciras.blog.infra.principal.WebPrincipal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.filter.TypeExcludeFilters;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,10 +21,13 @@ import java.io.IOException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+@TypeExcludeFilters(DisableScanFilter.class)
+
 // LTW 简直毒瘤啊，各种毛病烦死人
 @EnableLoadTimeWeaving
 @ActiveProfiles("test")
 @SpringBootTest
+@Import(SnapshotAssertion.class)
 @ExtendWith(SnapshotAssertion.ContextHolder.class)
 public abstract class AbstractControllerTest {
 

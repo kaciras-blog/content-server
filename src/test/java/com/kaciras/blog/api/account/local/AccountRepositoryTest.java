@@ -1,16 +1,20 @@
 package com.kaciras.blog.api.account.local;
 
+import com.kaciras.blog.api.MinimumSpringTest;
+import com.kaciras.blog.api.UseBlogMybatis;
+import com.kaciras.blog.api.UseBlogRedis;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Transactional
-@SpringBootTest
+@Import(AccountRepository.class)
+@UseBlogMybatis
+@UseBlogRedis
+@MinimumSpringTest
 class AccountRepositoryTest {
 
 	@Autowired

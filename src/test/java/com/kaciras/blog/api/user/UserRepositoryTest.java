@@ -1,13 +1,14 @@
 package com.kaciras.blog.api.user;
 
+import com.kaciras.blog.api.MinimumSpringTest;
+import com.kaciras.blog.api.UseBlogMybatis;
 import com.kaciras.blog.api.account.AuthType;
 import com.kaciras.blog.infra.codec.ImageReference;
 import com.kaciras.blog.infra.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Import;
 
 import java.net.InetAddress;
 import java.time.Clock;
@@ -17,8 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-@Transactional
-@SpringBootTest
+@Import(UserRepository.class)
+@UseBlogMybatis
+@MinimumSpringTest
 class UserRepositoryTest {
 
 	@Autowired

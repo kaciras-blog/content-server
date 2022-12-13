@@ -1,6 +1,7 @@
 package com.kaciras.blog.api.friend;
 
-import com.kaciras.blog.api.BlogRedisTest;
+import com.kaciras.blog.api.MinimumSpringTest;
+import com.kaciras.blog.api.UseBlogRedis;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -11,7 +12,8 @@ import static com.kaciras.blog.api.friend.TestHelper.createFriend;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(FriendRepository.class)
-@BlogRedisTest
+@UseBlogRedis
+@MinimumSpringTest
 final class FriendRepositoryTest {
 
 	@Autowired
