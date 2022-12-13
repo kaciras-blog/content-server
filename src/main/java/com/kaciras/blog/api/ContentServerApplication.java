@@ -6,13 +6,16 @@ import org.springframework.boot.autoconfigure.session.DefaultCookieSerializerCus
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableLoadTimeWeaving;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.security.SecureRandom;
 import java.time.Clock;
+import java.util.Random;
 
 /**
  * 应用的启动入口，也包括一些基本组件的创建代码。
@@ -54,6 +57,23 @@ public class ContentServerApplication {
 	@Bean
 	Clock clock() {
 		return Clock.systemUTC();
+	}
+
+	/**
+	 * 同样为了 Mock 测试，以及少创建点对象，随机数生成器也由容器注入。
+	 *
+	 * <h2>性能</h2>
+	 * ThreadLocalRandom 都是静态方法，不能注入，本站访问量不大就懒得管了。
+	 */
+	@Primary
+	@Bean
+	Random random() {
+		return new Random();
+	}
+
+	@Bean
+	SecureRandom secureRandom() {
+		return new SecureRandom();
 	}
 
 	/**

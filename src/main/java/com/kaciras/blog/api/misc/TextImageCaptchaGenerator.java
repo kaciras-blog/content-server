@@ -22,8 +22,6 @@ import java.util.stream.IntStream;
 @Component
 public final class TextImageCaptchaGenerator {
 
-	private static final Random RANDOM = new Random();
-
 	// 字符集
 	private static final char[] CAPTCHA_TEXT =
 			"0123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
@@ -31,6 +29,7 @@ public final class TextImageCaptchaGenerator {
 	private static final int CAPTCHA_WIDTH = 150; // 图片宽度
 	private static final int CAPTCHA_HEIGHT = 40; // 图片高度
 
+	private final Random random;
 	private final Font font;
 
 	/*
@@ -40,7 +39,9 @@ public final class TextImageCaptchaGenerator {
 	 * 一些没安装字体功能的Linux系统会报错：IOException: Problem reading font data.
 	 * 此时可以尝试安装 fontconfig 包：`apt install fontconfig`
 	 */
-	public TextImageCaptchaGenerator() throws IOException, FontFormatException {
+	public TextImageCaptchaGenerator(Random random) throws IOException, FontFormatException {
+		this.random = random;
+
 		var fontFile = TextImageCaptchaGenerator.class.getClassLoader().getResource("CENTURY.TTF");
 		if (fontFile == null) {
 			throw new Error("找不到验证码字体文件：CENTURY.TTF");
@@ -65,7 +66,7 @@ public final class TextImageCaptchaGenerator {
 	private String randomCaptchaText(int length) {
 		var text = new StringBuilder(length);
 		for (int i = 0; i < length; i++) {
-			text.append(CAPTCHA_TEXT[RANDOM.nextInt(CAPTCHA_TEXT.length)]);
+			text.append(CAPTCHA_TEXT[random.nextInt(CAPTCHA_TEXT.length)]);
 		}
 		return text.toString();
 	}
@@ -89,10 +90,10 @@ public final class TextImageCaptchaGenerator {
 		// 干扰线
 		g2.setColor(randomColor(160, 200)); // 线条的颜色
 		for (int i = 0; i < 20; i++) {
-			var x = RANDOM.nextInt(w - 1);
-			var y = RANDOM.nextInt(h - 1);
-			var xl = RANDOM.nextInt(6) + 1;
-			var yl = RANDOM.nextInt(12) + 1;
+			var x = random.nextInt(w - 1);
+			var y = random.nextInt(h - 1);
+			var xl = random.nextInt(6) + 1;
+			var yl = random.nextInt(12) + 1;
 			g2.drawLine(x, y, x + xl + 40, y + yl + 20);
 		}
 
@@ -100,7 +101,7 @@ public final class TextImageCaptchaGenerator {
 		var yawpRate = 0.08f; // 噪声率
 		var area = (int) (yawpRate * w * h);
 		for (var i = 0; i < area; i++) {
-			image.setRGB(RANDOM.nextInt(w), RANDOM.nextInt(h), randomColorValue(0, 0xFF));
+			image.setRGB(random.nextInt(w), random.nextInt(h), randomColorValue(0, 0xFF));
 		}
 
 		g2.setFont(font);
@@ -108,7 +109,7 @@ public final class TextImageCaptchaGenerator {
 
 		for (var i = 0; i < verifySize; i++) {
 			var affine = new AffineTransform();
-			var angle = Math.PI / 4 * RANDOM.nextDouble() * (RANDOM.nextBoolean() ? 1 : -1);
+			var angle = Math.PI / 4 * random.nextDouble() * (random.nextBoolean() ? 1 : -1);
 
 			affine.setToRotation(angle, ((double) w / verifySize) * i + font.getSize() / 2D, h / 2D);
 			g2.setColor(randomColor(50, 140));
@@ -134,15 +135,15 @@ public final class TextImageCaptchaGenerator {
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	private int randomColorValue(int lo, int hi) {
 		return IntStream.range(0, 3)
-				.map(i -> lo + RANDOM.nextInt(hi - lo))
+				.map(i -> lo + random.nextInt(hi - lo))
 				.reduce((rgb, channel) -> rgb << 8 | channel)
 				.getAsInt();
 	}
 
 	private void shearX(Graphics g, int w1, int h1, Color color) {
-		var period = RANDOM.nextInt(2);
+		var period = random.nextInt(2);
 		var frames = 1;
-		var phase = RANDOM.nextInt(2);
+		var phase = random.nextInt(2);
 
 		for (var i = 0; i < h1; i++) {
 			var d = (period >> 1) * Math.sin(i / (double) period + Math.PI * 2 * phase / frames);
@@ -154,7 +155,7 @@ public final class TextImageCaptchaGenerator {
 	}
 
 	private void shearY(Graphics g, int w1, int h1, Color color) {
-		var period = RANDOM.nextInt(40) + 10; // 50;
+		var period = random.nextInt(40) + 10; // 50;
 		var frames = 20;
 		var phase = 7;
 		for (var i = 0; i < w1; i++) {

@@ -26,7 +26,10 @@ public final class Account {
 	 */
 	private static final int HASH_SIZE = 512;
 
-	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private SecureRandom random;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -78,7 +81,7 @@ public final class Account {
 	 */
 	private void encryptPassword(String password) {
 		this.salt = new byte[HASH_SIZE >> 3];
-		SECURE_RANDOM.nextBytes(salt);
+		random.nextBytes(salt);
 		this.password = encryptPassword(password, salt);
 	}
 
