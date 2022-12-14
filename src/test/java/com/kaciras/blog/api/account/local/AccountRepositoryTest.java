@@ -2,7 +2,6 @@ package com.kaciras.blog.api.account.local;
 
 import com.kaciras.blog.api.MinimumSpringTest;
 import com.kaciras.blog.api.UseBlogMybatis;
-import com.kaciras.blog.api.UseBlogRedis;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -13,27 +12,35 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Import(AccountRepository.class)
 @UseBlogMybatis
-@UseBlogRedis
 @MinimumSpringTest
 class AccountRepositoryTest {
 
 	@Autowired
 	private AccountRepository repository;
 
+	private Account stub(int id, String name) {
+		var account = new Account();
+		account.setId(id);
+		account.setName(name);
+		account.setSalt(new byte[64]);
+		account.setPassword(new byte[64]);
+		return account;
+	}
+
 	@Test
 	void nameConflict() {
-		var a0 = Account.create(3, "alice", "foobar2000");
-		var a1 = Account.create(4, "alice", "foobar2000");
+		var a0 = stub(3, "alice");
+		var a1 = stub(4, "alice");
 		repository.add(a0);
 		assertThatThrownBy(() -> repository.add(a1)).isInstanceOf(DuplicateKeyException.class);
 	}
 
 	@Test
 	void findByName() {
-		var account = Account.create(3, "alice", "foobar2000");
+		var account = stub(3, "bob");
 		repository.add(account);
 
-		var result = repository.findByName("alice");
+		var result = repository.findByName("bob");
 		assertThat(result).usingRecursiveComparison().isEqualTo(account);
 	}
 }

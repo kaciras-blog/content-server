@@ -1,22 +1,21 @@
 package com.kaciras.blog.api.discuss;
 
+import com.kaciras.blog.api.MinimumSpringTest;
 import com.kaciras.blog.api.SnapshotAssertion;
+import com.kaciras.blog.api.UseBlogMybatis;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.net.InetAddress;
 import java.time.Clock;
@@ -28,10 +27,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @Sql(statements = "ALTER TABLE discussion AUTO_INCREMENT = 1")
-@ActiveProfiles("test")
-@Transactional
-@SpringBootTest
-@ExtendWith(SnapshotAssertion.ContextHolder.class)
+@Import(DiscussionRepository.class)
+@UseBlogMybatis
+@MinimumSpringTest
 class DiscussionRepositoryTest {
 
 	@Autowired

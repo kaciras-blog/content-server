@@ -1,7 +1,6 @@
 package com.kaciras.blog.api.discuss;
 
 import com.kaciras.blog.api.AbstractControllerTest;
-import com.kaciras.blog.api.article.ArticleRepository;
 import com.kaciras.blog.api.notice.NoticeService;
 import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.api.user.UserVO;
@@ -16,7 +15,6 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.RequestBuilder;
 
@@ -35,11 +33,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.noMoreIn
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Import(DiscussionController.class)
 final class DiscussionControllerTest extends AbstractControllerTest {
-
-	@MockBean
-	private ArticleRepository aa;
 
 	@SpyBean
 	private TopicRegistration topics;
