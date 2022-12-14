@@ -36,8 +36,8 @@ spring:
   main:
     banner-mode: "off"
 
-    # LTW 自动注入不支持延迟初始化
-    lazy-initialization: false
+#    LTW 自动注入不支持延迟初始化，默认也是 false
+#    lazy-initialization: false
 
   mvc:
     # ResponseEntityExceptionHandler 需要设置下才会注册

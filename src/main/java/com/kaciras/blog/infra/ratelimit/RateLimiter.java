@@ -7,7 +7,7 @@ import org.springframework.lang.NonNull;
  * <p>
  * 每一次访问都需要获取一定数量的令牌，令牌用来衡量一次访问对资源的消耗程度，
  * 越大表示越耗资源，需要被限制在更低的速率。
- *
+ * <p>
  * 应用层的限流器无法处理底层的情况，比如 TCP 层的 DDOS 攻击，应对这些请使用防火墙或 CDN。
  */
 public interface RateLimiter {

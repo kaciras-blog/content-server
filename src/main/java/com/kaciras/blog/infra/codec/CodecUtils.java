@@ -80,10 +80,9 @@ public final class CodecUtils {
 	}
 
 	/**
-	 * 检查一个字符是否是合法的Hex字符。
+	 * 检查一个字符是否是合法的 HEX 字符, 各种实现的性能参考 benchmark。
 	 *
-	 * @param ch 字符
-	 * @return 如果是返回true，否则false
+	 * @see com.kaciras.blog.infra.HexMatchPerf
 	 */
 	public static boolean isHexDigit(char ch) {
 		return ch >= '0' && ch <= '9' || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F');
@@ -115,7 +114,7 @@ public final class CodecUtils {
 	}
 
 	/**
-	 * 把InetAddress转换为16字节的数组
+	 * 把 InetAddress 转换为 16 字节的数组
 	 *
 	 * @param address 地址
 	 * @return 字节数组
@@ -128,9 +127,9 @@ public final class CodecUtils {
 	}
 
 	/**
-	 * 使用IPv4-mapped addresses,将IPv4的4字节地址转换成IPv6的16字节地址
+	 * 使用 IPv4-mapped addresses,将 IPv4 的 4 字节地址转换成 IPv6 的 16 字节地址
 	 *
-	 * @param ipv4 表示IPv4地址的4个字节
+	 * @param ipv4 表示 IPv4 地址的 4 个字节
 	 * @return IPv4-mapped IPv6 Address bytes
 	 * @see <a href="https://tools.ietf.org/html/rfc3493#section-3.7">IPv4-mapped addresses</a>
 	 */

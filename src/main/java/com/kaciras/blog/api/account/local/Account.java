@@ -112,7 +112,6 @@ public final class Account {
 	 *
 	 * @param name     账户名称
 	 * @param password 密码
-	 * @return 账户对象
 	 */
 	public static Account create(int id, String name, String password) {
 		var account = new Account();

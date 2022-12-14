@@ -14,11 +14,11 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 数据库驱动里看到个 useServerPrepStmts 选项，试下能不能提升性能。
- *
+ * <p>
  * Benchmark                       Mode  Cnt  Score   Error  Units
  * ServerPrepStmtsPerf.clientSide  avgt   25  0.228 ± 0.006  ms/op
  * ServerPrepStmtsPerf.serverSide  avgt   25  0.198 ± 0.002  ms/op
- *
+ * <p>
  * 结论：蚊子肉没卵用。
  */
 @State(Scope.Benchmark)

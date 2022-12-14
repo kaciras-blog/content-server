@@ -4,10 +4,10 @@ import java.util.function.Consumer;
 
 /**
  * 此类解决了 java.util.function.Consumer 内部不能有 CheckedException 的问题。
- *
+ * <p>
  * Java 的 CheckedException 机制使 Lambda 表达式的接口必须声明异常，而一些常用的接口
  * 如 Consumer、Function、Runnable 等都没有声明，这让它们在有异常时写的非常难受。
- *
+ * <p>
  * 用法：
  * Consumer<Integer> c = (UncheckedConsumer<Integer>)(t) -> { throw new IOException(); };
  *

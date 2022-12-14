@@ -71,8 +71,8 @@ public class ConfigBindingManager {
 
 	// 两种校验方式，以后可能会扩展？
 	private void validate(String name, Object value) {
-		if (value instanceof ValidatedConfig) {
-			var success = ((ValidatedConfig) value).validate();
+		if (value instanceof ValidatedConfig vc) {
+			var success = vc.validate();
 			if (!success) {
 				throw new ValidationException("配置：" + name + "验证失败");
 			}

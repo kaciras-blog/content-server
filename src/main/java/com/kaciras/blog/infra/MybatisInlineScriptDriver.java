@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 /**
  * 扩展 Mybatis 的解析器，让注解中的 SQL 也支持集合参数。
  * 新增的规则会将 (#{xxx}) 这样的字符串将其转换为 foreach 块。
- *
  * <a href="https://stackoverflow.com/a/29076097">参考</a>
  *
  * @see org.apache.ibatis.annotations.Lang

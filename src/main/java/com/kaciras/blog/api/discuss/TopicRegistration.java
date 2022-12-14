@@ -59,6 +59,7 @@ public class TopicRegistration {
 			return new Topic(article.getTitle(), url);
 		}
 		if (type == 2) {
+			//noinspection EnhancedSwitchMigration
 			switch (objectId) {
 				case 1:
 					return new Topic("关于 - 博主", origin + "/about/me");

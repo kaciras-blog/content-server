@@ -12,7 +12,7 @@ import java.util.Collections;
 /**
  * 使用 Redis 存储的多级令牌桶，该类仅作为 Java 层的接口，算法的实现在 Lua 脚本里。
  *
- * <h3>关于 Redis 操作类</h3>
+ * <h2>关于 Redis 操作类</h2>
  * Spring Data Redis 里的 ScriptExecutor 跟 RedisTemplate 绑死了，很难直接基于 Connection 实现
  */
 public final class RedisTokenBucket implements RateLimiter {

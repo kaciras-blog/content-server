@@ -16,26 +16,30 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 final class RequestUtilsTest {
 
-	@Test
-	void addressFromRequest() {
-		var request = new MockHttpServletRequest();
+	MockHttpServletRequest request = new MockHttpServletRequest();
 
+	@Test
+	void defaultRemoteAddr() {
 		var address = RequestUtils.addressFrom(request);
 		assertThat(request.getRemoteAddr()).isNotNull();
-		assertThat(address.isLoopbackAddress()).isTrue();
-
-		request.setRemoteAddr("1234::5678");
-		address = RequestUtils.addressFrom(request);
-		assertThat(address).isInstanceOf(Inet6Address.class);
-
-		request.setRemoteAddr(null);
-		address = RequestUtils.addressFrom(request);
 		assertThat(address.isLoopbackAddress()).isTrue();
 	}
 
 	@Test
+	void nullRemoteAddr(){
+		var address = RequestUtils.addressFrom(request);
+		assertThat(address.isLoopbackAddress()).isTrue();
+	}
+
+	@Test
+	void addressFromRequest() {
+		request.setRemoteAddr("1234::5678");
+		var address = RequestUtils.addressFrom(request);
+		assertThat(address).isInstanceOf(Inet6Address.class);
+	}
+
+	@Test
 	void addressFromRequestUnknownHost() {
-		var request = new MockHttpServletRequest();
 		request.setRemoteAddr("invalid");
 		assertThatThrownBy(() -> RequestUtils.addressFrom(request)).isInstanceOf(UncheckedIOException.class);
 	}
@@ -53,9 +57,9 @@ final class RequestUtilsTest {
 
 	@MethodSource("addressAndIsLocal")
 	@ParameterizedTest
-	void isLocalNetwork(String host, boolean expect) throws Exception {
+	void isLocalNetwork(String host, boolean expected) throws Exception {
 		var address = InetAddress.getByName(host);
 		var actual = RequestUtils.isLocalNetwork(address);
-		assertThat(actual).isEqualTo(expect);
+		assertThat(actual).isEqualTo(expected);
 	}
 }

@@ -17,11 +17,11 @@ public class ConfigRepository {
 	private final RedisTemplate<String, byte[]> redisTemplate;
 	private final ObjectMapper objectMapper;
 
-	private final String namespace = RedisKeys.CONFIG_STORE.value();
+	private final RedisKeys namespace = RedisKeys.CONFIG_STORE;
 
 	public void save(String name, Object config) {
 		try {
-			redisTemplate.opsForValue().set(namespace + name, objectMapper.writeValueAsBytes(config));
+			redisTemplate.opsForValue().set(namespace.of(name), objectMapper.writeValueAsBytes(config));
 		} catch (JsonProcessingException e) {
 			throw new SerializationException("配置保存失败", e);
 		}
@@ -34,10 +34,10 @@ public class ConfigRepository {
 	 * @param name 配置名
 	 * @param type 配置对象的类型
 	 * @param <T>  配置对象的类型
-	 * @return 配置对象，如果没有就返回null
+	 * @return 配置对象，如果没有就返回 null
 	 */
 	public <T> T load(String name, Class<T> type) {
-		var data = redisTemplate.opsForValue().get(namespace + name);
+		var data = redisTemplate.opsForValue().get(namespace.of(name));
 		if (data == null) {
 			return null;
 		}
