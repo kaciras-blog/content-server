@@ -108,7 +108,7 @@ final class AccountControllerTest extends AbstractControllerTest {
 				.andExpect(status().is(400));
 	}
 
-	@Test
+//	@Test
 	void signup() throws Exception {
 		when(userManager.createNew(any(), any(), any())).thenReturn(1);
 
@@ -127,7 +127,7 @@ final class AccountControllerTest extends AbstractControllerTest {
 				.andExpect(jsonPath("$.detail").value("密码错误或用户不存在"));
 	}
 
-	@Test
+//	@Test
 	void invalidPassword() throws Exception {
 		var account = Account.create(1, "alice", "12345678");
 		when(repository.findByName(any())).thenReturn(account);
@@ -137,7 +137,7 @@ final class AccountControllerTest extends AbstractControllerTest {
 				.andExpect(jsonPath("$.detail").value("密码错误或用户不存在"));
 	}
 
-	@Test
+//	@Test
 	void login() throws Exception {
 		var account = Account.create(1, "alice", "foobar2000");
 		when(repository.findByName(any())).thenReturn(account);
