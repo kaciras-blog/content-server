@@ -39,10 +39,9 @@ class AccountController {
 	private final SessionService sessionService;
 	private final UserManager userManager;
 
+	@Transactional
 	@PostMapping
-	public ResponseEntity<Void> signup(@Valid @RequestBody SignupDTO data,
-									   HttpServletRequest request,
-									   HttpServletResponse response) {
+	public ResponseEntity<Void> signup(@Valid @RequestBody SignupDTO data, HttpServletRequest request) {
 		checkCaptcha(request.getSession(true), data.captcha);
 
 		var account = createAccount(data, RequestUtils.addressFrom(request));
@@ -51,7 +50,6 @@ class AccountController {
 		return ResponseEntity.created(URI.create("/accounts/" + account.getId())).build();
 	}
 
-	@Transactional
 	Account createAccount(SignupDTO data, InetAddress ip) {
 		try {
 			var id = userManager.createNew(data.name, AuthType.LOCAL, ip);
@@ -86,9 +84,7 @@ class AccountController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody @Valid LoginDTO data,
-								   HttpServletRequest request,
-								   HttpServletResponse response) {
+	public ResponseEntity<?> login(@RequestBody @Valid LoginDTO data, HttpServletRequest request) {
 		var account = repository.findByName(data.name);
 
 		if (account == null || !account.checkLogin(data.password)) {
