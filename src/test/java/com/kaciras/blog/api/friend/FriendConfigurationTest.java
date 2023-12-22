@@ -24,8 +24,7 @@ final class FriendConfigurationTest {
 
 	@Test
 	void scheduleValidator() {
-		runner.withPropertyValues("app.validate-friend=true").run(ctx -> {
-			verify(ctx.getBean(TaskScheduler.class)).scheduleAtFixedRate(any(), eq(Duration.ofDays(1)));
-		});
+		runner.withPropertyValues("app.validate-friend=true").run(ctx ->
+				verify(ctx.getBean(TaskScheduler.class)).scheduleAtFixedRate(any(), eq(Duration.ofDays(1))));
 	}
 }

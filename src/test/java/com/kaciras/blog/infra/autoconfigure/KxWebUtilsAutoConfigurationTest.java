@@ -21,7 +21,7 @@ import java.net.http.HttpResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-// 本测试会启动真实的Tomcat服务器而不是Mock
+// 本测试会启动真实的 Tomcat 服务器而不是 Mock
 final class KxWebUtilsAutoConfigurationTest {
 
 	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
@@ -57,18 +57,18 @@ final class KxWebUtilsAutoConfigurationTest {
 		});
 	}
 
-	private HttpResponse<String> request(String url) throws Exception {
+	private HttpResponse<String> request(int port) throws Exception {
 		var request = HttpRequest
-				.newBuilder(URI.create(url))
+				.newBuilder(URI.create("http://localhost:" + port))
 				.build();
-		var response = HttpClient
-				.newHttpClient()
-				.send(request, HttpResponse.BodyHandlers.ofString());
 
-		assertThat(response.body()).isEqualTo("Hello");
-		assertThat(response.statusCode()).isEqualTo(200);
+		try (var client = HttpClient.newHttpClient()) {
+			var response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-		return response;
+			assertThat(response.body()).isEqualTo("Hello");
+			assertThat(response.statusCode()).isEqualTo(200);
+			return response;
+		}
 	}
 
 	@Test
@@ -77,7 +77,7 @@ final class KxWebUtilsAutoConfigurationTest {
 			assertThat(context).doesNotHaveBean("additionalConnectorCustomizer");
 			assertThat(context).doesNotHaveBean("springH2CCustomizer");
 
-			var resp = request("http://localhost:" + connectors[0].getLocalPort());
+			var resp = request(connectors[0].getLocalPort());
 			assertThat(resp.version()).isEqualTo(HttpClient.Version.HTTP_1_1);
 		}));
 	}
@@ -88,7 +88,7 @@ final class KxWebUtilsAutoConfigurationTest {
 		runWithServer(runner, (context, connectors) -> {
 			assertThat(context).hasBean("springH2CCustomizer");
 
-			var resp = request("http://localhost:" + connectors[0].getLocalPort());
+			var resp = request(connectors[0].getLocalPort());
 			assertThat(resp.version()).isEqualTo(HttpClient.Version.HTTP_2);
 		});
 	}
@@ -99,7 +99,7 @@ final class KxWebUtilsAutoConfigurationTest {
 		runWithServer(runner, (context, connectors) -> {
 			assertThat(context).hasBean("additionalConnectorCustomizer");
 
-			var resp = request("http://localhost:" + connectors[1].getLocalPort());
+			var resp = request(connectors[1].getLocalPort());
 			assertThat(resp.version()).isEqualTo(HttpClient.Version.HTTP_1_1);
 		});
 	}
@@ -111,7 +111,7 @@ final class KxWebUtilsAutoConfigurationTest {
 				"server.http2.enabled=true"
 		);
 		runWithServer(runner, (__, connectors) -> {
-			var resp = request("http://localhost:" + connectors[1].getLocalPort());
+			var resp = request(connectors[1].getLocalPort());
 			assertThat(resp.version()).isEqualTo(HttpClient.Version.HTTP_2);
 		});
 	}

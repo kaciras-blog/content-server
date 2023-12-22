@@ -40,7 +40,7 @@ public class NoticeService {
 	@Nullable
 	private final MailService mailService;
 
-	public List<Notice> getAll() {
+	List<Notice> getAll() {
 		return redis.range(0, -1);
 	}
 

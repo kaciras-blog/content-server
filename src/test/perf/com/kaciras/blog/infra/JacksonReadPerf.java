@@ -43,6 +43,6 @@ public class JacksonReadPerf {
 
 	@Benchmark
 	public Object fromBytes() throws JsonProcessingException {
-		return objectMapper.readTree(new String(data, 0, data.length));
+		return objectMapper.readTree(new String(data));
 	}
 }

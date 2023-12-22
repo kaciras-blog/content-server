@@ -22,9 +22,8 @@ final class SecurityContextTest {
 		request.setUserPrincipal(new WebPrincipal(123));
 
 		var filter = new SecurityContextFilter();
-		filter.doFilter(request, new MockHttpServletResponse(), (req, res) -> {
-			assertThat(SecurityContext.getUserId()).isEqualTo(123);
-		});
+		filter.doFilter(request, new MockHttpServletResponse(), (req, res) ->
+				assertThat(SecurityContext.getUserId()).isEqualTo(123));
 
 		assertThat(SecurityContext.getPrincipal()).isNull();
 	}

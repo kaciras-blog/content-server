@@ -7,7 +7,6 @@ import com.kaciras.blog.api.user.UserManager;
 import com.kaciras.blog.infra.RequestUtils;
 import com.kaciras.blog.infra.exception.RequestArgumentException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +38,6 @@ class AccountController {
 	private final SessionService sessionService;
 	private final UserManager userManager;
 
-	@Transactional
 	@PostMapping
 	public ResponseEntity<Void> signup(@Valid @RequestBody SignupDTO data, HttpServletRequest request) {
 		checkCaptcha(request.getSession(true), data.captcha);
@@ -50,6 +48,7 @@ class AccountController {
 		return ResponseEntity.created(URI.create("/accounts/" + account.getId())).build();
 	}
 
+	@Transactional
 	Account createAccount(SignupDTO data, InetAddress ip) {
 		try {
 			var id = userManager.createNew(data.name, AuthType.LOCAL, ip);
