@@ -9,6 +9,7 @@
 
 	<!-- Spring 和 Tomcat 的日志没啥看头 -->
 	<logger name="org.springframework" level="WARN"/>
+	<logger name="org.apache.coyote" level="OFF"/>
 	<logger name="org.apache.catalina" level="WARN"/>
 
 	<!--
