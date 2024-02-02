@@ -30,12 +30,12 @@ final class RateLimitFilter extends HttpFilter {
 
 	/** 表示需要等待多少秒的响应头 */
 	private static final String RATE_LIMIT_HEADER = "X-RateLimit-Wait";
+	private static final byte[] BODY = "{\"type\":\"about:blank\",\"status\":429}".getBytes();
 
 	private final List<RateLimitChecker> checkers;
 
 	@Override
-	protected void doFilter(HttpServletRequest request,
-							HttpServletResponse response,
+	protected void doFilter(HttpServletRequest request, HttpServletResponse response,
 							FilterChain chain) throws IOException, ServletException {
 		var ip = RequestUtils.addressFrom(request);
 
@@ -54,6 +54,8 @@ final class RateLimitFilter extends HttpFilter {
 				logger.warn("{} 被限流 {} 秒", ip, waitTime);
 				response.setStatus(429);
 				response.setHeader(RATE_LIMIT_HEADER, Long.toString(waitTime));
+				response.setContentType("application/problem+json");
+				response.getOutputStream().write(BODY);
 			}
 		}
 	}
