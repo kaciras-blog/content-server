@@ -11,14 +11,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.3</version>
+		<version>3.2.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>21</java.version>
+		<java.version>22</java.version>
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
 		<ltw.agent>
 			${settings.localRepository}/org/springframework/spring-instrument/${spring-framework.version}/spring-instrument-${spring-framework.version}.jar
@@ -31,6 +31,7 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
+			<version>1.18.32</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mapstruct</groupId>
@@ -94,14 +95,14 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.9.21.1</version>
+			<version>1.9.22</version>
 		</dependency>
 
 		<!-- 其它非 Spring 依赖 -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>33.0.0-jre</version>
+			<version>33.1.0-jre</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
