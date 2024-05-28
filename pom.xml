@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.4</version>
+		<version>3.3.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -95,14 +95,14 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>1.9.22</version>
+			<version>1.9.22.1</version>
 		</dependency>
 
 		<!-- 其它非 Spring 依赖 -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>33.1.0-jre</version>
+			<version>33.2.0-jre</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
@@ -155,7 +155,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.11</version>
+				<version>0.8.12</version>
 				<executions>
 					<execution>
 						<goals>
@@ -222,6 +222,13 @@
 			</plugin>
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>maven_central</id>
+			<name>Maven Central</name>
+			<url>https://repo.maven.apache.org/maven2/</url>
+		</repository>
+	</repositories>
 
 	<!--
 		参考了 Vert.x 的写法用 assembly plugin 打包测试代码和依赖，
