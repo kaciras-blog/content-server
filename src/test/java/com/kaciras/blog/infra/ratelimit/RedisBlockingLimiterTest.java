@@ -4,9 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -35,7 +35,7 @@ final class RedisBlockingLimiterTest {
 	@Autowired
 	private RedisTemplate<String, Object> template;
 
-	@MockBean
+	@MockitoBean
 	private RateLimiter inner;
 
 	private RedisBlockingLimiter limiter;

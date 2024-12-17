@@ -7,8 +7,8 @@ import com.kaciras.blog.infra.codec.ImageReference;
 import com.kaciras.blog.infra.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.net.InetAddress;
 import java.time.Clock;
@@ -26,7 +26,7 @@ class UserRepositoryTest {
 	@Autowired
 	private UserRepository repository;
 
-	@MockBean
+	@MockitoBean
 	private Clock clock;
 
 	private User testUser() {

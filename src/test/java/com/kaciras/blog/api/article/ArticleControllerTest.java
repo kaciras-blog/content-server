@@ -5,8 +5,8 @@ import com.kaciras.blog.api.draft.DraftRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -15,13 +15,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 final class ArticleControllerTest extends AbstractControllerTest {
 
-	@MockBean
+	@MockitoBean
 	private ArticleRepository repository;
 
-	@MockBean
+	@MockitoBean
 	private DraftRepository draftRepository;
 
-	@MockBean
+	@MockitoBean
 	private ArticleMapper articleMapper;
 
 	private final Article article = Mockito.mock(Article.class);

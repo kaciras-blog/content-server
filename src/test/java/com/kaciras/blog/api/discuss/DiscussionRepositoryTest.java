@@ -10,11 +10,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.net.InetAddress;
@@ -35,7 +35,7 @@ class DiscussionRepositoryTest {
 	@Autowired
 	private SnapshotAssertion snapshot;
 
-	@MockBean
+	@MockitoBean
 	private Clock clock;
 
 	@Autowired

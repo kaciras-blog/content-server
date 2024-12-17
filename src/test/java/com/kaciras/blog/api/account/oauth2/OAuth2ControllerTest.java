@@ -10,12 +10,12 @@ import com.kaciras.blog.api.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Clock;
@@ -84,13 +84,13 @@ final class OAuth2ControllerTest extends AbstractControllerTest {
 		}
 	}
 
-	@MockBean
+	@MockitoBean
 	private OAuth2DAO oAuth2DAO;
 
-	@MockBean
+	@MockitoBean
 	private UserRepository userRepository;
 
-	@MockBean
+	@MockitoBean
 	private Clock clock;
 
 	@BeforeEach

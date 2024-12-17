@@ -9,11 +9,11 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJson;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.net.URI;
 import java.nio.file.Files;
@@ -34,16 +34,16 @@ import static org.mockito.internal.verification.VerificationModeFactory.noIntera
 @DataRedisTest(properties = "app.origin=https://blog.example.com")
 final class FriendValidateServiceTest {
 
-	@MockBean
+	@MockitoBean
 	private NoticeService notification;
 
-	@MockBean
+	@MockitoBean
 	private FriendRepository repository;
 
-	@MockBean
+	@MockitoBean
 	private Clock clock;
 
-	@MockBean
+	@MockitoBean
 	private FriendValidator validator;
 
 	@Autowired

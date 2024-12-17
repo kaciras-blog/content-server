@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -28,13 +28,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({AccountController.class})
 final class AccountControllerTest extends AbstractControllerTest {
 
-	@MockBean
+	@MockitoBean
 	private AccountRepository repository;
 
-	@MockBean
+	@MockitoBean
 	private UserManager userManager;
 
-	@MockBean
+	@MockitoBean
 	private SessionService sessionService;
 
 	private final MockHttpSession session = new MockHttpSession();

@@ -13,9 +13,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.net.InetAddress;
@@ -35,16 +35,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 final class DiscussionControllerTest extends AbstractControllerTest {
 
-	@SpyBean
+	@MockitoSpyBean
 	private TopicRegistration topics;
 
-	@MockBean
+	@MockitoBean
 	private DiscussionRepository repository;
 
-	@MockBean
+	@MockitoBean
 	private UserManager userManager;
 
-	@MockBean
+	@MockitoBean
 	private NoticeService notification;
 
 	@Autowired

@@ -5,10 +5,10 @@ import com.kaciras.blog.api.UseBlogRedis;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -25,13 +25,13 @@ import static org.mockito.internal.verification.VerificationModeFactory.noMoreIn
 @MinimumSpringTest
 final class NoticeServiceTest {
 
-	@MockBean
+	@MockitoBean
 	private ThreadPoolTaskScheduler executor;
 
-	@MockBean
+	@MockitoBean
 	private Clock clock;
 
-	@MockBean
+	@MockitoBean
 	private MailService mailService;
 
 	@Autowired

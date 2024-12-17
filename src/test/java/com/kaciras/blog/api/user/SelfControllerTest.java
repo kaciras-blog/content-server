@@ -6,8 +6,8 @@ import com.kaciras.blog.infra.codec.ImageReference;
 import com.kaciras.blog.infra.principal.WebPrincipal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.Instant;
 
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({SelfController.class, UserMapperImpl.class})
 final class SelfControllerTest extends AbstractControllerTest {
 
-	@MockBean
+	@MockitoBean
 	private UserRepository repository;
 
 	@BeforeEach
