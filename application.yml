@@ -36,7 +36,7 @@ spring:
 #  mail:
 #    host: smtp.office365.com
 #    port: 587
-#    username: example@outlook.com
+#    username: bob@example.com
 #    password: <password>
 
     # 如果 SMTP 要求 STARTTLS 必须加上这个属性

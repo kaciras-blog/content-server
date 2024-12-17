@@ -6,6 +6,7 @@ import com.kaciras.blog.api.notice.ActivityType;
 import com.kaciras.blog.api.notice.MailService;
 import com.kaciras.blog.api.user.User;
 import com.kaciras.blog.infra.principal.WebPrincipal;
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,9 @@ import java.util.Map;
 @Setter
 final class DiscussionActivity implements Activity {
 
-	/** 评论所在的页面地址和标题 */
+	/**
+	 * 评论所在的页面地址和标题
+	 */
 	private String url;
 	private String title;
 
@@ -25,7 +28,9 @@ final class DiscussionActivity implements Activity {
 	private int topicFloor;
 	private int nestFloor;
 
-	/** 内容预览 */
+	/**
+	 * 内容预览
+	 */
 	private String preview;
 
 	@JsonIgnore
@@ -33,13 +38,14 @@ final class DiscussionActivity implements Activity {
 
 	// 仅当顶层评论时为 null
 	@JsonIgnore
+	@Nullable
 	private User parentUser;
 
 	@JsonIgnore
 	private String email;
 
 	/**
-	 * 父评论者填写的邮箱
+	 * 父评论者填写的邮箱，可能不等于用户的邮箱。
 	 */
 	@JsonIgnore
 	private String parentEmail;
@@ -58,8 +64,11 @@ final class DiscussionActivity implements Activity {
 	public void sendMail(boolean clear, MailService sender) {
 		// 给站长的邮件，仅提示有新回复，具体内容去后台看。
 		if (clear && user.getId() != WebPrincipal.ADMIN_ID) {
-			sender.sendToAdmin("有新评论啦",
-					sender.interpolate("NewDiscussion", Map.of()));
+			sender.sendToAdmin("有新评论啦", sender.interpolate("NewDiscussion", Map.of()));
+		}
+
+		if (parentUser == null) {
+			return; // 顶层评论没有父用户，不发邮件。
 		}
 
 		// 登录了就不支持匿名邮箱，因为本来就是为了第三方验证才搞得登录。

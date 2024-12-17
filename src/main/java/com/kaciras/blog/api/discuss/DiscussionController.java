@@ -116,12 +116,10 @@ class DiscussionController {
 		activity.setUser(userRepository.get(discussion.getUserId()));
 		if (parent != null) {
 			// 父评论存在，则 Nest 一定不为 null。
-			var nestRoot = repository
-					.get(discussion.getNestId())
-					.orElseThrow();
+			var nestRoot = repository.get(discussion.getNestId()).orElseThrow();
 			activity.setTopicFloor(nestRoot.getNestFloor());
-			activity.setParentUser(userRepository.get(parent.getUserId()));
 			activity.setParentEmail(parent.getEmail());
+			activity.setParentUser(userRepository.get(parent.getUserId()));
 		}
 		noticeService.notify(activity);
 
