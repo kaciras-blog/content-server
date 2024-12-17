@@ -83,9 +83,9 @@ final class NoticeServiceTest {
 		var list = service.getAll();
 
 		assertThat(list).hasSize(1);
-		assertThat(list.get(0).getType()).isEqualTo(ActivityType.DISCUSSION);
-		assertThat(list.get(0).getTime()).isNotNull();
-		assertThat(list.get(0).getData()).isNotNull();
+		assertThat(list.getFirst().getType()).isEqualTo(ActivityType.DISCUSSION);
+		assertThat(list.getFirst().getTime()).isNotNull();
+		assertThat(list.getFirst().getData()).isNotNull();
 	}
 
 	@Test

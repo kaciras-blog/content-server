@@ -145,7 +145,7 @@ class DiscussionRepositoryTest {
 		var list = repository.findAll(query);
 
 		assertThat(list).hasSize(1);
-		assertThat(list.get(0).getNestSize()).isEqualTo(0);
+		assertThat(list.getFirst().getNestSize()).isEqualTo(0);
 	}
 
 	@Test

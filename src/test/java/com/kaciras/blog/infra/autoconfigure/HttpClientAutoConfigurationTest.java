@@ -30,7 +30,7 @@ public class HttpClientAutoConfigurationTest {
 
 					var proxy = selector.get().select(new URI("https://example.com"));
 					var except = new InetSocketAddress("localhost", 1080);
-					assertThat(proxy.get(0).address()).isEqualTo(except);
+					assertThat(proxy.getFirst().address()).isEqualTo(except);
 				});
 	}
 

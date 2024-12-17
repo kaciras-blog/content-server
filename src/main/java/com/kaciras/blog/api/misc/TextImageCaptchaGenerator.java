@@ -141,7 +141,7 @@ public final class TextImageCaptchaGenerator {
 	}
 
 	private void shearX(Graphics g, int w1, int h1, Color color) {
-		var period = random.nextInt(2);
+		var period = random.nextInt(3);
 		var frames = 1;
 		var phase = random.nextInt(2);
 
